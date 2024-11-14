@@ -1,5 +1,6 @@
 ﻿using RackLogic.Core.Interfaces;
 using RackLogic.Infrastructure;
+using RackLogic.Infrastructure.Data.Repositories;
 using RackLogic.Infrastructure.Email;
 
 namespace RackLogic.Web.Configurations;
@@ -16,7 +17,8 @@ public static class ServiceConfigs
     {
       // Use a local test email server
       // See: https://ardalis.com/configuring-a-local-test-email-server/
-      services.AddScoped<IEmailSender, MimeKitEmailSender>();
+      services.AddScoped<IEmailSender, EmailService>();
+      services.AddScoped(typeof(IRepositoryWithExpression<>), typeof(EfRepositoryWithExpression<>));
 
       // Otherwise use this:
       //builder.Services.AddScoped<IEmailSender, FakeEmailSender>();
@@ -24,7 +26,7 @@ public static class ServiceConfigs
     }
     else
     {
-      services.AddScoped<IEmailSender, MimeKitEmailSender>();
+      services.AddScoped<IEmailSender, EmailService>();
     }
 
     logger.LogInformation("{Project} services registered", "Mediatr and Email Sender");

@@ -1,15 +1,19 @@
 ﻿using System.Reflection;
 using Ardalis.SharedKernel;
-using RackLogic.Core.ContributorAggregate;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using RackLogic.Core.ContributorAggregate;
+using RackLogic.Core.UserAggregate;
 
 namespace RackLogic.Infrastructure.Data;
 public class AppDbContext(DbContextOptions<AppDbContext> options,
-  IDomainEventDispatcher? dispatcher) : DbContext(options)
+  IDomainEventDispatcher? dispatcher) : IdentityDbContext<ApplicationUser, IdentityRole<Guid>, Guid>(options)
 {
   private readonly IDomainEventDispatcher? _dispatcher = dispatcher;
 
   public DbSet<Contributor> Contributors => Set<Contributor>();
+  public DbSet<UserOtp> UserOtps => Set<UserOtp>();
 
   protected override void OnModelCreating(ModelBuilder modelBuilder)
   {
