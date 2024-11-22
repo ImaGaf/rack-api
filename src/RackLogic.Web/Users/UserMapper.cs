@@ -1,6 +1,6 @@
-﻿using Riok.Mapperly.Abstractions;
-using RackLogic.UseCases.Users.Create;
+﻿using RackLogic.UseCases.Users.Create;
 using RackLogic.Web.Users.Register;
+using Riok.Mapperly.Abstractions;
 
 namespace RackLogic.Web.Users;
 

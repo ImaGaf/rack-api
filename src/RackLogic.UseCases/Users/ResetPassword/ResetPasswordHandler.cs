@@ -1,8 +1,6 @@
-﻿using System.Text;
-using Ardalis.Result;
+﻿using Ardalis.Result;
 using Ardalis.SharedKernel;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.WebUtilities;
 using RackLogic.Core.Interfaces;
 using RackLogic.Core.UserAggregate;
 
@@ -27,8 +25,7 @@ public class ResetPasswordHandler(
     IdentityResult result;
     try
     {
-      var userOtp = await _userOtpRepository.FirstOrDefaultAsync(x => x.UserId == user.Id);
-      result = await _userManager.ResetPasswordAsync(user, userOtp?.ResetToken ?? string.Empty, request.NewPassword);
+      result = await _userManager.ResetPasswordAsync(user, request.ResetPasswordToken, request.NewPassword);
     }
     catch (FormatException)
     {
@@ -37,9 +34,9 @@ public class ResetPasswordHandler(
 
     if (!result.Succeeded)
     {
-      return Result.Error(new ErrorList(result.Errors?.Select(x => x.Description)));
+      return Result.Invalid(new ValidationError(result.Errors?.FirstOrDefault()?.Description));
     }
-
-    return Result.Success();
+    await _userOtpRepository.DeleteAsync(x => x.UserId == user.Id, true, cancellationToken);
+    return true;
   }
 }

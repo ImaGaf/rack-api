@@ -18,7 +18,7 @@ public static class TokenUtil
 
     var userClaims = new List<Claim>
       {
-          new("Id", user.Id.ToString()),
+          new(ClaimTypes.NameIdentifier, user.Id.ToString()),
           new ("UserName", user.UserName??"")
       };
     userClaims.AddRange(roleClaims);

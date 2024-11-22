@@ -8,9 +8,9 @@ namespace RackLogic.UseCases.Users.VerifyOtp;
 public class VerifyOtpHandler(
   IRepositoryWithExpression<UserOtp> _userOtpRepository,
   UserManager<ApplicationUser> _userManager)
-  : ICommandHandler<VerifyOtpCommand, Result<bool>>
+  : ICommandHandler<VerifyOtpCommand, Result<string?>>
 {
-  public async Task<Result<bool>> Handle(VerifyOtpCommand request, CancellationToken cancellationToken)
+  public async Task<Result<string?>> Handle(VerifyOtpCommand request, CancellationToken cancellationToken)
   {
     var user = await _userManager.FindByEmailAsync(request.Email);
 
@@ -18,18 +18,19 @@ public class VerifyOtpHandler(
 
     var userOtp = await _userOtpRepository.FirstOrDefaultAsync(x => x.UserId == user.Id);
 
-    if (userOtp is null) return false;
+    if (userOtp is null) return Result.Invalid(new ValidationError("Otp invalid."));
+
+    if (DateTime.Now > userOtp.CreationTime.AddMinutes(3)) return Result.Invalid(new ValidationError("Otp invalid."));
 
     var validToken = await _userManager.VerifyUserTokenAsync(
                                         user,
-                                        _userManager.Options.Tokens.PasswordResetTokenProvider,
-                                        UserManager<IdentityUser>.ResetPasswordTokenPurpose,
+                                        "ResetPassword",
+                                        "ResetPassword",
                                         userOtp.ResetToken ?? string.Empty);
     var result = userOtp.Otp == request.Otp && validToken;
 
-    //if (result)
-    //  await _userOtpRepository.DeleteAsync(userOtp);
+    if (result) return userOtp.ResetToken;
 
-    return result;
+    return Result.Invalid(new ValidationError("Otp invalid."));
   }
 }

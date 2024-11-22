@@ -27,12 +27,11 @@ public static class ServiceConfigs
     else
     {
       services.AddScoped<IEmailSender, EmailService>();
+      services.AddScoped(typeof(IRepositoryWithExpression<>), typeof(EfRepositoryWithExpression<>));
     }
 
     logger.LogInformation("{Project} services registered", "Mediatr and Email Sender");
 
     return services;
   }
-
-
 }

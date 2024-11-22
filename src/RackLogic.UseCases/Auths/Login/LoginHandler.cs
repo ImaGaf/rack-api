@@ -13,21 +13,39 @@ public class LoginHandler(
   {
     var user = await _userManager.FindByEmailAsync(request.Email);
     if (user == null)
-    {
       return Result.Invalid(new ValidationError("Email not found."));
-    }
-    else
+
+    if (await _userManager.IsLockedOutAsync(user))
     {
-      var result = await _signInManager.CheckPasswordSignInAsync(user, request.Password, true);
-      if (result.Succeeded)
-      {
-        var token = await _userService.GenerateUserTokenAsync(user);
-        return token;
-      }
-      else
-      {
-        return Result.Invalid(new ValidationError(result.ToString()));
-      }
+      var lockoutEnd = await _userManager.GetLockoutEndDateAsync(user);
+      if (lockoutEnd.HasValue && lockoutEnd.Value == DateTimeOffset.MaxValue)
+        return Result.Forbidden("Your account has been permanently locked due to repeated login failures.");
+
+      return Result.Forbidden("Account is locked. Please try again later.");
     }
+      
+    var result = await _signInManager.CheckPasswordSignInAsync(user, request.Password, true);
+    if (result.Succeeded)
+    {
+      var token = await _userService.GenerateUserTokenAsync(user);
+      return token;
+    }
+
+    //await _userManager.AccessFailedAsync(user);
+    var failedCount = await _userManager.GetAccessFailedCountAsync(user);
+
+    if (failedCount == 10)
+    {
+      await _userManager.SetLockoutEndDateAsync(user, DateTimeOffset.UtcNow.AddMinutes(5));
+      return Result.Forbidden("Account is locked. Please try again later.");
+    }
+
+    if (failedCount >= 20)
+    {
+      await _userManager.SetLockoutEndDateAsync(user, DateTimeOffset.MaxValue);
+      return Result.Forbidden("Your account has been permanently locked due to repeated login failures.");
+    }
+
+    return Result.Invalid(new ValidationError(result.ToString()));
   }
 }

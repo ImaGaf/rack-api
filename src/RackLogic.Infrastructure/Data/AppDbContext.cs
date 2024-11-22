@@ -3,6 +3,7 @@ using Ardalis.SharedKernel;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using RackLogic.Core.Common.Entity;
 using RackLogic.Core.ContributorAggregate;
 using RackLogic.Core.UserAggregate;
 
@@ -14,6 +15,8 @@ public class AppDbContext(DbContextOptions<AppDbContext> options,
 
   public DbSet<Contributor> Contributors => Set<Contributor>();
   public DbSet<UserOtp> UserOtps => Set<UserOtp>();
+  public DbSet<Warehouse> Warehouses => Set<Warehouse>();
+  public DbSet<UserWarehouseRole> UserWarehouseRoles => Set<UserWarehouseRole>();
 
   protected override void OnModelCreating(ModelBuilder modelBuilder)
   {

@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using RackLogic.Core.UserAggregate;
@@ -14,6 +15,7 @@ using RackLogic.Infrastructure.Token;
 using RackLogic.Web;
 using RackLogic.Web.Configurations;
 using RackLogic.Web.Middlewares;
+using RackLogic.Web.Services;
 using Serilog;
 using Serilog.Extensions.Logging;
 
@@ -42,22 +44,26 @@ builder.Services.AddFastEndpoints()
                   o.ShortSchemaNames = true;
                 });
 
-builder.Services.AddIdentityCore<ApplicationUser>(op =>
+builder.Services.Configure<DataProtectionTokenProviderOptions>(options =>
+{
+  options.TokenLifespan = TimeSpan.FromSeconds(appSettings.PasswordRefreshTokenExpireSeconds);
+  options.Name = "ResetPassword";
+});
+
+builder.Services.AddIdentity<ApplicationUser, IdentityRole<Guid>>(op =>
 {
   op.Password.RequireNonAlphanumeric = false;
+  op.Lockout.MaxFailedAccessAttempts = 30;
+  op.Tokens.PasswordResetTokenProvider = "ResetPassword";
 })
                 .AddSignInManager()
                 .AddEntityFrameworkStores<AppDbContext>()
-                .AddTokenProvider<DataProtectorTokenProvider<ApplicationUser>>("REFRESHTOKENPROVIDER");
+                .AddTokenProvider<DataProtectorTokenProvider<ApplicationUser>>("REFRESHTOKENPROVIDER")
+                .AddTokenProvider<DataProtectorTokenProvider<ApplicationUser>>("ResetPassword");
 
 builder.Services.Configure<DataProtectionTokenProviderOptions>(options =>
 {
   options.TokenLifespan = TimeSpan.FromSeconds(appSettings.RefreshTokenExpireSeconds);
-});
-
-builder.Services.Configure<DataProtectionTokenProviderOptions>(options =>
-{
-  options.TokenLifespan = TimeSpan.FromSeconds(appSettings.PasswordRefreshTokenExpireSeconds);
 });
 
 builder.Services.AddAuthentication(options =>
@@ -121,6 +127,8 @@ builder.Services.AddSwaggerGen(config =>
       });
 });
 
+builder.Services.AddHostedService<ResetCountService>();
+
 var app = builder.Build();
 //if (app.Environment.IsDevelopment() || app.Environment.IsEnvironment("Test"))
 //{
@@ -133,6 +141,13 @@ app.UseCors("webAppRequests");
 app.UseAuthentication();
 app.UseAuthorization();
 app.UseMiddleware<GlobalExceptionMiddleware>();
+
+using (var scope = app.Services.CreateScope())
+{
+  var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole<Guid>>>();
+  await AppDbContextSeed.SeedRolesAsync(roleManager);
+}
+
 app.Run();
 
 // Make the implicit Program.cs class public, so integration tests can reference the correct assembly for host building

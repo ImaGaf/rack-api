@@ -1,6 +1,7 @@
 ﻿using Ardalis.Result;
 using FastEndpoints;
 using MediatR;
+using RackLogic.Web.Exceptions;
 using RackLogic.Web.Models;
 
 namespace RackLogic.Web.Auth.Login;
@@ -11,10 +12,20 @@ public class Login(IMediator _mediator) : Endpoint<LoginRequest, ApiResponse<Log
   {
     Post("/auths/login");
     AllowAnonymous();
+    DontThrowIfValidationFails();
   }
 
   public override async Task HandleAsync(LoginRequest req, CancellationToken ct)
   {
+    var validator = new LoginRequestValidator();
+    var validationResult = validator.Validate(req);
+
+    if (!validationResult.IsValid)
+    {
+      var errors = validationResult.Errors.Select(e => e.ErrorMessage).ToList();
+      throw new InvalidException(errors);
+    }
+
     var result = await _mediator.Send(AuthMapper.ToLoginCommand(req));
 
     if (result.IsSuccess)
@@ -25,9 +36,12 @@ public class Login(IMediator _mediator) : Endpoint<LoginRequest, ApiResponse<Log
 
     if (result.IsInvalid())
     {
-      AddError(result.ValidationErrors?.FirstOrDefault()?.ErrorMessage ?? string.Empty);
-      await SendErrorsAsync(400, ct);
-      return;
+      throw new InvalidException(result?.ValidationErrors?.Select(x => x.ErrorMessage).ToList());
+    }
+
+    if (result.IsForbidden())
+    {
+      throw new ForbiddenException(result?.Errors?.FirstOrDefault());
     }
 
     foreach (var error in result.Errors)

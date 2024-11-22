@@ -27,6 +27,16 @@ public class GlobalExceptionMiddleware
         Errors = ex.Errors
       });
     }
+    catch (ForbiddenException ex)
+    {
+      context.Response.StatusCode = StatusCodes.Status403Forbidden;
+      await context.Response.WriteAsJsonAsync(new
+      {
+        StatusCode = StatusCodes.Status403Forbidden,
+        Message = "One or more validation errors occurred.",
+        Errors = ex.Error
+      });
+    }
     catch (Exception ex)
     {
       context.Response.StatusCode = StatusCodes.Status500InternalServerError;
