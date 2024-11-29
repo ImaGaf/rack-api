@@ -36,5 +36,9 @@ public class RegisterUserRequestValidator : Validator<RegisterUserRequest>
       .NotEmpty()
       .MaximumLength(4)
       .WithMessage("Invalid post code format.");
+
+    RuleFor(r => r.Role)
+      .NotEmpty()
+      .WithMessage("Role is required");
   }
 }

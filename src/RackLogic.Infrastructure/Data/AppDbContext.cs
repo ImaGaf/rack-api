@@ -17,11 +17,29 @@ public class AppDbContext(DbContextOptions<AppDbContext> options,
   public DbSet<UserOtp> UserOtps => Set<UserOtp>();
   public DbSet<Warehouse> Warehouses => Set<Warehouse>();
   public DbSet<UserWarehouseRole> UserWarehouseRoles => Set<UserWarehouseRole>();
-
+  public DbSet<Invitation> Invitations => Set<Invitation>();
   protected override void OnModelCreating(ModelBuilder modelBuilder)
   {
     base.OnModelCreating(modelBuilder);
     modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
+
+    modelBuilder.Entity<Warehouse>()
+      .HasOne(w => w.User)
+      .WithMany(u => u.OwnedWarehouses)
+      .HasForeignKey(w => w.OwnerId)
+      .OnDelete(DeleteBehavior.Restrict);
+
+    modelBuilder.Entity<Invitation>()
+      .HasOne(w => w.User)
+      .WithMany(u => u.Invitations)
+      .HasForeignKey(w => w.InviteById)
+      .OnDelete(DeleteBehavior.Restrict);
+
+    modelBuilder.Entity<UserOtp>()
+        .HasOne(u => u.User)
+        .WithMany(u => u.UserOtps)
+        .HasForeignKey(u => u.UserId)
+        .OnDelete(DeleteBehavior.Cascade);
   }
 
   public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = new CancellationToken())

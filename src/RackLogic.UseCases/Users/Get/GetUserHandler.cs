@@ -15,6 +15,12 @@ public class GetUserHandler(UserManager<ApplicationUser> _userManager) : IQueryH
     var user = await _userManager.FindByIdAsync(userId);
     if (user is null) return Result.Invalid();
 
-    return new UserDTO(user.FirstName, user.LastName, user.Email, user.PhoneNumber);
+    return new UserDTO
+      ( user.FirstName ?? string.Empty,
+        user.LastName ?? string.Empty,
+        user.Email, user.PhoneNumber,
+        user.RegisteredRole ?? string.Empty,
+        user.IsPaid
+      );
   }
 }

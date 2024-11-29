@@ -13,7 +13,7 @@ public class LoginHandler(
   {
     var user = await _userManager.FindByEmailAsync(request.Email);
     if (user == null)
-      return Result.Invalid(new ValidationError("Email not found."));
+      return Result.Invalid(new ValidationError("The email and/or password entered is incorrect. Please try again."));
 
     if (await _userManager.IsLockedOutAsync(user))
     {
@@ -46,6 +46,6 @@ public class LoginHandler(
       return Result.Forbidden("Your account has been permanently locked due to repeated login failures.");
     }
 
-    return Result.Invalid(new ValidationError(result.ToString()));
+    return Result.Invalid(new ValidationError("The email and/or password entered is incorrect. Please try again."));
   }
 }

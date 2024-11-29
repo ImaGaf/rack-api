@@ -27,7 +27,9 @@ public class Get(IMediator _mediator) : EndpointWithoutRequest<ApiResponse<GetUs
           FirstName = result.Value.FirstName,
           LastName = result.Value.LastName,
           Email = result.Value.Email,
-          PhoneNumber = result.Value.PhoneNumber 
+          PhoneNumber = result.Value.PhoneNumber ,
+          RegistedRole = result.Value.RegisteredRole,
+          IsPaid = result.Value.IsPaid,
         });
       return;
     }

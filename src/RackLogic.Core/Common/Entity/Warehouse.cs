@@ -1,9 +1,11 @@
-﻿using Ardalis.SharedKernel;
+﻿using System.ComponentModel.DataAnnotations.Schema;
+using RackLogic.Core.UserAggregate;
 
 namespace RackLogic.Core.Common.Entity;
-public class Warehouse : EntityBase<Guid>
+public class Warehouse : BaseEntityCustom
 {
   public required string Name { get; set; }
-
+  public required Guid OwnerId { get; set; }
+  public ApplicationUser? User { get; set; }
   public required ICollection<UserWarehouseRole> UserWarehouseRoles { get; set; }
 }

@@ -20,6 +20,8 @@ public class RegisterUserRequest
   public string? Password { get; set; }
 
   public bool OptOutRackLogicMarketing { get; set; }
+  [Required]
+  public string? Role { get; set; }
 
-  public List<string>? Roles { get; set; }
+  public Guid? InviteId { get; set; }
 }
