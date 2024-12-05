@@ -1,4 +1,5 @@
-﻿using Ardalis.Result;
+﻿using System.Security.Claims;
+using Ardalis.Result;
 using Ardalis.SharedKernel;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
@@ -19,13 +20,18 @@ public class InviteUserHandler(
 {
   public async Task<Result<bool>> Handle(InviteUserCommand request, CancellationToken cancellationToken)
   {
-    if (!await CheckPermissionUserRequest(request.InviteById, request.WarehouseId)) return Result.Unauthorized();
+    if (!request.User.Identity?.IsAuthenticated ?? false) return Result.Unauthorized();
+
+    var inviteIdString = request.User.Claims.First(x => x.Type == ClaimTypes.NameIdentifier).Value;
+    var inviteId = Guid.Parse(inviteIdString);
+
+    if (!await CheckPermissionUserRequest(inviteId, request.WarehouseId)) return Result.Unauthorized();
 
     var role = await _roleManager.FindByNameAsync(request.Role);
     if (role is null) return Result.Invalid(new ValidationError("Role invalid."));
 
     // Check warehouse in database
-    var result = await _warehouseRepository.FirstOrDefaultAsync(x => x.Id == request.WarehouseId && x.OwnerId == request.InviteById);
+    var result = await _warehouseRepository.FirstOrDefaultAsync(x => x.Id == request.WarehouseId && x.OwnerId == inviteId);
     if (result is null) return Result.Invalid(new ValidationError("Warehouse not found."));
 
     var user = await _userManager.FindByEmailAsync(request.Email);
@@ -36,13 +42,12 @@ public class InviteUserHandler(
         {
           Role = request.Role,
           Email = request.Email,
-          InviteById = request.InviteById,
+          InviteById = inviteId,
           WarehouseId = request.WarehouseId,
         }, cancellationToken);
-      var baseUrl = _configuration.GetSection("Dashboard:BaseUrl").Value;
+      var baseUrl = _configuration.GetSection("Dashboard:InviteUser").Value;
       var logo = $"{baseUrl}{_configuration.GetSection("Dashboard:LogoMarket").Value}";
-      //TODO: Create deeplink
-      var linkUrl = $"{baseUrl} id={invitation.Id},inviterole={request.Role}";
+      var linkUrl = $"{baseUrl}id={invitation.Id},inviterole={request.Role}";
       var content = BuildEmailInviteContent(linkUrl, logo);
       //TODO: Send Email 
       //var result = await _emailSender.SendAsync(request.Email, EmailConstants.OTPSubject, content);

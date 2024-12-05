@@ -7,10 +7,6 @@ public class InviteUserRequestValidator : Validator<InviteUserRequest>
 {
   public InviteUserRequestValidator()
   {
-    RuleFor(x => x.InvitedById)
-            .NotEmpty().WithMessage("InvitedById is required.")
-            .Must(BeValidGuid).WithMessage("InvitedById must be a valid GUID.");
-
     RuleFor(x => x.Email)
         .NotEmpty().WithMessage("Email is required.")
         .EmailAddress().WithMessage("Email must be a valid email address.");
