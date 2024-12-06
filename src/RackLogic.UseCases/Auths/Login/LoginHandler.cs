@@ -7,7 +7,8 @@ namespace RackLogic.UseCases.Auths.Login;
 public class LoginHandler(
   SignInManager<ApplicationUser> _signInManager,
   UserManager<ApplicationUser> _userManager,
-  IUserService _userService) : ICommandHandler<LoginCommand, Result<LoginDTO>>
+  IUserService _userService)
+  : ICommandHandler<LoginCommand, Result<LoginDTO>>
 {
   public async Task<Result<LoginDTO>> Handle(LoginCommand request, CancellationToken cancellationToken)
   {

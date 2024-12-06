@@ -3,9 +3,7 @@ using Ardalis.Result;
 using Ardalis.SharedKernel;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Options;
 using RackLogic.Core.Common;
-using RackLogic.Core.Common.Constants;
 using RackLogic.Core.Interfaces;
 using RackLogic.Core.UserAggregate;
 
