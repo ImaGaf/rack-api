@@ -22,6 +22,4 @@ public class RegisterUserRequest
   public bool OptOutRackLogicMarketing { get; set; }
   [Required]
   public string? Role { get; set; }
-
-  public Guid? InviteId { get; set; }
 }

@@ -47,7 +47,7 @@ public class InviteUserHandler(
         }, cancellationToken);
       var baseUrl = _configuration.GetSection("Dashboard:InviteUser").Value;
       var logo = $"{baseUrl}{_configuration.GetSection("Dashboard:LogoMarket").Value}";
-      var linkUrl = $"{baseUrl}id={invitation.Id},inviterole={request.Role}";
+      var linkUrl = $"{baseUrl}email={invitation.Email},inviterole={request.Role}";
       var content = BuildEmailInviteContent(linkUrl, logo);
       //TODO: Send Email 
       //var result = await _emailSender.SendAsync(request.Email, EmailConstants.OTPSubject, content);

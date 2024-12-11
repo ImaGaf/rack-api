@@ -9,6 +9,5 @@ public record RegisterUserCommand
   string Postcode,
   string Password,
   bool OptOutRackLogicMarketing,
-  string Role,
-  Guid? InviteId)
+  string Role)
   : Ardalis.SharedKernel.ICommand<Result>;
