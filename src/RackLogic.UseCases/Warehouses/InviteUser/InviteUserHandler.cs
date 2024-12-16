@@ -25,7 +25,7 @@ public class InviteUserHandler(
     var inviteIdString = request.User.Claims.First(x => x.Type == ClaimTypes.NameIdentifier).Value;
     var inviteId = Guid.Parse(inviteIdString);
 
-    if (!await CheckPermissionUserRequest(inviteId, request.WarehouseId)) return Result.Unauthorized();
+    if (!await CheckPermissionUserRequest(inviteId, request.WarehouseId)) return Result.Forbidden();
 
     var role = await _roleManager.FindByNameAsync(request.Role);
     if (role is null) return Result.Invalid(new ValidationError("Role invalid."));
