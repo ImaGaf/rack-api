@@ -1,19 +1,14 @@
 ﻿using System.Text;
 using FastEndpoints;
 using FastEndpoints.Swagger;
-using Microsoft.AspNetCore.Authentication.BearerToken;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using RackLogic.Core.UserAggregate;
 using RackLogic.Infrastructure.Data;
 using RackLogic.Infrastructure.Token;
-using RackLogic.Web;
 using RackLogic.Web.Configurations;
 using RackLogic.Web.Middlewares;
 using RackLogic.Web.Services;
@@ -45,26 +40,26 @@ builder.Services.AddFastEndpoints()
                   o.ShortSchemaNames = true;
                 });
 
-builder.Services.Configure<DataProtectionTokenProviderOptions>(options =>
-{
-  options.TokenLifespan = TimeSpan.FromSeconds(appSettings.PasswordRefreshTokenExpireSeconds);
-  options.Name = "ResetPassword";
-});
-
 builder.Services.AddIdentity<ApplicationUser, IdentityRole<Guid>>(op =>
 {
   op.Password.RequireNonAlphanumeric = false;
   op.Lockout.MaxFailedAccessAttempts = 30;
   op.Tokens.PasswordResetTokenProvider = "ResetPassword";
+  op.Tokens.AuthenticatorTokenProvider = "REFRESHTOKENPROVIDER";
 })
                 .AddSignInManager()
                 .AddEntityFrameworkStores<AppDbContext>()
                 .AddTokenProvider<DataProtectorTokenProvider<ApplicationUser>>("REFRESHTOKENPROVIDER")
                 .AddTokenProvider<DataProtectorTokenProvider<ApplicationUser>>("ResetPassword");
 
-builder.Services.Configure<DataProtectionTokenProviderOptions>(options =>
+builder.Services.Configure<DataProtectionTokenProviderOptions>("REFRESHTOKENPROVIDER", options =>
 {
   options.TokenLifespan = TimeSpan.FromSeconds(appSettings.RefreshTokenExpireSeconds);
+});
+
+builder.Services.Configure<DataProtectionTokenProviderOptions>("ResetPassword", options =>
+{
+  options.TokenLifespan = TimeSpan.FromSeconds(appSettings.PasswordRefreshTokenExpireSeconds);
 });
 
 builder.Services.AddAuthentication(options =>
