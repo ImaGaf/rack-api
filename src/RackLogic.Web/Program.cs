@@ -2,8 +2,10 @@
 using FastEndpoints;
 using FastEndpoints.Swagger;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using RackLogic.Core.UserAggregate;
@@ -11,6 +13,7 @@ using RackLogic.Infrastructure.Data;
 using RackLogic.Infrastructure.Token;
 using RackLogic.Web.Configurations;
 using RackLogic.Web.Middlewares;
+using RackLogic.Web.Providers;
 using RackLogic.Web.Services;
 using Serilog;
 using Serilog.Extensions.Logging;
@@ -44,20 +47,20 @@ builder.Services.AddIdentity<ApplicationUser, IdentityRole<Guid>>(op =>
 {
   op.Password.RequireNonAlphanumeric = false;
   op.Lockout.MaxFailedAccessAttempts = 30;
-  op.Tokens.PasswordResetTokenProvider = "ResetPassword";
   op.Tokens.AuthenticatorTokenProvider = "REFRESHTOKENPROVIDER";
+  op.Tokens.PasswordResetTokenProvider = "RESETPASSWORDTOKENPROVIDER";
 })
-                .AddSignInManager()
-                .AddEntityFrameworkStores<AppDbContext>()
-                .AddTokenProvider<DataProtectorTokenProvider<ApplicationUser>>("REFRESHTOKENPROVIDER")
-                .AddTokenProvider<DataProtectorTokenProvider<ApplicationUser>>("ResetPassword");
+    .AddSignInManager()
+    .AddEntityFrameworkStores<AppDbContext>()
+    .AddTokenProvider<PasswordResetTokenProvider<ApplicationUser>>("RESETPASSWORDTOKENPROVIDER")
+    .AddTokenProvider<RefreshTokenProvider<ApplicationUser>>("REFRESHTOKENPROVIDER");
 
-builder.Services.Configure<DataProtectionTokenProviderOptions>("REFRESHTOKENPROVIDER", options =>
+builder.Services.Configure<RefreshTokenDataProtectionTokenProviderOptions>(options =>
 {
   options.TokenLifespan = TimeSpan.FromSeconds(appSettings.RefreshTokenExpireSeconds);
 });
 
-builder.Services.Configure<DataProtectionTokenProviderOptions>("ResetPassword", options =>
+builder.Services.Configure<PasswordResetTokenDataProtectionTokenProviderOptions>(options =>
 {
   options.TokenLifespan = TimeSpan.FromSeconds(appSettings.PasswordRefreshTokenExpireSeconds);
 });
@@ -141,7 +144,6 @@ app.UseMiddleware<GlobalExceptionMiddleware>();
 using (var scope = app.Services.CreateScope())
 {
   var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
-  //Same as the question
   db.Database.Migrate();
   var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole<Guid>>>();
   await AppDbContextSeed.SeedRolesAsync(roleManager);

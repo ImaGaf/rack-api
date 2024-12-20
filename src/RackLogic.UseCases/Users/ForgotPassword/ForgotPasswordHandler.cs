@@ -4,6 +4,7 @@ using Ardalis.SharedKernel;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using RackLogic.Core.Common;
+using RackLogic.Core.Common.Constants;
 using RackLogic.Core.Interfaces;
 using RackLogic.Core.UserAggregate;
 
@@ -11,8 +12,8 @@ namespace RackLogic.UseCases.Users.ForgotPassword;
 public class ForgotPasswordHandler(
   IConfiguration _configuration,
   IRepositoryWithExpression<UserOtp> _userOtpRepository,
-  UserManager<ApplicationUser> _userManager)
- // IEmailSender _emailSender) 
+  UserManager<ApplicationUser> _userManager,
+  IEmailSender _emailSender) 
   : ICommandHandler<ForgotPasswordCommand, Result<bool>>
 {
   public async Task<Result<bool>> Handle(ForgotPasswordCommand request, CancellationToken cancellationToken)
@@ -38,8 +39,7 @@ public class ForgotPasswordHandler(
       var forgotPasswordUrl = _configuration.GetSection("Dashboard:ForgotPassword").Value;
       var resetLink = $"{baseUrl}{forgotPasswordUrl}?userId={user.Id}&resetToken={UrlEncoder.Default.Encode(resetToken)}";
       var content = BuildEmailContent($"{user.FirstName} {user.LastName}", otp, resetLink, logo);
-      //var result = await _emailSender.SendAsync(request.Email, EmailConstants.OTPSubject, content);
-      var result = true;
+      var result = await _emailSender.SendAsync(request.Email, EmailConstants.OTPSubject, content);
       
       if (result)
       {
