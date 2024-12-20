@@ -41,6 +41,11 @@ public class EditRoleUser(IMediator _mediator) : Endpoint<EditRoleUserRequest, A
       await SendUnauthorizedAsync();
     }
 
+    if (result.IsForbidden())
+    {
+      throw new ForbiddenException(result?.Errors?.FirstOrDefault());
+    }
+
     if (result.IsInvalid())
     {
       throw new InvalidException(result?.ValidationErrors?.Select(x => x.ErrorMessage).ToList());
