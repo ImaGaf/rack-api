@@ -10,6 +10,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using RackLogic.UseCases.Auths;
+using RackLogic.UseCases.Warehouses;
 
 namespace RackLogic.Infrastructure;
 public static class InfrastructureServiceExtensions
@@ -28,7 +29,8 @@ public static class InfrastructureServiceExtensions
            .AddScoped(typeof(IReadRepository<>), typeof(EfRepository<>))
            .AddScoped<IListContributorsQueryService, ListContributorsQueryService>()
            .AddScoped<IDeleteContributorService, DeleteContributorService>()
-           .AddScoped<IUserService, UserSevice>();
+           .AddScoped<IUserService, UserSevice>()
+           .AddScoped<IUserWarehouseService, UserWarehouseService>();
 
 
     logger.LogInformation("{Project} services registered", "Infrastructure");

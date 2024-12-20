@@ -1,4 +1,5 @@
-﻿using RackLogic.Web.Exceptions;
+﻿
+using RackLogic.Web.Exceptions;
 
 namespace RackLogic.Web.Middlewares;
 
@@ -33,6 +34,16 @@ public class GlobalExceptionMiddleware
       await context.Response.WriteAsJsonAsync(new
       {
         StatusCode = StatusCodes.Status403Forbidden,
+        Message = "One or more validation errors occurred.",
+        Errors = ex.Error
+      });
+    }
+    catch (NotFoundException ex)
+    {
+      context.Response.StatusCode = StatusCodes.Status404NotFound;
+      await context.Response.WriteAsJsonAsync(new
+      {
+        StatusCode = StatusCodes.Status404NotFound,
         Message = "One or more validation errors occurred.",
         Errors = ex.Error
       });
