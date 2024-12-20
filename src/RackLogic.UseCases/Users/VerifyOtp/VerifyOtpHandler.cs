@@ -20,11 +20,11 @@ public class VerifyOtpHandler(
 
     if (userOtp is null) return Result.Invalid(new ValidationError("Otp invalid."));
 
-    if (DateTime.Now > userOtp.CreationTime.AddMinutes(3)) return Result.Invalid(new ValidationError("Otp invalid."));
+    if (DateTime.Now > userOtp.CreationTime.AddMinutes(3)) return Result.Invalid(new ValidationError("Otp expired."));
 
     var validToken = await _userManager.VerifyUserTokenAsync(
                                         user,
-                                        "ResetPassword",
+                                        "RESETPASSWORDTOKENPROVIDER",
                                         "ResetPassword",
                                         userOtp.ResetToken ?? string.Empty);
     var result = userOtp.Otp == request.Otp && validToken;

@@ -23,13 +23,33 @@ public class EfRepositoryWithExpression<T> : EfRepository<T>, IRepositoryWithExp
     }
   }
 
-  public async Task<IEnumerable<T>> FindAsync(Expression<Func<T, bool>> predicate, CancellationToken cancellationToken = default)
+  public async Task<IEnumerable<T>> FindAsync(Expression<Func<T, bool>> predicate, CancellationToken cancellationToken = default, params Expression<Func<T, object?>>[] includes)
   {
-    return await _dbContext.Set<T>().Where(predicate).ToListAsync(cancellationToken);
+    var query = _dbContext.Set<T>().Where(predicate);
+
+    if (includes is not null)
+    {
+      foreach (var include in includes)
+      {
+        query = query.Include(include);
+      }
+    }
+
+    return await query.ToListAsync(cancellationToken);
   }
 
-  public async Task<T?> FirstOrDefaultAsync(Expression<Func<T, bool>> predicate, CancellationToken cancellationToken = default)
+  public async Task<T?> FirstOrDefaultAsync(Expression<Func<T, bool>> predicate, CancellationToken cancellationToken = default, params Expression<Func<T, object?>>[] includes)
   {
-    return await _dbContext.Set<T>().FirstOrDefaultAsync(predicate, cancellationToken: cancellationToken);
+    var query = _dbContext.Set<T>().Where(predicate);
+
+    if (includes is not null)
+    {
+      foreach (var include in includes)
+      {
+        query = query.Include(include);
+      }
+    }
+
+    return await query.FirstOrDefaultAsync(cancellationToken: cancellationToken);
   }
 }
