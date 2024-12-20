@@ -27,4 +27,17 @@
     <ProjectReference Include="..\RackLogic.UseCases\RackLogic.UseCases.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="wwwroot\.well-known\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Update="wwwroot\.well-known\apple-app-site-association">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Update="wwwroot\.well-known\assetlinks.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
 </Project>
