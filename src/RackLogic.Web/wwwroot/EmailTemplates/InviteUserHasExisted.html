@@ -1,0 +1,101 @@
+﻿<html>
+
+<head>
+    <meta charset="UTF-8">
+    <style>
+        @font-face {
+            font-family: 'Inter';
+            src: url('./fonts/static/inter-regular.ttf') format('truetype');
+            /* Update the path */
+            font-weight: normal;
+            font-style: normal;
+        }
+        
+        .container {
+            background-color: #F5F5F5;
+        }
+        
+        .logo-container {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        
+        .sub_container {
+            margin: 0 auto;
+            padding: 40px 20px 20px;
+            border: 1px solid #ccc;
+            background-color: #FFFFFF;
+            font-family: 'Inter', sans-serif;
+            font-size: 14px;
+            font-style: normal;
+            font-weight: 500;
+            color: #000000;
+        }
+        
+        .title {
+            margin-bottom: 10px;
+        }
+        
+        .footer {
+            text-align: center;
+            margin-top: 20px;
+            font-family: 'Inter', sans-serif;
+            font-size: 12px;
+            font-style: normal;
+            font-weight: 400;
+            line-height: 20px;
+            color: #000000;
+        }
+        
+        a {
+            color: #007BFF;
+            text-decoration: none;
+            color: orange !important;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <table align="center" style="max-width: 600px; width: 100%; margin-top: 2px;">
+            <tbody>
+                <tr>
+                    <td>
+                        <div class='logo-container'>
+                            <img height="40" src='{logo}' alt='logo'>
+                        </div>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td>
+                        <div class='sub_container'>
+                            <p>
+                                Hello,<br><br> {invited_name} has invited you to {location_name}.
+                                <br> You have been assigned the role- {role_name}.
+                                <br><br> You will be able to access the Location Profile in your Account Profile- which is at the top right of the screen in the Rack Logic app.
+                            </p>
+                            <p>
+                                <!--You can access-->
+                                <!--<a href="https://brisbanemarketspricereport.com.au/brisbane-markets-price-report-user-guides/">user guides for the Brisbane Markets Price Report</a> or view the
+                                <a href="https://brisbanemarketspricereport.com.au/terms-of-service/">Brisbane Markets Price Report Terms of Service</a> at <a href="{link}">brisbanemarketspricereport.com.au</a>-->
+                            </p>
+                            <p>
+                                Thank you,<br><br> Rack Logic<br>
+                            </p>
+                        </div>
+
+                    </td>
+                </tr>
+
+                <tr>
+                    <td>
+                        <div class='footer'>Copyright &copy;{currentYear} Rack Logic, All rights reserved</div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</body>
+
+</html>

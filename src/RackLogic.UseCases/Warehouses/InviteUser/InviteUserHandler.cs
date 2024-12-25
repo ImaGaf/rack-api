@@ -2,6 +2,7 @@
 using Ardalis.Result;
 using Ardalis.SharedKernel;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.Extensions.Configuration;
 using RackLogic.Core.Common.Constants;
 using RackLogic.Core.Common.Entity;
@@ -15,7 +16,8 @@ public class InviteUserHandler(
   IRepositoryWithExpression<UserWarehouseRole> _userWarehouseRoleRepository,
   RoleManager<IdentityRole<Guid>> _roleManager,
   UserManager<ApplicationUser> _userManager,
-  IConfiguration _configuration) 
+  IConfiguration _configuration,
+  IEmailSender _emailSender) 
   : ICommandHandler<InviteUserCommand, Result<bool>>
 {
   public async Task<Result<bool>> Handle(InviteUserCommand request, CancellationToken cancellationToken)
@@ -35,6 +37,10 @@ public class InviteUserHandler(
     if (result is null) return Result.Invalid(new ValidationError("Warehouse not found."));
 
     var user = await _userManager.FindByEmailAsync(request.Email);
+    var userName = request.User.Claims.First(x => x.Type == ClaimTypes.Name).Value;
+    var baseUrl = _configuration.GetSection("Dashboard:InviteUser").Value;
+    var logo = $"{baseUrl}{_configuration.GetSection("Dashboard:LogoMarket").Value}";
+
     if (user is null)
     {
       var invitation = await _invitationsRepository.AddAsync(
@@ -45,13 +51,10 @@ public class InviteUserHandler(
           InviteById = inviteId,
           WarehouseId = request.WarehouseId,
         }, cancellationToken);
-      var baseUrl = _configuration.GetSection("Dashboard:InviteUser").Value;
-      var logo = $"{baseUrl}{_configuration.GetSection("Dashboard:LogoMarket").Value}";
+
       var linkUrl = $"{baseUrl}email={invitation.Email},inviterole={request.Role}";
-      var content = BuildEmailInviteContent(linkUrl, logo);
-      //TODO: Send Email 
-      //var result = await _emailSender.SendAsync(request.Email, EmailConstants.OTPSubject, content);
-      return true;
+      var content = BuildEmailInviteContent(linkUrl, logo, userName, result.Name, role?.Name);
+      return await _emailSender.SendAsync(request.Email, EmailConstants.InviteSubject, content);
     }
 
     if (request.Role == RoleConstant.Inspector && user.RegisteredRole != RoleConstant.Inspector)
@@ -67,18 +70,34 @@ public class InviteUserHandler(
        WarehouseId = request.WarehouseId,
        RoleId = role.Id,
      }, cancellationToken);
-    // TODO: Send Email notification.
-    return true;
+
+    var contentEmail = BuildEmailInviteExistedUserContent(logo, userName, result.Name, role?.Name);
+    return await _emailSender.SendAsync(request.Email, EmailConstants.InviteExistedUserSubject, contentEmail);
   }
 
-  private string BuildEmailInviteContent( string link, string logo)
+  private string BuildEmailInviteContent( string link, string logo, string inviteName, string locationName, string? roleName)
   {
     var templatePath = Path.Combine("wwwroot", "EmailTemplates", "InviteUser.html");
     var emailContent = System.IO.File.ReadAllText(templatePath);
-
-    //emailContent = emailContent.Replace("{platformName}", platformName);
     emailContent = emailContent.Replace("{link}", link);
     emailContent = emailContent.Replace("{logo}", logo);
+    emailContent = emailContent.Replace("{invited_name}", inviteName);
+    emailContent = emailContent.Replace("{location_name}", locationName);
+    emailContent = emailContent.Replace("{role_name}", roleName);
+    emailContent = emailContent.Replace("{currentYear}", DateTime.Now.Year.ToString());
+
+    return emailContent;
+  }
+
+  private string BuildEmailInviteExistedUserContent(string logo, string inviteName, string locationName, string? roleName)
+  {
+    var templatePath = Path.Combine("wwwroot", "EmailTemplates", "InviteUserHasExisted.html");
+    var emailContent = System.IO.File.ReadAllText(templatePath);
+
+    emailContent = emailContent.Replace("{logo}", logo);
+    emailContent = emailContent.Replace("{invited_name}", inviteName);
+    emailContent = emailContent.Replace("{location_name}", locationName);
+    emailContent = emailContent.Replace("{role_name}", roleName);
     emailContent = emailContent.Replace("{currentYear}", DateTime.Now.Year.ToString());
 
     return emailContent;
