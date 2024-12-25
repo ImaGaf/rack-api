@@ -38,8 +38,8 @@ public class ForgotPasswordHandler(
       var logo = $"{baseUrl}{_configuration.GetSection("Dashboard:LogoMarket").Value}";
       var forgotPasswordUrl = _configuration.GetSection("Dashboard:ForgotPassword").Value;
       var resetLink = $"{baseUrl}{forgotPasswordUrl}?userId={user.Id}&resetToken={UrlEncoder.Default.Encode(resetToken)}";
-      var content = BuildEmailContent($"{user.FirstName} {user.LastName}", otp, resetLink, logo);
-      var result = await _emailSender.SendAsync(request.Email, EmailConstants.OTPSubject, content);
+      var content = BuildEmailContent($"{user.FirstName}", otp, resetLink, logo);
+      var result = await _emailSender.SendAsync(request.Email, "Reset RackPro password", content);
       
       if (result)
       {

@@ -19,7 +19,8 @@ public static class TokenUtil
     var userClaims = new List<Claim>
       {
           new(ClaimTypes.NameIdentifier, user.Id.ToString()),
-          new ("UserName", user.UserName??"")
+          new ("UserName", user.UserName??""),
+          new (ClaimTypes.Name, user.FirstName??"")
       };
     userClaims.AddRange(roleClaims);
     var tokeOptions = new JwtSecurityToken(

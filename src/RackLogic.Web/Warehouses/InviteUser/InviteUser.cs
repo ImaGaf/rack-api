@@ -31,9 +31,16 @@ public class InviteUser(IMediator _mediator) : Endpoint<InviteUserRequest, ApiRe
 
     var result = await _mediator.Send(new InviteUserCommand(User, req.Email, req.WarehouseId, req.Role), ct);
 
+    if (result.IsSuccess)
+    {
+      Response = new ApiResponse<bool>(result.Value);
+      return;
+    }
+
     if (result.IsUnauthorized())
     {
       await SendUnauthorizedAsync();
+      return;
     }
 
     if (result.IsInvalid())
