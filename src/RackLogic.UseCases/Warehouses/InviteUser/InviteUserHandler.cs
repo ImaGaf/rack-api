@@ -31,7 +31,7 @@ public class InviteUserHandler(
     if (role is null) return Result.Invalid(new ValidationError("Role invalid."));
 
     // Check warehouse in database
-    var result = await _warehouseRepository.FirstOrDefaultAsync(x => x.Id == request.WarehouseId && x.OwnerId == inviteId);
+    var result = await _warehouseRepository.FirstOrDefaultAsync(x => x.Id == request.WarehouseId);
     if (result is null) return Result.Invalid(new ValidationError("Warehouse not found."));
 
     var user = await _userManager.FindByEmailAsync(request.Email);
