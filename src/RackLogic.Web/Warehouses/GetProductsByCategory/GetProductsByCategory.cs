@@ -30,11 +30,6 @@ public class GetProductsByCategory(IMediator _mediator) : Endpoint<GetProductsBy
 
     var result = await _mediator.Send(new GetProductsByCategoryQuery(req.ManufacturerId, req.Category), ct);
 
-    if (result.IsNotFound())
-    {
-      throw new NotFoundException(result?.Errors?.FirstOrDefault());
-    }
-
     if (result.IsSuccess)
     {
       var responseList = result.Value.Select(WareHouseMapper.GetProductByCategoryRespond).ToList();

@@ -15,7 +15,7 @@ public class GetComponentsByBrandHandler(IUserWarehouseService _userWarehouse) :
 
     if (products == null)
     {
-      return Result.NotFound("No products found for the given BrandId.");
+      products = new List<ListComponentBrandDTO>();
     }
 
     var pagedData = new PagedDataDTO<ListComponentBrandDTO>

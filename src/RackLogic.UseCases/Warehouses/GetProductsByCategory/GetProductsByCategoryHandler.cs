@@ -14,7 +14,7 @@ public class GetProductsByCategoryHandler(IUserWarehouseService _userWarehouse) 
     var products = await _userWarehouse.GetProductsByCategoryAndManufacturerAsync(request.ManufacturerId, request.Category);
     if (products == null)
     {
-      return Result.NotFound("No products found for the given ManufacturerID and Category.");
+      products = new List<ProductDTO>();
     }
     return Result.Success(products);
   }

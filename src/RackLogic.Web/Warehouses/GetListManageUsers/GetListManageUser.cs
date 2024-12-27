@@ -33,10 +33,7 @@ public class GetListManageUser(IMediator _mediator) : Endpoint<GetManageUserRequ
     }
 
     var result = await _mediator.Send(new GetListManageUsersQuery(req.WareHouseId, pageNumber, pageSize), ct);
-    if (result.IsNotFound())
-    {
-      throw new NotFoundException(result?.Errors?.FirstOrDefault());
-    }
+
     if (result.IsSuccess)
     {
       // Mapper list of ManageUserDTOs to list of GetManageUserRespon

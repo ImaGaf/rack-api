@@ -22,11 +22,6 @@ public class GetOEMBrand(IMediator _mediator) : EndpointWithoutRequest<ApiRespon
   {
     var result = await _mediator.Send(new GetOEMBrandQuery(), ct);
 
-    if (result.IsNotFound())
-    {
-      throw new NotFoundException(result?.Errors?.FirstOrDefault());
-    }
-
     if (result.IsSuccess)
     {
       var responseList = result.Value.Select(WareHouseMapper.GetGetOEMBrandRespond).ToList();

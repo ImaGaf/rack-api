@@ -37,11 +37,6 @@ public class GetListComponentBrand(IMediator _mediator) : Endpoint<GetListCompon
 
     var result = await _mediator.Send(new GetComponentsByBrandQuery(req.BrandId, pageNumber, pageSize), ct);
 
-    if (result.IsNotFound())
-    {
-      throw new NotFoundException(result?.Errors?.FirstOrDefault());
-    }
-
     if (result.IsSuccess)
     {
       // Mapper list of ListComponentBrandDTO to list of ListComponentBrandResponse

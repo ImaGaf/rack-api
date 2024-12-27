@@ -15,7 +15,7 @@ public class GetOEMBrandHandler(IUserWarehouseService _userWarehouse) : IQueryHa
 
     if (brands == null)
     {
-      return Result.NotFound("No brands found.");
+      brands = new List<OEMBrandDTO>();
     }
 
     return Result.Success(brands);
