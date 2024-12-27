@@ -203,6 +203,57 @@ namespace RackLogic.Infrastructure.Data.Migrations
                     b.ToTable("Invitations");
                 });
 
+            modelBuilder.Entity("RackLogic.Core.Common.Entity.OEMBrand", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Path")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("OEMBrands");
+                });
+
+            modelBuilder.Entity("RackLogic.Core.Common.Entity.Products", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Category")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<double?>("Code")
+                        .HasColumnType("float");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<double?>("Height")
+                        .HasColumnType("float");
+
+                    b.Property<Guid?>("ManufacturerId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<double?>("Price")
+                        .HasColumnType("float");
+
+                    b.Property<double?>("Width")
+                        .HasColumnType("float");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ManufacturerId");
+
+                    b.ToTable("Products");
+                });
+
             modelBuilder.Entity("RackLogic.Core.Common.Entity.UserWarehouseRole", b =>
                 {
                     b.Property<Guid>("Id")
@@ -522,6 +573,16 @@ namespace RackLogic.Infrastructure.Data.Migrations
                     b.Navigation("Warehouse");
                 });
 
+            modelBuilder.Entity("RackLogic.Core.Common.Entity.Products", b =>
+                {
+                    b.HasOne("RackLogic.Core.Common.Entity.OEMBrand", "Manufacturer")
+                        .WithMany("Products")
+                        .HasForeignKey("ManufacturerId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.Navigation("Manufacturer");
+                });
+
             modelBuilder.Entity("RackLogic.Core.Common.Entity.UserWarehouseRole", b =>
                 {
                     b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole<System.Guid>", "Role")
@@ -598,6 +659,11 @@ namespace RackLogic.Infrastructure.Data.Migrations
                         .IsRequired();
 
                     b.Navigation("User");
+                });
+
+            modelBuilder.Entity("RackLogic.Core.Common.Entity.OEMBrand", b =>
+                {
+                    b.Navigation("Products");
                 });
 
             modelBuilder.Entity("RackLogic.Core.Common.Entity.Warehouse", b =>

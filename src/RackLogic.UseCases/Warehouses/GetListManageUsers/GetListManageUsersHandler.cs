@@ -17,7 +17,7 @@ public class GetListManageUsersHandler(IUserWarehouseService _userWarehouse) : I
       PageNumber = request.PageNumber,
       PageSize = request.PageSize,
       TotalRecords = totalRecords,
-      Users = users
+      DataDTO = users
     };
 
     return Result.Success(pagedData);

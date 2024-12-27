@@ -40,7 +40,7 @@ public class GetListManageUser(IMediator _mediator) : Endpoint<GetManageUserRequ
     if (result.IsSuccess)
     {
       // Mapper list of ManageUserDTOs to list of GetManageUserRespon
-      var responseList = result.Value.Users
+      var responseList = result.Value.DataDTO
                     .Select(WareHouseMapper.ToGetManageUserRespon)
                     .ToList();
 
@@ -50,7 +50,7 @@ public class GetListManageUser(IMediator _mediator) : Endpoint<GetManageUserRequ
                      PageNumber = pageNumber,
                      PageSize = pageSize,
                      TotalRecords = result.Value.TotalRecords,
-                     Users = responseList
+                     Data = responseList
                    });
 
       return;
