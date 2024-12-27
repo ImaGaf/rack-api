@@ -14,7 +14,7 @@ public class GetListManageUser(IMediator _mediator) : Endpoint<GetManageUserRequ
 {
   public override void Configure()
   {
-    Get("/manager-user/list-manage-user/{WareHouseId}");
+    Get("/manager-user/list-manage-user/{WarehouseId}");
   }
 
   public override async Task HandleAsync(GetManageUserRequest req, CancellationToken ct)
@@ -32,7 +32,7 @@ public class GetListManageUser(IMediator _mediator) : Endpoint<GetManageUserRequ
       throw new InvalidException(errors);
     }
 
-    var result = await _mediator.Send(new GetListManageUsersQuery(req.WareHouseId, pageNumber, pageSize), ct);
+    var result = await _mediator.Send(new GetListManageUsersQuery(req.WarehouseId, pageNumber, pageSize), ct);
     if (result.IsNotFound())
     {
       throw new NotFoundException(result?.Errors?.FirstOrDefault());

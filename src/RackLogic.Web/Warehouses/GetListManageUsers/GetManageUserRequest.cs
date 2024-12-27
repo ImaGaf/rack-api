@@ -6,5 +6,5 @@ namespace RackLogic.Web.Warehouses.GetListManageUsers;
 public class GetManageUserRequest : PaginationRequest
 {
   [FromRoute]
-  public Guid WareHouseId { get; set; }
+  public Guid WarehouseId { get; set; }
 }

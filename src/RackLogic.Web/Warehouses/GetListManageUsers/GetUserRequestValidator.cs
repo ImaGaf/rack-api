@@ -7,7 +7,7 @@ public class GetUserRequestValidator : Validator<GetManageUserRequest>
 {
   public GetUserRequestValidator()
   {
-    RuleFor(x => x.WareHouseId)
+    RuleFor(x => x.WarehouseId)
             .NotEmpty().WithMessage("WarehouseId is required.")
             .Must(BeValidGuid).WithMessage("Invalid WarehouseId format.");
 
