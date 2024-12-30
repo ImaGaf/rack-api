@@ -18,10 +18,18 @@ public class AppDbContext(DbContextOptions<AppDbContext> options,
   public DbSet<Warehouse> Warehouses => Set<Warehouse>();
   public DbSet<UserWarehouseRole> UserWarehouseRoles => Set<UserWarehouseRole>();
   public DbSet<Invitation> Invitations => Set<Invitation>();
+  public DbSet<Products> Products => Set<Products>();
+  public DbSet<OEMBrand> OEMBrands => Set<OEMBrand>();
   protected override void OnModelCreating(ModelBuilder modelBuilder)
   {
     base.OnModelCreating(modelBuilder);
     modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
+
+    modelBuilder.Entity<Products>()
+      .HasOne(p => p.Manufacturer)
+      .WithMany(b => b.Products)
+      .HasForeignKey(p => p.ManufacturerId)
+      .OnDelete(DeleteBehavior.Restrict);
 
     modelBuilder.Entity<Warehouse>()
       .HasOne(w => w.User)
