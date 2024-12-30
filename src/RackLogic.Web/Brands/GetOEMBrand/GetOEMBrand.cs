@@ -1,20 +1,19 @@
-﻿using Ardalis.Result;
-using FastEndpoints;
+﻿using FastEndpoints;
 using MediatR;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
-using RackLogic.UseCases.Warehouses.GetOEMBrand;
-using RackLogic.Web.Exceptions;
+using RackLogic.UseCases.Brands.GetOEMBrand;
 using RackLogic.Web.Models;
+using RackLogic.Web.Warehouses;
 
-namespace RackLogic.Web.Warehouses.GetOEMBrand;
+namespace RackLogic.Web.Brands.GetOEMBrand;
 
 [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
 public class GetOEMBrand(IMediator _mediator) : EndpointWithoutRequest<ApiResponse<List<GetOEMBrandResponse>>>
 {
   public override void Configure()
   {
-    Get("/products/list-oem-brands");
+    Get("/brand-oEM/brands");
     DontThrowIfValidationFails();
   }
 

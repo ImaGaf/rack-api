@@ -1,20 +1,20 @@
-﻿using Ardalis.Result;
-using FastEndpoints;
+﻿using FastEndpoints;
 using MediatR;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
-using RackLogic.UseCases.Warehouses.GetProductsByCategory;
+using RackLogic.UseCases.Brands.GetProductsByCategory;
 using RackLogic.Web.Exceptions;
 using RackLogic.Web.Models;
+using RackLogic.Web.Warehouses;
 
-namespace RackLogic.Web.Warehouses.GetProductsByCategory;
+namespace RackLogic.Web.Brands.GetProductsByCategory;
 
 [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
 public class GetProductsByCategory(IMediator _mediator) : Endpoint<GetProductsByCategoryRequest, ApiResponse<List<GetProductsByCategoryResponse>>>
 {
   public override void Configure()
   {
-    Get("/products/by-category");
+    Get("/brand-oEM/product/getByCategory");
     DontThrowIfValidationFails();
   }
   public override async Task HandleAsync(GetProductsByCategoryRequest req, CancellationToken ct)

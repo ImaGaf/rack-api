@@ -1,7 +1,7 @@
 ﻿using FastEndpoints;
 using FluentValidation;
 
-namespace RackLogic.Web.Warehouses.GetProductsByCategory;
+namespace RackLogic.Web.Brands.GetProductsByCategory;
 
 public class GetProductsByCategoryValidator : Validator<GetProductsByCategoryRequest>
 {

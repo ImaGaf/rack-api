@@ -1,7 +1,7 @@
 ﻿using FastEndpoints;
 using FluentValidation;
 
-namespace RackLogic.Web.Warehouses.GetListComponentBrand;
+namespace RackLogic.Web.Brands.GetListComponentBrand;
 
 public class GetListComponentBrandValidator : Validator<GetListComponentBrandRequest>
 {

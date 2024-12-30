@@ -1,5 +1,6 @@
 ﻿using System.Data;
 using Microsoft.EntityFrameworkCore;
+using RackLogic.UseCases.Brands;
 using RackLogic.UseCases.Warehouses;
 
 namespace RackLogic.Infrastructure.Data.Queries;

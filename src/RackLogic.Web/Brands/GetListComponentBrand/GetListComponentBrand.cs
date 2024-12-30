@@ -1,13 +1,13 @@
-﻿using Ardalis.Result;
-using FastEndpoints;
+﻿using FastEndpoints;
 using MediatR;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
-using RackLogic.UseCases.Warehouses.GetListComponentBrand;
+using RackLogic.UseCases.Brands.GetListComponentBrand;
 using RackLogic.Web.Exceptions;
 using RackLogic.Web.Models;
+using RackLogic.Web.Warehouses;
 
-namespace RackLogic.Web.Warehouses.GetListComponentBrand;
+namespace RackLogic.Web.Brands.GetListComponentBrand;
 
 [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
 
@@ -15,7 +15,7 @@ public class GetListComponentBrand(IMediator _mediator) : Endpoint<GetListCompon
 {
   public override void Configure()
   {
-    Get("/products/brand/{brandId}");
+    Get("/brand-oEM/product/{brandId}");
     DontThrowIfValidationFails();
   }
 
@@ -32,8 +32,8 @@ public class GetListComponentBrand(IMediator _mediator) : Endpoint<GetListCompon
     }
 
     // Default value if PageNumber or PageSize is not passed
-    int pageNumber = req.PageNumber ?? 1;
-    int pageSize = req.PageSize ?? 10;
+    var pageNumber = req.PageNumber ?? 1;
+    var pageSize = req.PageSize ?? 10;
 
     var result = await _mediator.Send(new GetComponentsByBrandQuery(req.BrandId, pageNumber, pageSize), ct);
 

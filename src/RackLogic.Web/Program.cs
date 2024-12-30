@@ -112,17 +112,17 @@ builder.Services.AddSwaggerGen(config =>
   });
   config.AddSecurityRequirement(
       new OpenApiSecurityRequirement{
-                        {
-                            new OpenApiSecurityScheme
-                            {
-                                Reference = new OpenApiReference
-                                {
-                                    Type=ReferenceType.SecurityScheme,
-                                    Id="Bearer"
-                                }
-                            },
-                            Array.Empty<string>()
-                        }
+        {
+          new OpenApiSecurityScheme
+          {
+            Reference = new OpenApiReference
+              {
+                Type=ReferenceType.SecurityScheme,
+                Id="Bearer"
+              }
+          },
+          Array.Empty<string>()
+        }
       });
 });
 
@@ -139,6 +139,7 @@ app.UseHttpsRedirection();
 app.UseCors("webAppRequests");
 app.UseAuthentication();
 app.UseAuthorization();
+app.UseStaticFiles();
 app.UseMiddleware<GlobalExceptionMiddleware>();
 
 using (var scope = app.Services.CreateScope())

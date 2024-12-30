@@ -1,8 +1,9 @@
-﻿using RackLogic.UseCases.Warehouses;
-using RackLogic.Web.Warehouses.GetListComponentBrand;
+﻿using RackLogic.UseCases.Brands;
+using RackLogic.UseCases.Warehouses;
+using RackLogic.Web.Brands.GetListComponentBrand;
+using RackLogic.Web.Brands.GetOEMBrand;
+using RackLogic.Web.Brands.GetProductsByCategory;
 using RackLogic.Web.Warehouses.GetListManageUsers;
-using RackLogic.Web.Warehouses.GetOEMBrand;
-using RackLogic.Web.Warehouses.GetProductsByCategory;
 using Riok.Mapperly.Abstractions;
 
 namespace RackLogic.Web.Warehouses;

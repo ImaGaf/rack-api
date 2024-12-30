@@ -1,4 +1,4 @@
-﻿namespace RackLogic.Web.Warehouses.GetOEMBrand;
+﻿namespace RackLogic.Web.Brands.GetOEMBrand;
 
 public class GetOEMBrandResponse
 {

@@ -5,8 +5,9 @@ using System.Text;
 using System.Threading.Tasks;
 using Ardalis.Result;
 using Ardalis.SharedKernel;
+using RackLogic.UseCases.Warehouses;
 
-namespace RackLogic.UseCases.Warehouses.GetListComponentBrand;
+namespace RackLogic.UseCases.Brands.GetListComponentBrand;
 public class GetComponentsByBrandHandler(IUserWarehouseService _userWarehouse) : IQueryHandler<GetComponentsByBrandQuery, Result<PagedDataDTO<ListComponentBrandDTO>>>
 {
   public async Task<Result<PagedDataDTO<ListComponentBrandDTO>>> Handle(GetComponentsByBrandQuery request, CancellationToken cancellationToken)

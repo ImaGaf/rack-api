@@ -1,7 +1,6 @@
-﻿
+﻿namespace RackLogic.Web.Brands.GetProductsByCategory;
 
-namespace RackLogic.UseCases.Warehouses;
-public class ProductDTO
+public class GetProductsByCategoryResponse
 {
   public Guid Id { get; set; }
   public double? Height { get; set; }

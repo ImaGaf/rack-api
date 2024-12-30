@@ -1,4 +1,4 @@
-﻿namespace RackLogic.Web.Warehouses.GetListComponentBrand;
+﻿namespace RackLogic.Web.Brands.GetListComponentBrand;
 
 public class GetListComponentBrandResponse
 {

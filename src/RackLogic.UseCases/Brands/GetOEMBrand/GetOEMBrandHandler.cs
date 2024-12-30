@@ -5,8 +5,9 @@ using System.Text;
 using System.Threading.Tasks;
 using Ardalis.Result;
 using Ardalis.SharedKernel;
+using RackLogic.UseCases.Warehouses;
 
-namespace RackLogic.UseCases.Warehouses.GetOEMBrand;
+namespace RackLogic.UseCases.Brands.GetOEMBrand;
 public class GetOEMBrandHandler(IUserWarehouseService _userWarehouse) : IQueryHandler<GetOEMBrandQuery, Result<List<OEMBrandDTO>>>
 {
   public async Task<Result<List<OEMBrandDTO>>> Handle(GetOEMBrandQuery request, CancellationToken cancellationToken)

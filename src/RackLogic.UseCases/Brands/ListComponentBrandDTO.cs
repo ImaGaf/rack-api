@@ -1,5 +1,4 @@
-﻿
-namespace RackLogic.UseCases.Warehouses;
+﻿namespace RackLogic.UseCases.Brands;
 public class ListComponentBrandDTO
 {
   public Guid ItemId { get; set; }
