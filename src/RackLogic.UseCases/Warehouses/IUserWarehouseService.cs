@@ -1,6 +1,4 @@
-﻿
-
-using RackLogic.UseCases.Brands;
+﻿using RackLogic.UseCases.Brands;
 
 namespace RackLogic.UseCases.Warehouses;
 public interface IUserWarehouseService

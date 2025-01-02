@@ -61,8 +61,11 @@ public class UserWarehouseService : IUserWarehouseService
                   Id = product.Id,
                   Height = product.Height,
                   Width = product.Width,
+                  Length = product.Length,
                   Code = product.Code,
-                  Description = product.Description
+                  Description = product.Description,
+                  Orientation = product.Orientation,
+                  DistanceCenterToCenter = product.DistanceCenterToCenter
                 };
 
     var products = await query.ToListAsync();

@@ -235,11 +235,20 @@ namespace RackLogic.Infrastructure.Data.Migrations
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<double?>("DistanceCenterToCenter")
+                        .HasColumnType("float");
+
                     b.Property<double?>("Height")
+                        .HasColumnType("float");
+
+                    b.Property<double?>("Length")
                         .HasColumnType("float");
 
                     b.Property<Guid?>("ManufacturerId")
                         .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Orientation")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<double?>("Price")
                         .HasColumnType("float");
