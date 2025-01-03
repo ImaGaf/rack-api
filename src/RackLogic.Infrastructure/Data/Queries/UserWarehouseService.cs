@@ -35,18 +35,24 @@ public class UserWarehouseService : IUserWarehouseService
                             where product.ManufacturerId == brandId
                             select new ListComponentBrandDTO
                             {
-                              ItemId = product.Id,
+                              Id = product.Id,
                               Category = product.Category,
+                              Height = product.Height,
+                              Width = product.Width,
+                              Length = product.Length,
                               Code = product.Code,
-                              Description = product.Description
+                              Description = product.Description,
+                              Orientation = product.Orientation,
+                              DistanceCenterToCenter = product.DistanceCenterToCenter,
                             };
 
     int totalRecords = await queryListProducts.CountAsync();
+    var pageSizeProduct = pageSize == 0? totalRecords : pageSize;
 
     var products = await queryListProducts
                 .OrderBy(p => p.Category)
                 .Skip((pageNumber - 1) * pageSize)
-                .Take(pageSize)
+                .Take(pageSizeProduct)
                 .ToListAsync();
 
     return (products, totalRecords);
