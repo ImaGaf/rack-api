@@ -4,22 +4,18 @@ using RackLogic.Core.Common.Entity;
 using RackLogic.Core.Interfaces;
 
 namespace RackLogic.UseCases.FloorPlans.Get;
-public class GetFloorPlanByIdHandler(IRepositoryWithExpression<FloorPlan> _floorPlanRepository)
-  : IQueryHandler<GetFloorPlanByIdQuery, Result<IEnumerable<FloorPlanDTO>>>
+public class GetFloorPlanByIdHandler(IFileService _fileService)
+  : IQueryHandler<GetFloorPlanByIdQuery, Result<List<FloorPlanDTO>>>
 {
-  public async Task<Result<IEnumerable<FloorPlanDTO>>> Handle(GetFloorPlanByIdQuery request, CancellationToken cancellationToken)
+  public async Task<Result<List<FloorPlanDTO>>> Handle(GetFloorPlanByIdQuery request, CancellationToken cancellationToken)
   {
-    var result = await _floorPlanRepository.FindAsync(x => x.WarehouseId == request.WarehouseId);
+    var floorPlans = await _fileService.GetFloorPlansWithFilesByWarehouseIdAsync(request.WarehouseId);
 
-    if (!result.Any()) return Result.Invalid(new ValidationError(""));
-
-    var resultDTO = result.Select(x => new FloorPlanDTO()
+    if (floorPlans == null)
     {
-      WarehouseId = x.WarehouseId,
-      AssetName = x.AssetName,
-      Floor = x.Floor 
-    });
+      return Result.Success(new List<FloorPlanDTO>());
+    }
 
-    return Result.Success(resultDTO);
+    return Result.Success(floorPlans);
   }
 }

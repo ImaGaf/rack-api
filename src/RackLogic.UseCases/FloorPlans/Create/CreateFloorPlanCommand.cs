@@ -1,5 +1,6 @@
 ﻿using System.Security.Claims;
 using Ardalis.Result;
+using Microsoft.AspNetCore.Http;
 
 namespace RackLogic.UseCases.FloorPlans.Create;
 public record CreateFloorPlanCommand(
@@ -8,4 +9,6 @@ public record CreateFloorPlanCommand(
   List<FloorPlanCommand> FloorPlans)
   : Ardalis.SharedKernel.ICommand<Result<bool>>;
 
-public record FloorPlanCommand(string AssetName, string Floor);
+public record FloorPlanCommand(string AssetName, string Floor, List<IFormFile> Files);
+
+

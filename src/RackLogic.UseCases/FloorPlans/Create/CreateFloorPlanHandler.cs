@@ -9,8 +9,10 @@ using RackLogic.Core.Interfaces;
 namespace RackLogic.UseCases.FloorPlans.Create;
 public class CreateFloorPlanHandler(
   IRepositoryWithExpression<FloorPlan> _floorPlanRepository,
+  IRepositoryWithExpression<FloorPlanFiles> _floorPlanFilesRepository,
   IRepositoryWithExpression<UserWarehouseRole> _userWarehouseRoleRepository,
   IRepositoryWithExpression<Warehouse> _warehouseRepository,
+  IFileService _fileService,
   RoleManager<IdentityRole<Guid>> _roleManager)
   : ICommandHandler<CreateFloorPlanCommand, Result<bool>>
 {
@@ -33,12 +35,40 @@ public class CreateFloorPlanHandler(
         WarehouseId = request.WarehouseId,
         AssetName = f.AssetName,
         Floor = f.Floor,
-        CreatorId = userCreatedId
+        CreatorId = userCreatedId,
+        FloorPlanFiles = new List<FloorPlanFiles>()
       });
     }
-    var result = await _floorPlanRepository.AddRangeAsync(listFloorPlans);
 
-    return result is null;
+    var result = await _floorPlanRepository.AddRangeAsync(listFloorPlans);
+    if (result == null)
+    {
+      return Result.Invalid(new ValidationError("Failed to create floor plans."));
+    }
+
+    //Save files
+    foreach (var (floorPlan, f) in result.Zip(request.FloorPlans))
+    {
+      // Check if user has uploaded files
+      if (f.Files != null && f.Files.Any()  )
+      {
+        var savedFiles = await _fileService.SaveFilesAsync(floorPlan.WarehouseId, floorPlan.Id, f.Files);
+
+        // Save file info to database
+        var floorPlanFiles = savedFiles.Select(sf => new FloorPlanFiles
+        {
+          Id = Guid.NewGuid(),
+          FloorPlanId = floorPlan.Id,
+          FileName = sf.FileName,
+          FileUrl = sf.FilePath,
+          ContentType = sf.ContentType
+        }).ToList();
+
+        await _floorPlanFilesRepository.AddRangeAsync(floorPlanFiles);
+      }
+    }
+
+    return Result.Success(true);
   }
 
   private async Task<bool> CheckPermissionUserRequest(Guid userId, Guid warehouseId)

@@ -19,6 +19,7 @@ public class AppDbContext(DbContextOptions<AppDbContext> options,
   public DbSet<UserWarehouseRole> UserWarehouseRoles => Set<UserWarehouseRole>();
   public DbSet<Invitation> Invitations => Set<Invitation>();
   public DbSet<FloorPlan> FloorPlans => Set<FloorPlan>();
+  public DbSet<FloorPlanFiles> FloorPlanFiles => Set<FloorPlanFiles>();
   protected override void OnModelCreating(ModelBuilder modelBuilder)
   {
     base.OnModelCreating(modelBuilder);
@@ -47,6 +48,12 @@ public class AppDbContext(DbContextOptions<AppDbContext> options,
       .WithMany(w => w.FloorPlans)
       .HasForeignKey(f => f.WarehouseId)
       .OnDelete(DeleteBehavior.Restrict);
+
+    modelBuilder.Entity<FloorPlanFiles>()
+       .HasOne(fp => fp.FloorPlan)
+       .WithMany(f => f.FloorPlanFiles)
+       .HasForeignKey(fp => fp.FloorPlanId)
+       .OnDelete(DeleteBehavior.Cascade);
   }
 
   public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = new CancellationToken())

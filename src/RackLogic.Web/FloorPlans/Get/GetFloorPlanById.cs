@@ -12,7 +12,7 @@ public class GetFloorPlanById(IMediator _mediator)
 {
   public override void Configure()
   {
-    Post("/floor-plan/getById/{WarehouseId}");
+    Get("/floor-plan/getById/{WarehouseId}");
     DontThrowIfValidationFails();
   }
 
