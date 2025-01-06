@@ -10,14 +10,14 @@ public class GetListManageUsersHandler(IUserWarehouseService _userWarehouse) : I
     var (users, totalRecords) = await _userWarehouse.GetUsersByWarehouseIdAsync(request.WarehouseId, request.PageNumber, request.PageSize);
     if (users == null)
     {
-      return Result.NotFound("No users found for the given WarehouseId.");
+      users = new List<ManageUserDTO>();
     }
     var pagedData = new PagedDataDTO<ManageUserDTO>
     {
       PageNumber = request.PageNumber,
       PageSize = request.PageSize,
       TotalRecords = totalRecords,
-      Users = users
+      DataDTO = users
     };
 
     return Result.Success(pagedData);

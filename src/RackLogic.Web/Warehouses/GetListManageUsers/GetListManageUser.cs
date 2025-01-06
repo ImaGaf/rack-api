@@ -33,14 +33,11 @@ public class GetListManageUser(IMediator _mediator) : Endpoint<GetManageUserRequ
     }
 
     var result = await _mediator.Send(new GetListManageUsersQuery(req.WarehouseId, pageNumber, pageSize), ct);
-    if (result.IsNotFound())
-    {
-      throw new NotFoundException(result?.Errors?.FirstOrDefault());
-    }
+
     if (result.IsSuccess)
     {
       // Mapper list of ManageUserDTOs to list of GetManageUserRespon
-      var responseList = result.Value.Users
+      var responseList = result.Value.DataDTO
                     .Select(WareHouseMapper.ToGetManageUserRespon)
                     .ToList();
 
@@ -50,7 +47,7 @@ public class GetListManageUser(IMediator _mediator) : Endpoint<GetManageUserRequ
                      PageNumber = pageNumber,
                      PageSize = pageSize,
                      TotalRecords = result.Value.TotalRecords,
-                     Users = responseList
+                     Data = responseList
                    });
 
       return;

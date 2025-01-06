@@ -20,10 +20,18 @@ public class AppDbContext(DbContextOptions<AppDbContext> options,
   public DbSet<Invitation> Invitations => Set<Invitation>();
   public DbSet<FloorPlan> FloorPlans => Set<FloorPlan>();
   public DbSet<FloorPlanFiles> FloorPlanFiles => Set<FloorPlanFiles>();
+  public DbSet<Products> Products => Set<Products>();
+  public DbSet<OEMBrand> OEMBrands => Set<OEMBrand>();
   protected override void OnModelCreating(ModelBuilder modelBuilder)
   {
     base.OnModelCreating(modelBuilder);
     modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
+
+    modelBuilder.Entity<Products>()
+      .HasOne(p => p.Manufacturer)
+      .WithMany(b => b.Products)
+      .HasForeignKey(p => p.ManufacturerId)
+      .OnDelete(DeleteBehavior.Restrict);
 
     modelBuilder.Entity<Warehouse>()
       .HasOne(w => w.User)
