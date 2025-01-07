@@ -18,6 +18,8 @@ public class AppDbContext(DbContextOptions<AppDbContext> options,
   public DbSet<Warehouse> Warehouses => Set<Warehouse>();
   public DbSet<UserWarehouseRole> UserWarehouseRoles => Set<UserWarehouseRole>();
   public DbSet<Invitation> Invitations => Set<Invitation>();
+  public DbSet<FloorPlan> FloorPlans => Set<FloorPlan>();
+  public DbSet<FloorPlanFiles> FloorPlanFiles => Set<FloorPlanFiles>();
   public DbSet<Products> Products => Set<Products>();
   public DbSet<OEMBrand> OEMBrands => Set<OEMBrand>();
   protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -48,6 +50,18 @@ public class AppDbContext(DbContextOptions<AppDbContext> options,
         .WithMany(u => u.UserOtps)
         .HasForeignKey(u => u.UserId)
         .OnDelete(DeleteBehavior.Cascade);
+
+    modelBuilder.Entity<FloorPlan>()
+      .HasOne(f => f.Warehouse)
+      .WithMany(w => w.FloorPlans)
+      .HasForeignKey(f => f.WarehouseId)
+      .OnDelete(DeleteBehavior.Restrict);
+
+    modelBuilder.Entity<FloorPlanFiles>()
+       .HasOne(fp => fp.FloorPlan)
+       .WithMany(f => f.FloorPlanFiles)
+       .HasForeignKey(fp => fp.FloorPlanId)
+       .OnDelete(DeleteBehavior.Cascade);
   }
 
   public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = new CancellationToken())

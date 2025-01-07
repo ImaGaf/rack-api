@@ -2,5 +2,5 @@
 using Ardalis.SharedKernel;
 
 namespace RackLogic.UseCases.Warehouses.GetListManageUsers;
-public record GetListManageUsersQuery(Guid WareHouseId, int PageNumber, int PageSize) : IQuery<Result<PagedDataDTO<ManageUserDTO>>>;
+public record GetListManageUsersQuery(Guid WarehouseId, int PageNumber, int PageSize) : IQuery<Result<PagedDataDTO<ManageUserDTO>>>;
 
