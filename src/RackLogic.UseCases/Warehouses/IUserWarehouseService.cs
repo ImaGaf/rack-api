@@ -7,4 +7,5 @@ public interface IUserWarehouseService
   Task<List<OEMBrandDTO>> GetAllBrandsAsync();
   Task<(List<ListComponentBrandDTO> Products, int TotalRecords)> GetProductsByBrandAsync(Guid brandId, int pageNumber, int pageSize);
   Task<List<ProductDTO>> GetProductsByCategoryAndManufacturerAsync(Guid manufacturerId, string category);
+  Task<List<GetAllBrandDTO>> GetAllBrand();
 }

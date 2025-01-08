@@ -13,6 +13,41 @@ public class UserWarehouseService : IUserWarehouseService
     _context = context;
   }
 
+  public async Task<List<GetAllBrandDTO>> GetAllBrand()
+  {
+    var result = await _context.OEMBrands
+    .GroupJoin(
+        _context.Products,
+        brand => brand.Id,
+        product => product.ManufacturerId,
+        (brand, products) => new GetAllBrandDTO
+        {
+          Brand = new OEMBrandDTO
+          {
+            Id = brand.Id,
+            Name = brand.Name,
+            Path = brand.Path
+          },
+          Components = products.Select(product => new ListComponentBrandDTO
+          {
+            Id = product.Id,
+            Category = product.Category,
+            Height = product.Height,
+            Width = product.Width,
+            Length = product.Length,
+            Code = product.Code,
+            Description = product.Description,
+            Orientation = product.Orientation,
+            DistanceCenterToCenter = product.DistanceCenterToCenter
+          }).ToList()
+        }
+    ).ToListAsync();
+
+    if (result is null) return new List<GetAllBrandDTO>();
+
+    return result;
+  }
+
   public async Task<List<OEMBrandDTO>> GetAllBrandsAsync()
   {
     var query = from brand in _context.OEMBrands
