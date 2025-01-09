@@ -410,6 +410,18 @@ namespace RackLogic.Infrastructure.Data.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<string>("ABN")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ClientPhoneNumber")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("CompanyName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<DateTime>("CreationTime")
                         .HasColumnType("datetime2");
 
@@ -422,6 +434,12 @@ namespace RackLogic.Infrastructure.Data.Migrations
                     b.Property<DateTime?>("DeletionTime")
                         .HasColumnType("datetime2");
 
+                    b.Property<string>("FileImageName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("FileImageUrl")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
 
@@ -431,12 +449,28 @@ namespace RackLogic.Infrastructure.Data.Migrations
                     b.Property<Guid?>("LastModifierId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<string>("Name")
+                    b.Property<string>("OwnerEmailAddress")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("OwnerFirstName")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<Guid>("OwnerId")
                         .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("OwnerLastName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("OwnerPhoneNumber")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("SiteAddress")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
@@ -790,6 +824,7 @@ namespace RackLogic.Infrastructure.Data.Migrations
                 {
                     b.Navigation("FloorPlanFiles");
                 });
+
             modelBuilder.Entity("RackLogic.Core.Common.Entity.OEMBrand", b =>
                 {
                     b.Navigation("Products");

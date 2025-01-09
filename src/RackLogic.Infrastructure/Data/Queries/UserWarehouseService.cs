@@ -103,4 +103,19 @@ public class UserWarehouseService : IUserWarehouseService
 
     return (users, totalRecords);
   }
+
+  public async Task<List<WarehousesDTO>> GetWarehousesByUserIdAsync(Guid userId)
+  {
+    var query = from userWarehouseRole in _context.UserWarehouseRoles
+                where userWarehouseRole.UserId == userId
+                join warehouse in _context.Warehouses
+                on userWarehouseRole.WarehouseId equals warehouse.Id
+                select new WarehousesDTO
+                {
+                  WarahouseId = warehouse.Id,
+                  Name = warehouse.CompanyName,
+                  FilePathImage = warehouse.FileImageUrl
+                };
+    return await query.ToListAsync();
+  }
 }

@@ -1,12 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
-using RackLogic.Core.Common.Entity;
-using RackLogic.Core.Interfaces;
 using RackLogic.UseCases.FloorPlans;
 
 namespace RackLogic.Infrastructure.Data.Queries;
@@ -95,10 +88,21 @@ public class FileService : IFileService
     return updatedFilesInfo;
   }
 
-public async Task<List<SavedFileInfo>> SaveFilesAsync(Guid warehouseId, Guid floorPlanId, List<IFormFile> files)
+public async Task<List<SavedFileInfo>> SaveFilesAsync(Guid warehouseId, Guid? floorPlanId, List<IFormFile> files)
 {
     var rootPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot");
-    var folderPath = Path.Combine(rootPath, "FloorPlan", warehouseId.ToString(), floorPlanId.ToString());
+    string folderPath;
+    if (floorPlanId.HasValue)
+    {
+      // Case when floorPlanId is not null
+      folderPath = Path.Combine(rootPath, "FloorPlan", warehouseId.ToString(), floorPlanId.Value.ToString());
+    }
+
+    else
+    {
+      // Case when floorPlanId is null
+      folderPath = Path.Combine(rootPath, "Logo", warehouseId.ToString());
+    }
 
     if (!Directory.Exists(folderPath))
     {
@@ -121,9 +125,11 @@ public async Task<List<SavedFileInfo>> SaveFilesAsync(Guid warehouseId, Guid flo
         // Save info file to list
         fileInfoList.Add(new SavedFileInfo
         {
-            FilePath = $"FloorPlan/{warehouseId}/{floorPlanId}/{fileName}", 
-            FileName = fileName,
-            ContentType = file.ContentType
+          FilePath = floorPlanId.HasValue
+                ? $"FloorPlan/{warehouseId}/{floorPlanId}/{fileName}"
+                : $"Logo/{warehouseId}/{fileName}",
+          FileName = fileName,
+          ContentType = file.ContentType
         });
     }
 
