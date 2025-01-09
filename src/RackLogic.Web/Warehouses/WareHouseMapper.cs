@@ -2,6 +2,7 @@
 using RackLogic.UseCases.Brands;
 using RackLogic.UseCases.Warehouses;
 using RackLogic.UseCases.Warehouses.CreateWarehouse;
+using RackLogic.Web.Brands.GetAll;
 using RackLogic.Web.Brands.GetListComponentBrand;
 using RackLogic.Web.Brands.GetOEMBrand;
 using RackLogic.Web.Brands.GetProductsByCategory;
@@ -21,4 +22,5 @@ public static partial class WareHouseMapper
   public static partial GetProductsByCategoryResponse GetProductByCategoryRespond(this ProductDTO request);
   public static partial GetListWarehousesResponse GetListWarehousesResponsByUser(this WarehousesDTO request);
   public static partial CreateWarehouseCommand ToCreateWarehouseCommand(this CreateWarehouseRequest request, ClaimsPrincipal user);
+  public static partial GetAllResponse GetAllBrandResponse(this GetAllBrandDTO request);
 }

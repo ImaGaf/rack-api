@@ -20,7 +20,7 @@ public class RegisterUserHandler(
   public async Task<Result> Handle(RegisterUserCommand request, CancellationToken cancellationToken)
   {
     var emailStore = (IUserEmailStore<ApplicationUser>)_userStore;
-    var email = request.EmailAddress;
+    var email = request.EmailAddress.Trim();
 
     if (string.IsNullOrEmpty(email) || !_emailAddressAttribute.IsValid(email))
     {
@@ -43,7 +43,7 @@ public class RegisterUserHandler(
     user.Postcode = request.Postcode;
     user.PhoneNumber = request.PhoneNumber;
     user.OptOutRackLogicMarketing = request.OptOutRackLogicMarketing;
-    user.UserName = request.EmailAddress;
+    user.UserName = email;
     user.EmailConfirmed = true;
     user.RegisteredRole = request.Role;
     var result = await _userManager.CreateAsync(user, request.Password);
