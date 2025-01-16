@@ -479,6 +479,9 @@ namespace RackLogic.Infrastructure.Data.Migrations
                         .IsConcurrencyToken()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<DateTime?>("DeleteDate")
+                        .HasColumnType("datetime2");
+
                     b.Property<string>("Email")
                         .HasMaxLength(256)
                         .HasColumnType("nvarchar(256)");
@@ -573,6 +576,9 @@ namespace RackLogic.Infrastructure.Data.Migrations
 
                     b.Property<Guid?>("CreatorId")
                         .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("DeleteToken")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<Guid?>("DeleterId")
                         .HasColumnType("uniqueidentifier");
@@ -790,6 +796,7 @@ namespace RackLogic.Infrastructure.Data.Migrations
                 {
                     b.Navigation("FloorPlanFiles");
                 });
+
             modelBuilder.Entity("RackLogic.Core.Common.Entity.OEMBrand", b =>
                 {
                     b.Navigation("Products");

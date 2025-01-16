@@ -2,10 +2,8 @@
 using FastEndpoints;
 using FastEndpoints.Swagger;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using RackLogic.Core.UserAggregate;
@@ -49,11 +47,13 @@ builder.Services.AddIdentity<ApplicationUser, IdentityRole<Guid>>(op =>
   op.Lockout.MaxFailedAccessAttempts = 30;
   op.Tokens.AuthenticatorTokenProvider = "REFRESHTOKENPROVIDER";
   op.Tokens.PasswordResetTokenProvider = "RESETPASSWORDTOKENPROVIDER";
+  op.Tokens.EmailConfirmationTokenProvider = "DELETEPASSWORDTOKENPROVIDER";
 })
     .AddSignInManager()
     .AddEntityFrameworkStores<AppDbContext>()
     .AddTokenProvider<PasswordResetTokenProvider<ApplicationUser>>("RESETPASSWORDTOKENPROVIDER")
-    .AddTokenProvider<RefreshTokenProvider<ApplicationUser>>("REFRESHTOKENPROVIDER");
+    .AddTokenProvider<RefreshTokenProvider<ApplicationUser>>("REFRESHTOKENPROVIDER")
+    .AddTokenProvider<PasswordResetTokenProvider<ApplicationUser>>("DELETEPASSWORDTOKENPROVIDER");
 
 builder.Services.Configure<RefreshTokenDataProtectionTokenProviderOptions>(options =>
 {
@@ -127,6 +127,8 @@ builder.Services.AddSwaggerGen(config =>
 });
 
 builder.Services.AddHostedService<ResetCountService>();
+
+builder.Services.AddHostedService<DeleteUserJob>();
 
 var app = builder.Build();
 //if (app.Environment.IsDevelopment() || app.Environment.IsEnvironment("Test"))
