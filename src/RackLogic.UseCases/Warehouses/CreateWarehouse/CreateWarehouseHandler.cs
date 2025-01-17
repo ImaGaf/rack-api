@@ -28,6 +28,7 @@ public class CreateWarehouseHandler(
     var createIdString = request.User.Claims.First(x => x.Type == ClaimTypes.NameIdentifier).Value;
     var creatorId = Guid.Parse(createIdString);
     var creatorRole = request.User.Claims.First(x => x.Type == ClaimTypes.Role).Value;
+    var creatorRoleId = await _roleManager.FindByNameAsync(creatorRole);
     var inspectorRole = await _roleManager.FindByNameAsync(RoleConstant.Inspector);
 
     if (!await CheckPermissionUserRequest(creatorId)) return Result.Forbidden();
@@ -35,7 +36,7 @@ public class CreateWarehouseHandler(
     //If user switch on button and user not a inspector
     if (request.IsNominatedInspector && creatorRole != RoleConstant.Inspector) return Result.Invalid(new ValidationError("Only Inspectors can be the nominated inspector."));
 
-    if (inspectorRole is null) return Result.Invalid(new ValidationError("Inspector role not found."));
+    if (inspectorRole is null || creatorRoleId is null) return Result.Invalid(new ValidationError("Inspector role or Permiss not found."));
 
     //Create Warehouse
     var warehouse = new Warehouse
@@ -60,11 +61,14 @@ public class CreateWarehouseHandler(
     // Call func Savefile
     if (!await AddFileAsync(warehouse, request.FileImageLogo, cancellationToken)) return Result.Error("Failed to save logo file.");
 
+    //Create UserWarehouseRole
+    if (!await AddUserWarehouseRoleAsync(creatorId, warehouse.Id, creatorRoleId.Id, cancellationToken)) return Result.Error("Failed to assign inspector role in warehouse.");
+
     //If user switch on button
     if (request.IsNominatedInspector)
     {
       //Create UserWarehouseRole
-      if (!await AddUserWarehouseRoleAsync(creatorId, warehouse.Id, inspectorRole.Id, cancellationToken)) return Result.Error("Failed to assign inspector role in warehouse.");
+      if (!await AddUserWarehouseRoleAsync(creatorId, warehouse.Id, creatorRoleId.Id, cancellationToken)) return Result.Error("Failed to assign inspector role in warehouse.");
     }
 
     //If user switch off button

@@ -13,7 +13,7 @@ public class FileService : IFileService
   }
   public Task<List<string>> DeleteFilesAsync(List<string> fileUrlsToDelete)
   {
-    string rootPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot");
+    string rootPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "Warehouse");
     var nonExistentFiles = new List<string>();
 
     foreach (var fileUrl in fileUrlsToDelete)
@@ -53,8 +53,8 @@ public class FileService : IFileService
 
   public async Task<List<SavedFileInfo>> ReplaceFileAsync(Guid warehouseId, Guid floorPlanId, List<IFormFile> filesToUpdate)
   {
-    var rootPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot");
-    var folderPath = Path.Combine(rootPath, "FloorPlan", warehouseId.ToString(), floorPlanId.ToString());
+    var rootPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "Warehouse");
+    var folderPath = Path.Combine(rootPath, warehouseId.ToString(), "FloorPlan", floorPlanId.ToString());
 
     var updatedFilesInfo = new List<SavedFileInfo>();
 
@@ -80,7 +80,7 @@ public class FileService : IFileService
       updatedFilesInfo.Add(new SavedFileInfo
       {
         FileName = fileName,
-        FilePath = $"FloorPlan/{warehouseId}/{floorPlanId}/{fileName}",
+        FilePath = $"Warehouse/{warehouseId}/FloorPlan/{floorPlanId}/{fileName}",
         ContentType = file.ContentType
       });
     }
@@ -90,18 +90,17 @@ public class FileService : IFileService
 
 public async Task<List<SavedFileInfo>> SaveFilesAsync(Guid warehouseId, Guid? floorPlanId, List<IFormFile> files)
 {
-    var rootPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot");
+    var rootPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "Warehouse");
     string folderPath;
     if (floorPlanId.HasValue)
     {
       // Case when floorPlanId is not null
-      folderPath = Path.Combine(rootPath, "FloorPlan", warehouseId.ToString(), floorPlanId.Value.ToString());
+      folderPath = Path.Combine(rootPath, warehouseId.ToString(), "FloorPlan", floorPlanId.Value.ToString());
     }
-
     else
     {
       // Case when floorPlanId is null
-      folderPath = Path.Combine(rootPath, "Logo", warehouseId.ToString());
+      folderPath = Path.Combine(rootPath, warehouseId.ToString(), "Logo");
     }
 
     if (!Directory.Exists(folderPath))
@@ -126,8 +125,8 @@ public async Task<List<SavedFileInfo>> SaveFilesAsync(Guid warehouseId, Guid? fl
         fileInfoList.Add(new SavedFileInfo
         {
           FilePath = floorPlanId.HasValue
-                ? $"FloorPlan/{warehouseId}/{floorPlanId}/{fileName}"
-                : $"Logo/{warehouseId}/{fileName}",
+                ? $"Warehouse/{warehouseId}/FloorPlan/{floorPlanId}/{fileName}"
+                : $"Warehouse/{warehouseId}/Logo/{fileName}",
           FileName = fileName,
           ContentType = file.ContentType
         });
