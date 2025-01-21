@@ -41,6 +41,7 @@ public class CreateWarehouseHandler(
     //Create Warehouse
     var warehouse = new Warehouse
     {
+      Id = Guid.NewGuid(),
       CompanyName = request.CompanyName,
       OwnerId = creatorId,
       ABN = request.ABN,
@@ -53,65 +54,66 @@ public class CreateWarehouseHandler(
       UserWarehouseRoles = new List<UserWarehouseRole>(),
       FloorPlans = new List<FloorPlan>()
     };
-    var result =  await _warehouseRepository.AddAsync(warehouse, cancellationToken);
-    if (result == null)
-    {
-      return Result.Error("Failed to create warehouse. Please try again later.");
-    }
+
+    await _warehouseRepository.AddToContextAsync(warehouse);
+
     // Call func Savefile
     if (!await AddFileAsync(warehouse, request.FileImageLogo, cancellationToken)) return Result.Error("Failed to save logo file.");
 
     //Create UserWarehouseRole
-    if (!await AddUserWarehouseRoleAsync(creatorId, warehouse.Id, creatorRoleId.Id, cancellationToken)) return Result.Error("Failed to assign inspector role in warehouse.");
-
-    //If user switch on button
-    if (request.IsNominatedInspector)
-    {
-      //Create UserWarehouseRole
-      if (!await AddUserWarehouseRoleAsync(creatorId, warehouse.Id, creatorRoleId.Id, cancellationToken)) return Result.Error("Failed to assign inspector role in warehouse.");
-    }
-
+    if (!await AddUserWarehouseRoleAsync(creatorId, warehouse.Id, creatorRoleId.Id, cancellationToken)) return Result.Error("Failed to assign role in warehouse.");
+    
     //If user switch off button
-    else
+    if (!request.IsNominatedInspector)
     {
-      //If user not fill Invite Inspector Email
-      if (string.IsNullOrEmpty(request.InviteInspectorEmail)) return Result.Success(true);
-
-      var invitedUser = await _userManager.FindByEmailAsync(request.InviteInspectorEmail!);
-      var userName = request.User.Claims.First(x => x.Type == ClaimTypes.Name).Value;
-      var baseUrl = _configuration.GetSection("Dashboard:InviteUser").Value;
-      var logo = $"{baseUrl}{_configuration.GetSection("Dashboard:LogoMarket").Value}";
-
-      //If the invite user does not exist
-      if (invitedUser is null)
-      {
-        var invitation = await _invitationsRepository.AddAsync(
-        new Invitation()
-        {
-          Role = RoleConstant.Inspector,
-          Email = request.InviteInspectorEmail!,
-          InviteById = creatorId,
-          WarehouseId = warehouse.Id,
-        }, cancellationToken);
-
-        var linkUrl = $"{baseUrl}email={invitation.Email},inviterole={RoleConstant.Inspector}";
-        var content = BuildEmailInviteContent(linkUrl, logo, userName, warehouse.CompanyName, RoleConstant.Inspector);
-        return await _emailSender.SendAsync(request.InviteInspectorEmail!, EmailConstants.InviteSubject, content);
-      }
-        //Check invited user role
-        if (invitedUser.RegisteredRole != RoleConstant.Inspector)
-        {
-          return Result.Invalid(new ValidationError("The invited user is not an Inspector."));
-        }
-
-      //Create UserWarehouseRole
-      if (!await AddUserWarehouseRoleAsync(invitedUser.Id, warehouse.Id, inspectorRole.Id, cancellationToken)) return Result.Error("Failed to assign inspector role in warehouse.");
-
-        var contentEmail = BuildEmailInviteExistedUserContent(logo, userName, warehouse.CompanyName, RoleConstant.Inspector);
-        return await _emailSender.SendAsync(request.InviteInspectorEmail!, EmailConstants.InviteExistedUserSubject, contentEmail);
+      if (!await InviteUserAsync(request, warehouse, inspectorRole.Id, creatorId, cancellationToken)) return Result.Invalid(new ValidationError("The invited user is not an Inspector."));
     }
 
+    await _warehouseRepository.SaveEntityAsync(warehouse, cancellationToken);
+    await _warehouseRepository.SaveContextAsync(cancellationToken);
     return Result.Success(true);
+  }
+
+  //Funcition
+  //Invite user to warehouse
+  private async Task<bool> InviteUserAsync(CreateWarehouseCommand request, Warehouse warehouse, Guid inspectorRoleId, Guid creatorId, CancellationToken cancellationToken)
+  {
+    // If the invitee's email is not filled in
+    if (string.IsNullOrEmpty(request.InviteInspectorEmail)) return true;
+
+    var invitedUser = await _userManager.FindByEmailAsync(request.InviteInspectorEmail!);
+    var userName = request.User.Claims.First(x => x.Type == ClaimTypes.Name).Value;
+    var baseUrl = _configuration.GetSection("Dashboard:InviteUser").Value;
+    var logo = $"{baseUrl}{_configuration.GetSection("Dashboard:LogoMarket").Value}";
+
+    // If the invited user does not exist
+    if (invitedUser is null)
+    {
+      var invitation = new Invitation()
+      {
+        Role = RoleConstant.Inspector,
+        Email = request.InviteInspectorEmail!,
+        InviteById = creatorId,
+        WarehouseId = warehouse.Id,
+      };
+
+      await _invitationsRepository.AddToContextAsync(invitation);
+
+      var linkUrl = $"{baseUrl}email={invitation.Email},inviterole={RoleConstant.Inspector}";
+      var content = BuildEmailInviteContent(linkUrl, logo, userName, warehouse.CompanyName, RoleConstant.Inspector);
+
+      // Send user invitation email
+      return await _emailSender.SendAsync(request.InviteInspectorEmail!, EmailConstants.InviteSubject, content);
+    }
+
+    // Check the role of the invitee
+    if (invitedUser.RegisteredRole != RoleConstant.Inspector) return false;
+
+    // Create UserWarehouseRole
+    if (!await AddUserWarehouseRoleAsync(invitedUser.Id, warehouse.Id, inspectorRoleId, cancellationToken)) return false;
+
+    var contentEmail = BuildEmailInviteExistedUserContent(logo, userName, warehouse.CompanyName, RoleConstant.Inspector);
+    return await _emailSender.SendAsync(request.InviteInspectorEmail!, EmailConstants.InviteExistedUserSubject, contentEmail);
   }
 
   //Save file folder and add file path in db
@@ -124,7 +126,7 @@ public class CreateWarehouseHandler(
 
     warehouse.FileImageUrl = savedFile.FilePath;
     warehouse.FileImageName = savedFile.FileName;
-    await _warehouseRepository.UpdateAsync(warehouse, cancellationToken);
+    await _warehouseRepository.UpdateToContextAsync(warehouse);
 
     return true;
   }
@@ -139,7 +141,7 @@ public class CreateWarehouseHandler(
       RoleId = roleId,
     };
 
-    await _userWarehouseRoleRepository.AddAsync(userWarehouseRole, cancellationToken);
+    await _userWarehouseRoleRepository.AddToContextAsync(userWarehouseRole);
     return true;
   }
 
@@ -177,10 +179,7 @@ public class CreateWarehouseHandler(
 
     if (user == null) return false;
 
-    if (user.RegisteredRole != RoleConstant.Premises && user.RegisteredRole != RoleConstant.Inspector)
-    {
-      return false;
-    }
+    if (user.RegisteredRole != RoleConstant.Premises && user.RegisteredRole != RoleConstant.Inspector) return false;
 
     return true;
   }
