@@ -10,6 +10,7 @@ namespace RackLogic.UseCases.Users.Delete;
 public class DeleteUserHandler(
   UserManager<ApplicationUser> _userManager,
   IUserTokenRepository _userTokenRepository,
+  IRepositoryWithExpression<UserOtp> _userOtpRepository,
   IEmailSender _emailSender,
   IConfiguration _configuration) 
   : ICommandHandler<DeleteUserCommand, Result<bool>>
@@ -22,6 +23,12 @@ public class DeleteUserHandler(
     var validToken = await _userManager.VerifyUserTokenAsync(user, "DELETEPASSWORDTOKENPROVIDER", "DeleteUser", request.DeleteAccountToken);
     if (!validToken) return Result.Invalid(new ValidationError("Invalid delete token."));
 
+    //Delete valid delete token after use
+    var existingOtp = await _userOtpRepository.FirstOrDefaultAsync(u => u.UserId == user.Id, cancellationToken);
+    if (existingOtp != null)
+    {
+      await _userOtpRepository.DeleteAsync(existingOtp, cancellationToken);
+    }
     // Update DeleteDate
     user.DeleteDate = DateTime.UtcNow;
     await _userManager.UpdateAsync(user);
