@@ -36,7 +36,7 @@ public class CreateWarehouseHandler(
     //If user switch on button and user not a inspector
     if (request.IsNominatedInspector && creatorRole != RoleConstant.Inspector) return Result.Invalid(new ValidationError("Only Inspectors can be the nominated inspector."));
 
-    if (inspectorRole is null || creatorRoleId is null) return Result.Invalid(new ValidationError("Inspector role or Permiss not found."));
+    if (inspectorRole is null || creatorRoleId is null) return Result.Invalid(new ValidationError("Inspector role or Premises role not found."));
 
     //Create Warehouse
     var warehouse = new Warehouse
@@ -64,10 +64,7 @@ public class CreateWarehouseHandler(
     if (!await AddUserWarehouseRoleAsync(creatorId, warehouse.Id, creatorRoleId.Id, cancellationToken)) return Result.Error("Failed to assign role in warehouse.");
     
     //If user switch off button
-    if (!request.IsNominatedInspector)
-    {
-      if (!await InviteUserAsync(request, warehouse, inspectorRole.Id, creatorId, cancellationToken)) return Result.Invalid(new ValidationError("The invited user is not an Inspector."));
-    }
+    if (!request.IsNominatedInspector && !await InviteUserAsync(request, warehouse, inspectorRole.Id, creatorId, cancellationToken)) return Result.Invalid(new ValidationError("The invited user is not an Inspector."));
 
     await _warehouseRepository.SaveEntityAsync(warehouse, cancellationToken);
     await _warehouseRepository.SaveContextAsync(cancellationToken);
