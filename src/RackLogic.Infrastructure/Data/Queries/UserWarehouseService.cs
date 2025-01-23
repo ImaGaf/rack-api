@@ -138,4 +138,25 @@ public class UserWarehouseService : IUserWarehouseService
 
     return (users, totalRecords);
   }
+
+  public async Task<WarehousesDTO?> GetLastWarehouseForUserAsync(Guid userId)
+  {
+    var warehouseFinalUse = await _context.WarehouseFinalUses
+    .FirstOrDefaultAsync(wf => wf.UserId == userId);
+
+    if (warehouseFinalUse == null)  return null;
+
+    // Query warehouse information based on WarehouseId from WarehouseFinalUse
+    var warehouse = await _context.Warehouses
+        .Where(w => w.Id == warehouseFinalUse.WarehouseId)
+        .Select(w => new WarehousesDTO
+        {
+          WarahouseId = w.Id,
+          Name = w.CompanyName, 
+          FilePathImage = w.FileImageUrl 
+        })
+        .FirstOrDefaultAsync();
+
+    return warehouse;
+  }
 }

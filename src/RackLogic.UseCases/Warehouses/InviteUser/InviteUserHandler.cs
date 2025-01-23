@@ -53,7 +53,7 @@ public class InviteUserHandler(
         }, cancellationToken);
 
       var linkUrl = $"{baseUrl}email={invitation.Email},inviterole={request.Role}";
-      var content = BuildEmailInviteContent(linkUrl, logo, userName, result.Name, role?.Name);
+      var content = BuildEmailInviteContent(linkUrl, logo, userName, result.CompanyName, role?.Name);
       return await _emailSender.SendAsync(request.Email, EmailConstants.InviteSubject, content);
     }
 
@@ -71,7 +71,7 @@ public class InviteUserHandler(
        RoleId = role.Id,
      }, cancellationToken);
 
-    var contentEmail = BuildEmailInviteExistedUserContent(logo, userName, result.Name, role?.Name);
+    var contentEmail = BuildEmailInviteExistedUserContent(logo, userName, result.CompanyName, role?.Name);
     return await _emailSender.SendAsync(request.Email, EmailConstants.InviteExistedUserSubject, contentEmail);
   }
 

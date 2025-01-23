@@ -5,6 +5,7 @@ using RackLogic.Web.Brands.GetListComponentBrand;
 using RackLogic.Web.Brands.GetOEMBrand;
 using RackLogic.Web.Brands.GetProductsByCategory;
 using RackLogic.Web.Warehouses.GetListManageUsers;
+using RackLogic.Web.Warehouses.GetWarehouseFinalUse;
 using Riok.Mapperly.Abstractions;
 
 namespace RackLogic.Web.Warehouses;
@@ -17,4 +18,5 @@ public static partial class WareHouseMapper
   public static partial GetListComponentBrandResponse GetComponentBrandRespond(this ListComponentBrandDTO request);
   public static partial GetProductsByCategoryResponse GetProductByCategoryRespond(this ProductDTO request);
   public static partial GetAllResponse GetAllBrandResponse(this GetAllBrandDTO request);
+  public static partial GetWarehouseFinalUseResponse GetWarehousesFinalUseByUser(this WarehousesDTO request);
 }
