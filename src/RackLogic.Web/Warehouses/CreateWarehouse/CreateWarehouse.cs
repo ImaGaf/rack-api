@@ -13,7 +13,7 @@ public class CreateWarehouse(IMediator _mediator) : Endpoint<CreateWarehouseRequ
 {
   public override void Configure()
   {
-    Post("/manager-warehouse/create-warehouse");
+    Post("/manager-warehouse/createWarehouse");
     DontThrowIfValidationFails();
     AllowFileUploads();
   }

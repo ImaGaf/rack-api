@@ -15,7 +15,7 @@ public class GetListComponentBrand(IMediator _mediator) : Endpoint<GetListCompon
 {
   public override void Configure()
   {
-    Get("/brand-oEM/product/{brandId}");
+    Get("/brand-OEM/product/{brandId}");
     DontThrowIfValidationFails();
   }
 

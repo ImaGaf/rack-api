@@ -15,7 +15,7 @@ public class GetWarehouseFinalUse(IMediator _mediator) : EndpointWithoutRequest<
 {
   public override void Configure()
   {
-    Get("/manager-warehouse/get-warehouse-final");
+    Get("/manager-warehouse/getWarehouseLastWorking");
   }
   public override async Task HandleAsync(CancellationToken ct)
   {

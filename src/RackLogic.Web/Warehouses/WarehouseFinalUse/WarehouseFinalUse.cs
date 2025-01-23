@@ -15,7 +15,7 @@ public class WarehouseFinalUse(IMediator _mediator) : Endpoint<WarehouseFinalUse
 {
   public override void Configure()
   {
-    Put("/manager-warehouse/warehouse-final-use");
+    Put("/manager-warehouse/warehouseLastWorking");
     DontThrowIfValidationFails();
   }
 

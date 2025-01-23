@@ -13,7 +13,7 @@ public class GetAll(IMediator _mediator) : EndpointWithoutRequest<ApiResponse<Li
 {
   public override void Configure()
   {
-    Get("/brand-oEM/getAll");
+    Get("/brand-OEM/getAll");
   }
 
   public override async Task HandleAsync(CancellationToken ct)

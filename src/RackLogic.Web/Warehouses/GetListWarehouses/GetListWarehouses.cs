@@ -14,7 +14,7 @@ public class GetListWarehouses(IMediator _mediator) : Endpoint<GetListWarehouses
 {
   public override void Configure()
   {
-    Get("/manager-warehouse/list-warehouse/{UserId}");
+    Get("/manager-warehouse/listWarehouse/{UserId}");
     DontThrowIfValidationFails();
   }
 
