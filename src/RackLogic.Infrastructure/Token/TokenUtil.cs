@@ -1,10 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IdentityModel.Tokens.Jwt;
-using System.Linq;
+﻿using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
-using System.Threading.Tasks;
 using Microsoft.IdentityModel.Tokens;
 using RackLogic.Core.UserAggregate;
 
@@ -20,7 +16,8 @@ public static class TokenUtil
       {
           new(ClaimTypes.NameIdentifier, user.Id.ToString()),
           new ("UserName", user.UserName??""),
-          new (ClaimTypes.Name, user.FirstName??"")
+          new (ClaimTypes.Name, user.FirstName??""),
+          new Claim(ClaimTypes.Role, user.RegisteredRole ?? "")
       };
     userClaims.AddRange(roleClaims);
     var tokeOptions = new JwtSecurityToken(

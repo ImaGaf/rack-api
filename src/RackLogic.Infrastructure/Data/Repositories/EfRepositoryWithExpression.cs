@@ -12,6 +12,15 @@ public class EfRepositoryWithExpression<T> : EfRepository<T>, IRepositoryWithExp
     _dbContext = dbContext;
   }
 
+  public async Task AddToContextAsync(T entity, bool autoSave = false, CancellationToken cancellationToken = default)
+  {
+    await _dbContext.Set<T>().AddAsync(entity, cancellationToken);
+    if (autoSave)
+    {
+      await _dbContext.SaveChangesAsync(cancellationToken);
+    }
+  }
+
   public async Task DeleteAsync(Expression<Func<T, bool>> predicate, bool autoSave = false, CancellationToken cancellationToken = default)
   {
     var entities = await _dbContext.Set<T>().Where(predicate).ToListAsync(cancellationToken);
@@ -51,5 +60,27 @@ public class EfRepositoryWithExpression<T> : EfRepository<T>, IRepositoryWithExp
     }
 
     return await query.FirstOrDefaultAsync(cancellationToken: cancellationToken);
+  }
+
+  public async Task SaveContextAsync(CancellationToken cancellationToken = default)
+  {
+      await _dbContext.SaveChangesAsync(cancellationToken);
+  }
+
+  public async Task SaveEntityAsync(T entity, CancellationToken cancellationToken = default)
+  {
+      _dbContext.Attach(entity);
+      _dbContext.Entry(entity).State = EntityState.Added; 
+      await _dbContext.SaveChangesAsync(cancellationToken);
+  }
+
+  public async Task UpdateToContextAsync(T entity, bool autoSave = false, CancellationToken cancellationToken = default)
+  {
+    _dbContext.Set<T>().Update(entity); 
+
+    if (autoSave) 
+    {
+      await _dbContext.SaveChangesAsync(cancellationToken);
+    }
   }
 }
