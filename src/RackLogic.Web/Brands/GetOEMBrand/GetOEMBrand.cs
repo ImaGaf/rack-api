@@ -13,7 +13,7 @@ public class GetOEMBrand(IMediator _mediator) : EndpointWithoutRequest<ApiRespon
 {
   public override void Configure()
   {
-    Get("/brand-oEM/brands");
+    Get("/brand-OEM/brands");
     DontThrowIfValidationFails();
   }
 

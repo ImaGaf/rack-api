@@ -15,7 +15,7 @@ public class ConfirmPassword(IMediator _mediator) : Endpoint<ConfirmPasswordRequ
 {
   public override void Configure()
   {
-    Post("/users/confirm-password");
+    Post("/users/confirmPassword");
     DontThrowIfValidationFails();
   }
 

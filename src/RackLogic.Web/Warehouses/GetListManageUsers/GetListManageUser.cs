@@ -14,7 +14,7 @@ public class GetListManageUser(IMediator _mediator) : Endpoint<GetManageUserRequ
 {
   public override void Configure()
   {
-    Get("/manager-user/list-manage-user/{WarehouseId}");
+    Get("/manager-user/listManageUser/{WarehouseId}");
   }
 
   public override async Task HandleAsync(GetManageUserRequest req, CancellationToken ct)

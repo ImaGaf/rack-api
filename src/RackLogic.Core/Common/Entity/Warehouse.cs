@@ -9,8 +9,8 @@ public class Warehouse : BaseEntityCustom
   public required string ABN { get; set; }
   public required string SiteAddress { get; set; }
   public required string ClientPhoneNumber { get; set; }
-  public  string? FileImageName { get; set; }
-  public  string? FileImageUrl { get; set; }
+  public string? FileImageName { get; set; }
+  public string? FileImageUrl { get; set; }
   public required string OwnerFirstName { get; set; }
   public required string OwnerLastName { get; set; }
   public required string OwnerEmailAddress { get; set; }

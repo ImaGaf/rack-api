@@ -14,7 +14,7 @@ public class InviteUser(IMediator _mediator) : Endpoint<InviteUserRequest, ApiRe
 {
   public override void Configure()
   {
-    Post("/manager-user/invite-user");
+    Post("/manager-user/inviteUser");
     DontThrowIfValidationFails();
   }
 

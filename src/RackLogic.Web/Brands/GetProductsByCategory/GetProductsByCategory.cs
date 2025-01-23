@@ -14,7 +14,7 @@ public class GetProductsByCategory(IMediator _mediator) : Endpoint<GetProductsBy
 {
   public override void Configure()
   {
-    Get("/brand-oEM/product/getByCategory");
+    Get("/brand-OEM/product/getByCategory");
     DontThrowIfValidationFails();
   }
   public override async Task HandleAsync(GetProductsByCategoryRequest req, CancellationToken ct)
