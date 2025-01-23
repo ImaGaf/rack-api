@@ -2,7 +2,6 @@
 using Ardalis.Result;
 using Ardalis.SharedKernel;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.Extensions.Configuration;
 using RackLogic.Core.Common.Constants;
 using RackLogic.Core.Common.Entity;

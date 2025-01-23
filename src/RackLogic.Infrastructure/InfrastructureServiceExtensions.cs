@@ -32,7 +32,8 @@ public static class InfrastructureServiceExtensions
            .AddScoped<IDeleteContributorService, DeleteContributorService>()
            .AddScoped<IUserService, UserSevice>()
            .AddScoped<IUserWarehouseService, UserWarehouseService>()
-           .AddScoped<IFileService, FileService>();
+           .AddScoped<IFileService, FileService>()
+           .AddScoped<IUserTokenRepository, UserTokenRepository>();
 
 
     logger.LogInformation("{Project} services registered", "Infrastructure");

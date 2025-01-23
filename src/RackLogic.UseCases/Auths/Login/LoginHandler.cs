@@ -24,7 +24,11 @@ public class LoginHandler(
 
       return Result.Forbidden("Account is locked. Please try again later.");
     }
-      
+    if (user.DeleteDate.HasValue)
+    {
+      return Result.Forbidden("Your account is scheduled for deletion and cannot be accessed.");
+    }
+
     var result = await _signInManager.CheckPasswordSignInAsync(user, request.Password, true);
     if (result.Succeeded)
     {

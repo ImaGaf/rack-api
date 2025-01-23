@@ -11,4 +11,5 @@ public class EmailConstants
   public const string ACTIVE_USER = "Your account has be activated";
   public const string UPDATE_SUBSCRIPTION = "Your current subscription has been updated";
   public const string SIGNUP_SUCCESSFULLY = "Welcome to Brisbane Markets Price Report";
+  public const string DeleteAccountUser = "Your account will be deleted within the next 14 days";
 }

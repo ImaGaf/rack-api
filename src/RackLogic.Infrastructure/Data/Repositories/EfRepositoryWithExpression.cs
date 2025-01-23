@@ -62,6 +62,12 @@ public class EfRepositoryWithExpression<T> : EfRepository<T>, IRepositoryWithExp
     return await query.FirstOrDefaultAsync(cancellationToken: cancellationToken);
   }
 
+  public async Task<List<T>> ListAsync(Expression<Func<T, bool>> predicate, CancellationToken cancellationToken = default)
+  {
+    var query = _dbContext.Set<T>().Where(predicate);
+
+    return await query.ToListAsync(cancellationToken);
+  }
   public async Task SaveContextAsync(CancellationToken cancellationToken = default)
   {
       await _dbContext.SaveChangesAsync(cancellationToken);
