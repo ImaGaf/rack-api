@@ -1,5 +1,4 @@
-﻿using System.Collections;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Identity;
 using RackLogic.Core.Common.Entity;
 
@@ -18,6 +17,7 @@ public class ApplicationUser : IdentityUser<Guid>
   public string? RegisteredRole { get; set; }
   public bool IsPaid { get; set; }
   public Guid? ParentId { get; set; }
+  public DateTime? DeleteDate { get; set; }
   public ICollection<Warehouse> OwnedWarehouses { get; set; } = new List<Warehouse>();
   public ICollection<Invitation> Invitations { get; set; } = new List<Invitation>();
 

@@ -15,7 +15,7 @@ public class UpdateFloorPlan(IMediator _mediator) : Endpoint<UpdateFloorPlanRequ
 {
   public override void Configure()
   {
-    Post("/floor-plan/update");
+    Put("/floor-plan/update");
     DontThrowIfValidationFails();
     AllowFileUploads();
   }

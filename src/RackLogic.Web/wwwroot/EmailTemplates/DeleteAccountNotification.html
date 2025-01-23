@@ -1,0 +1,93 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <style>
+        @font-face {
+            font-family: 'Inter';
+            src: url('./fonts/static/inter-regular.ttf') format('truetype');
+            font-weight: normal;
+            font-style: normal;
+        }
+
+        .container {
+            background-color: #F5F5F5;
+        }
+
+        .logo-container {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .sub_container {
+            margin: 0 auto;
+            padding: 40px 20px 20px;
+            border: 1px solid #ccc;
+            background-color: #FFFFFF;
+            font-family: 'Inter', sans-serif;
+            font-size: 14px;
+            font-style: normal;
+            font-weight: 500;
+            color: #000000;
+        }
+
+        .title {
+            margin-bottom: 10px;
+        }
+
+        .footer {
+            text-align: center;
+            margin-top: 20px;
+            font-family: 'Inter', sans-serif;
+            font-size: 12px;
+            font-style: normal;
+            font-weight: 400;
+            line-height: 20px;
+            color: #000000;
+        }
+
+        a {
+            color: orange !important;
+            text-decoration: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <table align="center" style="max-width: 600px; width: 100%; margin-top: 2px;">
+            <tbody>
+                <tr>
+                    <td>
+                        <div class='logo-container'>
+                            <img height="40" src='{logo}' alt='logo'>
+                        </div>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td>
+                        <div class='sub_container'>
+                            <p>
+                                Hello {userDeleteName},<br><br>
+                                Your account associated with this email will be deleted within the next 14 days.<br>
+                                If you would like to reactivate your account, please contact us at:
+                                <a href="mailto:support@racklogic.com.au">support@racklogic.com.au</a>
+                                <br><br>
+                            </p>
+                            <p>
+                                Thank you,<br><br> Rack Logic<br>
+                            </p>
+                        </div>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td>
+                        <div class='footer'>Copyright &copy;{currentYear} Rack Logic, All rights reserved</div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</body>
+</html>
