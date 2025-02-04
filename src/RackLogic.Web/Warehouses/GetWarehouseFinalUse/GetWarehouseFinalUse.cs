@@ -11,7 +11,7 @@ namespace RackLogic.Web.Warehouses.GetWarehouseFinalUse;
 
 [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
 
-public class GetWarehouseFinalUse(IMediator _mediator) : EndpointWithoutRequest<ApiResponse<GetWarehouseFinalUseResponse>>
+public class GetWarehouseFinalUse(IMediator _mediator) : EndpointWithoutRequest<ApiResponse<GetWarehouseFinalUseResponse?>>
 {
   public override void Configure()
   {
@@ -23,7 +23,9 @@ public class GetWarehouseFinalUse(IMediator _mediator) : EndpointWithoutRequest<
 
     if (result.IsSuccess)
     {
-      Response = new ApiResponse<GetWarehouseFinalUseResponse>(WareHouseMapper.GetWarehousesFinalUseByUser(result.Value));
+      Response = new ApiResponse<GetWarehouseFinalUseResponse?>(result.Value != null
+       ? WareHouseMapper.GetWarehousesFinalUseByUser(result.Value)
+       : null);
       return;
     }
 
@@ -39,5 +41,5 @@ public class GetWarehouseFinalUse(IMediator _mediator) : EndpointWithoutRequest<
 
     await SendErrorsAsync(statusCode: 500, ct);
   }
-  
-  }
+
+}

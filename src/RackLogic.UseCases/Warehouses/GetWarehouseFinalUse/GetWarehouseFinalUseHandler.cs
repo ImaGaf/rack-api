@@ -16,10 +16,7 @@ public class GetWarehouseFinalUseHandler(IUserWarehouseService _userWarehouse)
 
     var warehouseDTO = await _userWarehouse.GetLastWarehouseForUserAsync(userId);
 
-    if (warehouseDTO == null)
-    {
-       warehouseDTO = new WarehousesDTO();
-    }
+    if (warehouseDTO == null) return Result.Success();
 
     return Result.Success(warehouseDTO);
   }
