@@ -10,26 +10,18 @@ using RackLogic.Web.Models;
 namespace RackLogic.Web.Warehouses.GetListWarehouses;
 
 [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-public class GetListWarehouses(IMediator _mediator) : Endpoint<GetListWarehousesRequest, ApiResponse<List<GetListWarehousesResponse>>>
+public class GetListWarehouses(IMediator _mediator) : EndpointWithoutRequest<ApiResponse<List<GetListWarehousesResponse>>>
 {
   public override void Configure()
   {
-    Get("/manager-warehouse/listWarehouse/{UserId}");
+    Get("/manager-warehouse/listWarehouse");
     DontThrowIfValidationFails();
   }
 
-  public override async Task HandleAsync(GetListWarehousesRequest req, CancellationToken ct)
+  public override async Task HandleAsync(CancellationToken ct)
   {
-    var validator = new GetListWarehousesValidator();
-    var validationResult = validator.Validate(req);
 
-    if (!validationResult.IsValid)
-    {
-      var errors = validationResult.Errors.Select(e => e.ErrorMessage).ToList();
-      throw new InvalidException(errors);
-    }
-
-    var result = await _mediator.Send(new GetListWarehousesQuery(req.UserId), ct);
+    var result = await _mediator.Send(new GetListWarehousesQuery(User), ct);
 
     if (result.IsSuccess)
     {
