@@ -10,12 +10,6 @@ public class GetUserRequestValidator : Validator<GetManageUserRequest>
     RuleFor(x => x.WarehouseId)
             .NotEmpty().WithMessage("WarehouseId is required.")
             .Must(BeValidGuid).WithMessage("Invalid WarehouseId format.");
-
-    RuleFor(x => x.PageNumber)
-           .GreaterThanOrEqualTo(1).WithMessage("PageNumber must be greater than or equal to 1.");
-
-    RuleFor(x => x.PageSize)
-        .GreaterThan(0).WithMessage("PageSize must be greater than 0.");
   }
   private bool BeValidGuid(Guid guid)
   {
