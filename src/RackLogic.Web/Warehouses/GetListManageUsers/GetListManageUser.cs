@@ -10,7 +10,7 @@ using RackLogic.Web.Models;
 namespace RackLogic.Web.Warehouses.GetListManageUsers;
 
 [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-public class GetListManageUser(IMediator _mediator) : Endpoint<GetManageUserRequest, ApiResponse<PageResponse<GetManageUserRespon>>>
+public class GetListManageUser(IMediator _mediator) : Endpoint<GetManageUserRequest, PageResponse<GetManageUserRespon>>
 {
   public override void Configure()
   {
@@ -41,14 +41,13 @@ public class GetListManageUser(IMediator _mediator) : Endpoint<GetManageUserRequ
                     .Select(WareHouseMapper.ToGetManageUserRespon)
                     .ToList();
 
-      Response = new ApiResponse<PageResponse<GetManageUserRespon>>(
-                   new PageResponse<GetManageUserRespon>
+      Response = new PageResponse<GetManageUserRespon>
                    {
                      PageNumber = pageNumber,
                      PageSize = pageSize,
                      TotalRecords = result.Value.TotalRecords,
                      Data = responseList
-                   });
+                   };
 
       return;
     }
