@@ -1,13 +1,10 @@
 ﻿using Ardalis.Result;
 using FastEndpoints;
-using FluentValidation;
 using MediatR;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using RackLogic.UseCases.Users.Delete;
 using RackLogic.Web.Exceptions;
-using RackLogic.Web.FloorPlans.Create;
-using RackLogic.Web.FloorPlans.Get;
 using RackLogic.Web.Models;
 
 namespace RackLogic.Web.Users.Delete;
@@ -23,16 +20,7 @@ public class Delete(IMediator _mediator) : Endpoint<DeleteRequest, ApiResponse<b
 
   public override async Task HandleAsync(DeleteRequest req, CancellationToken ct)
   {
-    var validator = new DeleteValidator();
-    var validationResult = validator.Validate(req);
-
-    if (!validationResult.IsValid)
-    {
-      var errors = validationResult.Errors.Select(e => e.ErrorMessage).ToList();
-      throw new InvalidException(errors);
-    }
-
-    var result = await _mediator.Send(new DeleteUserCommand(req.UserId, req.DeleteAccountToken), ct);
+    var result = await _mediator.Send(new DeleteUserCommand(User, req.DeleteAccountToken), ct);
 
     if (result.IsSuccess)
     {

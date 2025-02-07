@@ -1,4 +1,5 @@
-﻿using Ardalis.Result;
+﻿using System.Security.Claims;
+using Ardalis.Result;
 using Ardalis.SharedKernel;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
@@ -17,7 +18,11 @@ public class DeleteUserHandler(
 {
   public async Task<Result<bool>> Handle(DeleteUserCommand request, CancellationToken cancellationToken)
   {
-    var user = await _userManager.FindByIdAsync(request.UserId.ToString());
+    var userIdClaim = request.User.FindFirst(ClaimTypes.NameIdentifier);
+    if (userIdClaim == null) return Result.Invalid(new ValidationError("User not found."));
+    var userId = Guid.Parse(userIdClaim.Value);
+
+    var user = await _userManager.FindByIdAsync(userId.ToString());
     if (user == null) return Result.Invalid(new ValidationError("User not found."));
 
     var validToken = await _userManager.VerifyUserTokenAsync(user, "DELETEPASSWORDTOKENPROVIDER", "DeleteUser", request.DeleteAccountToken);
