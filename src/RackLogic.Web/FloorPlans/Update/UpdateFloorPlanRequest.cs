@@ -23,9 +23,9 @@ public class UpdateFloorPlanInformation
   public required int Floor { get; set; }
   public required string? Description { get; set; }
   [Required]
-  public required int totalRack { get; set; }
+  public required int TotalRack { get; set; }
   [Required]
-  public required int totalBay { get; set; }
+  public required int TotalBay { get; set; }
   [Required]
   public required List<UpdateFloorPlanItemInformation> Items { get; set; } = new();
 }

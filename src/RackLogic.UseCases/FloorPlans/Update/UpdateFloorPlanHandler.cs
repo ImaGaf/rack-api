@@ -1,6 +1,7 @@
 ﻿using System.Security.Claims;
 using Ardalis.Result;
 using Ardalis.SharedKernel;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using RackLogic.Core.Common.Constants;
 using RackLogic.Core.Common.Entity;
@@ -31,99 +32,132 @@ public class UpdateFloorPlanHandler(
 
     foreach (var plan in request.FloorAsset)
     {
-      var floorPlan = await _floorPlanRepository.FirstOrDefaultAsync(x => x.Id == plan.FloorPlanId);
-      results.Add(floorPlan != null);
-      if (floorPlan is null) continue;
+      results.Add(await ProcessFloorPlan(plan, request.WarehouseId));
+    }
 
-      floorPlan.AssetName = plan.Title;
-      floorPlan.FloorNumber = plan.Floor;
-      floorPlan.Description = plan.Description;
-      floorPlan.totalRack = plan.totalRack;
-      floorPlan.totalBay = plan.totalBay;
+    return !results.Any(x => x == false);
+  }
 
-      // Update Items (Rack, Bay, ...)
-      foreach (var item in plan.Items)
+  //Funcition
+  private async Task<bool> ProcessFloorPlan(UpdateFloorPlanInformationCommand plan, Guid warehouseId)
+  {
+    var floorPlan = await _floorPlanRepository.FirstOrDefaultAsync(x => x.Id == plan.FloorPlanId);
+    if (floorPlan is null) return false;
+
+    UpdateFloorPlanDetails(floorPlan, plan);
+    await UpdateFloorPlanItems(plan.Items);
+    await HandleFileOperations(plan, warehouseId, floorPlan.Id);
+    await _floorPlanRepository.UpdateAsync(floorPlan);
+
+    return true;
+  }
+
+  private void UpdateFloorPlanDetails(FloorPlan floorPlan, UpdateFloorPlanInformationCommand plan)
+  {
+    floorPlan.AssetName = plan.Title;
+    floorPlan.FloorNumber = plan.Floor;
+    floorPlan.Description = plan.Description;
+    floorPlan.TotalRack = plan.TotalRack;
+    floorPlan.TotalBay = plan.TotalBay;
+  }
+
+  private async Task UpdateFloorPlanItems(List<UpdateFloorPlanItemInformationCommand> items)
+  {
+    foreach (var item in items)
+    {
+      var floorPlanItem = await _floorPlanItemRepository.FirstOrDefaultAsync(i => i.Id == item.Id);
+      if (floorPlanItem is null) continue;
+
+      UpdateFloorPlanItemDetails(floorPlanItem, item);
+      await UpdateFloorPlanItemComments(item.Comments, floorPlanItem.Id);
+    }
+  }
+
+  private void UpdateFloorPlanItemDetails(FloorPlanItem floorPlanItem, UpdateFloorPlanItemInformationCommand item)
+  {
+    floorPlanItem.Rack = item.Rack;
+    floorPlanItem.Bay = item.Bay;
+    floorPlanItem.Offset = item.Offset;
+    floorPlanItem.Size = item.Size ?? null;
+    floorPlanItem.Width = item.Width ?? null;
+    floorPlanItem.Height = item.Height ?? null;
+    floorPlanItem.ObjectType = item.ObjectType;
+    floorPlanItem.Rotation = item.Rotation;
+  }
+
+  private async Task UpdateFloorPlanItemComments(List<UpdateFloorPlanCommentCommand>? comments, Guid floorPlanItemId)
+  {
+    if (comments == null) return;
+
+    foreach (var comment in comments)
+    {
+      var floorPlanComment = await _floorPlanCommentsRepository
+          .FirstOrDefaultAsync(c => c.Id == comment.Id && c.FloorPlanItemId == floorPlanItemId);
+
+      if (floorPlanComment is null) continue;
+
+      floorPlanComment.UserName = comment.UserName;
+      floorPlanComment.Comment = comment.Comment;
+      floorPlanComment.CreationTime = DateTime.Parse(comment.Date);
+    }
+  }
+
+  private async Task HandleFileOperations(UpdateFloorPlanInformationCommand plan, Guid warehouseId, Guid floorPlanId)
+  {
+    if (plan.FileUrlsToDelete is not null && plan.FileUrlsToDelete.Any())
+      await DeleteFiles(plan.FileUrlsToDelete);
+
+    if (plan.FilesToUpdate is not null && plan.FilesToUpdate.Any())
+      await UpdateExistingFiles(plan.FilesToUpdate, warehouseId, floorPlanId);
+
+    if (plan.NewFiles is not null && plan.NewFiles.Any())
+      await SaveNewFiles(plan.NewFiles, warehouseId, floorPlanId);
+  }
+
+  private async Task DeleteFiles(List<string> fileUrlsToDelete)
+  {
+    await _fileService.DeleteFilesAsync(fileUrlsToDelete);
+
+    foreach (var fileUrl in fileUrlsToDelete)
+    {
+      string fileName = Path.GetFileName(fileUrl);
+      var fileRecord = await _floorPlanFilesRepository.FirstOrDefaultAsync(f => f.FileName == fileName);
+      if (fileRecord != null)
       {
-        var floorPlanItem = await _floorPlanItemRepository.FirstOrDefaultAsync(i => i.Id == item.Id);
-        if (floorPlanItem == null) continue;
-
-        floorPlanItem.Rack = item.Rack;
-        floorPlanItem.Bay = item.Bay;
-        floorPlanItem.Offset = item.Offset;
-        floorPlanItem.Size = item.Size ?? null;
-        floorPlanItem.Width = item.Width ?? null;
-        floorPlanItem.Height = item.Height ?? null;
-        floorPlanItem.ObjectType = item.ObjectType;
-        floorPlanItem.Rotation = item.Rotation;
-
-        // Update Comments in Item
-        if (item.Comments != null) 
-        {
-          foreach (var comment in item.Comments)
-          {
-            var floorPlanComment = await _floorPlanCommentsRepository.FirstOrDefaultAsync(c => c.Id == comment.Id && c.FloorPlanItemId == floorPlanItem.Id);
-            if (floorPlanComment == null) continue;
-
-            floorPlanComment.UserName = comment.UserName;
-            floorPlanComment.Comment = comment.Comment;
-            floorPlanComment.CreationTime = DateTime.Parse(comment.Date);
-          }
-        }
-      }
-      await _floorPlanRepository.UpdateAsync(floorPlan);
-
-      if (plan.FileUrlsToDelete != null && plan.FileUrlsToDelete.Any())
-      {
-        await _fileService.DeleteFilesAsync(plan.FileUrlsToDelete);
-
-        foreach (var fileUrl in plan.FileUrlsToDelete)
-        {
-          string fileName = Path.GetFileName(fileUrl);
-
-          var fileRecord = await _floorPlanFilesRepository.FirstOrDefaultAsync(f => f.FileName == fileName);
-          if (fileRecord != null)
-          {
-            await _floorPlanFilesRepository.DeleteAsync(fileRecord);
-          }
-        }
-      }
-
-      if (plan.FilesToUpdate != null && plan.FilesToUpdate.Any())
-      {
-        var updatedFiles = await _fileService.ReplaceFileAsync(request.WarehouseId, floorPlan.Id, plan.FilesToUpdate);
-
-        foreach (var updatedFile in updatedFiles)
-        {
-
-          var fileRecord = await _floorPlanFilesRepository
-              .FirstOrDefaultAsync(f => f.FloorPlanId == floorPlan.Id && f.FileName == updatedFile.FileName);
-
-          if (fileRecord == null)
-          {
-            continue;
-          }
-        }
-      }
-
-      if (plan.NewFiles != null && plan.NewFiles.Any())
-      {
-        var updateNewFiles = await _fileService.SaveFilesAsync(request.WarehouseId, floorPlan.Id, plan.NewFiles);
-
-        // Save file info to database
-        var floorPlanFiles = updateNewFiles.Select(f => new FloorPlanFiles
-        {
-          Id = Guid.NewGuid(),
-          FloorPlanId = floorPlan.Id,
-          FileName = f.FileName,
-          FileUrl = f.FilePath,
-          ContentType = f.ContentType
-        }).ToList();
-
-        await _floorPlanFilesRepository.AddRangeAsync(floorPlanFiles);
+        await _floorPlanFilesRepository.DeleteAsync(fileRecord);
       }
     }
-      return !results.Any(x => x == false);
   }
+
+  private async Task UpdateExistingFiles(List<IFormFile> filesToUpdate, Guid warehouseId, Guid floorPlanId)
+  {
+    var updatedFiles = await _fileService.ReplaceFileAsync(warehouseId, floorPlanId, filesToUpdate);
+
+    foreach (var updatedFile in updatedFiles)
+    {
+      var fileRecord = await _floorPlanFilesRepository
+          .FirstOrDefaultAsync(f => f.FloorPlanId == floorPlanId && f.FileName == updatedFile.FileName);
+
+      if (fileRecord is null) continue;
+    }
+  }
+
+  private async Task SaveNewFiles(List<IFormFile> newFiles, Guid warehouseId, Guid floorPlanId)
+  {
+    var savedFiles = await _fileService.SaveFilesAsync(warehouseId, floorPlanId, newFiles);
+
+    var floorPlanFiles = savedFiles.Select(f => new FloorPlanFiles
+    {
+      Id = Guid.NewGuid(),
+      FloorPlanId = floorPlanId,
+      FileName = f.FileName,
+      FileUrl = f.FilePath,
+      ContentType = f.ContentType
+    }).ToList();
+
+    await _floorPlanFilesRepository.AddRangeAsync(floorPlanFiles);
+  }
+
 
   private async Task<bool> CheckPermissionUserRequest(Guid userId, Guid warehouseId)
   {

@@ -89,8 +89,8 @@ public class CreateFloorPlan(IMediator _mediator) : Endpoint<CreateFloorPlanRequ
             Title = assetName.ToString(),
             Floor = int.Parse(floorNumber!),
             Description = description.ToString() ?? null,
-            totalRack = int.Parse(totalRack!),
-            totalBay = int.Parse(totalBay!),
+            TotalRack = int.Parse(totalRack!),
+            TotalBay = int.Parse(totalBay!),
             Items = floorItems,
             Files = files.ToList()
           };

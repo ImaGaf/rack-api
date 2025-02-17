@@ -14,8 +14,8 @@ public record FloorPlanCommand(
     string Title,
     int Floor,
     string? Description,
-    int totalRack,
-    int totalBay,
+    int TotalRack,
+    int TotalBay,
     List<FloorPlanItemCommand> Items,
     List<IFormFile> Files);
 

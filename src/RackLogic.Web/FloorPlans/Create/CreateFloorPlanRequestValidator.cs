@@ -23,10 +23,10 @@ public class CreateFloorPlanRequestValidator : Validator<CreateFloorPlanRequest>
       floorPlan.RuleFor(fp => fp.Floor)
           .NotEmpty().WithMessage("Floor is required.");
 
-      floorPlan.RuleFor(fp => fp.totalRack)
+      floorPlan.RuleFor(fp => fp.TotalRack)
           .NotEmpty().WithMessage("TotalRack is required.");
 
-      floorPlan.RuleFor(fp => fp.totalBay)
+      floorPlan.RuleFor(fp => fp.TotalBay)
           .NotEmpty().WithMessage("TotalBay is required.");
 
       floorPlan.RuleFor(fp => fp.Items)

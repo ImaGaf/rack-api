@@ -6,8 +6,8 @@ public class GetFloorPlanByIdResponse
   public required string Title { get; set; }
   public int Floor { get; set; }
   public string? Description { get; set; }
-  public int totalRack { get; set; }
-  public int totalBay { get; set; }
+  public int TotalRack { get; set; }
+  public int TotalBay { get; set; }
   public List<string> FileUrls { get; set; } = new();
   public List<FloorPlanItemResponse> Items { get; set; } = new();
 }

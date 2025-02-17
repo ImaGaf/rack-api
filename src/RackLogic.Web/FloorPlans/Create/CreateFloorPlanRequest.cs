@@ -19,9 +19,9 @@ public class FloorPlanRequest
   public required int Floor { get; set; }
   public string? Description { get; set; }
   [Required]
-  public required int totalRack { get; set; }
+  public required int TotalRack { get; set; }
   [Required]
-  public required int totalBay { get; set; }
+  public required int TotalBay { get; set; }
   [Required]
   public required List<FloorPlanItem> Items { get; set; }
   public List<IFormFile> Files { get; set; } = new();

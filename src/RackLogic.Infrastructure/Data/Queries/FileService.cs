@@ -33,48 +33,6 @@ public class FileService : IFileService
     return Task.FromResult(nonExistentFiles);
   }
 
-  public async Task<List<FloorPlanDTO>> GetFloorPlansWithFilesByWarehouseIdAsync(Guid warehouseId)
-  {
-
-    //Get list FloorPlans by WarehouseId
-    var floorPlans = await _context.FloorPlans
-        .Include(f => f.FloorPlanFiles)
-        .Include(f => f.FloorPlanItems)
-            .ThenInclude(i => i.Comments)
-        .Where(f => f.WarehouseId == warehouseId)
-        .ToListAsync();
-
-    return floorPlans.Select(f => new FloorPlanDTO
-    {
-      FloorPlanRequestId = f.Id,
-      Title = f.AssetName,
-      Floor = f.FloorNumber,
-      Description = f.Description,
-      totalRack = f.totalRack ,
-      totalBay = f.totalBay ,
-      FileUrls = f.FloorPlanFiles.Select(file => file.FileUrl).ToList(),
-      Items = f.FloorPlanItems.Select(i => new FloorPlanItemResponse
-      {
-        Id = i.Id,
-        Rack = i.Rack,
-        Bay = i.Bay,
-        Offset = i.Offset,
-        Size = i.Size,
-        Width = i.Width,
-        Height = i.Height,
-        ObjectType = i.ObjectType,
-        Rotation = i.Rotation,
-        Comments = i.Comments?.Select(c => new FloorPlanCommentResponse
-        {
-          Id = c.Id,
-          UserName = c.UserName,
-          Comment = c.Comment,
-          Date = c.CreationTime.ToString("yyyy-MM-dd HH:mm:ss")
-        }).ToList() ?? new List<FloorPlanCommentResponse>()
-      }).ToList()
-    }).ToList();
-  }
-
   public async Task<List<SavedFileInfo>> ReplaceFileAsync(Guid warehouseId, Guid floorPlanId, List<IFormFile> filesToUpdate)
   {
     var rootPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "Warehouse");

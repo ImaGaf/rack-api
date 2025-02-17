@@ -28,32 +28,43 @@ public class CreateFloorPlanHandler(
     var userCreatedId = Guid.Parse(inviteIdString);
     if (!await CheckPermissionUserRequest(userCreatedId, request.WarehouseId)) return Result.Forbidden();
 
-    var listFloorPlans = new List<FloorPlan>();
-    var listFloorPlanItems = new List<FloorPlanItem>();
-    var listFloorPlanComments = new List<FloorPlanComments>();
+    var (floorPlans, floorPlanItems, floorPlanComments) = BuildFloorPlanData(request, userCreatedId);
+
+    if (!await SaveFloorPlanData(floorPlans, floorPlanItems, floorPlanComments))
+      return Result.Invalid(new ValidationError("Failed to create floor plans."));
+
+    await SaveFloorPlanFiles(floorPlans, request.FloorPlans);
+
+    return Result.Success(true);
+  }
+
+  //Funcition
+  private (List<FloorPlan>, List<FloorPlanItem>, List<FloorPlanComments>) BuildFloorPlanData(CreateFloorPlanCommand request, Guid userCreatedId)
+  {
+    var floorPlans = new List<FloorPlan>();
+    var floorPlanItems = new List<FloorPlanItem>();
+    var floorPlanComments = new List<FloorPlanComments>();
 
     foreach (var f in request.FloorPlans)
     {
-      // Add FloorPlan
-      var floorPlan = new FloorPlan()
+      var floorPlan = new FloorPlan
       {
         Id = f.FloorPlanRequestId ?? Guid.NewGuid(),
         WarehouseId = request.WarehouseId,
         AssetName = f.Title,
         FloorNumber = f.Floor,
         Description = f.Description,
-        totalRack = f.totalRack,
-        totalBay = f.totalBay,
+        TotalRack = f.TotalRack,
+        TotalBay = f.TotalBay,
         CreatorId = userCreatedId,
         FloorPlanFiles = new List<FloorPlanFiles>(),
         FloorPlanItems = new List<FloorPlanItem>()
       };
-      listFloorPlans.Add(floorPlan);
+      floorPlans.Add(floorPlan);
 
-      // Add FloorPlanItem
       foreach (var item in f.Items)
       {
-        var floorPlanItem = new FloorPlanItem()
+        var floorPlanItem = new FloorPlanItem
         {
           Id = item.Id ?? Guid.NewGuid(),
           FloorPlanId = floorPlan.Id,
@@ -67,45 +78,44 @@ public class CreateFloorPlanHandler(
           Rotation = item.Rotation,
           Comments = new List<FloorPlanComments>()
         };
-        listFloorPlanItems.Add(floorPlanItem);
+        floorPlanItems.Add(floorPlanItem);
 
-        // Add FloorPlanComment
         if (item.Comments != null)
         {
-          foreach (var comment in item.Comments)
+          floorPlanComments.AddRange(item.Comments.Select(comment => new FloorPlanComments
           {
-            var floorPlanComment = new FloorPlanComments()
-            {
-              Id = comment.Id ?? Guid.NewGuid(),
-              FloorPlanItemId = floorPlanItem.Id,
-              UserName = comment.userName,
-              Comment = comment.comment
-            };
-            listFloorPlanComments.Add(floorPlanComment);
-          }
+            Id = comment.Id ?? Guid.NewGuid(),
+            FloorPlanItemId = floorPlanItem.Id,
+            UserName = comment.userName,
+            Comment = comment.comment
+          }));
         }
       }
     }
 
-    // Save data to database
+    return (floorPlans, floorPlanItems, floorPlanComments);
+  }
 
-    var savedFloorPlans = await _floorPlanRepository.AddRangeAsync(listFloorPlans);
-    if (savedFloorPlans == null) return Result.Invalid(new ValidationError("Failed to create floor plans."));
+  private async Task<bool> SaveFloorPlanData(List<FloorPlan> floorPlans, List<FloorPlanItem> floorPlanItems, List<FloorPlanComments> floorPlanComments)
+  {
+    var savedFloorPlans = await _floorPlanRepository.AddRangeAsync(floorPlans);
+    if (savedFloorPlans == null) return false;
 
-    var savedFloorPlanItems = await _floorPlanItemRepository.AddRangeAsync(listFloorPlanItems);
-    if (savedFloorPlanItems == null) return Result.Invalid(new ValidationError("Failed to create floor plan items."));
+    var savedFloorPlanItems = await _floorPlanItemRepository.AddRangeAsync(floorPlanItems);
+    if (savedFloorPlanItems == null) return false;
 
-    var savedFloorPlanComments = await _floorPlanCommentsRepository.AddRangeAsync(listFloorPlanComments);
+    await _floorPlanCommentsRepository.AddRangeAsync(floorPlanComments);
+    return true;
+  }
 
-    //Save files
-    foreach (var (floorPlan, f) in savedFloorPlans.Zip(request.FloorPlans))
+  private async Task SaveFloorPlanFiles(List<FloorPlan> floorPlans, List<FloorPlanCommand> floorPlanRequests)
+  {
+    foreach (var (floorPlan, f) in floorPlans.Zip(floorPlanRequests))
     {
-      // Check if user has uploaded files
-      if (f.Files != null && f.Files.Any())
+      if (f.Files?.Any() ?? false)
       {
         var savedFiles = await _fileService.SaveFilesAsync(floorPlan.WarehouseId, floorPlan.Id, f.Files);
 
-        // Save file info to database
         var floorPlanFiles = savedFiles.Select(sf => new FloorPlanFiles
         {
           Id = Guid.NewGuid(),
@@ -118,8 +128,6 @@ public class CreateFloorPlanHandler(
         await _floorPlanFilesRepository.AddRangeAsync(floorPlanFiles);
       }
     }
-
-    return Result.Success(true);
   }
 
   private async Task<bool> CheckPermissionUserRequest(Guid userId, Guid warehouseId)

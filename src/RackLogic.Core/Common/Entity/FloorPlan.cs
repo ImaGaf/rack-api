@@ -6,8 +6,8 @@ public class FloorPlan : BaseEntityCustom
   public required string AssetName { get; set; }
   public required int FloorNumber {  get; set; }
   public string? Description  { get; set; }
-  public required int totalRack { get; set; }
-  public required int totalBay { get; set; }
+  public required int TotalRack { get; set; }
+  public required int TotalBay { get; set; }
   public required ICollection<FloorPlanFiles> FloorPlanFiles { get; set; }
   public required ICollection<FloorPlanItem> FloorPlanItems { get; set; } 
 }
