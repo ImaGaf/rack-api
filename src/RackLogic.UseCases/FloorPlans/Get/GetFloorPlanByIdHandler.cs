@@ -1,7 +1,5 @@
 ﻿using Ardalis.Result;
 using Ardalis.SharedKernel;
-using RackLogic.Core.Common.Entity;
-using RackLogic.Core.Interfaces;
 
 namespace RackLogic.UseCases.FloorPlans.Get;
 public class GetFloorPlanByIdHandler(IFileService _fileService)

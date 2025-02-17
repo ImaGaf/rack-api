@@ -13,7 +13,7 @@ public class FileService : IFileService
   }
   public Task<List<string>> DeleteFilesAsync(List<string> fileUrlsToDelete)
   {
-    string rootPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "Warehouse");
+    string rootPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot");
     var nonExistentFiles = new List<string>();
 
     foreach (var fileUrl in fileUrlsToDelete)
@@ -35,19 +35,43 @@ public class FileService : IFileService
 
   public async Task<List<FloorPlanDTO>> GetFloorPlansWithFilesByWarehouseIdAsync(Guid warehouseId)
   {
-    // Take list FloorPlans by WarehouseId
+
+    //Get list FloorPlans by WarehouseId
     var floorPlans = await _context.FloorPlans
         .Include(f => f.FloorPlanFiles)
+        .Include(f => f.FloorPlanItems)
+            .ThenInclude(i => i.Comments)
         .Where(f => f.WarehouseId == warehouseId)
         .ToListAsync();
 
-
     return floorPlans.Select(f => new FloorPlanDTO
     {
-      WarehouseId = f.WarehouseId,
-      AssetName = f.AssetName,
-      Floor = f.Floor,
-      FileUrls = f.FloorPlanFiles.Select(file => file.FileUrl).ToList()
+      FloorPlanRequestId = f.Id,
+      Title = f.AssetName,
+      Floor = f.FloorNumber,
+      Description = f.Description,
+      totalRack = f.totalRack ,
+      totalBay = f.totalBay ,
+      FileUrls = f.FloorPlanFiles.Select(file => file.FileUrl).ToList(),
+      Items = f.FloorPlanItems.Select(i => new FloorPlanItemResponse
+      {
+        Id = i.Id,
+        Rack = i.Rack,
+        Bay = i.Bay,
+        Offset = i.Offset,
+        Size = i.Size,
+        Width = i.Width,
+        Height = i.Height,
+        ObjectType = i.ObjectType,
+        Rotation = i.Rotation,
+        Comments = i.Comments?.Select(c => new FloorPlanCommentResponse
+        {
+          Id = c.Id,
+          UserName = c.UserName,
+          Comment = c.Comment,
+          Date = c.CreationTime.ToString("yyyy-MM-dd HH:mm:ss")
+        }).ToList() ?? new List<FloorPlanCommentResponse>()
+      }).ToList()
     }).ToList();
   }
 
@@ -114,9 +138,13 @@ public async Task<List<SavedFileInfo>> SaveFilesAsync(Guid warehouseId, Guid? fl
     {
         var fileName = Path.GetFileName(file.FileName);
         var filePath = Path.Combine(folderPath, fileName);
-
-        // Save file to folder
-        using (var stream = new FileStream(filePath, FileMode.Create))
+        
+      if (File.Exists(filePath))
+      {
+        continue;
+      }
+      // Save file to folder
+      using (var stream = new FileStream(filePath, FileMode.Create))
         {
             await file.CopyToAsync(stream);
         }

@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace RackLogic.Core.Common.Entity;
+﻿namespace RackLogic.Core.Common.Entity;
 public class FloorPlanFiles : BaseEntityCustom
 {
   public required Guid FloorPlanId { get; set; }

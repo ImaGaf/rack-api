@@ -10,6 +10,8 @@ namespace RackLogic.UseCases.FloorPlans.Create;
 public class CreateFloorPlanHandler(
   IRepositoryWithExpression<FloorPlan> _floorPlanRepository,
   IRepositoryWithExpression<FloorPlanFiles> _floorPlanFilesRepository,
+  IRepositoryWithExpression<FloorPlanItem> _floorPlanItemRepository,
+  IRepositoryWithExpression<FloorPlanComments> _floorPlanCommentsRepository,
   IRepositoryWithExpression<UserWarehouseRole> _userWarehouseRoleRepository,
   IRepositoryWithExpression<Warehouse> _warehouseRepository,
   IFileService _fileService,
@@ -27,30 +29,79 @@ public class CreateFloorPlanHandler(
     if (!await CheckPermissionUserRequest(userCreatedId, request.WarehouseId)) return Result.Forbidden();
 
     var listFloorPlans = new List<FloorPlan>();
+    var listFloorPlanItems = new List<FloorPlanItem>();
+    var listFloorPlanComments = new List<FloorPlanComments>();
 
     foreach (var f in request.FloorPlans)
     {
-      listFloorPlans.Add(new FloorPlan()
+      // Add FloorPlan
+      var floorPlan = new FloorPlan()
       {
+        Id = f.FloorPlanRequestId ?? Guid.NewGuid(),
         WarehouseId = request.WarehouseId,
-        AssetName = f.AssetName,
-        Floor = f.Floor,
+        AssetName = f.Title,
+        FloorNumber = f.Floor,
+        Description = f.Description,
+        totalRack = f.totalRack,
+        totalBay = f.totalBay,
         CreatorId = userCreatedId,
-        FloorPlanFiles = new List<FloorPlanFiles>()
-      });
+        FloorPlanFiles = new List<FloorPlanFiles>(),
+        FloorPlanItems = new List<FloorPlanItem>()
+      };
+      listFloorPlans.Add(floorPlan);
+
+      // Add FloorPlanItem
+      foreach (var item in f.Items)
+      {
+        var floorPlanItem = new FloorPlanItem()
+        {
+          Id = item.Id ?? Guid.NewGuid(),
+          FloorPlanId = floorPlan.Id,
+          Rack = item.Rack,
+          Bay = item.Bay,
+          Offset = item.Offset,
+          Size = item.Size,
+          Width = item.Width,
+          Height = item.Height,
+          ObjectType = item.ObjectType,
+          Rotation = item.Rotation,
+          Comments = new List<FloorPlanComments>()
+        };
+        listFloorPlanItems.Add(floorPlanItem);
+
+        // Add FloorPlanComment
+        if (item.Comments != null)
+        {
+          foreach (var comment in item.Comments)
+          {
+            var floorPlanComment = new FloorPlanComments()
+            {
+              Id = comment.Id ?? Guid.NewGuid(),
+              FloorPlanItemId = floorPlanItem.Id,
+              UserName = comment.userName,
+              Comment = comment.comment
+            };
+            listFloorPlanComments.Add(floorPlanComment);
+          }
+        }
+      }
     }
 
-    var result = await _floorPlanRepository.AddRangeAsync(listFloorPlans);
-    if (result == null)
-    {
-      return Result.Invalid(new ValidationError("Failed to create floor plans."));
-    }
+    // Save data to database
+
+    var savedFloorPlans = await _floorPlanRepository.AddRangeAsync(listFloorPlans);
+    if (savedFloorPlans == null) return Result.Invalid(new ValidationError("Failed to create floor plans."));
+
+    var savedFloorPlanItems = await _floorPlanItemRepository.AddRangeAsync(listFloorPlanItems);
+    if (savedFloorPlanItems == null) return Result.Invalid(new ValidationError("Failed to create floor plan items."));
+
+    var savedFloorPlanComments = await _floorPlanCommentsRepository.AddRangeAsync(listFloorPlanComments);
 
     //Save files
-    foreach (var (floorPlan, f) in result.Zip(request.FloorPlans))
+    foreach (var (floorPlan, f) in savedFloorPlans.Zip(request.FloorPlans))
     {
       // Check if user has uploaded files
-      if (f.Files != null && f.Files.Any()  )
+      if (f.Files != null && f.Files.Any())
       {
         var savedFiles = await _fileService.SaveFilesAsync(floorPlan.WarehouseId, floorPlan.Id, f.Files);
 

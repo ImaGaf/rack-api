@@ -11,6 +11,8 @@ public class UpdateFloorPlanHandler(
   IRepositoryWithExpression<FloorPlan> _floorPlanRepository,
   IRepositoryWithExpression<FloorPlanFiles> _floorPlanFilesRepository,
   IRepositoryWithExpression<UserWarehouseRole> _userWarehouseRoleRepository,
+  IRepositoryWithExpression<FloorPlanItem> _floorPlanItemRepository,
+  IRepositoryWithExpression<FloorPlanComments> _floorPlanCommentsRepository,
   IRepositoryWithExpression<Warehouse> _warehouseRepository,
   IFileService _fileService,
   RoleManager<IdentityRole<Guid>> _roleManager)
@@ -27,15 +29,47 @@ public class UpdateFloorPlanHandler(
     if (!await CheckPermissionUserRequest(userCreatedId, request.WarehouseId)) return Result.Forbidden();
     var results = new List<bool>();
 
-    foreach (var plan in request.FloorPlans)
+    foreach (var plan in request.FloorAsset)
     {
       var floorPlan = await _floorPlanRepository.FirstOrDefaultAsync(x => x.Id == plan.FloorPlanId);
       results.Add(floorPlan != null);
       if (floorPlan is null) continue;
 
-      floorPlan.AssetName = plan.AssetName;
-      floorPlan.Floor = plan.Floor;
+      floorPlan.AssetName = plan.Title;
+      floorPlan.FloorNumber = plan.Floor;
+      floorPlan.Description = plan.Description;
+      floorPlan.totalRack = plan.totalRack;
+      floorPlan.totalBay = plan.totalBay;
 
+      // Update Items (Rack, Bay, ...)
+      foreach (var item in plan.Items)
+      {
+        var floorPlanItem = await _floorPlanItemRepository.FirstOrDefaultAsync(i => i.Id == item.Id);
+        if (floorPlanItem == null) continue;
+
+        floorPlanItem.Rack = item.Rack;
+        floorPlanItem.Bay = item.Bay;
+        floorPlanItem.Offset = item.Offset;
+        floorPlanItem.Size = item.Size ?? null;
+        floorPlanItem.Width = item.Width ?? null;
+        floorPlanItem.Height = item.Height ?? null;
+        floorPlanItem.ObjectType = item.ObjectType;
+        floorPlanItem.Rotation = item.Rotation;
+
+        // Update Comments in Item
+        if (item.Comments != null) 
+        {
+          foreach (var comment in item.Comments)
+          {
+            var floorPlanComment = await _floorPlanCommentsRepository.FirstOrDefaultAsync(c => c.Id == comment.Id && c.FloorPlanItemId == floorPlanItem.Id);
+            if (floorPlanComment == null) continue;
+
+            floorPlanComment.UserName = comment.UserName;
+            floorPlanComment.Comment = comment.Comment;
+            floorPlanComment.CreationTime = DateTime.Parse(comment.Date);
+          }
+        }
+      }
       await _floorPlanRepository.UpdateAsync(floorPlan);
 
       if (plan.FileUrlsToDelete != null && plan.FileUrlsToDelete.Any())
@@ -60,7 +94,7 @@ public class UpdateFloorPlanHandler(
 
         foreach (var updatedFile in updatedFiles)
         {
-          
+
           var fileRecord = await _floorPlanFilesRepository
               .FirstOrDefaultAsync(f => f.FloorPlanId == floorPlan.Id && f.FileName == updatedFile.FileName);
 
@@ -88,7 +122,7 @@ public class UpdateFloorPlanHandler(
         await _floorPlanFilesRepository.AddRangeAsync(floorPlanFiles);
       }
     }
-    return !results.Any(x => x == false);
+      return !results.Any(x => x == false);
   }
 
   private async Task<bool> CheckPermissionUserRequest(Guid userId, Guid warehouseId)
