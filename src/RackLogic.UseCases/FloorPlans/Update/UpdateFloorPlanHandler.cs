@@ -3,6 +3,7 @@ using Ardalis.Result;
 using Ardalis.SharedKernel;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.DependencyInjection;
 using RackLogic.Core.Common.Constants;
 using RackLogic.Core.Common.Entity;
 using RackLogic.Core.Interfaces;
@@ -28,12 +29,18 @@ public class UpdateFloorPlanHandler(
     var inviteIdString = request.User.Claims.First(x => x.Type == ClaimTypes.NameIdentifier).Value;
     var userCreatedId = Guid.Parse(inviteIdString);
     if (!await CheckPermissionUserRequest(userCreatedId, request.WarehouseId)) return Result.Forbidden();
+
     var results = new List<bool>();
 
     foreach (var plan in request.FloorAsset)
     {
       results.Add(await ProcessFloorPlan(plan, request.WarehouseId));
     }
+    //var processTasks = request.FloorAsset
+    //    .Select(plan => ProcessFloorPlan(plan, request.WarehouseId))
+    //    .ToList();
+
+    //var results = await Task.WhenAll(processTasks);
 
     return !results.Any(x => x == false);
   }
@@ -44,7 +51,7 @@ public class UpdateFloorPlanHandler(
     var floorPlan = await _floorPlanRepository.FirstOrDefaultAsync(x => x.Id == plan.FloorPlanId);
     if (floorPlan is null) return false;
 
-    UpdateFloorPlanDetails(floorPlan, plan);
+    plan.UpdateFloorPlan(floorPlan);
     await UpdateFloorPlanItems(plan.Items);
     await HandleFileOperations(plan, warehouseId, floorPlan.Id);
     await _floorPlanRepository.UpdateAsync(floorPlan);
@@ -52,56 +59,43 @@ public class UpdateFloorPlanHandler(
     return true;
   }
 
-  private void UpdateFloorPlanDetails(FloorPlan floorPlan, UpdateFloorPlanInformationCommand plan)
-  {
-    floorPlan.AssetName = plan.Title;
-    floorPlan.FloorNumber = plan.Floor;
-    floorPlan.Description = plan.Description;
-    floorPlan.TotalRack = plan.TotalRack;
-    floorPlan.TotalBay = plan.TotalBay;
-  }
-
   private async Task UpdateFloorPlanItems(List<UpdateFloorPlanItemInformationCommand> items)
   {
-    foreach (var item in items)
-    {
-      var floorPlanItem = await _floorPlanItemRepository.FirstOrDefaultAsync(i => i.Id == item.Id);
-      if (floorPlanItem is null) continue;
+    var itemIds = items.Select(i => i.Id).ToList();
+    var floorPlanItems = await _floorPlanItemRepository.ListAsync(i => itemIds.Contains(i.Id));
 
-      UpdateFloorPlanItemDetails(floorPlanItem, item);
-      await UpdateFloorPlanItemComments(item.Comments, floorPlanItem.Id);
-    }
-  }
+    var updatedItems = items
+        .Join(floorPlanItems, item => item.Id, floorPlanItem => floorPlanItem.Id, (item, floorPlanItem) => new { item, floorPlanItem })
+        .ToList();
 
-  private void UpdateFloorPlanItemDetails(FloorPlanItem floorPlanItem, UpdateFloorPlanItemInformationCommand item)
-  {
-    floorPlanItem.Rack = item.Rack;
-    floorPlanItem.Bay = item.Bay;
-    floorPlanItem.Offset = item.Offset;
-    floorPlanItem.Size = item.Size ?? null;
-    floorPlanItem.Width = item.Width ?? null;
-    floorPlanItem.Height = item.Height ?? null;
-    floorPlanItem.ObjectType = item.ObjectType;
-    floorPlanItem.Rotation = item.Rotation;
+    updatedItems.ForEach(x => x.item.UpdateFloorPlanItem(x.floorPlanItem));
+
+    // Process comments at one time
+    var commentTasks = updatedItems
+        .Where(x => x.item.Comments != null && x.item.Comments.Any())
+        .Select(x => UpdateFloorPlanItemComments(x.item.Comments, x.floorPlanItem.Id));
+
+    await Task.WhenAll(commentTasks);
   }
 
   private async Task UpdateFloorPlanItemComments(List<UpdateFloorPlanCommentCommand>? comments, Guid floorPlanItemId)
   {
-    if (comments == null) return;
+    if (comments == null || comments.Count == 0) return;
 
-    foreach (var comment in comments)
-    {
-      var floorPlanComment = await _floorPlanCommentsRepository
-          .FirstOrDefaultAsync(c => c.Id == comment.Id && c.FloorPlanItemId == floorPlanItemId);
+    var commentIds = comments.Select(c => c.Id);
+    var existingComments = await _floorPlanCommentsRepository
+        .ListAsync(c => c.FloorPlanItemId == floorPlanItemId && commentIds.Any(x => x == c.Id));
 
-      if (floorPlanComment is null) continue;
+    // Use Join to match comments from requests with entities in DB
+    var updatedComments = comments
+        .Join(existingComments,
+              c => c.Id,
+              ec => ec.Id,
+              (c, ec) => new { Command = c, Entity = ec })
+        .ToList();
 
-      floorPlanComment.UserName = comment.UserName;
-      floorPlanComment.Comment = comment.Comment;
-      floorPlanComment.CreationTime = DateTime.Parse(comment.Date);
-    }
+    updatedComments.ForEach(pair => pair.Command.UpdateFloorPlanComment(pair.Entity));
   }
-
   private async Task HandleFileOperations(UpdateFloorPlanInformationCommand plan, Guid warehouseId, Guid floorPlanId)
   {
     if (plan.FileUrlsToDelete is not null && plan.FileUrlsToDelete.Any())
@@ -118,14 +112,12 @@ public class UpdateFloorPlanHandler(
   {
     await _fileService.DeleteFilesAsync(fileUrlsToDelete);
 
-    foreach (var fileUrl in fileUrlsToDelete)
+    var fileNames = fileUrlsToDelete.Select(Path.GetFileName).ToList();
+    var fileRecords = await _floorPlanFilesRepository.ListAsync(f => fileNames.Contains(f.FileName));
+
+    if (fileRecords.Any())
     {
-      string fileName = Path.GetFileName(fileUrl);
-      var fileRecord = await _floorPlanFilesRepository.FirstOrDefaultAsync(f => f.FileName == fileName);
-      if (fileRecord != null)
-      {
-        await _floorPlanFilesRepository.DeleteAsync(fileRecord);
-      }
+      await _floorPlanFilesRepository.DeleteRangeAsync(fileRecords);
     }
   }
 

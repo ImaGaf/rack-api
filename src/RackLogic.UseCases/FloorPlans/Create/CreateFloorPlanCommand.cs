@@ -10,7 +10,7 @@ public record CreateFloorPlanCommand(
   : Ardalis.SharedKernel.ICommand<Result<bool>>;
 
 public record FloorPlanCommand(
-    Guid? FloorPlanRequestId,
+    Guid FloorPlanRequestId,
     string Title,
     int Floor,
     string? Description,
@@ -20,7 +20,7 @@ public record FloorPlanCommand(
     List<IFormFile> Files);
 
 public record FloorPlanItemCommand(
-    Guid? Id,
+    Guid Id,
     int Rack,
     int Bay,
     List<FloorPlanCommentCommand>? Comments,
@@ -32,7 +32,7 @@ public record FloorPlanItemCommand(
     double Rotation);
 
 public record FloorPlanCommentCommand(
-    Guid? Id,
+    Guid Id,
     string userName,
     string comment);
 

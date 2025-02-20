@@ -12,7 +12,7 @@ public class CreateFloorPlanRequest
 
 public class FloorPlanRequest
 {
-  public Guid? FloorPlanRequestId { get; set; }
+  public Guid? FloorPlanRequestId { get; set; } 
   [Required]
   public required string Title { get; set; }
   [Required]
@@ -29,7 +29,7 @@ public class FloorPlanRequest
 
 public class FloorPlanItem
 {
-  public Guid? Id { get; set; }
+  public Guid? Id { get; set; } 
   [Required]
   public required int Rack { get; set; }
   [Required]

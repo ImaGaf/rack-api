@@ -92,7 +92,7 @@ public class UpdateFloorPlan(IMediator _mediator) : Endpoint<UpdateFloorPlanRequ
           var fileUrlsToDelete = form[$"{group.Key}.FileUrlsToDelete"]
               .ToString()
               .Split(',', StringSplitOptions.RemoveEmptyEntries)
-              .ToList();
+              .ToList() ?? new List<string>();
           var newFiles = form.Files.Where(f => f.Name.StartsWith($"{group.Key}.NewFiles")).ToList();
           var filesToUpdate = form.Files.Where(f => f.Name.StartsWith($"{group.Key}.FilesToUpdate")).ToList();
 

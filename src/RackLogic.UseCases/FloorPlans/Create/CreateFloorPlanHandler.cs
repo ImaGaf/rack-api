@@ -41,57 +41,19 @@ public class CreateFloorPlanHandler(
   //Funcition
   private (List<FloorPlan>, List<FloorPlanItem>, List<FloorPlanComments>) BuildFloorPlanData(CreateFloorPlanCommand request, Guid userCreatedId)
   {
-    var floorPlans = new List<FloorPlan>();
-    var floorPlanItems = new List<FloorPlanItem>();
-    var floorPlanComments = new List<FloorPlanComments>();
+    var floorPlans = request.FloorPlans
+        .Select(f => f.ToFloorPlan(request.WarehouseId, userCreatedId))
+        .ToList();
 
-    foreach (var f in request.FloorPlans)
-    {
-      var floorPlan = new FloorPlan
-      {
-        Id = f.FloorPlanRequestId ?? Guid.NewGuid(),
-        WarehouseId = request.WarehouseId,
-        AssetName = f.Title,
-        FloorNumber = f.Floor,
-        Description = f.Description,
-        TotalRack = f.TotalRack,
-        TotalBay = f.TotalBay,
-        CreatorId = userCreatedId,
-        FloorPlanFiles = new List<FloorPlanFiles>(),
-        FloorPlanItems = new List<FloorPlanItem>()
-      };
-      floorPlans.Add(floorPlan);
+    var floorPlanItems = request.FloorPlans
+        .SelectMany(f => f.Items, (f, item) => item.ToFloorPlanItem(f.FloorPlanRequestId))
+        .ToList();
 
-      foreach (var item in f.Items)
-      {
-        var floorPlanItem = new FloorPlanItem
-        {
-          Id = item.Id ?? Guid.NewGuid(),
-          FloorPlanId = floorPlan.Id,
-          Rack = item.Rack,
-          Bay = item.Bay,
-          Offset = item.Offset,
-          Size = item.Size,
-          Width = item.Width,
-          Height = item.Height,
-          ObjectType = item.ObjectType,
-          Rotation = item.Rotation,
-          Comments = new List<FloorPlanComments>()
-        };
-        floorPlanItems.Add(floorPlanItem);
-
-        if (item.Comments != null)
-        {
-          floorPlanComments.AddRange(item.Comments.Select(comment => new FloorPlanComments
-          {
-            Id = comment.Id ?? Guid.NewGuid(),
-            FloorPlanItemId = floorPlanItem.Id,
-            UserName = comment.userName,
-            Comment = comment.comment
-          }));
-        }
-      }
-    }
+    var floorPlanComments = request.FloorPlans
+        .SelectMany(f => f.Items)
+        .Where(item => item.Comments != null)
+        .SelectMany(item => item.Comments ?? new List<FloorPlanCommentCommand>(), (item, comment) => comment.ToFloorPlanComment(item.Id))
+        .ToList();
 
     return (floorPlans, floorPlanItems, floorPlanComments);
   }
@@ -116,14 +78,9 @@ public class CreateFloorPlanHandler(
       {
         var savedFiles = await _fileService.SaveFilesAsync(floorPlan.WarehouseId, floorPlan.Id, f.Files);
 
-        var floorPlanFiles = savedFiles.Select(sf => new FloorPlanFiles
-        {
-          Id = Guid.NewGuid(),
-          FloorPlanId = floorPlan.Id,
-          FileName = sf.FileName,
-          FileUrl = sf.FilePath,
-          ContentType = sf.ContentType
-        }).ToList();
+        var floorPlanFiles = savedFiles
+            .Select(sf => sf.ToFloorPlanFile(floorPlan.Id))
+            .ToList();
 
         await _floorPlanFilesRepository.AddRangeAsync(floorPlanFiles);
       }

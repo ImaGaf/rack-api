@@ -16,7 +16,7 @@ public record UpdateFloorPlanInformationCommand(
   string? Description,
   int TotalRack,
   int TotalBay,
-  List<string>? FileUrlsToDelete,
+  List<string> FileUrlsToDelete,
   List<IFormFile> NewFiles,
   List<IFormFile> FilesToUpdate,
   List<UpdateFloorPlanItemInformationCommand> Items);

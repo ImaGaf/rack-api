@@ -29,7 +29,7 @@ public class CreateFloorPlan(IMediator _mediator) : Endpoint<CreateFloorPlanRequ
 
     var validator = new CreateFloorPlanRequestValidator();
     var validationResult = validator.Validate(req);
-        
+
     if (!validationResult.IsValid)
     {
       var errors = validationResult.Errors.Select(e => e.ErrorMessage).ToList();
@@ -106,15 +106,15 @@ public class CreateFloorPlan(IMediator _mediator) : Endpoint<CreateFloorPlanRequ
                             .Distinct()
                             .GroupBy(c => c.Substring(0, c.LastIndexOf(']') + 1)) // Group by FloorPlanComment[0], ...
                             .Select(commentGroup => new Comment
-                  {
-                    userName = form[$"{commentGroup.Key}.UserName"].ToString(),
-                    comment = form[$"{commentGroup.Key}.Comment"].ToString(),
-                    Id = Guid.TryParse(form[$"{commentGroup.Key}.Id"], out var commentId) ? commentId : null
-                  }).ToList();
+                            {
+                              userName = form[$"{commentGroup.Key}.UserName"].ToString(),
+                              comment = form[$"{commentGroup.Key}.Comment"].ToString(),
+                              Id = Guid.TryParse(form[$"{commentGroup.Key}.Id"], out var commentId) ? commentId : Guid.NewGuid()
+                            }).ToList();
 
                           return new FloorPlanItem
                           {
-                            Id = Guid.TryParse(floorPlanItemId, out var itemId) ? itemId : null,
+                            Id = Guid.TryParse(floorPlanItemId, out var itemId) ? itemId : Guid.NewGuid(),
                             Rack = int.Parse(rack!),
                             Bay = int.Parse(bay!),
                             Offset = offset.FirstOrDefault() ?? string.Empty,
@@ -129,7 +129,7 @@ public class CreateFloorPlan(IMediator _mediator) : Endpoint<CreateFloorPlanRequ
 
           return new FloorPlanRequest
           {
-            FloorPlanRequestId = Guid.TryParse(floorPlanRequestId, out var requestId) ? requestId : null,
+            FloorPlanRequestId = Guid.TryParse(floorPlanRequestId, out var requestId) ? requestId : Guid.NewGuid(),
             Title = assetName.ToString(),
             Floor = int.Parse(floorNumber!),
             Description = description.ToString() ?? null,
