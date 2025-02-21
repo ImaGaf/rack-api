@@ -76,7 +76,7 @@ public class UpdateFloorPlan(IMediator _mediator, IHttpContextAccessor _httpCont
     var floorPlans = form
         .Keys
         .Where(key => key.StartsWith("FloorPlans["))
-        .GroupBy(key => key.Substring(0, key.IndexOf(']') + 1)) // Nhóm theo FloorPlans[0], FloorPlans[1], ...
+        .GroupBy(key => key.Substring(0, key.IndexOf(']') + 1)) // Group by FloorPlans[0], FloorPlans[1], ...
         .Select(group =>
         {
           var floorPlanIdValue = form[$"{group.Key}.FloorPlanId"].FirstOrDefault();
