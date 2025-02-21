@@ -1,5 +1,4 @@
-﻿using System.Security.Claims;
-using Ardalis.Result;
+﻿using Ardalis.Result;
 using Ardalis.SharedKernel;
 using Microsoft.AspNetCore.Identity;
 using RackLogic.Core.Common.Constants;

@@ -1,5 +1,4 @@
-﻿using System.Security.Claims;
-using Ardalis.Result;
+﻿using Ardalis.Result;
 using Microsoft.AspNetCore.Http;
 
 namespace RackLogic.UseCases.FloorPlans.Update;
