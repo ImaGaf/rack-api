@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Http;
 
 namespace RackLogic.UseCases.FloorPlans.Update;
 public record UpdateFloorPlanCommand(
-  ClaimsPrincipal User,
+  Guid UserCreatedId,
   Guid WarehouseId,
   List<UpdateFloorPlanInformationCommand> FloorAsset)
   : Ardalis.SharedKernel.ICommand<Result<bool>>;

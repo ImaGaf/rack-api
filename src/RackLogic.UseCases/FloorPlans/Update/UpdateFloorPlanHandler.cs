@@ -3,7 +3,6 @@ using Ardalis.Result;
 using Ardalis.SharedKernel;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.Extensions.DependencyInjection;
 using RackLogic.Core.Common.Constants;
 using RackLogic.Core.Common.Entity;
 using RackLogic.Core.Interfaces;
@@ -22,12 +21,10 @@ public class UpdateFloorPlanHandler(
 {
   public async Task<Result<bool>> Handle(UpdateFloorPlanCommand request, CancellationToken cancellationToken)
   {
-    if (!request.User.Identity?.IsAuthenticated ?? false) return Result.Unauthorized();
 
     if (await _warehouseRepository.FirstOrDefaultAsync(x => x.Id == request.WarehouseId) is null) return Result.Invalid(new ValidationError("WarehouseId invalid."));
 
-    var inviteIdString = request.User.Claims.First(x => x.Type == ClaimTypes.NameIdentifier).Value;
-    var userCreatedId = Guid.Parse(inviteIdString);
+    var userCreatedId = request.UserCreatedId;
     if (!await CheckPermissionUserRequest(userCreatedId, request.WarehouseId)) return Result.Forbidden();
 
     var results = new List<bool>();
@@ -36,11 +33,6 @@ public class UpdateFloorPlanHandler(
     {
       results.Add(await ProcessFloorPlan(plan, request.WarehouseId));
     }
-    //var processTasks = request.FloorAsset
-    //    .Select(plan => ProcessFloorPlan(plan, request.WarehouseId))
-    //    .ToList();
-
-    //var results = await Task.WhenAll(processTasks);
 
     return !results.Any(x => x == false);
   }

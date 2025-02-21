@@ -20,12 +20,10 @@ public class CreateFloorPlanHandler(
 {
   public async Task<Result<bool>> Handle(CreateFloorPlanCommand request, CancellationToken cancellationToken)
   {
-    if (!request.User.Identity?.IsAuthenticated ?? false) return Result.Unauthorized();
 
     if (await _warehouseRepository.FirstOrDefaultAsync(x => x.Id == request.WarehouseId) is null) return Result.Invalid(new ValidationError("WarehouseId invalid."));
 
-    var inviteIdString = request.User.Claims.First(x => x.Type == ClaimTypes.NameIdentifier).Value;
-    var userCreatedId = Guid.Parse(inviteIdString);
+    var userCreatedId = request.UserCreatedId;
     if (!await CheckPermissionUserRequest(userCreatedId, request.WarehouseId)) return Result.Forbidden();
 
     var (floorPlans, floorPlanItems, floorPlanComments) = BuildFloorPlanData(request, userCreatedId);

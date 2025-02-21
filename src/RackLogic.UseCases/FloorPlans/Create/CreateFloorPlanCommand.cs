@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Http;
 
 namespace RackLogic.UseCases.FloorPlans.Create;
 public record CreateFloorPlanCommand(
-  ClaimsPrincipal User,
+  Guid UserCreatedId,
   Guid WarehouseId,
   List<FloorPlanCommand> FloorPlans)
   : Ardalis.SharedKernel.ICommand<Result<bool>>;

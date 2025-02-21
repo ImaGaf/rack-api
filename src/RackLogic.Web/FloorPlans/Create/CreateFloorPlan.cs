@@ -7,11 +7,12 @@ using Microsoft.AspNetCore.Mvc;
 using RackLogic.UseCases.FloorPlans.Create;
 using RackLogic.Web.Exceptions;
 using RackLogic.Web.Models;
+using RackLogic.Web.Services;
 
 namespace RackLogic.Web.FloorPlans.Create;
 
 [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-public class CreateFloorPlan(IMediator _mediator) : Endpoint<CreateFloorPlanRequest, ApiResponse<bool>>
+public class CreateFloorPlan(IMediator _mediator, IHttpContextAccessor _httpContextAccessor) : Endpoint<CreateFloorPlanRequest, ApiResponse<bool>>
 {
   public override void Configure()
   {
@@ -30,6 +31,8 @@ public class CreateFloorPlan(IMediator _mediator) : Endpoint<CreateFloorPlanRequ
     var validator = new CreateFloorPlanRequestValidator();
     var validationResult = validator.Validate(req);
 
+    var userCreatedId = UserHelper.GetUserCreatedId(_httpContextAccessor);
+
     if (!validationResult.IsValid)
     {
       var errors = validationResult.Errors.Select(e => e.ErrorMessage).ToList();
@@ -38,7 +41,7 @@ public class CreateFloorPlan(IMediator _mediator) : Endpoint<CreateFloorPlanRequ
 
     var result = await _mediator.Send(
       new CreateFloorPlanCommand(
-        User, req.WarehouseId,
+        userCreatedId, req.WarehouseId,
         req.FloorAsset.Select(FloorPlanMapper.ToFloorPlanCommand).ToList()),
       ct);
 
