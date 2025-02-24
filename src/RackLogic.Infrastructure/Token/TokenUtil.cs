@@ -2,6 +2,7 @@
 using System.Security.Claims;
 using System.Text;
 using Microsoft.IdentityModel.Tokens;
+using Newtonsoft.Json;
 using RackLogic.Core.UserAggregate;
 
 namespace RackLogic.Infrastructure.Token;
@@ -48,5 +49,13 @@ public static class TokenUtil
       throw new SecurityTokenException("GetPrincipalFromExpiredToken Token is not validated");
 
     return principal;
+  }
+
+  public static Task<T?> DecodeJwt<T>(string token)
+  {
+    var handler = new JwtSecurityTokenHandler();
+    var jsonToken = handler.ReadJwtToken(token);
+    var payload = jsonToken.Payload.SerializeToJson();
+    return Task.FromResult(JsonConvert.DeserializeObject<T>(payload ?? string.Empty));
   }
 }

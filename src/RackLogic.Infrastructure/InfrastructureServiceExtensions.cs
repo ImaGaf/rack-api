@@ -12,6 +12,7 @@ using Microsoft.Extensions.Logging;
 using RackLogic.UseCases.Auths;
 using RackLogic.UseCases.Warehouses;
 using RackLogic.UseCases.FloorPlans;
+using RackLogic.UseCases.StoreNotifications;
 
 namespace RackLogic.Infrastructure;
 public static class InfrastructureServiceExtensions
@@ -31,6 +32,7 @@ public static class InfrastructureServiceExtensions
            .AddScoped<IListContributorsQueryService, ListContributorsQueryService>()
            .AddScoped<IDeleteContributorService, DeleteContributorService>()
            .AddScoped<IUserService, UserSevice>()
+           .AddScoped<IStoreNotificationService, StoreNotificationService>()
            .AddScoped<IUserWarehouseService, UserWarehouseService>()
            .AddScoped<IFileService, FileService>()
            .AddScoped<IUserTokenRepository, UserTokenRepository>();
