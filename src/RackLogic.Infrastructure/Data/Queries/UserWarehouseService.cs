@@ -38,7 +38,8 @@ public class UserWarehouseService : IUserWarehouseService
             Code = product.Code,
             Description = product.Description,
             Orientation = product.Orientation,
-            DistanceCenterToCenter = product.DistanceCenterToCenter
+            DistanceCenterToCenter = product.DistanceCenterToCenter,
+            Type = product.Type,
           }).ToList()
         }
     ).ToListAsync();

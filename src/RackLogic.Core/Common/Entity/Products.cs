@@ -11,6 +11,7 @@ public class Products
   public string? Orientation { get; set; }
   public double? Price { get; set; }
   public double? DistanceCenterToCenter { get; set; }
+  public string? Type { get; set; }
   public Guid? ManufacturerId { get; set; }
   public required OEMBrand Manufacturer { get; set; }
 }
