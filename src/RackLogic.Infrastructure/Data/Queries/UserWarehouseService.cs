@@ -80,6 +80,7 @@ public class UserWarehouseService : IUserWarehouseService
                               Description = product.Description,
                               Orientation = product.Orientation,
                               DistanceCenterToCenter = product.DistanceCenterToCenter,
+                              Type = product.Type
                             };
 
     int totalRecords = await queryListProducts.CountAsync();
@@ -107,7 +108,8 @@ public class UserWarehouseService : IUserWarehouseService
                   Code = product.Code,
                   Description = product.Description,
                   Orientation = product.Orientation,
-                  DistanceCenterToCenter = product.DistanceCenterToCenter
+                  DistanceCenterToCenter = product.DistanceCenterToCenter,
+                  Type = product.Type
                 };
 
     var products = await query.ToListAsync();
