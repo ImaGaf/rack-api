@@ -1,7 +1,6 @@
-﻿using RackLogic.UseCases.StoreNotifications.AppStore;
-
-namespace RackLogic.UseCases.StoreNotifications;
+﻿namespace RackLogic.UseCases.StoreNotifications;
 public interface IStoreNotificationService
 {
-  Task<TransactionInfo?> DecodeJWTToken(string token);
+  Task<T?> DecodeJWTToken<T>(string token);
+  Task<bool> VerifyAppleReceiptByTransactionId(string id);
 }
