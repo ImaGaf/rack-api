@@ -2,10 +2,10 @@
 using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
 using RackLogic.Core.UserAggregate;
+using RackLogic.Infrastructure.Configuration;
 
 namespace RackLogic.Infrastructure.Token;
 public static class TokenUtil
@@ -61,34 +61,27 @@ public static class TokenUtil
     return Task.FromResult(JsonConvert.DeserializeObject<T>(payload ?? string.Empty));
   }
 
-  public static string GenerateDeveloperIOSToken(string keyId, string issuerId, string bundleId)
+  public static string GenerateDeveloperIOSToken(AppStoreConfig config)
   {
-    var privateKey = @"-----BEGIN PRIVATE KEY-----
-                    MIGTAgEAMBMGByqGSM49AgEGCCqGSM49AwEHBHkwdwIBAQQgA/9wtjQCv7qJjRmU
-                    MMX0rubs75H8iJXZwsccxavKDUGgCgYIKoZIzj0DAQehRANCAAQOVZ/b7wvAIAhp
-                    W5yUiiELf5k9oye0dh8QtF6iNENkL7pN8CCuJIctgitMHYgA2nAlv1X5Fo9mv+xe
-                    yr2C1w4e
-                    -----END PRIVATE KEY-----";
     var securityKey = new ECDsaSecurityKey(ECDsa.Create());
-
     // Load Private Key (PEM format)
-    securityKey.ECDsa.ImportFromPem(privateKey.ToCharArray());
+    securityKey.ECDsa.ImportFromPem(config.PrivateKey.ToCharArray());
 
     var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.EcdsaSha256);
 
     var tokenDescriptor = new SecurityTokenDescriptor
     {
-      Issuer = issuerId,
-      Audience = "appstoreconnect-v1",
-      Claims = new Dictionary<string, object> { { "bid", bundleId } },
-      Expires = DateTime.UtcNow.AddMinutes(30),
+      Issuer = config.IssuerId,
+      Audience = config.Audience,
+      Claims = new Dictionary<string, object> { { "bid", config.BundleId } },
+      Expires = DateTime.UtcNow.AddMinutes(3),
       SigningCredentials = credentials
     };
 
     var tokenHandler = new JwtSecurityTokenHandler();
     var securityToken = tokenHandler.CreateJwtSecurityToken(tokenDescriptor);
 
-    securityToken.Header["kid"] = keyId;
+    securityToken.Header["kid"] = config.KeyId;
 
     return tokenHandler.WriteToken(securityToken);
   }

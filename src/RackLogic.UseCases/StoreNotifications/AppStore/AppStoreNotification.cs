@@ -45,3 +45,8 @@ public class TransactionInfo
   public long Price { get; set; }
   public string Currency { get; set; } = string.Empty;
 }
+
+public class SignedTransactionInfoData
+{
+  public required string SignedTransactionInfo { get; set; }
+}

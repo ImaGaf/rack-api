@@ -1,8 +1,7 @@
-﻿using Ardalis.SharedKernel;
-using RackLogic.Core.UserAggregate;
+﻿using RackLogic.Core.UserAggregate;
 
 namespace RackLogic.Core.Common.Entity;
-public class PurchaseRecord : EntityBase<Guid>, IAggregateRoot
+public class PurchaseRecord : BaseEntityCustom
 {
   public required Guid UserId { get; set; }
   public ApplicationUser? User { get; set; }

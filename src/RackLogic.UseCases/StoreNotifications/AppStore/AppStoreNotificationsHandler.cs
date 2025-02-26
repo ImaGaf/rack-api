@@ -1,17 +1,25 @@
-﻿using System.Text;
-using Ardalis.Result;
+﻿using Ardalis.Result;
 using Ardalis.SharedKernel;
-using Newtonsoft.Json;
+using RackLogic.Core.Common.Entity;
+using RackLogic.Core.Interfaces;
 
 namespace RackLogic.UseCases.StoreNotifications.AppStore;
-public class AppStoreNotificationsHandler(IStoreNotificationService _storeNotificationService) 
+public class AppStoreNotificationsHandler(
+  IRepositoryWithExpression<PurchaseRecord> _purchaseRecordRepository,
+  IStoreNotificationService _storeNotificationService) 
   : ICommandHandler<AppStoreNotificationPayloadCommand, Result<bool>>
 {
   public async Task<Result<bool>> Handle(AppStoreNotificationPayloadCommand request, CancellationToken cancellationToken)
   {
-    var tran = await GetTransactionInfoByToken(request.SignedPayload);
-    var rs = _storeNotificationService.VerifyAppleReceiptByTransactionId(tran?.TransactionId ?? string.Empty);
-    return await VerifyAppleReceipt(request.SignedPayload);
+    // Get transaction Id
+    var transactionInfoByRequest = await GetTransactionInfoByToken(request.SignedPayload);
+    // Confirm transaction with Appstore api
+    var signedTransactionInfoData = await  _storeNotificationService.VerifyAppleReceiptByTransactionId(transactionInfoByRequest?.TransactionId ?? string.Empty);
+    // Decode transaction token by Appstore api response
+    var transactionInfo = await _storeNotificationService.DecodeJWTToken<TransactionInfo>(signedTransactionInfoData?.SignedTransactionInfo ?? string.Empty);
+    if (transactionInfo is null) return false;
+
+    return await UpdateTransaction(transactionInfo, request.SignedPayload, cancellationToken);
   }
 
   private async Task<TransactionInfo?> GetTransactionInfoByToken(string token)
@@ -22,28 +30,22 @@ public class AppStoreNotificationsHandler(IStoreNotificationService _storeNotifi
     return await _storeNotificationService.DecodeJWTToken<TransactionInfo>(appStoreNotification.Data?.SignedTransactionInfo ?? string.Empty);
   }
 
-  private async Task<bool> VerifyAppleReceipt(string request)
+  private async Task<bool> UpdateTransaction(TransactionInfo transactionInfo, string receiptData, CancellationToken cancellationToken)
   {
-    var url = "https://sandbox.itunes.apple.com/verifyReceipt";
-    var appStoreNotification = await _storeNotificationService.DecodeJWTToken<AppStoreNotification>(request);
-    if (appStoreNotification is null) return false;
+    var entity = await _purchaseRecordRepository.FirstOrDefaultAsync(x => x.OrderId == transactionInfo.OriginalTransactionId);
+    if (entity is null) return false;
 
-    var requestData = new
-    {
-      receiptData = appStoreNotification.Data?.SignedTransactionInfo ?? string.Empty,
-      password = "ab1867a592ea4bac9f5d3193a7461ab8" // Cần lấy trong App Store Connect
-    };
-
-    using (var httpClient = new HttpClient())
-    {
-      var content = new StringContent(JsonConvert.SerializeObject(requestData), Encoding.UTF8, "application/json");
-      var response = await httpClient.PostAsync(url, content);
-      var responseString = await response.Content.ReadAsStringAsync();
-
-      var result = JsonConvert.DeserializeObject(responseString);
-      if (result is null) return false;
-
-      return false;
-    }
+    entity.PurchaseToken = transactionInfo.TransactionId;
+    entity.OrderId = transactionInfo.OriginalTransactionId;
+    entity.ProductId = transactionInfo.ProductId;
+    entity.PurchaseTime = DateTimeOffset.FromUnixTimeMilliseconds(transactionInfo.PurchaseDate).UtcDateTime;
+    entity.ExpiryTime = DateTimeOffset.FromUnixTimeMilliseconds(transactionInfo.ExpiresDate).UtcDateTime;
+    entity.Status = transactionInfo.TransactionReason;
+    entity.AutoRenewing = !string.IsNullOrEmpty(transactionInfo.SubscriptionGroupIdentifier);
+    entity.IsRefunded = transactionInfo.TransactionReason == "REFUND";
+    entity.ReceiptData = receiptData;
+    entity.LastModificationTime = DateTime.UtcNow;
+    await _purchaseRecordRepository.UpdateAsync(entity,cancellationToken);
+    return true;
   }
 }

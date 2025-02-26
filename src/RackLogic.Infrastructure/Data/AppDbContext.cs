@@ -23,6 +23,7 @@ public class AppDbContext(DbContextOptions<AppDbContext> options,
   public DbSet<Products> Products => Set<Products>();
   public DbSet<OEMBrand> OEMBrands => Set<OEMBrand>();
   public DbSet<WarehouseFinalUses> WarehouseFinalUses => Set<WarehouseFinalUses>();
+  public DbSet<PurchaseRecord> PurchaseRecords => Set<PurchaseRecord>();
   protected override void OnModelCreating(ModelBuilder modelBuilder)
   {
     base.OnModelCreating(modelBuilder);
@@ -75,6 +76,12 @@ public class AppDbContext(DbContextOptions<AppDbContext> options,
       .WithMany()
       .HasForeignKey(wf => wf.WarehouseId)
       .OnDelete(DeleteBehavior.Cascade);
+
+    modelBuilder.Entity<PurchaseRecord>()
+        .HasOne(p => p.User)
+        .WithMany(u => u.Purchases)
+        .HasForeignKey(p => p.UserId)
+        .OnDelete(DeleteBehavior.Cascade);
   }
 
   public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = new CancellationToken())
