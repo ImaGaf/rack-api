@@ -462,6 +462,9 @@ namespace RackLogic.Infrastructure.Data.Migrations
                     b.Property<double?>("Price")
                         .HasColumnType("float");
 
+                    b.Property<string>("Type")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<double?>("Width")
                         .HasColumnType("float");
 
