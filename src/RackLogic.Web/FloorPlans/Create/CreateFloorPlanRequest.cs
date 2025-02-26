@@ -15,13 +15,10 @@ public class FloorPlanRequest
   public Guid? FloorPlanRequestId { get; set; } 
   [Required]
   public required string Title { get; set; }
-  [Required]
-  public required int Floor { get; set; }
+  public int? Floor { get; set; }
   public string? Description { get; set; }
-  [Required]
-  public required int TotalRack { get; set; }
-  [Required]
-  public required int TotalBay { get; set; }
+  public int? TotalRack { get; set; }
+  public int? TotalBay { get; set; }
   [Required]
   public required List<FloorPlanItem> Items { get; set; }
   public List<IFormFile> Files { get; set; } = new();
@@ -29,11 +26,9 @@ public class FloorPlanRequest
 
 public class FloorPlanItem
 {
-  public Guid? Id { get; set; } 
-  [Required]
-  public required int Rack { get; set; }
-  [Required]
-  public required int Bay { get; set; }
+  public Guid? Id { get; set; }
+  public int? Rack { get; set; }
+  public int? Bay { get; set; }
   public List<Comment>? Comments { get; set; }
   [Required]
   public required string Offset { get; set; }

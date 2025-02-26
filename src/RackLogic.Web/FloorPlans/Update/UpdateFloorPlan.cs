@@ -137,15 +137,15 @@ public class UpdateFloorPlan(IMediator _mediator, IHttpContextAccessor _httpCont
 
                 return new UpdateFloorPlanItemInformation
                 {
-                  Id = Guid.Parse(itemId!),
-                  Rack = int.Parse(rack!),
-                  Bay = int.Parse(bay!),
+                  Id = Guid.TryParse(itemId, out var parsedItemId) ? parsedItemId : null,
+                  Rack = int.TryParse(rack, out var parsedRack) ? parsedRack : null,
+                  Bay = int.TryParse(bay, out var parsedBay) ? parsedBay : null,
                   Offset = offset.FirstOrDefault() ?? string.Empty,
                   Size = int.TryParse(size, out var parsedSize) ? parsedSize : null,
                   Width = double.TryParse(width, out var parsedWidth) ? parsedWidth : null,
                   Height = double.TryParse(height, out var parsedHeight) ? parsedHeight : null,
                   ObjectType = objectType.FirstOrDefault() ?? null,
-                  Rotation = double.Parse(rotation!),
+                  Rotation = double.TryParse(rotation, out var parsedRotation) ? parsedRotation : null,
                   Comments = comments
                 };
               }).ToList();
@@ -154,10 +154,10 @@ public class UpdateFloorPlan(IMediator _mediator, IHttpContextAccessor _httpCont
           {
             FloorPlanId = floorPlanId,
             Title = title.ToString(),
-            Floor = int.Parse(floor!),
+            Floor = int.TryParse(floor, out var parsedFloor) ? parsedFloor : null,
             Description = description.ToString() ?? null,
-            TotalRack = int.Parse(totalRack!),
-            TotalBay = int.Parse(totalBay!),
+            TotalRack = int.TryParse(totalRack, out var parsedTotalRack) ? parsedTotalRack : null,
+            TotalBay = int.TryParse(totalBay, out var parsedTotalBay) ? parsedTotalBay : null,
             FileUrlsToDelete = fileUrlsToDelete,
             NewFiles = newFiles,
             FilesToUpdate = filesToUpdate,

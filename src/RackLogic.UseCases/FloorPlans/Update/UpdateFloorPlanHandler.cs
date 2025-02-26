@@ -26,59 +26,89 @@ public class UpdateFloorPlanHandler(
     var userCreatedId = request.UserCreatedId;
     if (!await CheckPermissionUserRequest(userCreatedId, request.WarehouseId)) return Result.Forbidden();
 
-    var results = new List<bool>();
+    var validationErrors = new List<ValidationError>();
 
     foreach (var plan in request.FloorAsset)
     {
-      results.Add(await ProcessFloorPlan(plan, request.WarehouseId));
+      var processResult = await ProcessFloorPlan(plan, request.WarehouseId);
+      if (!processResult.IsSuccess) validationErrors.AddRange(processResult.ValidationErrors);
     }
 
-    return !results.Any(x => x == false);
+    return validationErrors.Any() ? Result<bool>.Invalid(validationErrors) : Result.Success(true);
   }
 
   //Funcition
-  private async Task<bool> ProcessFloorPlan(UpdateFloorPlanInformationCommand plan, Guid warehouseId)
+  private async Task<Result<bool>> ProcessFloorPlan(UpdateFloorPlanInformationCommand plan, Guid warehouseId)
   {
     var floorPlan = await _floorPlanRepository.FirstOrDefaultAsync(x => x.Id == plan.FloorPlanId);
-    if (floorPlan is null) return false;
+    if (floorPlan is null) return Result.Invalid(new ValidationError($"Update failed: FloorPlan with ID {plan.FloorPlanId}, not found in database."));
 
     plan.UpdateFloorPlan(floorPlan);
-    await UpdateFloorPlanItems(plan.Items);
+
+    var itemResult = await UpdateFloorPlanItems(plan.Items);
+    if (!itemResult.IsSuccess) return itemResult;
+
     await HandleFileOperations(plan, warehouseId, floorPlan.Id);
     await _floorPlanRepository.UpdateAsync(floorPlan);
 
-    return true;
+    return Result.Success(true);
   }
 
-  private async Task UpdateFloorPlanItems(List<UpdateFloorPlanItemInformationCommand> items)
+  private async Task<Result<bool>> UpdateFloorPlanItems(List<UpdateFloorPlanItemInformationCommand> items)
   {
-    var itemIds = items.Select(i => i.Id).ToList();
-    var floorPlanItems = await _floorPlanItemRepository.ListAsync(i => itemIds.Contains(i.Id));
+    if (items is null || items.Count == 0) return Result.Success(true);
 
+    var itemIds = items.Select(i => i.Id);
+    var floorPlanItems = await _floorPlanItemRepository.ListAsync(i => itemIds.Contains(i.Id));
+    var existingItemIds = floorPlanItems.Select(i => i.Id);
+    var missingItemIds = itemIds.Except(existingItemIds);
+
+    var validationErrors = missingItemIds
+        .Select(id => new ValidationError($"Update failed: FloorPlanItem with ID {id}, not found in database."))
+        .ToList();
+
+    // Update items valid
     var updatedItems = items
+        .Where(item => existingItemIds.Contains(item.Id))
         .Join(floorPlanItems, item => item.Id, floorPlanItem => floorPlanItem.Id, (item, floorPlanItem) => new { item, floorPlanItem })
         .ToList();
 
     updatedItems.ForEach(x => x.item.UpdateFloorPlanItem(x.floorPlanItem));
 
-    // Process comments at one time
-    var commentTasks = updatedItems
-        .Where(x => x.item.Comments != null && x.item.Comments.Any())
-        .Select(x => UpdateFloorPlanItemComments(x.item.Comments, x.floorPlanItem.Id));
+    // Function Comments
+    var commentErrors = new List<ValidationError>();
 
-    await Task.WhenAll(commentTasks);
+    foreach (var x in updatedItems.Where(x => x.item.Comments?.Any() == true).ToList())
+    {
+      var result = await UpdateFloorPlanItemComments(x.item.Comments, x.floorPlanItem.Id);
+      if (!result.IsSuccess)
+      {
+        commentErrors.AddRange(result.ValidationErrors);
+      }
+    }
+
+    validationErrors.AddRange(commentErrors);
+    return validationErrors.Any() ? Result<bool>.Invalid(validationErrors) : Result.Success(true);
   }
 
-  private async Task UpdateFloorPlanItemComments(List<UpdateFloorPlanCommentCommand>? comments, Guid floorPlanItemId)
+  private async Task<Result<bool>> UpdateFloorPlanItemComments(List<UpdateFloorPlanCommentCommand>? comments, Guid floorPlanItemId)
   {
-    if (comments == null || comments.Count == 0) return;
+    if (comments == null || comments.Count == 0) return Result.Success(true);
 
-    var commentIds = comments.Select(c => c.Id);
+    var commentIds = comments.Select(c => c.Id).ToList();
     var existingComments = await _floorPlanCommentsRepository
-        .ListAsync(c => c.FloorPlanItemId == floorPlanItemId && commentIds.Any(x => x == c.Id));
+        .ListAsync(c => c.FloorPlanItemId == floorPlanItemId && commentIds.Contains(c.Id));
 
-    // Use Join to match comments from requests with entities in DB
+    var existingCommentIds = existingComments.Select(c => c.Id).ToHashSet();
+    var missingCommentIds = commentIds.Where(id => !existingCommentIds.Contains(id));
+
+    var validationErrors = missingCommentIds
+        .Select(id => new ValidationError($"Update failed: FloorPlanComment with ID {id}, not found in database."))
+        .ToList();
+
+    // Update comments valid
     var updatedComments = comments
+        .Where(c => existingCommentIds.Contains(c.Id))
         .Join(existingComments,
               c => c.Id,
               ec => ec.Id,
@@ -86,6 +116,8 @@ public class UpdateFloorPlanHandler(
         .ToList();
 
     updatedComments.ForEach(pair => pair.Command.UpdateFloorPlanComment(pair.Entity));
+
+    return validationErrors.Any() ? Result<bool>.Invalid(validationErrors) : Result.Success(true);
   }
   private async Task HandleFileOperations(UpdateFloorPlanInformationCommand plan, Guid warehouseId, Guid floorPlanId)
   {
@@ -129,14 +161,9 @@ public class UpdateFloorPlanHandler(
   {
     var savedFiles = await _fileService.SaveFilesAsync(warehouseId, floorPlanId, newFiles);
 
-    var floorPlanFiles = savedFiles.Select(f => new FloorPlanFiles
-    {
-      Id = Guid.NewGuid(),
-      FloorPlanId = floorPlanId,
-      FileName = f.FileName,
-      FileUrl = f.FilePath,
-      ContentType = f.ContentType
-    }).ToList();
+    var floorPlanFiles = savedFiles
+       .Select(sf => sf.ToFloorPlanFile(floorPlanId))
+       .ToList();
 
     await _floorPlanFilesRepository.AddRangeAsync(floorPlanFiles);
   }

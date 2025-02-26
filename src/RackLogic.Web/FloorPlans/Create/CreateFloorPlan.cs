@@ -1,4 +1,5 @@
-﻿using Ardalis.Result;
+﻿using System.Drawing;
+using Ardalis.Result;
 using FastEndpoints;
 using MediatR;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -118,8 +119,8 @@ public class CreateFloorPlan(IMediator _mediator, IHttpContextAccessor _httpCont
                           return new FloorPlanItem
                           {
                             Id = Guid.TryParse(floorPlanItemId, out var itemId) ? itemId : Guid.NewGuid(),
-                            Rack = int.Parse(rack!),
-                            Bay = int.Parse(bay!),
+                            Rack = int.TryParse(rack, out var parsedRack) ? parsedRack : null,
+                            Bay = int.TryParse(bay, out var parsedBay) ? parsedBay : null,
                             Offset = offset.FirstOrDefault() ?? string.Empty,
                             Size = int.TryParse(size, out var parsedSize) ? parsedSize : null,
                             Width = double.TryParse(width, out var parsedWidth) ? parsedWidth : null,
@@ -134,10 +135,10 @@ public class CreateFloorPlan(IMediator _mediator, IHttpContextAccessor _httpCont
           {
             FloorPlanRequestId = Guid.TryParse(floorPlanRequestId, out var requestId) ? requestId : Guid.NewGuid(),
             Title = assetName.ToString(),
-            Floor = int.Parse(floorNumber!),
+            Floor = int.TryParse(floorNumber, out var parsedFloorNumber) ? parsedFloorNumber : null,
             Description = description.ToString() ?? null,
-            TotalRack = int.Parse(totalRack!),
-            TotalBay = int.Parse(totalBay!),
+            TotalRack = int.TryParse(totalRack, out var parsedTotalRack) ? parsedTotalRack : null,
+            TotalBay = int.TryParse(totalBay, out var parsedTotalBay) ? parsedTotalBay : null,
             Items = floorItems,
             Files = files.ToList()
           };

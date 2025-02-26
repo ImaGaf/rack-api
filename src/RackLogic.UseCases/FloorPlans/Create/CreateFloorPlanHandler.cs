@@ -25,18 +25,16 @@ public class CreateFloorPlanHandler(
     var userCreatedId = request.UserCreatedId;
     if (!await CheckPermissionUserRequest(userCreatedId, request.WarehouseId)) return Result.Forbidden();
 
-    var (floorPlans, floorPlanItems, floorPlanComments) = BuildFloorPlanData(request, userCreatedId);
+    var (floorPlans, floorPlanItems, floorPlanComments) = GetFloorPlanData(request, userCreatedId);
 
-    if (!await SaveFloorPlanData(floorPlans, floorPlanItems, floorPlanComments))
-      return Result.Invalid(new ValidationError("Failed to create floor plans."));
-
-    await SaveFloorPlanFiles(floorPlans, request.FloorPlans);
+    var saveResult = await SaveFloorPlanData(floorPlans, floorPlanItems, floorPlanComments, request.FloorPlans);
+    if (!saveResult.IsSuccess) return saveResult;
 
     return Result.Success(true);
   }
 
   //Funcition
-  private (List<FloorPlan>, List<FloorPlanItem>, List<FloorPlanComments>) BuildFloorPlanData(CreateFloorPlanCommand request, Guid userCreatedId)
+  private (List<FloorPlan>, List<FloorPlanItem>, List<FloorPlanComments>) GetFloorPlanData(CreateFloorPlanCommand request, Guid userCreatedId)
   {
     var floorPlans = request.FloorPlans
         .Select(f => f.ToFloorPlan(request.WarehouseId, userCreatedId))
@@ -54,17 +52,96 @@ public class CreateFloorPlanHandler(
 
     return (floorPlans, floorPlanItems, floorPlanComments);
   }
-
-  private async Task<bool> SaveFloorPlanData(List<FloorPlan> floorPlans, List<FloorPlanItem> floorPlanItems, List<FloorPlanComments> floorPlanComments)
+  private async Task<Result<bool>> SaveFloorPlanData(List<FloorPlan> floorPlans, List<FloorPlanItem> floorPlanItems, List<FloorPlanComments> floorPlanComments, List<FloorPlanCommand> floorPlanRequests)
   {
-    var savedFloorPlans = await _floorPlanRepository.AddRangeAsync(floorPlans);
-    if (savedFloorPlans == null) return false;
+    // // Check errors for each object
+    var errorFloorPlanIds = await CheckAndGetErrorsForFloorPlans(floorPlans);
+    var errorFloorPlanItemIds = await CheckAndGetErrorsForFloorPlanItems(floorPlanItems, errorFloorPlanIds);
+    var errorFloorPlanCommentIds = await CheckAndGetErrorsForFloorPlanComments(floorPlanComments, errorFloorPlanItemIds);
 
-    var savedFloorPlanItems = await _floorPlanItemRepository.AddRangeAsync(floorPlanItems);
-    if (savedFloorPlanItems == null) return false;
+    // Save valid floorPlans to DB first
+    var validFloorPlans = floorPlans.Where(f => !errorFloorPlanIds.Contains(f.Id)).ToList();
+    await _floorPlanRepository.AddRangeAsync(validFloorPlans);
 
-    await _floorPlanCommentsRepository.AddRangeAsync(floorPlanComments);
-    return true;
+    // Save valid floorPlanItems to DB first
+    var validfloorPlanItems = floorPlanItems.Where(i => !errorFloorPlanItemIds.Contains(i.Id)).ToList();
+    await _floorPlanItemRepository.AddRangeAsync(validfloorPlanItems);
+
+    // Save valid floorPlanComments to DB first
+    var validfloorPlanComments = floorPlanComments.Where(c => !errorFloorPlanCommentIds.Contains(c.Id)).ToList();
+    await _floorPlanCommentsRepository.AddRangeAsync(validfloorPlanComments);
+
+    // Check and return errors if any
+    var validationErrors = new List<ValidationError>();
+
+    if (errorFloorPlanIds.Any())
+    {
+      validationErrors.Add(new ValidationError($"Failed to create floor plans with IDs: {string.Join(", ", errorFloorPlanIds)}"));
+    }
+    if (errorFloorPlanItemIds.Any())
+    {
+      validationErrors.Add(new ValidationError($"Failed to create items with IDs: {string.Join(", ", errorFloorPlanItemIds)}"));
+    }
+    if (errorFloorPlanCommentIds.Any())
+    {
+      validationErrors.Add(new ValidationError($"Failed to create comments with IDs: {string.Join(", ", errorFloorPlanCommentIds)}"));
+    }
+
+    await SaveFloorPlanFiles(floorPlans, floorPlanRequests);
+
+    if (validationErrors.Any())
+    {
+      return Result<bool>.Invalid(validationErrors);
+    }
+
+    return Result.Success(true);
+  }
+
+  private async Task<List<Guid>> CheckAndGetErrorsForFloorPlans(List<FloorPlan> floorPlans)
+  {
+    var floorPlanIds = floorPlans.Select(f => f.Id).ToList();
+
+    var existingFloorPlans = await _floorPlanRepository.ListAsync(f => floorPlanIds.Contains(f.Id));
+
+    return existingFloorPlans.Select(f => f.Id).ToList();
+  }
+
+
+  private async Task<List<Guid>> CheckAndGetErrorsForFloorPlanItems(List<FloorPlanItem> floorPlanItems, List<Guid> errorFloorPlanIds)
+{
+    var floorPlanItemIds = floorPlanItems.Select(f => f.Id).ToList(); 
+
+    var existingFloorPlanItems = await _floorPlanItemRepository.ListAsync(f => floorPlanItemIds.Contains(f.Id));
+
+    var errorFloorPlanItemIds = new List<Guid>();
+    foreach (var floorPlanItem in floorPlanItems)
+    {
+        if (errorFloorPlanIds.Contains(floorPlanItem.FloorPlanId) || existingFloorPlanItems.Any(e => e.Id == floorPlanItem.Id))
+        {
+            errorFloorPlanItemIds.Add(floorPlanItem.Id);
+        }
+    }
+
+    return errorFloorPlanItemIds;
+}
+
+
+  private async Task<List<Guid>> CheckAndGetErrorsForFloorPlanComments(List<FloorPlanComments> floorPlanComments, List<Guid> errorFloorPlanItemIds)
+  {
+    var floorPlanCommentIds = floorPlanComments.Select(f => f.Id).ToList();
+
+    var existingFloorPlanComments = await _floorPlanCommentsRepository.ListAsync(f => floorPlanCommentIds.Contains(f.Id));
+
+    var errorFloorPlanCommentIds = new List<Guid>();
+    foreach (var floorPlanComment in floorPlanComments)
+    {
+      if (errorFloorPlanItemIds.Contains(floorPlanComment.FloorPlanItemId) || existingFloorPlanComments.Any(e => e.Id == floorPlanComment.Id))
+      {
+        errorFloorPlanCommentIds.Add(floorPlanComment.Id); 
+      }
+    }
+
+    return errorFloorPlanCommentIds;
   }
 
   private async Task SaveFloorPlanFiles(List<FloorPlan> floorPlans, List<FloorPlanCommand> floorPlanRequests)
@@ -74,7 +151,6 @@ public class CreateFloorPlanHandler(
       if (f.Files?.Any() ?? false)
       {
         var savedFiles = await _fileService.SaveFilesAsync(floorPlan.WarehouseId, floorPlan.Id, f.Files);
-
         var floorPlanFiles = savedFiles
             .Select(sf => sf.ToFloorPlanFile(floorPlan.Id))
             .ToList();
