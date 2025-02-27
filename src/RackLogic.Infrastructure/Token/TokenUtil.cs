@@ -1,8 +1,11 @@
 ﻿using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
+using System.Security.Cryptography;
 using System.Text;
 using Microsoft.IdentityModel.Tokens;
+using Newtonsoft.Json;
 using RackLogic.Core.UserAggregate;
+using RackLogic.Infrastructure.Configuration;
 
 namespace RackLogic.Infrastructure.Token;
 public static class TokenUtil
@@ -48,5 +51,38 @@ public static class TokenUtil
       throw new SecurityTokenException("GetPrincipalFromExpiredToken Token is not validated");
 
     return principal;
+  }
+
+  public static Task<T?> DecodeJwt<T>(string token)
+  {
+    var handler = new JwtSecurityTokenHandler();
+    var jsonToken = handler.ReadJwtToken(token);
+    var payload = jsonToken.Payload.SerializeToJson();
+    return Task.FromResult(JsonConvert.DeserializeObject<T>(payload ?? string.Empty));
+  }
+
+  public static string GenerateDeveloperIOSToken(AppStoreConfig config)
+  {
+    var securityKey = new ECDsaSecurityKey(ECDsa.Create());
+    // Load Private Key (PEM format)
+    securityKey.ECDsa.ImportFromPem(config.PrivateKey.ToCharArray());
+
+    var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.EcdsaSha256);
+
+    var tokenDescriptor = new SecurityTokenDescriptor
+    {
+      Issuer = config.IssuerId,
+      Audience = config.Audience,
+      Claims = new Dictionary<string, object> { { "bid", config.BundleId } },
+      Expires = DateTime.UtcNow.AddMinutes(3),
+      SigningCredentials = credentials
+    };
+
+    var tokenHandler = new JwtSecurityTokenHandler();
+    var securityToken = tokenHandler.CreateJwtSecurityToken(tokenDescriptor);
+
+    securityToken.Header["kid"] = config.KeyId;
+
+    return tokenHandler.WriteToken(securityToken);
   }
 }

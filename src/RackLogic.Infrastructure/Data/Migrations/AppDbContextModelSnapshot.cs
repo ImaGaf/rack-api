@@ -475,6 +475,75 @@ namespace RackLogic.Infrastructure.Data.Migrations
                     b.ToTable("Products");
                 });
 
+            modelBuilder.Entity("RackLogic.Core.Common.Entity.PurchaseRecord", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<bool>("AutoRenewing")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime>("CreationTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid?>("CreatorId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("DeleterId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("DeletionTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("ExpiryTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsRefunded")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime?>("LastModificationTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid?>("LastModifierId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("OrderId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ProductId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("PurchaseTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("PurchaseToken")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ReceiptData")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("PurchaseRecords");
+                });
+
             modelBuilder.Entity("RackLogic.Core.Common.Entity.UserWarehouseRole", b =>
                 {
                     b.Property<Guid>("Id")
@@ -930,6 +999,17 @@ namespace RackLogic.Infrastructure.Data.Migrations
                     b.Navigation("Manufacturer");
                 });
 
+            modelBuilder.Entity("RackLogic.Core.Common.Entity.PurchaseRecord", b =>
+                {
+                    b.HasOne("RackLogic.Core.UserAggregate.ApplicationUser", "User")
+                        .WithMany("Purchases")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("RackLogic.Core.Common.Entity.UserWarehouseRole", b =>
                 {
                     b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole<System.Guid>", "Role")
@@ -1056,6 +1136,8 @@ namespace RackLogic.Infrastructure.Data.Migrations
                     b.Navigation("Invitations");
 
                     b.Navigation("OwnedWarehouses");
+
+                    b.Navigation("Purchases");
 
                     b.Navigation("UserOtps");
                 });

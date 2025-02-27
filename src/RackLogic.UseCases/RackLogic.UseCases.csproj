@@ -5,6 +5,7 @@
     <PackageReference Include="MediatR" />
     <PackageReference Include="Microsoft.AspNetCore.Identity" />
     <PackageReference Include="Microsoft.AspNetCore.WebUtilities" />
+    <PackageReference Include="Newtonsoft.Json" />
   </ItemGroup>
 
   <ItemGroup>

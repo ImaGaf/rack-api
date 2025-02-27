@@ -23,6 +23,7 @@ public class AppDbContext(DbContextOptions<AppDbContext> options,
   public DbSet<Products> Products => Set<Products>();
   public DbSet<OEMBrand> OEMBrands => Set<OEMBrand>();
   public DbSet<WarehouseFinalUses> WarehouseFinalUses => Set<WarehouseFinalUses>();
+  public DbSet<PurchaseRecord> PurchaseRecords => Set<PurchaseRecord>();
   public DbSet<FloorPlanItem> FloorPlanItems => Set<FloorPlanItem>();
   public DbSet<FloorPlanComments> FloorPlanComments => Set<FloorPlanComments>();
   protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -78,6 +79,12 @@ public class AppDbContext(DbContextOptions<AppDbContext> options,
       .HasForeignKey(wf => wf.WarehouseId)
       .OnDelete(DeleteBehavior.Cascade);
 
+    modelBuilder.Entity<PurchaseRecord>()
+        .HasOne(p => p.User)
+        .WithMany(u => u.Purchases)
+        .HasForeignKey(p => p.UserId)
+        .OnDelete(DeleteBehavior.Cascade);
+        
     modelBuilder.Entity<FloorPlanItem>()
       .HasMany(fpi => fpi.Comments)
       .WithOne(fpc => fpc.FloorPlanItem)
