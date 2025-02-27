@@ -10,4 +10,5 @@ public class GetProductsByCategoryResponse
   public string? Description { get; set; }
   public string? Orientation { get; set; }
   public double? DistanceCenterToCenter { get; set; }
+  public string? Type { get; set; }
 }

@@ -37,6 +37,7 @@ public static class InfrastructureServiceExtensions
            .AddScoped<IStoreNotificationService, StoreNotificationService>()
            .AddScoped<IUserWarehouseService, UserWarehouseService>()
            .AddScoped<IFileService, FileService>()
+           .AddScoped<IFloorPlanService, FloorPlanService>()
            .AddScoped<IUserTokenRepository, UserTokenRepository>();
 
 

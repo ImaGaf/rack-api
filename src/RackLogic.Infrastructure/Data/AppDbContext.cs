@@ -24,6 +24,8 @@ public class AppDbContext(DbContextOptions<AppDbContext> options,
   public DbSet<OEMBrand> OEMBrands => Set<OEMBrand>();
   public DbSet<WarehouseFinalUses> WarehouseFinalUses => Set<WarehouseFinalUses>();
   public DbSet<PurchaseRecord> PurchaseRecords => Set<PurchaseRecord>();
+  public DbSet<FloorPlanItem> FloorPlanItems => Set<FloorPlanItem>();
+  public DbSet<FloorPlanComments> FloorPlanComments => Set<FloorPlanComments>();
   protected override void OnModelCreating(ModelBuilder modelBuilder)
   {
     base.OnModelCreating(modelBuilder);
@@ -82,6 +84,18 @@ public class AppDbContext(DbContextOptions<AppDbContext> options,
         .WithMany(u => u.Purchases)
         .HasForeignKey(p => p.UserId)
         .OnDelete(DeleteBehavior.Cascade);
+        
+    modelBuilder.Entity<FloorPlanItem>()
+      .HasMany(fpi => fpi.Comments)
+      .WithOne(fpc => fpc.FloorPlanItem)
+      .HasForeignKey(fpc => fpc.FloorPlanItemId)
+      .OnDelete(DeleteBehavior.Cascade);
+
+    modelBuilder.Entity<FloorPlanComments>()
+      .HasOne(fpc => fpc.FloorPlanItem)
+      .WithMany(fpi => fpi.Comments)
+      .HasForeignKey(fpc => fpc.FloorPlanItemId)
+      .OnDelete(DeleteBehavior.Cascade);
   }
 
   public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = new CancellationToken())
