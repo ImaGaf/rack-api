@@ -10,4 +10,4 @@ public record RegisterUserCommand
   string Password,
   bool OptOutRackLogicMarketing,
   string Role)
-  : Ardalis.SharedKernel.ICommand<Result>;
+  : Ardalis.SharedKernel.ICommand<Result<Guid>>;

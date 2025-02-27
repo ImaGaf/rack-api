@@ -28,7 +28,7 @@ public class Register(IMediator _mediator) : Endpoint<RegisterUserRequest, Regis
 
     if(result.IsSuccess)
     {
-      Response = new RegisterUserResponse();
+      Response = new RegisterUserResponse() { UserId = result.Value};
       return;
     }
 
