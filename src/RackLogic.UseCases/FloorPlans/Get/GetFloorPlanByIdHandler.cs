@@ -9,10 +9,7 @@ public class GetFloorPlanByIdHandler(IFloorPlanService _floorPlanService)
   {
     var floorPlans = await _floorPlanService.GetFloorPlansWithFilesByWarehouseIdAsync(request.WarehouseId);
 
-    if (floorPlans == null)
-    {
-      return Result.Success(new List<FloorPlanDTO>());
-    }
+    if (floorPlans == null) return Result.Success(new List<FloorPlanDTO>());
 
     return Result.Success(floorPlans);
   }

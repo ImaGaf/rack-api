@@ -15,7 +15,7 @@ public class FloorPlanService : IFloorPlanService
     var floorPlans = await _context.FloorPlans
         .Include(f => f.FloorPlanFiles)
         .Include(f => f.FloorPlanItems)
-            .ThenInclude(i => i.Comments)
+        .ThenInclude(i => i.Comments)
         .Where(f => f.WarehouseId == warehouseId)
         .ToListAsync();
 
