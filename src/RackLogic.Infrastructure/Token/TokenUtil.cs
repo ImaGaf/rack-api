@@ -4,8 +4,14 @@ using System.Security.Cryptography;
 using System.Text;
 using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
+using Org.BouncyCastle.Crypto.Parameters;
+using Org.BouncyCastle.Crypto;
 using RackLogic.Core.UserAggregate;
 using RackLogic.Infrastructure.Configuration;
+using Org.BouncyCastle.OpenSsl;
+using System.Drawing;
+using Org.BouncyCastle.Asn1.Pkcs;
+using Org.BouncyCastle.Security;
 
 namespace RackLogic.Infrastructure.Token;
 public static class TokenUtil
@@ -63,9 +69,8 @@ public static class TokenUtil
 
   public static string GenerateDeveloperIOSToken(AppStoreConfig config)
   {
-    var securityKey = new ECDsaSecurityKey(ECDsa.Create());
-    // Load Private Key (PEM format)
-    securityKey.ECDsa.ImportFromPem(config.PrivateKey.ToCharArray());
+    var ecKey = LoadECDsaFromPem(config.PrivateKey);
+    var securityKey = new ECDsaSecurityKey(ecKey);
 
     var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.EcdsaSha256);
 
@@ -84,5 +89,33 @@ public static class TokenUtil
     securityToken.Header["kid"] = config.KeyId;
 
     return tokenHandler.WriteToken(securityToken);
+  }
+
+
+  private static ECDsa LoadECDsaFromPem(string privateKeyPem)
+  {
+    using (var reader = new StringReader(privateKeyPem))
+    {
+      var pemReader = new PemReader(reader);
+      var ecPrivateKey = pemReader.ReadObject() as ECPrivateKeyParameters;
+
+      if (ecPrivateKey == null)
+      {
+        throw new Exception("Key is not valid");
+      }
+      return ConvertToECDsa(ecPrivateKey);
+    }
+  }
+  private static ECDsa ConvertToECDsa(ECPrivateKeyParameters ecPrivateKey)
+  {
+    var ecParams = new ECParameters
+    {
+      Curve = ECCurve.NamedCurves.nistP256,
+      D = ecPrivateKey.D.ToByteArrayUnsigned()
+    };
+
+    var ecDsa = ECDsa.Create();
+    ecDsa.ImportParameters(ecParams);
+    return ecDsa;
   }
 }

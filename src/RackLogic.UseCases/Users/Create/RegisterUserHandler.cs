@@ -14,10 +14,10 @@ public class RegisterUserHandler(
   IUserStore<ApplicationUser> _userStore,
   IRepositoryWithExpression<Invitation> _invitationsRepository,
   IRepositoryWithExpression<UserWarehouseRole> _userWarehouseRoleRepository) 
-  : ICommandHandler<RegisterUserCommand, Result>
+  : ICommandHandler<RegisterUserCommand, Result<Guid>>
 {
   private readonly EmailAddressAttribute _emailAddressAttribute = new();
-  public async Task<Result> Handle(RegisterUserCommand request, CancellationToken cancellationToken)
+  public async Task<Result<Guid>> Handle(RegisterUserCommand request, CancellationToken cancellationToken)
   {
     var emailStore = (IUserEmailStore<ApplicationUser>)_userStore;
     var email = request.EmailAddress.Trim();
@@ -57,7 +57,7 @@ public class RegisterUserHandler(
     await HandleInvitation(request.EmailAddress, user, cancellationToken);
     // TODO: Send Email create account.
     //await SendConfirmationEmailAsync(user, userManager, context, email);
-    return Result.Success();
+    return Result.Success(user.Id);
   }
 
   private async Task HandleInvitation(string emailInvited, ApplicationUser user, CancellationToken cancellationToken)
