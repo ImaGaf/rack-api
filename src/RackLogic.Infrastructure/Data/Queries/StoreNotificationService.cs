@@ -1,4 +1,5 @@
 ﻿using System.Net.Http.Headers;
+using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 using RackLogic.Infrastructure.Configuration;
 using RackLogic.Infrastructure.Token;
@@ -6,7 +7,10 @@ using RackLogic.UseCases.StoreNotifications;
 using RackLogic.UseCases.StoreNotifications.AppStore;
 
 namespace RackLogic.Infrastructure.Data.Queries;
-public class StoreNotificationService(AppStoreConfigService _appStoreConfigService) : IStoreNotificationService
+public class StoreNotificationService(
+  AppStoreConfigService _appStoreConfigService,
+  IConfiguration _configuration)
+  : IStoreNotificationService
 {
   public async Task<T?> DecodeJWTToken<T>(string token)
   {
@@ -15,7 +19,8 @@ public class StoreNotificationService(AppStoreConfigService _appStoreConfigServi
 
   public async Task<SignedTransactionInfoData?> VerifyAppleReceiptByTransactionId(string transactionId)
   {
-    string url = $"https://api.storekit-sandbox.itunes.apple.com/inApps/v1/transactions/{transactionId}";
+    var urlConfig = _configuration.GetSection("InAppPurchase:APIConfirmTransactionAppStore").Value ?? string.Empty;
+    var url = string.Format(urlConfig, transactionId);
 
     using (var client = new HttpClient())
     {
