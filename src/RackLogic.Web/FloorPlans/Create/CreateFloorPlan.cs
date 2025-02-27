@@ -1,5 +1,4 @@
-﻿using System.Drawing;
-using Ardalis.Result;
+﻿using Ardalis.Result;
 using FastEndpoints;
 using MediatR;
 using Microsoft.AspNetCore.Authentication.JwtBearer;

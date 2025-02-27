@@ -89,10 +89,7 @@ public class CreateFloorPlanHandler(
 
     await SaveFloorPlanFiles(floorPlans, floorPlanRequests);
 
-    if (validationErrors.Any())
-    {
-      return Result<bool>.Invalid(validationErrors);
-    }
+    if (validationErrors.Any()) return Result<bool>.Invalid(validationErrors);
 
     return Result.Success(true);
   }
@@ -108,38 +105,38 @@ public class CreateFloorPlanHandler(
 
 
   private async Task<List<Guid>> CheckAndGetErrorsForFloorPlanItems(List<FloorPlanItem> floorPlanItems, List<Guid> errorFloorPlanIds)
-{
-    var floorPlanItemIds = floorPlanItems.Select(f => f.Id).ToList(); 
-
+  {
+    var floorPlanItemIds = new HashSet<Guid>(floorPlanItems.Select(f => f.Id));
     var existingFloorPlanItems = await _floorPlanItemRepository.ListAsync(f => floorPlanItemIds.Contains(f.Id));
+    var existingFloorPlanItemIds = new HashSet<Guid>(existingFloorPlanItems.Select(e => e.Id));
 
-    var errorFloorPlanItemIds = new List<Guid>();
-    foreach (var floorPlanItem in floorPlanItems)
-    {
-        if (errorFloorPlanIds.Contains(floorPlanItem.FloorPlanId) || existingFloorPlanItems.Any(e => e.Id == floorPlanItem.Id))
-        {
-            errorFloorPlanItemIds.Add(floorPlanItem.Id);
-        }
-    }
+    var errorFloorPlanIdsSet = new HashSet<Guid>(errorFloorPlanIds);
+
+    var errorFloorPlanItemIds = floorPlanItems
+        .Where(floorPlanItem => 
+          errorFloorPlanIdsSet.Contains(floorPlanItem.FloorPlanId) || 
+          existingFloorPlanItemIds.Contains(floorPlanItem.Id))
+        .Select(floorPlanItem => floorPlanItem.Id)
+        .ToList();
 
     return errorFloorPlanItemIds;
-}
+  }
 
 
   private async Task<List<Guid>> CheckAndGetErrorsForFloorPlanComments(List<FloorPlanComments> floorPlanComments, List<Guid> errorFloorPlanItemIds)
   {
-    var floorPlanCommentIds = floorPlanComments.Select(f => f.Id).ToList();
-
+    var floorPlanCommentIds = new HashSet<Guid>(floorPlanComments.Select(f => f.Id));
     var existingFloorPlanComments = await _floorPlanCommentsRepository.ListAsync(f => floorPlanCommentIds.Contains(f.Id));
+    var existingFloorPlanCommentIds = new HashSet<Guid>(existingFloorPlanComments.Select(e => e.Id));
 
-    var errorFloorPlanCommentIds = new List<Guid>();
-    foreach (var floorPlanComment in floorPlanComments)
-    {
-      if (errorFloorPlanItemIds.Contains(floorPlanComment.FloorPlanItemId) || existingFloorPlanComments.Any(e => e.Id == floorPlanComment.Id))
-      {
-        errorFloorPlanCommentIds.Add(floorPlanComment.Id); 
-      }
-    }
+    var errorFloorPlanItemIdsSet = new HashSet<Guid>(errorFloorPlanItemIds);
+
+    var errorFloorPlanCommentIds = floorPlanComments
+        .Where(floorPlanComment =>
+            errorFloorPlanItemIdsSet.Contains(floorPlanComment.FloorPlanItemId) ||
+            existingFloorPlanCommentIds.Contains(floorPlanComment.Id))
+        .Select(floorPlanComment => floorPlanComment.Id)
+        .ToList();
 
     return errorFloorPlanCommentIds;
   }

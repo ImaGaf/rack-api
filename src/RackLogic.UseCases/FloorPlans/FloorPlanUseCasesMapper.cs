@@ -91,4 +91,48 @@ public static partial class FloorPlanUseCasesMapper
     floorPlanComment.CreationTime = DateTime.Parse(comment.Date);
   }
 
+  public static FloorPlanDTO ToFloorPlanDTO(this FloorPlan floorPlan)
+  {
+    return new FloorPlanDTO
+    {
+      FloorPlanRequestId = floorPlan.Id,
+      Title = floorPlan.AssetName,
+      Floor = floorPlan.FloorNumber,
+      Description = floorPlan.Description,
+      TotalRack = floorPlan.TotalRack,
+      TotalBay = floorPlan.TotalBay,
+      FileUrls = floorPlan.FloorPlanFiles.Select(file => file.FileUrl).ToList(),
+      Items = floorPlan.FloorPlanItems.Select(i => i.ToFloorPlanItemResponse()).ToList()
+    };
+  }
+
+  // Map from FloorPlanItem to FloorPlanItemResponse
+  public static FloorPlanItemResponse ToFloorPlanItemResponse(this FloorPlanItem item)
+  {
+    return new FloorPlanItemResponse
+    {
+      Id = item.Id,
+      Rack = item.Rack,
+      Bay = item.Bay,
+      Offset = item.Offset,
+      Size = item.Size,
+      Width = item.Width,
+      Height = item.Height,
+      ObjectType = item.ObjectType,
+      Rotation = item.Rotation,
+      Comments = item.Comments?.Select(c => c.ToFloorPlanCommentResponse()).ToList() ?? new List<FloorPlanCommentResponse>()
+    };
+  }
+
+  // Mapping from FloorPlanComment to FloorPlanCommentResponse
+  public static FloorPlanCommentResponse ToFloorPlanCommentResponse(this FloorPlanComments comment)
+  {
+    return new FloorPlanCommentResponse
+    {
+      Id = comment.Id,
+      UserName = comment.UserName,
+      Comment = comment.Comment,
+      Date = comment.CreationTime.ToString("yyyy-MM-dd HH:mm:ss")
+    };
+  }
 }

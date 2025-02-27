@@ -31,11 +31,13 @@ public class UpdateFloorPlanHandler(
     foreach (var plan in request.FloorAsset)
     {
       var processResult = await ProcessFloorPlan(plan, request.WarehouseId);
-      if (!processResult.IsSuccess) validationErrors.AddRange(processResult.ValidationErrors);
+      if (!processResult.IsSuccess)
+      {
+        validationErrors.AddRange(processResult.ValidationErrors);
+      }
     }
-
     return validationErrors.Any() ? Result<bool>.Invalid(validationErrors) : Result.Success(true);
-  }
+  } 
 
   //Funcition
   private async Task<Result<bool>> ProcessFloorPlan(UpdateFloorPlanInformationCommand plan, Guid warehouseId)
@@ -122,13 +124,19 @@ public class UpdateFloorPlanHandler(
   private async Task HandleFileOperations(UpdateFloorPlanInformationCommand plan, Guid warehouseId, Guid floorPlanId)
   {
     if (plan.FileUrlsToDelete is not null && plan.FileUrlsToDelete.Any())
+    {
       await DeleteFiles(plan.FileUrlsToDelete);
+    }
 
     if (plan.FilesToUpdate is not null && plan.FilesToUpdate.Any())
+    {
       await UpdateExistingFiles(plan.FilesToUpdate, warehouseId, floorPlanId);
+    }
 
     if (plan.NewFiles is not null && plan.NewFiles.Any())
+    {
       await SaveNewFiles(plan.NewFiles, warehouseId, floorPlanId);
+    }
   }
 
   private async Task DeleteFiles(List<string> fileUrlsToDelete)
@@ -153,7 +161,10 @@ public class UpdateFloorPlanHandler(
       var fileRecord = await _floorPlanFilesRepository
           .FirstOrDefaultAsync(f => f.FloorPlanId == floorPlanId && f.FileName == updatedFile.FileName);
 
-      if (fileRecord is null) continue;
+      if (fileRecord is null)
+      {
+        continue;
+      }
     }
   }
 
