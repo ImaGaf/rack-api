@@ -13,7 +13,7 @@ public class FileService : IFileService
   }
   public Task<List<string>> DeleteFilesAsync(List<string> fileUrlsToDelete)
   {
-    string rootPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "Warehouse");
+    string rootPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot");
     var nonExistentFiles = new List<string>();
 
     foreach (var fileUrl in fileUrlsToDelete)
@@ -31,24 +31,6 @@ public class FileService : IFileService
       }
     }
     return Task.FromResult(nonExistentFiles);
-  }
-
-  public async Task<List<FloorPlanDTO>> GetFloorPlansWithFilesByWarehouseIdAsync(Guid warehouseId)
-  {
-    // Take list FloorPlans by WarehouseId
-    var floorPlans = await _context.FloorPlans
-        .Include(f => f.FloorPlanFiles)
-        .Where(f => f.WarehouseId == warehouseId)
-        .ToListAsync();
-
-
-    return floorPlans.Select(f => new FloorPlanDTO
-    {
-      WarehouseId = f.WarehouseId,
-      AssetName = f.AssetName,
-      Floor = f.Floor,
-      FileUrls = f.FloorPlanFiles.Select(file => file.FileUrl).ToList()
-    }).ToList();
   }
 
   public async Task<List<SavedFileInfo>> ReplaceFileAsync(Guid warehouseId, Guid floorPlanId, List<IFormFile> filesToUpdate)
@@ -114,9 +96,13 @@ public async Task<List<SavedFileInfo>> SaveFilesAsync(Guid warehouseId, Guid? fl
     {
         var fileName = Path.GetFileName(file.FileName);
         var filePath = Path.Combine(folderPath, fileName);
-
-        // Save file to folder
-        using (var stream = new FileStream(filePath, FileMode.Create))
+        
+      if (File.Exists(filePath))
+      {
+        continue;
+      }
+      // Save file to folder
+      using (var stream = new FileStream(filePath, FileMode.Create))
         {
             await file.CopyToAsync(stream);
         }

@@ -33,6 +33,7 @@ public static class InfrastructureServiceExtensions
            .AddScoped<IUserService, UserSevice>()
            .AddScoped<IUserWarehouseService, UserWarehouseService>()
            .AddScoped<IFileService, FileService>()
+           .AddScoped<IFloorPlanService, FloorPlanService>()
            .AddScoped<IUserTokenRepository, UserTokenRepository>();
 
 

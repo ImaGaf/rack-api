@@ -175,9 +175,11 @@ namespace RackLogic.Infrastructure.Data.Migrations
                     b.Property<DateTime?>("DeletionTime")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("Floor")
-                        .IsRequired()
+                    b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("FloorNumber")
+                        .HasColumnType("int");
 
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
@@ -188,6 +190,12 @@ namespace RackLogic.Infrastructure.Data.Migrations
                     b.Property<Guid?>("LastModifierId")
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<int>("TotalBay")
+                        .HasColumnType("int");
+
+                    b.Property<int>("TotalRack")
+                        .HasColumnType("int");
+
                     b.Property<Guid>("WarehouseId")
                         .HasColumnType("uniqueidentifier");
 
@@ -196,6 +204,51 @@ namespace RackLogic.Infrastructure.Data.Migrations
                     b.HasIndex("WarehouseId");
 
                     b.ToTable("FloorPlans");
+                });
+
+            modelBuilder.Entity("RackLogic.Core.Common.Entity.FloorPlanComments", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Comment")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("CreationTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid?>("CreatorId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("DeleterId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("DeletionTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid>("FloorPlanItemId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime?>("LastModificationTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid?>("LastModifierId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("UserName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("FloorPlanItemId");
+
+                    b.ToTable("FloorPlanComments");
                 });
 
             modelBuilder.Entity("RackLogic.Core.Common.Entity.FloorPlanFiles", b =>
@@ -245,6 +298,68 @@ namespace RackLogic.Infrastructure.Data.Migrations
                     b.HasIndex("FloorPlanId");
 
                     b.ToTable("FloorPlanFiles");
+                });
+
+            modelBuilder.Entity("RackLogic.Core.Common.Entity.FloorPlanItem", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("Bay")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("CreationTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid?>("CreatorId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("DeleterId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("DeletionTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid>("FloorPlanId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<double?>("Height")
+                        .HasColumnType("float");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime?>("LastModificationTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid?>("LastModifierId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("ObjectType")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Offset")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Rack")
+                        .HasColumnType("int");
+
+                    b.Property<double>("Rotation")
+                        .HasColumnType("float");
+
+                    b.Property<int?>("Size")
+                        .HasColumnType("int");
+
+                    b.Property<double?>("Width")
+                        .HasColumnType("float");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("FloorPlanId");
+
+                    b.ToTable("FloorPlanItems");
                 });
 
             modelBuilder.Entity("RackLogic.Core.Common.Entity.Invitation", b =>
@@ -753,10 +868,32 @@ namespace RackLogic.Infrastructure.Data.Migrations
                     b.Navigation("Warehouse");
                 });
 
+            modelBuilder.Entity("RackLogic.Core.Common.Entity.FloorPlanComments", b =>
+                {
+                    b.HasOne("RackLogic.Core.Common.Entity.FloorPlanItem", "FloorPlanItem")
+                        .WithMany("Comments")
+                        .HasForeignKey("FloorPlanItemId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("FloorPlanItem");
+                });
+
             modelBuilder.Entity("RackLogic.Core.Common.Entity.FloorPlanFiles", b =>
                 {
                     b.HasOne("RackLogic.Core.Common.Entity.FloorPlan", "FloorPlan")
                         .WithMany("FloorPlanFiles")
+                        .HasForeignKey("FloorPlanId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("FloorPlan");
+                });
+
+            modelBuilder.Entity("RackLogic.Core.Common.Entity.FloorPlanItem", b =>
+                {
+                    b.HasOne("RackLogic.Core.Common.Entity.FloorPlan", "FloorPlan")
+                        .WithMany("FloorPlanItems")
                         .HasForeignKey("FloorPlanId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -893,6 +1030,13 @@ namespace RackLogic.Infrastructure.Data.Migrations
             modelBuilder.Entity("RackLogic.Core.Common.Entity.FloorPlan", b =>
                 {
                     b.Navigation("FloorPlanFiles");
+
+                    b.Navigation("FloorPlanItems");
+                });
+
+            modelBuilder.Entity("RackLogic.Core.Common.Entity.FloorPlanItem", b =>
+                {
+                    b.Navigation("Comments");
                 });
 
             modelBuilder.Entity("RackLogic.Core.Common.Entity.OEMBrand", b =>

@@ -11,8 +11,4 @@
     <ProjectReference Include="..\RackLogic.Core\RackLogic.Core.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="FloorPlans\" />
-  </ItemGroup>
-
 </Project>
