@@ -4,7 +4,6 @@ using FastEndpoints;
 using MediatR;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using RackLogic.UseCases.FloorPlans.Create;
 using RackLogic.Web.Exceptions;
@@ -23,20 +22,20 @@ public class CreateFloorPlan(IMediator _mediator, IHttpContextAccessor _httpCont
     AllowFileUploads();
   }
 
-  public override async Task HandleAsync([FromForm] RequestCreateFloorPlan req, CancellationToken ct)
+  public override async Task HandleAsync(RequestCreateFloorPlan req, CancellationToken ct)
   {
 
     var form = await HttpContext.Request.ReadFormAsync();
 
     var files = form.Files.ToList();
-    var floorPlanData = JsonConvert.DeserializeObject<CreateFloorAssetRequest>(req.RequestFloorPlanData);
+    var floorPlanData = ConvertStringDataToModel(req.RequestFloorPlanData);
 
     if (floorPlanData == null)
     {
       throw new InvalidException(new List<string> { "Invalid JSON data in RequestFloorPlanData." });
     }
 
-    MapFilesToFloorAssets(floorPlanData.FloorAsset, files);
+    MapFilesToFloorAssets(floorPlanData.FloorAssets, files);
 
     var validator = new CreateFloorAssetRequestValidator();
     var validationResult = validator.Validate(floorPlanData);
@@ -52,7 +51,7 @@ public class CreateFloorPlan(IMediator _mediator, IHttpContextAccessor _httpCont
         new CreateFloorPlanCommand(
             userCreatedId,
             floorPlanData.WarehouseId,
-            floorPlanData.FloorAsset.Select(FloorPlanMapper.ToFloorPlanCommand).ToList()
+            floorPlanData.FloorAssets.Select(FloorPlanMapper.ToFloorPlanCommand).ToList()
         ),
         ct);
 
@@ -100,6 +99,22 @@ public class CreateFloorPlan(IMediator _mediator, IHttpContextAccessor _httpCont
       floorAssets[index].Files ??= new List<IFormFile>();
       floorAssets[index].Files!.Add(file);
     }
+  }
+
+  private CreateFloorAssetRequest? ConvertStringDataToModel(string data)
+  {
+    CreateFloorAssetRequest? result;
+    try
+    {
+      result = JsonConvert.DeserializeObject<CreateFloorAssetRequest>(data);
+    }
+    catch (Exception)
+    {
+      var jsonString = data.Trim('"').Replace("\n","");
+      result = JsonConvert.DeserializeObject<CreateFloorAssetRequest>(jsonString);
+    }
+
+    return result;
   }
 
 }

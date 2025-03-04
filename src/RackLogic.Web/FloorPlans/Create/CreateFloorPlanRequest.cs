@@ -17,7 +17,7 @@ public class CreateFloorAssetRequest
   [Required]
   public Guid WarehouseId { get; set; }
   [Required]
-  public required List<FloorPlanRequest> FloorAsset { get; set; }
+  public required List<FloorPlanRequest> FloorAssets { get; set; }
 }
 
 public class FloorPlanRequest

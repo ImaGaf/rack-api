@@ -23,13 +23,13 @@ public class UpdateFloorPlanRequestValidator : Validator<UpdateFloorPlanRequest>
           .NotEmpty().WithMessage("Title is required and must be correctly formatted.");
 
       floorPlan.RuleFor(fp => fp.Floor)
-          .NotEmpty().WithMessage("Floor is required and must be correctly formatted.");
+          .NotNull().WithMessage("Floor is required and must be correctly formatted.");
 
       floorPlan.RuleFor(fp => fp.TotalRack)
-          .NotEmpty().WithMessage("TotalRack is required and must be correctly formatted.");
+          .NotNull().WithMessage("TotalRack is required and must be correctly formatted.");
 
       floorPlan.RuleFor(fp => fp.TotalBay)
-          .NotEmpty().WithMessage("TotalBay is required and must be correctly formatted.");
+          .NotNull().WithMessage("TotalBay is required and must be correctly formatted.");
 
       floorPlan.RuleFor(fp => fp.Items)
           .NotEmpty().WithMessage("Items list cannot be empty.");
@@ -41,16 +41,16 @@ public class UpdateFloorPlanRequestValidator : Validator<UpdateFloorPlanRequest>
             .NotEmpty().WithMessage("Item Id is required and must be correctly formatted.");
 
         item.RuleFor(i => i.Rack)
-            .NotEmpty().WithMessage("Rack is required and must be correctly formatted.");
+            .NotNull().WithMessage("Rack is required and must be correctly formatted.");
 
         item.RuleFor(i => i.Bay)
-            .NotEmpty().WithMessage("Bay is required and must be correctly formatted.");
+            .NotNull().WithMessage("Bay is required and must be correctly formatted.");
 
         item.RuleFor(i => i.Offset)
             .NotEmpty().WithMessage("Offset is required and must be correctly formatted.");
 
         item.RuleFor(i => i.Rotation)
-            .NotEmpty().WithMessage("Rotation is required and must be correctly formatted.");
+            .NotNull().WithMessage("Rotation is required and must be correctly formatted.");
 
         // Check list Comments
         item.RuleForEach(i => i.Comments).ChildRules(comment =>

@@ -11,16 +11,16 @@ public class CreateFloorAssetRequestValidator : Validator<CreateFloorAssetReques
         .NotEmpty().WithMessage("WarehouseId is required.")
         .Must(BeValidGuid).WithMessage("Invalid WarehouseId format.");
 
-    RuleFor(x => x.FloorAsset)
+    RuleFor(x => x.FloorAssets)
         .NotEmpty().WithMessage("FloorAssets is required.");
 
-    RuleForEach(x => x.FloorAsset).ChildRules(floorPlan =>
+    RuleForEach(x => x.FloorAssets).ChildRules(floorPlan =>
     {
       floorPlan.RuleFor(fp => fp.Title)
           .NotEmpty().WithMessage("Title is required and must be correctly formatted.");
 
       floorPlan.RuleFor(fp => fp.Floor)
-          .NotEmpty().WithMessage("Floor is required and must be correctly formatted.");
+          .NotNull().WithMessage("Floor is required and must be correctly formatted.");
 
       floorPlan.RuleFor(fp => fp.TotalRack)
           .NotEmpty().WithMessage("TotalRack is required and must be correctly formatted.");
@@ -34,16 +34,16 @@ public class CreateFloorAssetRequestValidator : Validator<CreateFloorAssetReques
       floorPlan.RuleForEach(fp => fp.Items).ChildRules(item =>
       {
         item.RuleFor(i => i.Rack)
-            .NotEmpty().WithMessage("Rack is required and must be correctly formatted.");
+            .NotNull().WithMessage("Rack is required and must be correctly formatted.");
 
         item.RuleFor(i => i.Bay)
-            .NotEmpty().WithMessage("Bay is required and must be correctly formatted.");
+            .NotNull().WithMessage("Bay is required and must be correctly formatted.");
 
         item.RuleFor(i => i.Offset)
             .NotEmpty().WithMessage("Offset is required and must be correctly formatted.");
 
         item.RuleFor(i => i.Rotation)
-            .NotEmpty().WithMessage("Rotation is required and must be correctly formatted.");
+            .NotNull().WithMessage("Rotation is required and must be correctly formatted.");
       });
 
       floorPlan.RuleForEach(fp => fp.Files)
