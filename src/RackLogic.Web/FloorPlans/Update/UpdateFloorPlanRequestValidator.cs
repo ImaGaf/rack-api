@@ -68,6 +68,44 @@ public class UpdateFloorPlanRequestValidator : Validator<UpdateFloorPlanRequest>
               .NotEmpty().WithMessage("Date is required and must be correctly formatted.");
         });
       });
+
+      // Validate `NewFiles`
+      floorPlan.RuleForEach(fp => fp.NewFiles)
+          .SetValidator(new InlineValidator<IFormFile>())
+          .When(fp => fp.NewFiles != null && fp.NewFiles.Any(), ApplyConditionTo.CurrentValidator)
+          .ChildRules(file =>
+          {
+            file.RuleFor(f => f.ContentType)
+                      .Must(IsValidFileType)
+                      .WithMessage("New File must be of type PDF, PNG, or JPEG.");
+
+            file.RuleFor(f => f.Length)
+                      .LessThanOrEqualTo(10 * 1024 * 1024) // 10MB
+                      .WithMessage(" New File size must not exceed 10MB.");
+          });
+
+      // Validate `FilesToUpdate`
+      floorPlan.RuleForEach(fp => fp.FilesToUpdate)
+          .SetValidator(new InlineValidator<IFormFile>())
+          .When(fp => fp.FilesToUpdate != null && fp.FilesToUpdate.Any(), ApplyConditionTo.CurrentValidator)
+          .ChildRules(file =>
+          {
+            file.RuleFor(f => f.ContentType)
+                      .Must(IsValidFileType)
+                      .WithMessage("Update File must be of type PDF, PNG, or JPEG.");
+
+            file.RuleFor(f => f.Length)
+                      .LessThanOrEqualTo(10 * 1024 * 1024) // 10MB
+                      .WithMessage("Update File size must not exceed 10MB.");
+          });
     });
+  }
+
+  // Helper method to check valid file types
+  private bool IsValidFileType(string contentType)
+  {
+    return contentType == "application/pdf" ||
+           contentType == "image/png" ||
+           contentType == "image/jpeg";
   }
 }

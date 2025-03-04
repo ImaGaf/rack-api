@@ -16,33 +16,12 @@ public class UserWarehouseService : IUserWarehouseService
   public async Task<List<GetAllBrandDTO>> GetAllBrand()
   {
     var result = await _context.OEMBrands
-    .GroupJoin(
-        _context.Products,
-        brand => brand.Id,
-        product => product.ManufacturerId,
-        (brand, products) => new GetAllBrandDTO
-        {
-          Brand = new OEMBrandDTO
-          {
-            Id = brand.Id,
-            Name = brand.Name,
-            Path = brand.Path
-          },
-          Components = products.Select(product => new ListComponentBrandDTO
-          {
-            Id = product.Id,
-            Category = product.Category,
-            Height = product.Height,
-            Width = product.Width,
-            Length = product.Length,
-            Code = product.Code,
-            Description = product.Description,
-            Orientation = product.Orientation,
-            DistanceCenterToCenter = product.DistanceCenterToCenter,
-            Type = product.Type,
-          }).ToList()
-        }
-    ).ToListAsync();
+        .GroupJoin(
+            _context.Products,
+            brand => brand.Id,
+            product => product.ManufacturerId,
+            (brand, products) => brand.ToGetAllBrandDTO(products.ToList())
+        ).ToListAsync();
 
     if (result is null) return new List<GetAllBrandDTO>();
 
@@ -51,18 +30,11 @@ public class UserWarehouseService : IUserWarehouseService
 
   public async Task<List<OEMBrandDTO>> GetAllBrandsAsync()
   {
-    var query = from brand in _context.OEMBrands
-                orderby brand.Name
-                select new OEMBrandDTO
-                {
-                  Id = brand.Id,
-                  Name = brand.Name,
-                  Path = brand.Path
-                };
+    var brands = await _context.OEMBrands
+        .OrderBy(brand => brand.Name)
+        .ToListAsync();
 
-    var brands = await query.ToListAsync();
-    return brands;
-
+    return brands.Select(brand => brand.ToOEMBrandDTO()).ToList();
   }
 
   public async Task<(List<ListComponentBrandDTO> Products, int TotalRecords)> GetProductsByBrandAsync(Guid brandId, int pageNumber, int pageSize)

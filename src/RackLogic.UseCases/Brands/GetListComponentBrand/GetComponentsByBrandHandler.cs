@@ -14,13 +14,7 @@ public class GetComponentsByBrandHandler(IUserWarehouseService _userWarehouse) :
       products = new List<ListComponentBrandDTO>();
     }
 
-    var pagedData = new PagedDataDTO<ListComponentBrandDTO>
-    {
-      PageNumber = request.PageNumber,
-      PageSize = request.PageSize,
-      TotalRecords = totalRecords,
-      DataDTO = products
-    };
+    var pagedData = request.ToPagedDataDTO(products, totalRecords);
 
     return Result.Success(pagedData);
   }
