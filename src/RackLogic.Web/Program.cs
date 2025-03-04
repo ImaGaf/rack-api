@@ -3,6 +3,7 @@ using FastEndpoints;
 using FastEndpoints.Swagger;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.StaticFiles;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
@@ -137,6 +138,13 @@ var app = builder.Build();
 //  app.UseSwaggerUi();
 //}
 await app.UseAppMiddleware();
+var provider = new FileExtensionContentTypeProvider();
+provider.Mappings[".heic"] = "image/heic";
+
+app.UseStaticFiles(new StaticFileOptions
+{
+  ContentTypeProvider = provider
+});
 app.UseHttpsRedirection();
 app.UseCors("webAppRequests");
 app.UseAuthentication();
