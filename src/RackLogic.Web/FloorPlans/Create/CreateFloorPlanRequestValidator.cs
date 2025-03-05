@@ -47,30 +47,31 @@ public class CreateFloorAssetRequestValidator : Validator<CreateFloorAssetReques
       });
 
       floorPlan.RuleForEach(fp => fp.Files)
-      .SetValidator(new InlineValidator<IFormFile>())
-      .When(fp => fp.Files != null && fp.Files.Any(), ApplyConditionTo.CurrentValidator)
-      .ChildRules(file =>
-      {
-        file.RuleFor(f => f.ContentType)
-      .Must(IsValidFileType)
-      .WithMessage("File must be of type PDF, PNG, or JPEG.");
+          .SetValidator(new InlineValidator<IFormFile>())
+          .When(fp => fp.Files != null && fp.Files.Any(), ApplyConditionTo.CurrentValidator)
+          .ChildRules(file =>
+          {
+            file.RuleFor(f => f.FileName) // Check file name
+              .Must(IsValidFileExtension)
+              .WithMessage("File must be of type PDF, PNG, JPEG, HEIC or HEIF.");
 
-        file.RuleFor(f => f.Length)
-      .LessThanOrEqualTo(10 * 1024 * 1024) // 10MB
-      .WithMessage("File size must not exceed 10MB.");
+            file.RuleFor(f => f.Length)
+              .LessThanOrEqualTo(10 * 1024 * 1024) // 10MB
+              .WithMessage("File size must not exceed 10MB.");
+          });
       });
-    });
-  }
+    }
 
   private bool BeValidGuid(Guid guid)
   {
     return guid != Guid.Empty; // Ensure it's not an empty GUID
   }
 
-  private bool IsValidFileType(string? contentType)
+  private bool IsValidFileExtension(string fileName)
   {
-    return contentType == "application/pdf" ||   // PDF
-           contentType == "image/png" ||        // PNG
-           contentType == "image/jpeg";         // JPEG
+    var validExtensions = new[] { ".pdf", ".png", ".jpeg", ".jpg", ".heic", ".heif" };
+    var fileExtension = Path.GetExtension(fileName).ToLower();
+
+    return validExtensions.Contains(fileExtension);
   }
 }

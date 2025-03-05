@@ -140,6 +140,7 @@ var app = builder.Build();
 await app.UseAppMiddleware();
 var provider = new FileExtensionContentTypeProvider();
 provider.Mappings[".heic"] = "image/heic";
+provider.Mappings[".heif"] = "image/heif";
 
 app.UseStaticFiles(new StaticFileOptions
 {
