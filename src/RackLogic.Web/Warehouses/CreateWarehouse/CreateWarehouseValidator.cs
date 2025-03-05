@@ -28,10 +28,20 @@ public class CreateWarehouseValidator : Validator<CreateWarehouseRequest>
            .NotNull()
            .WithMessage("ImageLogo is required.")
            .Must(file => file!.Length <= 2 * 1024 * 1024)
-           .WithMessage("The file size must be less than 2MB.");
+           .WithMessage("The file size must be less than 2MB.")
+           .Must(file => IsValidFileExtension(file.FileName))
+           .WithMessage("ImageLogo must be of type PDF, PNG, JPEG, HEIC, or HEIF.");
+
 
     RuleFor(r => r.OwnerEmailAddress)
           .EmailAddress()
           .WithMessage("Email is invalid.");
+  }
+  private bool IsValidFileExtension(string fileName)
+  {
+    var validExtensions = new[] { ".png", ".jpeg", ".jpg", ".heic", ".heif" };
+    var fileExtension = Path.GetExtension(fileName).ToLower();
+
+    return validExtensions.Contains(fileExtension);
   }
 }

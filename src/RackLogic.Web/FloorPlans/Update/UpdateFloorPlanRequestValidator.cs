@@ -75,13 +75,13 @@ public class UpdateFloorPlanRequestValidator : Validator<UpdateFloorPlanRequest>
           .When(fp => fp.NewFiles != null && fp.NewFiles.Any(), ApplyConditionTo.CurrentValidator)
           .ChildRules(file =>
           {
-            file.RuleFor(f => f.ContentType)
-                      .Must(IsValidFileType)
-                      .WithMessage("New File must be of type PDF, PNG, or JPEG.");
+            file.RuleFor(f => f.FileName) // Sử dụng FileName để kiểm tra extension
+          .Must(IsValidFileExtension)
+          .WithMessage("New File must be of type PDF, PNG, JPEG, HEIC, or HEIF.");
 
             file.RuleFor(f => f.Length)
-                      .LessThanOrEqualTo(10 * 1024 * 1024) // 10MB
-                      .WithMessage(" New File size must not exceed 10MB.");
+          .LessThanOrEqualTo(10 * 1024 * 1024) // 10MB
+          .WithMessage("New File size must not exceed 10MB.");
           });
 
       // Validate `FilesToUpdate`
@@ -90,22 +90,23 @@ public class UpdateFloorPlanRequestValidator : Validator<UpdateFloorPlanRequest>
           .When(fp => fp.FilesToUpdate != null && fp.FilesToUpdate.Any(), ApplyConditionTo.CurrentValidator)
           .ChildRules(file =>
           {
-            file.RuleFor(f => f.ContentType)
-                      .Must(IsValidFileType)
-                      .WithMessage("Update File must be of type PDF, PNG, or JPEG.");
+            file.RuleFor(f => f.FileName) // Sử dụng FileName để kiểm tra extension
+          .Must(IsValidFileExtension)
+          .WithMessage("Update File must be of type PDF, PNG, JPEG, HEIC, or HEIF.");
 
             file.RuleFor(f => f.Length)
-                      .LessThanOrEqualTo(10 * 1024 * 1024) // 10MB
-                      .WithMessage("Update File size must not exceed 10MB.");
+          .LessThanOrEqualTo(10 * 1024 * 1024) // 10MB
+          .WithMessage("Update File size must not exceed 10MB.");
           });
     });
   }
 
-  // Helper method to check valid file types
-  private bool IsValidFileType(string contentType)
+  // Method to check valid file types
+  private bool IsValidFileExtension(string fileName)
   {
-    return contentType == "application/pdf" ||
-           contentType == "image/png" ||
-           contentType == "image/jpeg";
+    var validExtensions = new[] { ".pdf", ".png", ".jpeg", ".jpg", ".heic", ".heif" };
+    var fileExtension = Path.GetExtension(fileName).ToLower(); 
+
+    return validExtensions.Contains(fileExtension); 
   }
 }
