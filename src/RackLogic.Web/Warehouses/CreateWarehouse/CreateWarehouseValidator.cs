@@ -30,7 +30,7 @@ public class CreateWarehouseValidator : Validator<CreateWarehouseRequest>
            .Must(file => file!.Length <= 2 * 1024 * 1024)
            .WithMessage("The file size must be less than 2MB.")
            .Must(file => IsValidFileExtension(file.FileName))
-           .WithMessage("ImageLogo must be of type PDF, PNG, JPEG, HEIC, or HEIF.");
+           .WithMessage("ImageLogo must be of type PDF, PNG, JPEG, HEIC or HEIF.");
 
 
     RuleFor(r => r.OwnerEmailAddress)

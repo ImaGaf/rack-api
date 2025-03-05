@@ -77,7 +77,7 @@ public class UpdateFloorPlanRequestValidator : Validator<UpdateFloorPlanRequest>
           {
             file.RuleFor(f => f.FileName) // Sử dụng FileName để kiểm tra extension
           .Must(IsValidFileExtension)
-          .WithMessage("New File must be of type PDF, PNG, JPEG, HEIC, or HEIF.");
+          .WithMessage("New File must be of type PDF, PNG, JPEG, HEIC or HEIF.");
 
             file.RuleFor(f => f.Length)
           .LessThanOrEqualTo(10 * 1024 * 1024) // 10MB
@@ -92,7 +92,7 @@ public class UpdateFloorPlanRequestValidator : Validator<UpdateFloorPlanRequest>
           {
             file.RuleFor(f => f.FileName) // Sử dụng FileName để kiểm tra extension
           .Must(IsValidFileExtension)
-          .WithMessage("Update File must be of type PDF, PNG, JPEG, HEIC, or HEIF.");
+          .WithMessage("Update File must be of type PDF, PNG, JPEG, HEIC or HEIF.");
 
             file.RuleFor(f => f.Length)
           .LessThanOrEqualTo(10 * 1024 * 1024) // 10MB

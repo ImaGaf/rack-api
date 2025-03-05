@@ -53,7 +53,7 @@ public class CreateFloorAssetRequestValidator : Validator<CreateFloorAssetReques
           {
             file.RuleFor(f => f.FileName) // Check file name
           .Must(IsValidFileExtension)
-          .WithMessage("File must be of type PDF, PNG, JPEG, HEIC, or HEIF.");
+          .WithMessage("File must be of type PDF, PNG, JPEG, HEIC or HEIF.");
 
             file.RuleFor(f => f.Length)
           .LessThanOrEqualTo(10 * 1024 * 1024) // 10MB
