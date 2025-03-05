@@ -52,12 +52,12 @@ public class CreateFloorAssetRequestValidator : Validator<CreateFloorAssetReques
           .ChildRules(file =>
           {
             file.RuleFor(f => f.FileName) // Check file name
-          .Must(IsValidFileExtension)
-          .WithMessage("File must be of type PDF, PNG, JPEG, HEIC or HEIF.");
+              .Must(IsValidFileExtension)
+              .WithMessage("File must be of type PDF, PNG, JPEG, HEIC or HEIF.");
 
             file.RuleFor(f => f.Length)
-          .LessThanOrEqualTo(10 * 1024 * 1024) // 10MB
-          .WithMessage("File size must not exceed 10MB.");
+              .LessThanOrEqualTo(10 * 1024 * 1024) // 10MB
+              .WithMessage("File size must not exceed 10MB.");
           });
       });
     }

@@ -75,13 +75,13 @@ public class UpdateFloorPlanRequestValidator : Validator<UpdateFloorPlanRequest>
           .When(fp => fp.NewFiles != null && fp.NewFiles.Any(), ApplyConditionTo.CurrentValidator)
           .ChildRules(file =>
           {
-            file.RuleFor(f => f.FileName) // Sử dụng FileName để kiểm tra extension
-          .Must(IsValidFileExtension)
-          .WithMessage("New File must be of type PDF, PNG, JPEG, HEIC or HEIF.");
+              file.RuleFor(f => f.FileName)
+                .Must(IsValidFileExtension)
+                .WithMessage("New File must be of type PDF, PNG, JPEG, HEIC or HEIF.");
 
-            file.RuleFor(f => f.Length)
-          .LessThanOrEqualTo(10 * 1024 * 1024) // 10MB
-          .WithMessage("New File size must not exceed 10MB.");
+              file.RuleFor(f => f.Length)
+                .LessThanOrEqualTo(10 * 1024 * 1024) // 10MB
+                .WithMessage("New File size must not exceed 10MB.");
           });
 
       // Validate `FilesToUpdate`
@@ -90,13 +90,13 @@ public class UpdateFloorPlanRequestValidator : Validator<UpdateFloorPlanRequest>
           .When(fp => fp.FilesToUpdate != null && fp.FilesToUpdate.Any(), ApplyConditionTo.CurrentValidator)
           .ChildRules(file =>
           {
-            file.RuleFor(f => f.FileName) // Sử dụng FileName để kiểm tra extension
-          .Must(IsValidFileExtension)
-          .WithMessage("Update File must be of type PDF, PNG, JPEG, HEIC or HEIF.");
+            file.RuleFor(f => f.FileName)
+              .Must(IsValidFileExtension)
+              .WithMessage("Update File must be of type PDF, PNG, JPEG, HEIC or HEIF.");
 
             file.RuleFor(f => f.Length)
-          .LessThanOrEqualTo(10 * 1024 * 1024) // 10MB
-          .WithMessage("Update File size must not exceed 10MB.");
+              .LessThanOrEqualTo(10 * 1024 * 1024) // 10MB
+              .WithMessage("Update File size must not exceed 10MB.");
           });
     });
   }
@@ -105,8 +105,8 @@ public class UpdateFloorPlanRequestValidator : Validator<UpdateFloorPlanRequest>
   private bool IsValidFileExtension(string fileName)
   {
     var validExtensions = new[] { ".pdf", ".png", ".jpeg", ".jpg", ".heic", ".heif" };
-    var fileExtension = Path.GetExtension(fileName).ToLower(); 
+    var fileExtension = Path.GetExtension(fileName).ToLower();
 
-    return validExtensions.Contains(fileExtension); 
+    return validExtensions.Contains(fileExtension);
   }
 }
