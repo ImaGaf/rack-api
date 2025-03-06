@@ -5,7 +5,7 @@ namespace RackLogic.UseCases.FloorPlans.Update;
 public record UpdateFloorPlanCommand(
   Guid UserCreatedId,
   Guid WarehouseId,
-  List<UpdateFloorPlanInformationCommand> FloorAsset)
+  List<UpdateFloorPlanInformationCommand> FloorAssets)
   : Ardalis.SharedKernel.ICommand<Result<bool>>;
 
 public record UpdateFloorPlanInformationCommand(
@@ -16,8 +16,7 @@ public record UpdateFloorPlanInformationCommand(
   int TotalRack,
   int TotalBay,
   List<string> FileUrlsToDelete,
-  List<IFormFile> NewFiles,
-  List<IFormFile> FilesToUpdate,
+  List<IFormFile> Files,
   List<UpdateFloorPlanItemInformationCommand> Items);
 
 public record UpdateFloorPlanItemInformationCommand(

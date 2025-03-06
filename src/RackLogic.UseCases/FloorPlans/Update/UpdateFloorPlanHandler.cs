@@ -1,10 +1,12 @@
 ﻿using Ardalis.Result;
 using Ardalis.SharedKernel;
+using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using RackLogic.Core.Common.Constants;
 using RackLogic.Core.Common.Entity;
 using RackLogic.Core.Interfaces;
+using RackLogic.UseCases.FloorPlans.Create;
 
 namespace RackLogic.UseCases.FloorPlans.Update;
 public class UpdateFloorPlanHandler(
@@ -15,6 +17,7 @@ public class UpdateFloorPlanHandler(
   IRepositoryWithExpression<FloorPlanComments> _floorPlanCommentsRepository,
   IRepositoryWithExpression<Warehouse> _warehouseRepository,
   IFileService _fileService,
+  IFloorPlanService _floorPlanService,
   RoleManager<IdentityRole<Guid>> _roleManager)
   : ICommandHandler<UpdateFloorPlanCommand, Result<bool>>
 {
@@ -26,9 +29,16 @@ public class UpdateFloorPlanHandler(
     var userCreatedId = request.UserCreatedId;
     if (!await CheckPermissionUserRequest(userCreatedId, request.WarehouseId)) return Result.Forbidden();
 
+    // Get only IDs that exist in the database
+    var existingFloorPlansDb = await _floorPlanRepository.ListAsync(f =>  request.FloorAssets.Select(p => p.FloorPlanId).Contains(f.Id));
+    var existingFloorPlanIds = existingFloorPlansDb.Select(f => f.Id).ToHashSet();
+
+    var existFloorAssetsDb = request.FloorAssets.Where(p => existingFloorPlanIds.Contains(p.FloorPlanId)).ToList();
+    var notExistFloorAssetsDb = request.FloorAssets.Where(p => !existingFloorPlanIds.Contains(p.FloorPlanId)).ToList();
+
     var validationErrors = new List<ValidationError>();
 
-    foreach (var plan in request.FloorAsset)
+    foreach (var plan in existFloorAssetsDb)
     {
       var processResult = await ProcessFloorPlan(plan, request.WarehouseId);
       if (!processResult.IsSuccess)
@@ -36,6 +46,22 @@ public class UpdateFloorPlanHandler(
         validationErrors.AddRange(processResult.ValidationErrors);
       }
     }
+
+    if (notExistFloorAssetsDb.Any())
+    {
+      var (floorPlans, floorPlanItems, floorPlanComments) = _floorPlanService.GetFloorPlanDataForUpdate(notExistFloorAssetsDb, request.WarehouseId, request.UserCreatedId);
+      var floorPlanCommands = notExistFloorAssetsDb
+          .Select(p => p.ToFloorPlanCommand())
+          .ToList();
+
+      var createResult = await _floorPlanService.SaveFloorPlanDataAsync(floorPlans, floorPlanItems, floorPlanComments, floorPlanCommands);
+
+      if (!createResult.IsSuccess)
+      {
+        validationErrors.AddRange(createResult.ValidationErrors);
+      }
+    }
+
     return validationErrors.Any() ? Result<bool>.Invalid(validationErrors) : Result.Success(true);
   } 
 
@@ -128,14 +154,9 @@ public class UpdateFloorPlanHandler(
       await DeleteFiles(plan.FileUrlsToDelete);
     }
 
-    if (plan.FilesToUpdate is not null && plan.FilesToUpdate.Any())
+    if (plan.Files is not null && plan.Files.Any())
     {
-      await UpdateExistingFiles(plan.FilesToUpdate, warehouseId, floorPlanId);
-    }
-
-    if (plan.NewFiles is not null && plan.NewFiles.Any())
-    {
-      await SaveNewFiles(plan.NewFiles, warehouseId, floorPlanId);
+      await SaveNewFiles(plan.Files, warehouseId, floorPlanId);
     }
   }
 
@@ -149,22 +170,6 @@ public class UpdateFloorPlanHandler(
     if (fileRecords.Any())
     {
       await _floorPlanFilesRepository.DeleteRangeAsync(fileRecords);
-    }
-  }
-
-  private async Task UpdateExistingFiles(List<IFormFile> filesToUpdate, Guid warehouseId, Guid floorPlanId)
-  {
-    var updatedFiles = await _fileService.ReplaceFileAsync(warehouseId, floorPlanId, filesToUpdate);
-
-    foreach (var updatedFile in updatedFiles)
-    {
-      var fileRecord = await _floorPlanFilesRepository
-          .FirstOrDefaultAsync(f => f.FloorPlanId == floorPlanId && f.FileName == updatedFile.FileName);
-
-      if (fileRecord is null)
-      {
-        continue;
-      }
     }
   }
 
