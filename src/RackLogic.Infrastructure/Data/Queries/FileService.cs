@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Http;
-using Microsoft.EntityFrameworkCore;
 using RackLogic.UseCases.FloorPlans;
 
 namespace RackLogic.Infrastructure.Data.Queries;

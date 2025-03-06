@@ -1,6 +1,5 @@
 ﻿using FastEndpoints;
 using FluentValidation;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace RackLogic.Web.FloorPlans.Update;
 
