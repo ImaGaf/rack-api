@@ -7,7 +7,7 @@ using RackLogic.Core.Interfaces;
 
 namespace RackLogic.UseCases.FloorPlans.Create;
 public class CreateFloorPlanHandler(
- // IRepositoryWithExpression<FloorPlan> _floorPlanRepository,
+  IRepositoryWithExpression<FloorPlan> _floorPlanRepository,
   IRepositoryWithExpression<UserWarehouseRole> _userWarehouseRoleRepository,
   IRepositoryWithExpression<Warehouse> _warehouseRepository,
   IFloorPlanService _floorPlanService,
@@ -20,7 +20,7 @@ RoleManager<IdentityRole<Guid>> _roleManager)
     if (await _warehouseRepository.FirstOrDefaultAsync(x => x.Id == request.WarehouseId) is null) return Result.Invalid(new ValidationError("WarehouseId invalid."));
 
     // Check if the warehouse has a floor plan
-    //if (await _floorPlanRepository.FirstOrDefaultAsync(x => x.WarehouseId == request.WarehouseId) != null) return Result.Invalid(new ValidationError("This Warehouse already has a Floor Plan!"));
+    if (await _floorPlanRepository.FirstOrDefaultAsync(x => x.WarehouseId == request.WarehouseId) != null) return Result.Invalid(new ValidationError("This Warehouse already has a Floor Plan!"));
 
     // Check user permissions
     var userCreatedId = request.UserCreatedId;
