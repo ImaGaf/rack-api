@@ -191,47 +191,6 @@ public class FloorPlanService : IFloorPlanService
     }
   }
 
-  public async Task<(List<UpdateFloorPlanInformationCommand> existFloorAssetsDb, List<UpdateFloorPlanInformationCommand> notExistFloorAssetsDb)> GetExistingAndNewFloorPlansAsync(UpdateFloorPlanCommand request)
-  {
-    var existingFloorPlansDb = await _context.FloorPlans.Where(f => request.FloorAssets.Select(p => p.FloorPlanId).Contains(f.Id)).ToListAsync();
-    var existingFloorPlanIds = existingFloorPlansDb.Select(f => f.Id).ToHashSet();
-
-    var existFloorAssetsDb = request.FloorAssets.Where(p => existingFloorPlanIds.Contains(p.FloorPlanId)).ToList();
-    var notExistFloorAssetsDb = request.FloorAssets.Where(p => !existingFloorPlanIds.Contains(p.FloorPlanId)).ToList();
-
-    return (existFloorAssetsDb, notExistFloorAssetsDb);
-  }
-
-  public async Task<Result<bool>> ProcessExistingFloorPlansAsync(List<UpdateFloorPlanInformationCommand> existFloorAssetsDb, Guid warehouseId)
-  {
-    if (!existFloorAssetsDb.Any()) return Result.Success(true);
-
-    var validationErrors = new List<ValidationError>();
-
-    foreach (var plan in existFloorAssetsDb)
-    {
-      var processResult = await ProcessFloorPlan(plan, warehouseId);
-      if (!processResult.IsSuccess)
-      {
-        validationErrors.AddRange(processResult.ValidationErrors);
-      }
-    }
-
-    return validationErrors.Any() ? Result<bool>.Invalid(validationErrors) : Result.Success(true);
-  }
-
-  public async Task<Result<bool>> CreateNewFloorPlansAsync(List<UpdateFloorPlanInformationCommand> notExistFloorAssetsDb, Guid warehouseId, Guid userCreatedId)
-  {
-    if (!notExistFloorAssetsDb.Any()) return Result.Success(true);
-    
-    var (floorPlans, floorPlanItems, floorPlanComments) = GetFloorPlanDataForUpdate(notExistFloorAssetsDb, warehouseId, userCreatedId);
-    var floorPlanCommands = notExistFloorAssetsDb.Select(p => p.ToFloorPlanCommand()).ToList();
-
-    var createResult = await SaveFloorPlanDataAsync(floorPlans, floorPlanItems, floorPlanComments, floorPlanCommands);
-
-    return createResult;
-  }
-
   // Update FloorPlanAssets list
   private async Task<Result<bool>> ProcessFloorPlan(UpdateFloorPlanInformationCommand plan, Guid warehouseId)
   {
@@ -363,5 +322,70 @@ public class FloorPlanService : IFloorPlanService
 
     await _context.FloorPlanFiles.AddRangeAsync(floorPlanFiles);
     await _context.SaveChangesAsync();
+  }
+
+  public async Task<Result<bool>> CreateOrUpdateFloorAsssetsAsync(List<UpdateFloorPlanInformationCommand> floorAssets, Guid warehouseId, Guid userCreatedId)
+  {
+    var validationErrors = new List<ValidationError>();
+
+    var (existFloorAssetsDb, notExistFloorAssetsDb) = await GetExistingAndNewFloorPlansAsync(floorAssets, warehouseId);
+
+    var updateResult = await ProcessExistingFloorPlansAsync(existFloorAssetsDb, warehouseId);
+    if (!updateResult.IsSuccess)
+    {
+      validationErrors.AddRange(updateResult.ValidationErrors);
+    }
+
+    var createResult = await CreateNewFloorPlansAsync(notExistFloorAssetsDb, warehouseId, userCreatedId);
+    if (!createResult.IsSuccess)
+    {
+      validationErrors.AddRange(createResult.ValidationErrors);
+    }
+
+    return validationErrors.Any() ? Result<bool>.Invalid(validationErrors) : Result.Success(true);
+  }
+
+  private async Task<(List<UpdateFloorPlanInformationCommand> existFloorAssetsDb, List<UpdateFloorPlanInformationCommand> notExistFloorAssetsDb)> GetExistingAndNewFloorPlansAsync(
+    List<UpdateFloorPlanInformationCommand> floorAssets, Guid warehouseId)
+  {
+    var existingFloorPlansDb = await _context.FloorPlans
+        .Where(f => floorAssets.Select(p => p.FloorPlanId).Contains(f.Id))
+        .ToListAsync();
+
+    var existingFloorPlanIds = existingFloorPlansDb.Select(f => f.Id).ToHashSet();
+    var existFloorAssetsDb = floorAssets.Where(p => existingFloorPlanIds.Contains(p.FloorPlanId)).ToList();
+    var notExistFloorAssetsDb = floorAssets.Where(p => !existingFloorPlanIds.Contains(p.FloorPlanId)).ToList();
+
+    return (existFloorAssetsDb, notExistFloorAssetsDb);
+  }
+
+  private async Task<Result<bool>> ProcessExistingFloorPlansAsync(List<UpdateFloorPlanInformationCommand> existFloorAssetsDb, Guid warehouseId)
+  {
+    if (!existFloorAssetsDb.Any()) return Result.Success(true);
+
+    var validationErrors = new List<ValidationError>();
+
+    foreach (var plan in existFloorAssetsDb)
+    {
+      var processResult = await ProcessFloorPlan(plan, warehouseId);
+      if (!processResult.IsSuccess)
+      {
+        validationErrors.AddRange(processResult.ValidationErrors);
+      }
+    }
+
+    return validationErrors.Any() ? Result<bool>.Invalid(validationErrors) : Result.Success(true);
+  }
+
+  private async Task<Result<bool>> CreateNewFloorPlansAsync(List<UpdateFloorPlanInformationCommand> notExistFloorAssetsDb, Guid warehouseId, Guid userCreatedId)
+  {
+    if (!notExistFloorAssetsDb.Any()) return Result.Success(true);
+
+    var (floorPlans, floorPlanItems, floorPlanComments) = GetFloorPlanDataForUpdate(notExistFloorAssetsDb, warehouseId, userCreatedId);
+    var floorPlanCommands = notExistFloorAssetsDb.Select(p => p.ToFloorPlanCommand()).ToList();
+
+    var createResult = await SaveFloorPlanDataAsync(floorPlans, floorPlanItems, floorPlanComments, floorPlanCommands);
+
+    return createResult;
   }
 }

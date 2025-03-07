@@ -22,23 +22,18 @@ public class UpdateFloorPlanHandler(
     var userCreatedId = request.UserCreatedId;
     if (!await CheckPermissionUserRequest(userCreatedId, request.WarehouseId)) return Result.Forbidden();
 
-    // Get a list of existing and non-existing FloorPlans
-    var (existFloorAssetsDb, notExistFloorAssetsDb) = await _floorPlanService.GetExistingAndNewFloorPlansAsync(request);
-
     var validationErrors = new List<ValidationError>();
 
-    // Handle FloorPlanAssets instances in DB
-    var updateResult = await _floorPlanService.ProcessExistingFloorPlansAsync(existFloorAssetsDb, request.WarehouseId);
-    if (!updateResult.IsSuccess)
-    {
-      validationErrors.AddRange(updateResult.ValidationErrors);
-    }
+    // Use CreateOrUpdateAsync to process both existing and non-existing floor plans
+    var createOrUpdateResult = await _floorPlanService.CreateOrUpdateFloorAsssetsAsync(
+        request.FloorAssets,
+        request.WarehouseId,
+        request.UserCreatedId
+    );
 
-    // Handle FloorPlanAssets not instances in DB
-    var createResult = await _floorPlanService.CreateNewFloorPlansAsync(notExistFloorAssetsDb, request.WarehouseId, request.UserCreatedId);
-    if (!createResult.IsSuccess)
+    if (!createOrUpdateResult.IsSuccess)
     {
-      validationErrors.AddRange(createResult.ValidationErrors);
+      validationErrors.AddRange(createOrUpdateResult.ValidationErrors);
     }
 
     return validationErrors.Any() ? Result<bool>.Invalid(validationErrors) : Result.Success(true);
