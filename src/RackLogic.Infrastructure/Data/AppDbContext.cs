@@ -26,6 +26,10 @@ public class AppDbContext(DbContextOptions<AppDbContext> options,
   public DbSet<PurchaseRecord> PurchaseRecords => Set<PurchaseRecord>();
   public DbSet<FloorPlanItem> FloorPlanItems => Set<FloorPlanItem>();
   public DbSet<FloorPlanComments> FloorPlanComments => Set<FloorPlanComments>();
+  public DbSet<BayConfiguration> BayConfigurations => Set<BayConfiguration>();
+  public DbSet<Component> Components => Set<Component>();
+  public DbSet<BayConfigurationLevels> BayConfigurationLevels => Set<BayConfigurationLevels>();
+  
   protected override void OnModelCreating(ModelBuilder modelBuilder)
   {
     base.OnModelCreating(modelBuilder);
@@ -96,6 +100,25 @@ public class AppDbContext(DbContextOptions<AppDbContext> options,
       .WithMany(fpi => fpi.Comments)
       .HasForeignKey(fpc => fpc.FloorPlanItemId)
       .OnDelete(DeleteBehavior.Cascade);
+
+    modelBuilder.Entity<BayConfiguration>()
+        .HasOne(p => p.Warehouses)
+        .WithMany(u => u.Configurations)
+        .HasForeignKey(p => p.WarahouseId)
+        .OnDelete(DeleteBehavior.Cascade);
+
+    modelBuilder.Entity<Component>()
+        .HasOne(p => p.BayConfiguration)
+        .WithMany(u => u.Components)
+        .HasForeignKey(p => p.BayId)
+        .OnDelete(DeleteBehavior.Cascade);
+
+    modelBuilder.Entity<BayConfigurationLevels>()
+        .HasOne(p => p.BayConfiguration)
+        .WithMany(u => u.BayConfigurationLevels)
+        .HasForeignKey(p => p.BayId)
+        .OnDelete(DeleteBehavior.Cascade);
+
   }
 
   public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = new CancellationToken())

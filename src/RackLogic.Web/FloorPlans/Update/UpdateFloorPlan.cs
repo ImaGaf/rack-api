@@ -16,7 +16,7 @@ using RackLogic.Web.Services;
 namespace RackLogic.Web.FloorPlans.Update;
 
 [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-public class UpdateFloorPlan(IMediator _mediator, IHttpContextAccessor _httpContextAccessor) : Endpoint<RequestUpdateFloorPlan, ApiResponse<bool>>
+public class UpdateFloorPlan(IMediator _mediator) : Endpoint<RequestUpdateFloorPlan, ApiResponse<bool>>
 {
   public override void Configure()
   {
@@ -49,7 +49,7 @@ public class UpdateFloorPlan(IMediator _mediator, IHttpContextAccessor _httpCont
       throw new InvalidException(errors);
     }
 
-    var userCreatedId = UserHelper.GetUserCreatedId(_httpContextAccessor);
+    var userCreatedId = User.GetUserId();
 
     var result = await _mediator.Send(
         new UpdateFloorPlanCommand(

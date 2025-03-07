@@ -14,6 +14,7 @@ using RackLogic.UseCases.Warehouses;
 using RackLogic.UseCases.FloorPlans;
 using RackLogic.UseCases.StoreNotifications;
 using RackLogic.Infrastructure.Configuration;
+using RackLogic.UseCases.BayConfigurator.List;
 
 namespace RackLogic.Infrastructure;
 public static class InfrastructureServiceExtensions
@@ -32,6 +33,7 @@ public static class InfrastructureServiceExtensions
     services.AddScoped(typeof(IRepository<>), typeof(EfRepository<>))
            .AddScoped(typeof(IReadRepository<>), typeof(EfRepository<>))
            .AddScoped<IListContributorsQueryService, ListContributorsQueryService>()
+           .AddScoped<IListBayConfiguratorQueryService, ListBayConfiguratorQueryService>()
            .AddScoped<IDeleteContributorService, DeleteContributorService>()
            .AddScoped<IUserService, UserSevice>()
            .AddScoped<IStoreNotificationService, StoreNotificationService>()
