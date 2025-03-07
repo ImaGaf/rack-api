@@ -10,11 +10,11 @@ public class UpdateFloorPlanRequestValidator : Validator<UpdateFloorPlanRequest>
     RuleFor(x => x.WarehouseId)
         .NotEmpty().WithMessage("WarehouseId is required.");
 
-    RuleFor(x => x.FloorAsset)
+    RuleFor(x => x.FloorAssets)
         .NotEmpty().WithMessage("FloorAsset is required.");
 
     // Check each element in FloorAsset
-    RuleForEach(x => x.FloorAsset).ChildRules(floorPlan =>
+    RuleForEach(x => x.FloorAssets).ChildRules(floorPlan =>
     {
       floorPlan.RuleFor(fp => fp.FloorPlanId)
           .NotEmpty().WithMessage("FloorPlanId is required and must be correctly formatted.");
@@ -65,38 +65,25 @@ public class UpdateFloorPlanRequestValidator : Validator<UpdateFloorPlanRequest>
               .NotEmpty().WithMessage("Comment content is required.");
 
           comment.RuleFor(c => c.Date)
-              .NotEmpty().WithMessage("Date is required and must be correctly formatted.");
+              .NotEmpty().WithMessage("Date is required.")
+              .Must(date => DateTime.TryParse(date, out _))
+              .WithMessage("Date must be in the format 'yyyy-MM-dd'.");
         });
       });
 
-      // Validate `NewFiles`
-      floorPlan.RuleForEach(fp => fp.NewFiles)
+      //Valise Files
+      floorPlan.RuleForEach(fp => fp.Files)
           .SetValidator(new InlineValidator<IFormFile>())
-          .When(fp => fp.NewFiles != null && fp.NewFiles.Any(), ApplyConditionTo.CurrentValidator)
+          .When(fp => fp.Files != null && fp.Files.Any(), ApplyConditionTo.CurrentValidator)
           .ChildRules(file =>
           {
-              file.RuleFor(f => f.FileName)
-                .Must(IsValidFileExtension)
-                .WithMessage("New File must be of type PDF, PNG, JPEG, HEIC or HEIF.");
-
-              file.RuleFor(f => f.Length)
-                .LessThanOrEqualTo(10 * 1024 * 1024) // 10MB
-                .WithMessage("New File size must not exceed 10MB.");
-          });
-
-      // Validate `FilesToUpdate`
-      floorPlan.RuleForEach(fp => fp.FilesToUpdate)
-          .SetValidator(new InlineValidator<IFormFile>())
-          .When(fp => fp.FilesToUpdate != null && fp.FilesToUpdate.Any(), ApplyConditionTo.CurrentValidator)
-          .ChildRules(file =>
-          {
-            file.RuleFor(f => f.FileName)
+            file.RuleFor(f => f.FileName) // Check file name
               .Must(IsValidFileExtension)
-              .WithMessage("Update File must be of type PDF, PNG, JPEG, HEIC or HEIF.");
+              .WithMessage("File must be of type PDF, PNG, JPEG, HEIC or HEIF.");
 
             file.RuleFor(f => f.Length)
               .LessThanOrEqualTo(10 * 1024 * 1024) // 10MB
-              .WithMessage("Update File size must not exceed 10MB.");
+              .WithMessage("File size must not exceed 10MB.");
           });
     });
   }

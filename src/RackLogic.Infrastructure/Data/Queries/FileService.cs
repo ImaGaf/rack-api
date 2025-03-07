@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Http;
-using Microsoft.EntityFrameworkCore;
 using RackLogic.UseCases.FloorPlans;
 
 namespace RackLogic.Infrastructure.Data.Queries;
@@ -31,43 +30,6 @@ public class FileService : IFileService
       }
     }
     return Task.FromResult(nonExistentFiles);
-  }
-
-  public async Task<List<SavedFileInfo>> ReplaceFileAsync(Guid warehouseId, Guid floorPlanId, List<IFormFile> filesToUpdate)
-  {
-    var rootPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "Warehouse");
-    var folderPath = Path.Combine(rootPath, warehouseId.ToString(), "FloorPlan", floorPlanId.ToString());
-
-    var updatedFilesInfo = new List<SavedFileInfo>();
-
-    foreach (var file in filesToUpdate)
-    {
-      var fileName = Path.GetFileName(file.FileName);
-      var filePath = Path.Combine(folderPath, fileName);
-
-      if (!File.Exists(filePath))
-      {
-        continue;
-      }
-
-      // Delete exist file in folder
-      File.Delete(filePath);
-
-      // Add new file to folder
-      using (var stream = new FileStream(filePath, FileMode.Create))
-      {
-        await file.CopyToAsync(stream);
-      }
-
-      updatedFilesInfo.Add(new SavedFileInfo
-      {
-        FileName = fileName,
-        FilePath = $"Warehouse/{warehouseId}/FloorPlan/{floorPlanId}/{fileName}",
-        ContentType = file.ContentType
-      });
-    }
-
-    return updatedFilesInfo;
   }
 
 public async Task<List<SavedFileInfo>> SaveFilesAsync(Guid warehouseId, Guid? floorPlanId, List<IFormFile> files)

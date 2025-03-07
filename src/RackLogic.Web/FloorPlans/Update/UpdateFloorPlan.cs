@@ -1,6 +1,7 @@
 ﻿using System.Text.RegularExpressions;
 using Ardalis.Result;
 using FastEndpoints;
+using FluentValidation;
 using MediatR;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
@@ -8,6 +9,7 @@ using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using RackLogic.UseCases.FloorPlans.Update;
 using RackLogic.Web.Exceptions;
+using RackLogic.Web.FloorPlans.Create;
 using RackLogic.Web.Models;
 using RackLogic.Web.Services;
 
@@ -23,12 +25,12 @@ public class UpdateFloorPlan(IMediator _mediator) : Endpoint<RequestUpdateFloorP
     AllowFileUploads();
   }
 
-  public override async Task HandleAsync([FromForm] RequestUpdateFloorPlan req, CancellationToken ct)
+  public override async Task HandleAsync(RequestUpdateFloorPlan req, CancellationToken ct)
   {
     var form = await HttpContext.Request.ReadFormAsync();
 
     var files = form.Files.ToList();
-    var floorPlanData = JsonConvert.DeserializeObject<UpdateFloorPlanRequest>(req.UpdateFloorPlanData);
+    var floorPlanData = ConvertStringDataToModel(req.UpdateFloorPlanData);
 
     if (floorPlanData == null)
     {
@@ -36,7 +38,7 @@ public class UpdateFloorPlan(IMediator _mediator) : Endpoint<RequestUpdateFloorP
     }
 
     // Mapping files to FloorAsset
-    MapFilesToFloorAssets(floorPlanData.FloorAsset, files);
+    MapFilesToFloorAssets(floorPlanData.FloorAssets, files);
 
     var validator = new UpdateFloorPlanRequestValidator();
     var validationResult = validator.Validate(floorPlanData);
@@ -53,7 +55,7 @@ public class UpdateFloorPlan(IMediator _mediator) : Endpoint<RequestUpdateFloorP
         new UpdateFloorPlanCommand(
             userCreatedId,
             floorPlanData.WarehouseId,
-            floorPlanData.FloorAsset.Select(FloorPlanMapper.ToUpdateFloorPlanCommand).ToList()
+            floorPlanData.FloorAssets.Select(FloorPlanMapper.ToUpdateFloorPlanCommand).ToList()
         ),
         ct);
 
@@ -83,9 +85,9 @@ public class UpdateFloorPlan(IMediator _mediator) : Endpoint<RequestUpdateFloorP
     await SendErrorsAsync(statusCode: 500, ct);
   }
 
-  private void MapFilesToFloorAssets(List<UpdateFloorPlanInformation>? floorAssets, List<IFormFile> files)
+  private void MapFilesToFloorAssets(List<UpdateFloorPlanInformation>? floorAssets, List<IFormFile>? files)
   {
-    if (floorAssets == null || floorAssets.Count == 0) return;
+    if (floorAssets == null || !floorAssets.Any() || files == null || files.Count == 0) return;
 
     var regex = new Regex(@"files\[(\d+)\]");
 
@@ -98,12 +100,24 @@ public class UpdateFloorPlan(IMediator _mediator) : Endpoint<RequestUpdateFloorP
         continue;
       }
 
-      var floorAsset = floorAssets[index];
-
-      if (file.Name.Contains("new", StringComparison.OrdinalIgnoreCase))
-        (floorAsset.NewFiles ??= new List<IFormFile>()).Add(file);
-      else if (file.Name.Contains("update", StringComparison.OrdinalIgnoreCase))
-        (floorAsset.FilesToUpdate ??= new List<IFormFile>()).Add(file);
+      floorAssets[index].Files ??= new List<IFormFile>();
+      floorAssets[index].Files!.Add(file);
     }
-  } 
+  }
+
+  private UpdateFloorPlanRequest? ConvertStringDataToModel(string data)
+  {
+    UpdateFloorPlanRequest? result;
+    try
+    {
+      result = JsonConvert.DeserializeObject<UpdateFloorPlanRequest>(data);
+    }
+    catch (Exception)
+    {
+      var jsonString = data.Trim('"').Replace("\n", "");
+      result = JsonConvert.DeserializeObject<UpdateFloorPlanRequest>(jsonString);
+    }
+
+    return result;
+  }
 }

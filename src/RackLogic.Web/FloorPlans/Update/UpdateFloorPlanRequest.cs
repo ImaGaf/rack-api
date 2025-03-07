@@ -9,10 +9,7 @@ public class RequestUpdateFloorPlan
   public required string UpdateFloorPlanData { get; set; }
 
   [FromForm]
-  public List<IFormFile> NewFiles { get; set; } = new();
-
-  [FromForm]
-  public List<IFormFile> FilesToUpdate { get; set; } = new();
+  public List<IFormFile> Files { get; set; } = new();
 }
 
 public class UpdateFloorPlanRequest
@@ -20,16 +17,18 @@ public class UpdateFloorPlanRequest
   [Required]
   public Guid WarehouseId { get; set; }
   [Required]
-  public required List<UpdateFloorPlanInformation> FloorAsset { get; set; }
+  public required List<UpdateFloorPlanInformation> FloorAssets { get; set; }
 }
 
 public class UpdateFloorPlanInformation
 {
-  [Required]
-  public Guid FloorPlanId { get; set; }
+  public Guid? FloorPlanId { get; set; }
+  public UpdateFloorPlanInformation(Guid? floorPlanId = null)
+  {
+    FloorPlanId = floorPlanId ?? Guid.NewGuid();
+  }
   public List<string>? FileUrlsToDelete { get; set; } = new();
-  public List<IFormFile>? NewFiles { get; set; } = new();
-  public List<IFormFile>? FilesToUpdate { get; set; } = new();
+  public List<IFormFile>? Files { get; set; } = new();
   [Required]
   public required string Title { get; set; }
   [Required]
@@ -45,6 +44,10 @@ public class UpdateFloorPlanInformation
 public class UpdateFloorPlanItemInformation
 {
   public Guid? Id { get; set; }
+  public UpdateFloorPlanItemInformation(Guid? id = null)
+  {
+    Id = id ?? Guid.NewGuid();
+  }
   [Required]
   public required int Rack { get; set; }
   [Required]
@@ -61,8 +64,11 @@ public class UpdateFloorPlanItemInformation
 }
 public class UpdateFloorPlanComment
 {
-  [Required]
-  public Guid Id { get; set; }
+  public Guid? Id { get; set; }
+  public UpdateFloorPlanComment(Guid ? id = null)
+  {
+    Id = id ?? Guid.NewGuid();
+  }
   [Required]
   public required string UserName { get; set; }
   [Required]

@@ -1,4 +1,5 @@
-﻿using RackLogic.Core.Common.Entity;
+﻿using Microsoft.AspNetCore.Http;
+using RackLogic.Core.Common.Entity;
 using RackLogic.UseCases.FloorPlans.Create;
 using RackLogic.UseCases.FloorPlans.Update;
 
@@ -49,6 +50,91 @@ public static partial class FloorPlanUseCasesMapper
       UserName = comment.userName,
       Comment = comment.comment
     };
+  }
+  // Mapper FloorPlanAsssets to UpdateFloorPlanInformationCommand
+  public static FloorPlan ToFloorPlan(this UpdateFloorPlanInformationCommand request, Guid warehouseId, Guid userCreatedId)
+  {
+    return new FloorPlan
+    {
+      Id = request.FloorPlanId,
+      WarehouseId = warehouseId,
+      AssetName = request.Title,
+      FloorNumber = request.Floor,
+      Description = request.Description,
+      TotalRack = request.TotalRack,
+      TotalBay = request.TotalBay,
+      CreatorId = userCreatedId,
+      FloorPlanFiles = new List<FloorPlanFiles>(),
+      FloorPlanItems = new List<FloorPlanItem>()
+    };
+  }
+  public static FloorPlanItem ToFloorPlanItem(this UpdateFloorPlanItemInformationCommand item, Guid floorPlanId)
+  {
+    return new FloorPlanItem
+    {
+      Id = item.Id,
+      FloorPlanId = floorPlanId,
+      Rack = item.Rack,
+      Bay = item.Bay,
+      Offset = item.Offset,
+      Size = item.Size,
+      Width = item.Width,
+      Height = item.Height,
+      ObjectType = item.ObjectType,
+      Rotation = item.Rotation,
+      Comments = new List<FloorPlanComments>()
+    };
+  }
+  public static FloorPlanComments ToFloorPlanComment(this UpdateFloorPlanCommentCommand comment, Guid floorPlanItemId)
+  {
+    return new FloorPlanComments
+    {
+      Id = comment.Id,
+      FloorPlanItemId = floorPlanItemId,
+      UserName = comment.UserName,
+      Comment = comment.Comment,
+      CreationTime = DateTime.Parse(comment.Date)
+    };
+  }
+
+  //Mapper UpdateFloorPlanInformationCommand to FloorPlanCommand
+  public static FloorPlanCommand ToFloorPlanCommand(this UpdateFloorPlanInformationCommand request)
+  {
+    return new FloorPlanCommand(
+        FloorPlanRequestId: request.FloorPlanId,
+        Title: request.Title,
+        Floor: request.Floor,
+        Description: request.Description,
+        TotalRack: request.TotalRack,
+        TotalBay: request.TotalBay,
+        Items: request.Items?.Select(i => i.ToFloorPlanItemCommand()).ToList() ?? new List<FloorPlanItemCommand>(),
+        Files: request.Files ?? new List<IFormFile>()
+    );
+  }
+
+  public static FloorPlanItemCommand ToFloorPlanItemCommand(this UpdateFloorPlanItemInformationCommand item)
+  {
+    return new FloorPlanItemCommand(
+        Id: item.Id,
+        Rack: item.Rack,
+        Bay: item.Bay,
+        Offset: item.Offset,
+        Size: item.Size,
+        Width: item.Width,
+        Height: item.Height,
+        ObjectType: item.ObjectType,
+        Rotation: item.Rotation,
+        Comments: item.Comments?.Select(c => c.ToFloorPlanCommentCommand()).ToList() ?? new List<FloorPlanCommentCommand>()
+    );
+  }
+
+  public static FloorPlanCommentCommand ToFloorPlanCommentCommand(this UpdateFloorPlanCommentCommand comment)
+  {
+    return new FloorPlanCommentCommand(
+        Id: comment.Id,
+        userName: comment.UserName,
+        comment: comment.Comment
+    );
   }
 
   public static FloorPlanFiles ToFloorPlanFile(this SavedFileInfo savedFile, Guid floorPlanId)
