@@ -153,6 +153,216 @@ namespace RackLogic.Infrastructure.Data.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
+            modelBuilder.Entity("RackLogic.Core.Common.Entity.BayConfiguration", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("ASComplianceVersion")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("BayConfigId")
+                        .IsRequired()
+                        .HasMaxLength(30)
+                        .HasColumnType("nvarchar(30)");
+
+                    b.Property<int>("BeamLevel")
+                        .HasColumnType("int");
+
+                    b.Property<int>("BracingDiagonalLevel")
+                        .HasColumnType("int");
+
+                    b.Property<int>("BracingLevel")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Comment")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("HasProtector")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("HasSplice")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime>("InstallationDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("InterimInterval")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool?>("IsCustomAccessories")
+                        .HasColumnType("bit");
+
+                    b.Property<bool?>("IsCustomBeam")
+                        .HasColumnType("bit");
+
+                    b.Property<bool?>("IsCustomBracingDiagonal")
+                        .HasColumnType("bit");
+
+                    b.Property<bool?>("IsCustomBracingHorizontal")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsCustomBrand")
+                        .HasColumnType("bit");
+
+                    b.Property<bool?>("IsCustomRowSpacer")
+                        .HasColumnType("bit");
+
+                    b.Property<bool?>("IsCustomUpRight")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsEnableInterimInspection")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsEstimatedInstallDate")
+                        .HasColumnType("bit");
+
+                    b.Property<int>("Level")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Pallets")
+                        .HasColumnType("int");
+
+                    b.Property<string>("ProjectRef")
+                        .IsRequired()
+                        .HasMaxLength(30)
+                        .HasColumnType("nvarchar(30)");
+
+                    b.Property<string>("RackingType")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("RowSpacerLevel")
+                        .HasColumnType("int");
+
+                    b.Property<string>("SpliceKits")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("StructuralDesigner")
+                        .IsRequired()
+                        .HasMaxLength(30)
+                        .HasColumnType("nvarchar(30)");
+
+                    b.Property<string>("Supplier")
+                        .IsRequired()
+                        .HasMaxLength(30)
+                        .HasColumnType("nvarchar(30)");
+
+                    b.Property<int>("ToleranceGrade")
+                        .HasMaxLength(1)
+                        .HasColumnType("int");
+
+                    b.Property<int>("TotalBayLoad")
+                        .HasMaxLength(5)
+                        .HasColumnType("int");
+
+                    b.Property<Guid>("WarahouseId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("WarahouseId");
+
+                    b.ToTable("BayConfigurations");
+                });
+
+            modelBuilder.Entity("RackLogic.Core.Common.Entity.BayConfigurationLevels", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("BayId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<bool?>("IsXBrace")
+                        .HasColumnType("bit");
+
+                    b.Property<int>("LevelType")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("LevelValue")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("LowerHeight")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Orientation")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("UpperHeight")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("BayId");
+
+                    b.ToTable("BayConfigurationLevels");
+                });
+
+            modelBuilder.Entity("RackLogic.Core.Common.Entity.Component", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("BayId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int?>("Category")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Code")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("ComponentType")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("DistanceCenterToCenter")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("Height")
+                        .HasColumnType("int");
+
+                    b.Property<bool?>("IsXBrace")
+                        .HasColumnType("bit");
+
+                    b.Property<int?>("Length")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("LowerHeight")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Notes")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Orientation")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("Quantity")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("UpperHeight")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("Width")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("BayId");
+
+                    b.ToTable("Components");
+                });
+
             modelBuilder.Entity("RackLogic.Core.Common.Entity.FloorPlan", b =>
                 {
                     b.Property<Guid>("Id")
@@ -926,6 +1136,39 @@ namespace RackLogic.Infrastructure.Data.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("RackLogic.Core.Common.Entity.BayConfiguration", b =>
+                {
+                    b.HasOne("RackLogic.Core.Common.Entity.Warehouse", "Warehouses")
+                        .WithMany("Configurations")
+                        .HasForeignKey("WarahouseId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Warehouses");
+                });
+
+            modelBuilder.Entity("RackLogic.Core.Common.Entity.BayConfigurationLevels", b =>
+                {
+                    b.HasOne("RackLogic.Core.Common.Entity.BayConfiguration", "BayConfiguration")
+                        .WithMany("BayConfigurationLevels")
+                        .HasForeignKey("BayId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("BayConfiguration");
+                });
+
+            modelBuilder.Entity("RackLogic.Core.Common.Entity.Component", b =>
+                {
+                    b.HasOne("RackLogic.Core.Common.Entity.BayConfiguration", "BayConfiguration")
+                        .WithMany("Components")
+                        .HasForeignKey("BayId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("BayConfiguration");
+                });
+
             modelBuilder.Entity("RackLogic.Core.Common.Entity.FloorPlan", b =>
                 {
                     b.HasOne("RackLogic.Core.Common.Entity.Warehouse", "Warehouse")
@@ -1107,6 +1350,13 @@ namespace RackLogic.Infrastructure.Data.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("RackLogic.Core.Common.Entity.BayConfiguration", b =>
+                {
+                    b.Navigation("BayConfigurationLevels");
+
+                    b.Navigation("Components");
+                });
+
             modelBuilder.Entity("RackLogic.Core.Common.Entity.FloorPlan", b =>
                 {
                     b.Navigation("FloorPlanFiles");
@@ -1126,6 +1376,8 @@ namespace RackLogic.Infrastructure.Data.Migrations
 
             modelBuilder.Entity("RackLogic.Core.Common.Entity.Warehouse", b =>
                 {
+                    b.Navigation("Configurations");
+
                     b.Navigation("FloorPlans");
 
                     b.Navigation("UserWarehouseRoles");

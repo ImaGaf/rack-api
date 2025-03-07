@@ -17,4 +17,5 @@ public class Warehouse : BaseEntityCustom
   public required string OwnerPhoneNumber { get; set; }
   public required ICollection<UserWarehouseRole> UserWarehouseRoles { get; set; }
   public required ICollection<FloorPlan> FloorPlans { get; set; }
+  public List<BayConfiguration> Configurations { get; set; } = new List<BayConfiguration>();
 }
