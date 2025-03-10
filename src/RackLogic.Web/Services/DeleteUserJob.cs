@@ -27,7 +27,7 @@ public class DeleteUserJob : BackgroundService
       try
       {
         // Process users to be deleted
-        await ProcessUsersToDelete(stoppingToken);
+        await ProcessUsersToDeleteAsync(stoppingToken);
       }
       catch (Exception ex)
       {
@@ -45,7 +45,7 @@ public class DeleteUserJob : BackgroundService
   /// <summary>
   /// Find and process users that have been marked for deletion after 14 days.
   /// </summary>
-  private async Task ProcessUsersToDelete(CancellationToken cancellationToken)
+  private async Task ProcessUsersToDeleteAsync(CancellationToken cancellationToken)
   {
     using var scope = _serviceProvider.CreateScope();
     var userManager = scope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
@@ -58,14 +58,14 @@ public class DeleteUserJob : BackgroundService
     // Handle each user
     foreach (var user in usersToDelete)
     {
-      await HandleUserDeletion(user, cancellationToken);
+      await HandleUserDeletionAsync(user, cancellationToken);
     }
   }
 
   /// <summary>
   /// Handles user deletion logic based on their role.
   /// </summary>
-  private async Task HandleUserDeletion(ApplicationUser user, CancellationToken cancellationToken)
+  private async Task HandleUserDeletionAsync(ApplicationUser user, CancellationToken cancellationToken)
   {
     using var scope = _serviceProvider.CreateScope();
     var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole<Guid>>>();
@@ -78,24 +78,24 @@ public class DeleteUserJob : BackgroundService
     if (role == RoleConstant.Premises)
     {
       // Handling user Premises
-      await HandlePremisesDeletion(user, userManager, dbContext, roleManager, warehouseRepository, userWarehouseRoleRepository, cancellationToken);
+      await HandlePremisesDeletionAsync(user, userManager, dbContext, roleManager, warehouseRepository, userWarehouseRoleRepository, cancellationToken);
     }
     else if (role == RoleConstant.Inspector)
     {
       // Handling user Inspector
-      await HandleInspectorDeletion(user, userManager, warehouseRepository, cancellationToken);
+      await HandleInspectorDeletionAsync(user, userManager, warehouseRepository, cancellationToken);
     }
     else
     {
       // Handling other user
-      await HandleGenericUserDeletion(user, userManager, userWarehouseRoleRepository, cancellationToken);
+      await HandleGenericUserDeletionAsync(user, userManager, userWarehouseRoleRepository, cancellationToken);
     }
   }
 
   /// <summary>
   /// Delete user Premises and related data.
   /// </summary>
-  private async Task HandlePremisesDeletion(
+  private async Task HandlePremisesDeletionAsync(
       ApplicationUser user,
       UserManager<ApplicationUser> userManager,
       AppDbContext dbContext,
@@ -139,13 +139,13 @@ public class DeleteUserJob : BackgroundService
     await userManager.DeleteAsync(user);
 
     // Delete user from other warehouses
-    await DeleteUserRolesFromWarehouses(user.Id, cancellationToken);
+    await DeleteUserRolesFromWarehousesAsync(user.Id, cancellationToken);
   }
 
   /// <summary>
   /// Delete user Inspector and related data.
   /// </summary>
-  private async Task HandleInspectorDeletion(
+  private async Task HandleInspectorDeletionAsync(
       ApplicationUser user,
       UserManager<ApplicationUser> userManager,
       IRepositoryWithExpression<Warehouse> warehouseRepository,
@@ -162,13 +162,13 @@ public class DeleteUserJob : BackgroundService
     await userManager.DeleteAsync(user);
 
     // Delete user from other warehouses
-    await DeleteUserRolesFromWarehouses(user.Id, cancellationToken);
+    await DeleteUserRolesFromWarehousesAsync(user.Id, cancellationToken);
   }
 
   /// <summary>
   /// Delete other users (ClientManager, ClientEditor, Repairer).
   /// </summary>
-  private async Task HandleGenericUserDeletion(
+  private async Task HandleGenericUserDeletionAsync(
       ApplicationUser user,
       UserManager<ApplicationUser> userManager,
       IRepositoryWithExpression<UserWarehouseRole> userWarehouseRoleRepository,
@@ -178,13 +178,13 @@ public class DeleteUserJob : BackgroundService
     await userManager.DeleteAsync(user);
 
     // Delete user from other warehouses
-    await DeleteUserRolesFromWarehouses(user.Id, cancellationToken);
+    await DeleteUserRolesFromWarehousesAsync(user.Id, cancellationToken);
   }
 
   /// <summary>
   /// Delete user roles in all warehouses.
   /// </summary>
-  private async Task DeleteUserRolesFromWarehouses(Guid userId, CancellationToken cancellationToken)
+  private async Task DeleteUserRolesFromWarehousesAsync(Guid userId, CancellationToken cancellationToken)
   {
     using var scope = _serviceProvider.CreateScope();
     var userWarehouseRoleRepository = scope.ServiceProvider.GetRequiredService<IRepositoryWithExpression<UserWarehouseRole>>();

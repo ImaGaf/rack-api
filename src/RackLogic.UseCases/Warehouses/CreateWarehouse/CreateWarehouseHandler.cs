@@ -31,7 +31,7 @@ public class CreateWarehouseHandler(
     var creatorRoleId = await _roleManager.FindByNameAsync(creatorRole);
     var inspectorRole = await _roleManager.FindByNameAsync(RoleConstant.Inspector);
 
-    if (!await CheckPermissionUserRequest(creatorId)) return Result.Forbidden();
+    if (!await CheckPermissionUserRequestAsync(creatorId)) return Result.Forbidden();
 
     //If user switch on button and user not a inspector
     if (request.IsNominatedInspector && creatorRole != RoleConstant.Inspector) return Result.Invalid(new ValidationError("Only Inspectors can be the nominated inspector."));
@@ -170,7 +170,7 @@ public class CreateWarehouseHandler(
     return emailContent;
   }
 
-  private async Task<bool> CheckPermissionUserRequest(Guid userId)
+  private async Task<bool> CheckPermissionUserRequestAsync(Guid userId)
   {
     var user = await _userManager.FindByIdAsync(userId.ToString());
 

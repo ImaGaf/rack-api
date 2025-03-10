@@ -13,7 +13,7 @@ public class UserWarehouseService : IUserWarehouseService
     _context = context;
   }
 
-  public async Task<List<GetAllBrandDTO>> GetAllBrand()
+  public async Task<List<GetAllBrandDTO>> GetAllBrandAsync()
   {
     var result = await _context.OEMBrands
         .GroupJoin(

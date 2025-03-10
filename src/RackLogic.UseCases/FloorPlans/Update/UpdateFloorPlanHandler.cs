@@ -20,7 +20,7 @@ public class UpdateFloorPlanHandler(
 
     // Check user role
     var userCreatedId = request.UserCreatedId;
-    if (!await CheckPermissionUserRequest(userCreatedId, request.WarehouseId)) return Result.Forbidden();
+    if (!await CheckPermissionUserRequestAsync(userCreatedId, request.WarehouseId)) return Result.Forbidden();
 
     var validationErrors = new List<ValidationError>();
 
@@ -38,7 +38,7 @@ public class UpdateFloorPlanHandler(
 
     return validationErrors.Any() ? Result<bool>.Invalid(validationErrors) : Result.Success(true);
   }
-  private async Task<bool> CheckPermissionUserRequest(Guid userId, Guid warehouseId)
+  private async Task<bool> CheckPermissionUserRequestAsync(Guid userId, Guid warehouseId)
   {
     var result = await _userWarehouseRoleRepository.FirstOrDefaultAsync(x => x.UserId == userId && x.WarehouseId == warehouseId);
     if (result == null) return false;

@@ -65,26 +65,7 @@ public class FloorPlanService : IFloorPlanService
     return existingFloorPlans.Select(f => f.Id).ToList();
   }
 
-  public (List<FloorPlan>, List<FloorPlanItem>, List<FloorPlanComments>) GetFloorPlanData(CreateFloorPlanCommand request, Guid userCreatedId)
-  {
-    var floorPlans = request.FloorPlans
-        .Select(f => f.ToFloorPlan(request.WarehouseId, userCreatedId))
-        .ToList();
-
-    var floorPlanItems = request.FloorPlans
-        .SelectMany(f => f.Items, (f, item) => item.ToFloorPlanItem(f.FloorPlanRequestId))
-        .ToList();
-
-    var floorPlanComments = request.FloorPlans
-        .SelectMany(f => f.Items)
-        .Where(item => item.Comments != null)
-        .SelectMany(item => item.Comments ?? new List<FloorPlanCommentCommand>(), (item, comment) => comment.ToFloorPlanComment(item.Id))
-        .ToList();
-
-    return (floorPlans, floorPlanItems, floorPlanComments);
-  }
-
-  public (List<FloorPlan>, List<FloorPlanItem>, List<FloorPlanComments>) GetFloorPlanDataForUpdate( List<UpdateFloorPlanInformationCommand> notExistFloorAssetsDb, Guid warehouseId, Guid userCreatedId)
+  private (List<FloorPlan>, List<FloorPlanItem>, List<FloorPlanComments>) GetFloorPlanDataForUpdate( List<UpdateFloorPlanInformationCommand> notExistFloorAssetsDb, Guid warehouseId, Guid userCreatedId)
   {
     var floorPlans = notExistFloorAssetsDb
         .Select(f => f.ToFloorPlan(warehouseId, userCreatedId))
@@ -117,22 +98,35 @@ public class FloorPlanService : IFloorPlanService
     return floorPlans.Select(FloorPlanUseCasesMapper.ToFloorPlanDTO).ToList();
   }
 
-  public async Task<Result<bool>> SaveFloorPlanDataAsync(List<FloorPlan> floorPlans, List<FloorPlanItem> floorPlanItems, List<FloorPlanComments> floorPlanComments, List<FloorPlanCommand> floorPlanRequests)
+  private async Task<Result<bool>> SaveFloorPlanDataAsync(List<FloorPlan> floorPlans, List<FloorPlanItem> floorPlanItems, List<FloorPlanComments> floorPlanComments, List<FloorPlanCommand> floorPlanRequests)
   {
     // Check errors for each object
     var errorFloorPlanIds = await CheckAndGetErrorsForFloorPlansAsync(floorPlans);
     var errorFloorPlanItemIds = await CheckAndGetErrorsForFloorPlanItemsAsync(floorPlanItems, errorFloorPlanIds);
     var errorFloorPlanCommentIds = await CheckAndGetErrorsForFloorPlanCommentsAsync(floorPlanComments, errorFloorPlanItemIds);
 
-    // Save valid floorPlans to DB first
-    var validFloorPlans = floorPlans.Where(f => !errorFloorPlanIds.Contains(f.Id)).ToList();
-    await _context.FloorPlans.AddRangeAsync(validFloorPlans);
-
-    // Save valid floorPlanItems to DB first
+    // Check valid floorPlanItems
     var validFloorPlanItems = floorPlanItems.Where(i => !errorFloorPlanItemIds.Contains(i.Id)).ToList();
+
+    // Check valid floorPlans
+    var validFloorPlans = floorPlans
+        .Where(f => !errorFloorPlanIds.Contains(f.Id) && validFloorPlanItems.Any(i => i.FloorPlanId == f.Id))
+        .ToList();
+
+    // If no valid FloorPlan is created, return an error.
+    if (!validFloorPlans.Any())
+    {
+      return Result<bool>.Invalid(new List<ValidationError>
+        {
+            new ValidationError("Failed to create new valid FloorPlans with invalid items.")
+        });
+    }
+    //Save valid floorPlans to DB
+    await _context.FloorPlans.AddRangeAsync(validFloorPlans);
+    //Save valid floorPlanItems to DB
     await _context.FloorPlanItems.AddRangeAsync(validFloorPlanItems);
 
-    // Save valid floorPlanComments to DB first
+    // Save valid floorPlanComments to DB
     var validFloorPlanComments = floorPlanComments.Where(c => !errorFloorPlanCommentIds.Contains(c.Id)).ToList();
     await _context.FloorPlanComments.AddRangeAsync(validFloorPlanComments);
 
@@ -142,6 +136,7 @@ public class FloorPlanService : IFloorPlanService
     .ToList();
 
     await SaveFloorPlanFilesAsync(validFloorPlans, validFloorPlanRequests);
+
     await _context.SaveChangesAsync();
 
     // Check and return errors if any
@@ -168,7 +163,7 @@ public class FloorPlanService : IFloorPlanService
     return Result.Success(true);
   }
 
-  public async Task SaveFloorPlanFilesAsync(List<FloorPlan> floorPlans, List<FloorPlanCommand> floorPlanRequests)
+  private async Task SaveFloorPlanFilesAsync(List<FloorPlan> floorPlans, List<FloorPlanCommand> floorPlanRequests)
   {
     foreach (var (floorPlan, f) in floorPlans.Zip(floorPlanRequests))
     {
@@ -192,7 +187,7 @@ public class FloorPlanService : IFloorPlanService
   }
 
   // Update FloorPlanAssets list
-  private async Task<Result<bool>> ProcessFloorPlan(UpdateFloorPlanInformationCommand plan, Guid warehouseId)
+  private async Task<Result<bool>> ProcessFloorPlanAsync(UpdateFloorPlanInformationCommand plan, Guid warehouseId)
   {
     var floorPlan = await _floorPlanRepository.FirstOrDefaultAsync(x => x.Id == plan.FloorPlanId);
     if (floorPlan is null)
@@ -200,17 +195,17 @@ public class FloorPlanService : IFloorPlanService
 
     plan.UpdateFloorPlan(floorPlan);
 
-    var itemResult = await UpdateFloorPlanItems(plan.Items);
+    var itemResult = await UpdateFloorPlanItemsAsync(plan.Items);
     if (!itemResult.IsSuccess) return itemResult;
 
-    await HandleFileOperations(plan, warehouseId, floorPlan.Id);
+    await HandleFileOperationsAsync(plan, warehouseId, floorPlan.Id);
     await _floorPlanRepository.UpdateAsync(floorPlan);
 
     return Result.Success(true);
   }
 
   // Update FloorPlanItems list
-  private async Task<Result<bool>> UpdateFloorPlanItems(List<UpdateFloorPlanItemInformationCommand> items)
+  private async Task<Result<bool>> UpdateFloorPlanItemsAsync(List<UpdateFloorPlanItemInformationCommand> items)
   {
     if (items is null || !items.Any()) return Result.Success(true);
 
@@ -236,7 +231,7 @@ public class FloorPlanService : IFloorPlanService
 
     foreach (var x in updatedItems.Where(x => x.item.Comments?.Any() == true).ToList())
     {
-      var result = await UpdateFloorPlanItemComments(x.item.Comments, x.floorPlanItem.Id);
+      var result = await UpdateFloorPlanItemCommentsAsync(x.item.Comments, x.floorPlanItem.Id);
       if (!result.IsSuccess)
       {
         commentErrors.AddRange(result.ValidationErrors);
@@ -248,7 +243,7 @@ public class FloorPlanService : IFloorPlanService
     return validationErrors.Any() ? Result<bool>.Invalid(validationErrors) : Result.Success(true);
   }
 
-  private async Task<Result<bool>> UpdateFloorPlanItemComments(List<UpdateFloorPlanCommentCommand>? comments, Guid floorPlanItemId)
+  private async Task<Result<bool>> UpdateFloorPlanItemCommentsAsync(List<UpdateFloorPlanCommentCommand>? comments, Guid floorPlanItemId)
   {
     if (comments == null || !comments.Any()) return Result.Success(true);
 
@@ -277,21 +272,21 @@ public class FloorPlanService : IFloorPlanService
 
 
   // Process files that need to be updated (delete old files, add new files)
-  private async Task HandleFileOperations(UpdateFloorPlanInformationCommand plan, Guid warehouseId, Guid floorPlanId)
+  private async Task HandleFileOperationsAsync(UpdateFloorPlanInformationCommand plan, Guid warehouseId, Guid floorPlanId)
   {
     if (plan.FileUrlsToDelete is not null && plan.FileUrlsToDelete.Any())
     {
-      await DeleteFiles(plan.FileUrlsToDelete);
+      await DeleteFilesAsync(plan.FileUrlsToDelete);
     }
 
     if (plan.Files is not null && plan.Files.Any())
     {
-      await SaveNewFiles(plan.Files, warehouseId, floorPlanId);
+      await SaveNewFilesAsync(plan.Files, warehouseId, floorPlanId);
     }
   }
 
   // Delete files in database & storage system
-  private async Task DeleteFiles(List<string> fileUrlsToDelete)
+  private async Task DeleteFilesAsync(List<string> fileUrlsToDelete)
   {
     await _fileService.DeleteFilesAsync(fileUrlsToDelete);
 
@@ -306,7 +301,7 @@ public class FloorPlanService : IFloorPlanService
   }
 
   // Save new file to database
-  private async Task SaveNewFiles(List<IFormFile> newFiles, Guid warehouseId, Guid floorPlanId)
+  private async Task SaveNewFilesAsync(List<IFormFile> newFiles, Guid warehouseId, Guid floorPlanId)
   {
     var savedFiles = await _fileService.SaveFilesAsync(warehouseId, floorPlanId, newFiles);
 
@@ -367,7 +362,7 @@ public class FloorPlanService : IFloorPlanService
 
     foreach (var plan in existFloorAssetsDb)
     {
-      var processResult = await ProcessFloorPlan(plan, warehouseId);
+      var processResult = await ProcessFloorPlanAsync(plan, warehouseId);
       if (!processResult.IsSuccess)
       {
         validationErrors.AddRange(processResult.ValidationErrors);
@@ -387,5 +382,40 @@ public class FloorPlanService : IFloorPlanService
     var createResult = await SaveFloorPlanDataAsync(floorPlans, floorPlanItems, floorPlanComments, floorPlanCommands);
 
     return createResult;
+  }
+
+  public async Task<Result<bool>> CreateFloorPlanAssetsAsync(List<FloorPlanCommand> FloorPlans, Guid warehouseId, Guid userCreatedId)
+  {
+    // Get Floor Plan Assets data
+    var (floorPlans, floorPlanItems, floorPlanComments) = GetFloorPlanData(FloorPlans, warehouseId, userCreatedId);
+    // Save Floor Plan Assets data
+    var saveResult = await SaveFloorPlanDataAsync(floorPlans, floorPlanItems, floorPlanComments, FloorPlans);
+
+    if (!saveResult.IsSuccess)
+    {
+      return Result<bool>.Invalid(saveResult.ValidationErrors);
+    }
+
+    return Result.Success(true);
+  }
+
+
+  private (List<FloorPlan>, List<FloorPlanItem>, List<FloorPlanComments>) GetFloorPlanData(List<FloorPlanCommand> FloorPlans, Guid warehouseId, Guid userCreatedId)
+  {
+    var floorPlans = FloorPlans
+        .Select(f => f.ToFloorPlan(warehouseId, userCreatedId))
+        .ToList();
+
+    var floorPlanItems = FloorPlans
+        .SelectMany(f => f.Items, (f, item) => item.ToFloorPlanItem(f.FloorPlanRequestId))
+        .ToList();
+
+    var floorPlanComments = FloorPlans
+        .SelectMany(f => f.Items)
+        .Where(item => item.Comments != null)
+        .SelectMany(item => item.Comments ?? new List<FloorPlanCommentCommand>(), (item, comment) => comment.ToFloorPlanComment(item.Id))
+        .ToList();
+
+    return (floorPlans, floorPlanItems, floorPlanComments);
   }
 }
