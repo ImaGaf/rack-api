@@ -27,7 +27,6 @@ public class ListBayConfigurationResponse
   public bool? IsCustomUpRight { get; set; }
   public ComponentResponse? Beam { get; set; }
   public List<int?>? BeamLevels { get; set; }
-  public int BeamLevel { get; set; }
   public bool? IsCustomBeam { get; set; }
   public ComponentResponse? BracingHorizontal { get; set; }
   public int BracingLevel { get; set; }
@@ -41,7 +40,7 @@ public class ListBayConfigurationResponse
   public int RowSpacerLevel { get; set; }
   public List<int?>? RowSpacerLevels { get; set; }
   public bool? IsCustomRowSpacer { get; set; }
-  public AccessoriesResponse? Accessories { get; set; }
+  public List<ComponentResponse>? Accessories { get; set; }
   public bool? IsCustomAccessories { get; set; }
 }
 
@@ -62,9 +61,4 @@ public class ComponentResponse
   public int? LowerHeight { get; set; }
   public int? UpperHeight { get; set; }
   public bool? IsXBrace { get; set; }
-}
-
-public class AccessoriesResponse
-{
-  public List<ComponentResponse>? BasePlate { get; set; }
 }

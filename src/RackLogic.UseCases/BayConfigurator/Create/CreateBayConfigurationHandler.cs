@@ -45,9 +45,9 @@ public class CreateBayConfigurationHandler(
     bayConfiguration.Components.Add(request.BayConfiguration.BracingDiagonal.Mapping(bayConfiguration.Id));
     bayConfiguration.Components.Add(request.BayConfiguration.RowSpacer.Mapping(bayConfiguration.Id));
 
-    if (request.BayConfiguration.Accessories.BasePlate != null)
+    if (request.BayConfiguration.Accessories != null)
     {
-      bayConfiguration.Components.AddRange(request.BayConfiguration.Accessories.BasePlate.Select(c => c.Mapping(bayConfiguration.Id)));
+      bayConfiguration.Components.AddRange(request.BayConfiguration.Accessories.Select(c => c.Mapping(bayConfiguration.Id)));
     }
 
     // Add Levels to BayConfiguration

@@ -27,7 +27,6 @@ public class BayConfigurationDTO
   public bool? IsCustomUpRight { get; set; }
   public ComponentDTO? Beam { get; set; }
   public List<int?>? BeamLevels { get; set; }
-  public int BeamLevel { get; set; }
   public bool? IsCustomBeam { get; set; }
   public ComponentDTO? BracingHorizontal { get; set; }
   public int BracingLevel { get; set; }
@@ -41,7 +40,7 @@ public class BayConfigurationDTO
   public int RowSpacerLevel { get; set; }
   public List<int?>? RowSpacerLevels { get; set; }
   public bool? IsCustomRowSpacer { get; set; }
-  public AccessoriesDTO? Accessories { get; set; }
+  public List<ComponentDTO>? Accessories { get; set; }
   public bool? IsCustomAccessories { get; set; }
 }
 
@@ -62,9 +61,4 @@ public class ComponentDTO
   public int? LowerHeight { get; set; }
   public int? UpperHeight { get; set; }
   public bool? IsXBrace { get; set; }
-}
-
-public class AccessoriesDTO
-{
-  public List<ComponentDTO>? BasePlate { get; set; }
 }
