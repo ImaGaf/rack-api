@@ -11,7 +11,7 @@ public class ContributorList(CustomWebApplicationFactory<Program> factory) : ICl
   private readonly HttpClient _client = factory.CreateClient();
 
   [Fact]
-  public async Task ReturnsTwoContributorsAsync()
+  public async Task ReturnsTwoContributors()
   {
     var result = await _client.GetAndDeserializeAsync<ContributorListResponse>("/Contributors");
 

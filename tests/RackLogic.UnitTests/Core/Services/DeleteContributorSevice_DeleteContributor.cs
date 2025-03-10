@@ -22,7 +22,7 @@ public class DeleteContributorService_DeleteContributor
   }
 
   [Fact]
-  public async Task ReturnsNotFoundGivenCantFindContributorAsync()
+  public async Task ReturnsNotFoundGivenCantFindContributor()
   {
     var result = await _service.DeleteContributorAsync(0);
 

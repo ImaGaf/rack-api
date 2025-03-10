@@ -6,7 +6,7 @@ namespace RackLogic.IntegrationTests.Data;
 public class EfRepositoryAdd : BaseEfRepoTestFixture
 {
   [Fact]
-  public async Task AddsContributorAndSetsIdAsync()
+  public async Task AddsContributorAndSetsId()
   {
     var testContributorName = "testContributor";
     var testContributorStatus = ContributorStatus.NotSet;
