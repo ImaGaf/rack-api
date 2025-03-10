@@ -22,11 +22,11 @@ public class CreateFloorAssetRequest
 
 public class FloorPlanRequest
 {
-  public Guid? FloorPlanRequestId { get; set; }
+  public Guid? FloorPlanId { get; set; }
 
-  public FloorPlanRequest(Guid? floorPlanRequestId = null)
+  public FloorPlanRequest(Guid? floorPlanId = null)
   {
-    FloorPlanRequestId = floorPlanRequestId ?? Guid.NewGuid();
+    FloorPlanId = floorPlanId ?? Guid.NewGuid();
   }
   [Required]
   public required string Title { get; set; }
