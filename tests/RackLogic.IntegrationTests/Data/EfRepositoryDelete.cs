@@ -6,7 +6,7 @@ namespace RackLogic.IntegrationTests.Data;
 public class EfRepositoryDelete : BaseEfRepoTestFixture
 {
   [Fact]
-  public async Task DeletesItemAfterAddingIt()
+  public async Task DeletesItemAfterAddingItAsync()
   {
     // add a Contributor
     var repository = GetRepository();

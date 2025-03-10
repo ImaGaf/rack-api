@@ -22,9 +22,9 @@ public class DeleteContributorService_DeleteContributor
   }
 
   [Fact]
-  public async Task ReturnsNotFoundGivenCantFindContributor()
+  public async Task ReturnsNotFoundGivenCantFindContributorAsync()
   {
-    var result = await _service.DeleteContributor(0);
+    var result = await _service.DeleteContributorAsync(0);
 
     Assert.Equal(Ardalis.Result.ResultStatus.NotFound, result.Status);
   }

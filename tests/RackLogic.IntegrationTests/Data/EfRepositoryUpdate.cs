@@ -7,7 +7,7 @@ namespace RackLogic.IntegrationTests.Data;
 public class EfRepositoryUpdate : BaseEfRepoTestFixture
 {
   [Fact]
-  public async Task UpdatesItemAfterAddingIt()
+  public async Task UpdatesItemAfterAddingItAsync()
   {
     // add a Contributor
     var repository = GetRepository();

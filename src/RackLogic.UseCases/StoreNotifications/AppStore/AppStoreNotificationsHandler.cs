@@ -12,25 +12,25 @@ public class AppStoreNotificationsHandler(
   public async Task<Result<bool>> Handle(AppStoreNotificationPayloadCommand request, CancellationToken cancellationToken)
   {
     // Get transaction Id
-    var transactionInfoByRequest = await GetTransactionInfoByToken(request.SignedPayload);
+    var transactionInfoByRequest = await GetTransactionInfoByTokenAsync(request.SignedPayload);
     // Confirm transaction with Appstore api
-    var signedTransactionInfoData = await  _storeNotificationService.VerifyAppleReceiptByTransactionId(transactionInfoByRequest?.TransactionId ?? string.Empty);
+    var signedTransactionInfoData = await  _storeNotificationService.VerifyAppleReceiptByTransactionIdAsync(transactionInfoByRequest?.TransactionId ?? string.Empty);
     // Decode transaction token by Appstore api response
-    var transactionInfo = await _storeNotificationService.DecodeJWTToken<TransactionInfo>(signedTransactionInfoData?.SignedTransactionInfo ?? string.Empty);
+    var transactionInfo = await _storeNotificationService.DecodeJWTTokenAsync<TransactionInfo>(signedTransactionInfoData?.SignedTransactionInfo ?? string.Empty);
     if (transactionInfo is null) return false;
 
-    return await UpdateTransaction(transactionInfo, request.SignedPayload, cancellationToken);
+    return await UpdateTransactionAsync(transactionInfo, request.SignedPayload, cancellationToken);
   }
 
-  private async Task<TransactionInfo?> GetTransactionInfoByToken(string token)
+  private async Task<TransactionInfo?> GetTransactionInfoByTokenAsync(string token)
   {
-    var appStoreNotification = await _storeNotificationService.DecodeJWTToken<AppStoreNotification>(token);
+    var appStoreNotification = await _storeNotificationService.DecodeJWTTokenAsync<AppStoreNotification>(token);
     if (appStoreNotification is null) return null;
 
-    return await _storeNotificationService.DecodeJWTToken<TransactionInfo>(appStoreNotification.Data?.SignedTransactionInfo ?? string.Empty);
+    return await _storeNotificationService.DecodeJWTTokenAsync<TransactionInfo>(appStoreNotification.Data?.SignedTransactionInfo ?? string.Empty);
   }
 
-  private async Task<bool> UpdateTransaction(TransactionInfo transactionInfo, string receiptData, CancellationToken cancellationToken)
+  private async Task<bool> UpdateTransactionAsync(TransactionInfo transactionInfo, string receiptData, CancellationToken cancellationToken)
   {
     var entity = await _purchaseRecordRepository.FirstOrDefaultAsync(x => x.OrderId == transactionInfo.OriginalTransactionId);
     if (entity is null) return false;

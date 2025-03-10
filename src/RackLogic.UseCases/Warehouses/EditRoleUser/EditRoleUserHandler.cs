@@ -22,7 +22,7 @@ public class EditRoleUserHandler(
     var UserEditIdString = request.User.Claims.First(x => x.Type == ClaimTypes.NameIdentifier).Value;
     var UserEditId = Guid.Parse(UserEditIdString);
 
-    if (!await CheckPermissionUserRequest(UserEditId, request.WarehouseId)) return Result.Forbidden("User does not have editing permission!");
+    if (!await CheckPermissionUserRequestAsync(UserEditId, request.WarehouseId)) return Result.Forbidden("User does not have editing permission!");
 
     // Check role request in database
     var role = await _roleManager.FindByNameAsync(request.Role);
@@ -57,7 +57,7 @@ public class EditRoleUserHandler(
     return true;
   }
 
-  private async Task<bool> CheckPermissionUserRequest(Guid userId, Guid warehouseId)
+  private async Task<bool> CheckPermissionUserRequestAsync(Guid userId, Guid warehouseId)
   {
     var result = await _userWarehouseRoleRepository.FirstOrDefaultAsync(x => x.UserId == userId && x.WarehouseId == warehouseId);
     if (result == null) return false;

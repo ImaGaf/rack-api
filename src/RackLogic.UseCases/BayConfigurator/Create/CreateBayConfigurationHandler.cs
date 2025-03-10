@@ -16,12 +16,12 @@ public class CreateBayConfigurationHandler(
 {
   public async Task<Result<bool>> Handle(CreateBayConfigurationCommand request, CancellationToken cancellationToken)
   {
-    if (!await CheckPermissionUserRequest(request.UserId, request.WarehouseId)) return Result.Forbidden();
+    if (!await CheckPermissionUserRequestAsync(request.UserId, request.WarehouseId)) return Result.Forbidden();
 
     return await AddConfigurationAsync(request, cancellationToken);
   }
 
-  private async Task<bool> CheckPermissionUserRequest(Guid userId, Guid warehouseId)
+  private async Task<bool> CheckPermissionUserRequestAsync(Guid userId, Guid warehouseId)
   {
     var result = await _userWarehouseRoleRepository.FirstOrDefaultAsync(x => x.UserId == userId && x.WarehouseId == warehouseId);
     if (result == null) return false;

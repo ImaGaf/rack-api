@@ -54,13 +54,13 @@ public class RegisterUserHandler(
       return Result.Error(new ErrorList(errors));
     }
 
-    await HandleInvitation(request.EmailAddress, user, cancellationToken);
+    await HandleInvitationAsync(request.EmailAddress, user, cancellationToken);
     // TODO: Send Email create account.
     //await SendConfirmationEmailAsync(user, userManager, context, email);
     return Result.Success(user.Id);
   }
 
-  private async Task HandleInvitation(string emailInvited, ApplicationUser user, CancellationToken cancellationToken)
+  private async Task HandleInvitationAsync(string emailInvited, ApplicationUser user, CancellationToken cancellationToken)
   {
     var invitation = await _invitationsRepository.FirstOrDefaultAsync(x => x.Email == emailInvited);
     if (invitation is null) return;

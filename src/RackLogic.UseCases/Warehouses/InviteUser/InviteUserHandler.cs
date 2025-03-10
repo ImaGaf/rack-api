@@ -26,7 +26,7 @@ public class InviteUserHandler(
     var inviteIdString = request.User.Claims.First(x => x.Type == ClaimTypes.NameIdentifier).Value;
     var inviteId = Guid.Parse(inviteIdString);
 
-    if (!await CheckPermissionUserRequest(inviteId, request.WarehouseId)) return Result.Forbidden();
+    if (!await CheckPermissionUserRequestAsync(inviteId, request.WarehouseId)) return Result.Forbidden();
 
     var role = await _roleManager.FindByNameAsync(request.Role);
     if (role is null) return Result.Invalid(new ValidationError("Role invalid."));
@@ -102,7 +102,7 @@ public class InviteUserHandler(
     return emailContent;
   }
 
-  private async Task<bool> CheckPermissionUserRequest(Guid userId, Guid warehouseId)
+  private async Task<bool> CheckPermissionUserRequestAsync(Guid userId, Guid warehouseId)
   {
     var result = await _userWarehouseRoleRepository.FirstOrDefaultAsync(x => x.UserId == userId && x.WarehouseId == warehouseId);
     if (result == null) return false;

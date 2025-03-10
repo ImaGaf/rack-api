@@ -24,7 +24,7 @@ public class CreateContributorHandlerHandle
   }
 
   [Fact]
-  public async Task ReturnsSuccessGivenValidName()
+  public async Task ReturnsSuccessGivenValidNameAsync()
   {
     _repository.AddAsync(Arg.Any<Contributor>(), Arg.Any<CancellationToken>())
       .Returns(Task.FromResult(CreateContributor()));
