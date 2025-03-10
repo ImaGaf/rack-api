@@ -19,9 +19,9 @@ public class ConfirmReceiptHandler(
     var user = await _userManager.FindByIdAsync(request.UserId.ToString());
     if (user == null) return Result.Invalid(new ValidationError("User not found."));
     // Confirm transaction by AppStore API.
-    var signedTransactionInfoData = await _storeNotificationService.VerifyAppleReceiptByTransactionId(request.TransactionId);
+    var signedTransactionInfoData = await _storeNotificationService.VerifyAppleReceiptByTransactionIdAsync(request.TransactionId);
     // Decode transaction token by response.
-    var transactionInfo = await _storeNotificationService.DecodeJWTToken<TransactionInfo>(signedTransactionInfoData?.SignedTransactionInfo ?? string.Empty);
+    var transactionInfo = await _storeNotificationService.DecodeJWTTokenAsync<TransactionInfo>(signedTransactionInfoData?.SignedTransactionInfo ?? string.Empty);
     if (transactionInfo is null) return Result.Invalid(new ValidationError("Invalid transaction code."));
 
     if (await TransactionIdExistsAsync(request.TransactionId)) return Result.Invalid(new ValidationError("The transaction already exists."));

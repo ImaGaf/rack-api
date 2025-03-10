@@ -7,7 +7,7 @@ public class GetAllBrandHandler(IUserWarehouseService _userWarehouseService) : I
 {
   public async Task<Result<List<GetAllBrandDTO>>> Handle(GetAllBrandQuery request, CancellationToken cancellationToken)
   {
-    var result = await _userWarehouseService.GetAllBrand();
+    var result = await _userWarehouseService.GetAllBrandAsync();
 
     return Result.Success(result);
   }

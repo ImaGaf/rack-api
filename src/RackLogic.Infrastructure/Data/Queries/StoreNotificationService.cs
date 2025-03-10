@@ -12,12 +12,12 @@ public class StoreNotificationService(
   IConfiguration _configuration)
   : IStoreNotificationService
 {
-  public async Task<T?> DecodeJWTToken<T>(string token)
+  public async Task<T?> DecodeJWTTokenAsync<T>(string token)
   {
     return await TokenUtil.DecodeJwt<T>(token);
   }
 
-  public async Task<SignedTransactionInfoData?> VerifyAppleReceiptByTransactionId(string transactionId)
+  public async Task<SignedTransactionInfoData?> VerifyAppleReceiptByTransactionIdAsync(string transactionId)
   {
     var urlConfig = _configuration.GetSection("InAppPurchase:APIConfirmTransactionAppStore").Value ?? string.Empty;
     var url = string.Format(urlConfig, transactionId);

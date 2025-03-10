@@ -24,15 +24,22 @@ RoleManager<IdentityRole<Guid>> _roleManager)
 
     // Check user permissions
     var userCreatedId = request.UserCreatedId;
-    if (!await CheckPermissionUserRequest(userCreatedId, request.WarehouseId)) return Result.Forbidden();
+    if (!await CheckPermissionUserRequestAsync(userCreatedId, request.WarehouseId)) return Result.Forbidden();
 
-    // Get floor plan data
-    var (floorPlans, floorPlanItems, floorPlanComments) = _floorPlanService.GetFloorPlanData(request, request.UserCreatedId);
+    var createOrUpdateResult = await _floorPlanService.CreateFloorPlanAssetsAsync(
+        request.FloorPlans,
+        request.WarehouseId,
+        request.UserCreatedId
+    );
 
-    // Save FloorPlan Data
-    return await _floorPlanService.SaveFloorPlanDataAsync(floorPlans, floorPlanItems, floorPlanComments, request.FloorPlans);
+    if (!createOrUpdateResult.IsSuccess)
+    {
+      return Result<bool>.Invalid(createOrUpdateResult.ValidationErrors);
+    }
+
+    return Result.Success(true);
   }
-  private async Task<bool> CheckPermissionUserRequest(Guid userId, Guid warehouseId)
+  private async Task<bool> CheckPermissionUserRequestAsync(Guid userId, Guid warehouseId)
   {
     var result = await _userWarehouseRoleRepository.FirstOrDefaultAsync(x => x.UserId == userId && x.WarehouseId == warehouseId);
     if (result == null) return false;
