@@ -10,7 +10,7 @@ public static partial class FloorPlanUseCasesMapper
   {
     return new FloorPlan
     {
-      Id = request.FloorPlanRequestId,
+      Id = request.FloorPlanId,
       WarehouseId = warehouseId,
       AssetName = request.Title,
       FloorNumber = request.Floor,
@@ -101,7 +101,7 @@ public static partial class FloorPlanUseCasesMapper
   public static FloorPlanCommand ToFloorPlanCommand(this UpdateFloorPlanInformationCommand request)
   {
     return new FloorPlanCommand(
-        FloorPlanRequestId: request.FloorPlanId,
+        FloorPlanId: request.FloorPlanId,
         Title: request.Title,
         Floor: request.Floor,
         Description: request.Description,
@@ -181,7 +181,7 @@ public static partial class FloorPlanUseCasesMapper
   {
     return new FloorPlanDTO
     {
-      FloorPlanRequestId = floorPlan.Id,
+      FloorPlanId = floorPlan.Id,
       Title = floorPlan.AssetName,
       Floor = floorPlan.FloorNumber,
       Description = floorPlan.Description,

@@ -132,7 +132,7 @@ public class FloorPlanService : IFloorPlanService
 
     // Save only valid files
     var validFloorPlanRequests = floorPlanRequests
-    .Where(f => validFloorPlans.Any(vf => vf.Id == f.FloorPlanRequestId))
+    .Where(f => validFloorPlans.Any(vf => vf.Id == f.FloorPlanId))
     .ToList();
 
     await SaveFloorPlanFilesAsync(validFloorPlans, validFloorPlanRequests);
@@ -407,7 +407,7 @@ public class FloorPlanService : IFloorPlanService
         .ToList();
 
     var floorPlanItems = FloorPlans
-        .SelectMany(f => f.Items, (f, item) => item.ToFloorPlanItem(f.FloorPlanRequestId))
+        .SelectMany(f => f.Items, (f, item) => item.ToFloorPlanItem(f.FloorPlanId))
         .ToList();
 
     var floorPlanComments = FloorPlans

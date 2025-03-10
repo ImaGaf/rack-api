@@ -9,7 +9,7 @@ public record CreateFloorPlanCommand(
   : Ardalis.SharedKernel.ICommand<Result<bool>>;
 
 public record FloorPlanCommand(
-    Guid FloorPlanRequestId,
+    Guid FloorPlanId,
     string Title,
     int Floor,
     string? Description,

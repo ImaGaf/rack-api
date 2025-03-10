@@ -2,7 +2,7 @@
 
 public class GetFloorPlanByIdResponse
 {
-  public Guid? FloorPlanRequestId { get; set; }
+  public Guid? FloorPlanId { get; set; }
   public required string Title { get; set; }
   public int Floor { get; set; }
   public string? Description { get; set; }
