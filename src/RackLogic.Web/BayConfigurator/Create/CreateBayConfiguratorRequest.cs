@@ -44,7 +44,7 @@ public class BayConfigurator
   public int RowSpacerLevel { get; set; }
   public required List<int> RowSpacerLevels { get; set; }
   public bool? IsCustomRowSpacer { get; set; }
-  public required Accessories Accessories { get; set; }
+  public required List<Component>? Accessories { get; set; }
   public bool? IsCustomAccessories { get; set; }
 }
 
@@ -64,9 +64,4 @@ public class Component
   public int? LowerHeight { get; set; }
   public int? UpperHeight { get; set; }
   public bool? IsXBrace { get; set; }
-}
-
-public class Accessories
-{
-  public List<Component>? BasePlate { get; set; }
 }

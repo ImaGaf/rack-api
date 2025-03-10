@@ -127,7 +127,6 @@ public static class BayConfiguratorMapper
       RowSpacerLevel = bayConfiguration.RowSpacerLevel,
       BracingDiagonalLevel = bayConfiguration.BracingDiagonalLevel,
       BracingLevel = bayConfiguration.BracingLevel,
-      BeamLevel = bayConfiguration.BeamLevel,
 
       Upright = bayConfiguration.Components.FirstOrDefault(c => c.ComponentType == ComponentType.Upright)?.Mapping(),
       Beam = bayConfiguration.Components.FirstOrDefault(c => c.ComponentType == ComponentType.Beam)?.Mapping(),
@@ -155,13 +154,10 @@ public static class BayConfiguratorMapper
                 .Select(l => l.Mapping())
                 .ToList(),
 
-      Accessories = new AccessoriesDTO
-      {
-        BasePlate = bayConfiguration.Components
-                    .Where(c => c.ComponentType == ComponentType.Accessories && c.Category == ComponentCategory.BASEPLATE)
-                    .Select(c => c.Mapping())
-                    .ToList()
-      }
+      Accessories = bayConfiguration.Components
+                .Where(c => c.ComponentType == ComponentType.Accessories)
+                .Select(c => c.Mapping())
+                .ToList()
     };
   }
 

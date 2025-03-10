@@ -46,7 +46,7 @@ public record BayConfigurationCommand(
     int RowSpacerLevel,
     List<int> RowSpacerLevels,
     bool? IsCustomRowSpacer,
-    AccessoriesCommand Accessories,
+    List<ComponentCommand>? Accessories,
     bool? IsCustomAccessories
   );
 
@@ -65,8 +65,4 @@ public record ComponentCommand(
     int? LowerHeight,
     int? UpperHeight,
     bool? IsXBrace
-);
-
-public record AccessoriesCommand(
-    List<ComponentCommand>? BasePlate
 );
