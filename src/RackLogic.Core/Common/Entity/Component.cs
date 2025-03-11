@@ -15,7 +15,7 @@ public class Component : EntityBase<Guid>, IAggregateRoot
   public string? Code { get; set; }
   public string? Description { get; set; }
   public string? Orientation { get; set; }
-  public int? DistanceCenterToCenter { get; set; }
+  public double? DistanceCenterToCenter { get; set; }
   public ComponentCategory? Category { get; set; }
   public int? Quantity { get; set; }
   public string? Notes { get; set; }

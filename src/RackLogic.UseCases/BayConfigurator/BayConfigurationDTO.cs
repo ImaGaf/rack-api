@@ -7,7 +7,7 @@ public class BayConfigurationDTO
   public bool IsCustomBrand { get; set; }
   public required string BayConfigId { get; set; }
   public required string RackingType { get; set; }
-  public DateTime InstallationDate { get; set; }
+  public DateTime? InstallationDate { get; set; }
   public bool IsEstimatedInstallDate { get; set; }
   public required string AsComplianceVersion { get; set; }
   public required string Supplier { get; set; }
@@ -19,7 +19,7 @@ public class BayConfigurationDTO
   public bool IsEnableInterimInspection { get; set; }
   public string? InterimInterval { get; set; }
   public ComponentDTO? Upright { get; set; }
-  public bool HasSplice { get; set; }
+  public bool? HasSplice { get; set; }
   public int Level { get; set; }
   public int Pallets { get; set; }
   public bool HasProtector { get; set; }
@@ -54,7 +54,7 @@ public class ComponentDTO
   public string? Code { get; set; }
   public string? Description { get; set; }
   public string? Orientation { get; set; }
-  public int? DistanceCenterToCenter { get; set; }
+  public double? DistanceCenterToCenter { get; set; }
   public string? Category { get; set; }
   public int? Quantity { get; set; }
   public string? Notes { get; set; }

@@ -9,11 +9,11 @@ public record CreateBayConfigurationCommand(
   : Ardalis.SharedKernel.ICommand<Result<bool>>;
 
 public record BayConfigurationCommand(
-    DateTime CreatedDate,
+    DateTime? CreatedDate,
     bool IsCustomBrand,
     string BayConfigId,
     string RackingType,
-    DateTime InstallationDate,
+    DateTime? InstallationDate,
     bool IsEstimatedInstallDate,
     string AsComplianceVersion,
     string Supplier,
@@ -25,7 +25,7 @@ public record BayConfigurationCommand(
     bool IsEnableInterimInspection,
     string? InterimInterval,
     ComponentCommand UpRight,
-    bool HasSplice,
+    bool? HasSplice,
     int Level,
     int Pallets,
     bool HasProtector,
@@ -58,7 +58,7 @@ public record ComponentCommand(
     string? Code,
     string Description,
     string? Orientation,
-    int? DistanceCenterToCenter,
+    double? DistanceCenterToCenter,
     string? Category,
     int? Quantity,
     string? Notes,

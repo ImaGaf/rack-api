@@ -63,8 +63,10 @@ public class CreateBayConfiguratorRequestValidator : Validator<CreateBayConfigur
     RuleFor(x => x.BayConfigurator.RowSpacerLevels)
         .NotEmpty().WithMessage("RowSpacerLevels must not be empty.");
 
-    RuleFor(x => x.BayConfigurator.Accessories)
-        .NotNull().WithMessage("Accessories is required.");
+    RuleFor(x => x.BayConfigurator.InstallationDate)
+      .NotNull()
+      .When(x => !x.BayConfigurator.IsEstimatedInstallDate)
+      .WithMessage("InstallationDate is required when IsEstimatedInstallDate is false.");
   }
   private bool BeValidGuid(Guid guid)
   {
