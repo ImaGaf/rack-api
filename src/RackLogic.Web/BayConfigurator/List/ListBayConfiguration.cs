@@ -30,7 +30,7 @@ public class ListBayConfiguration(IMediator _mediator) : Endpoint<ListBayConfigu
         PageSize = result.Value.PageSize,
         TotalRecords = result.Value.TotalRecords,
         Data = result.Value.DataDTO.Select(x => x.ToBayConfigurationResponse()).ToList() ?? new List<ListBayConfigurationResponse>()
-    };
+      };
       return;
     }
 
