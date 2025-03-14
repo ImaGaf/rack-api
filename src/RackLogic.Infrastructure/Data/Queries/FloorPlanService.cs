@@ -360,19 +360,17 @@ public class FloorPlanService : IFloorPlanService
   }
 
   // Get list of Ids of FloorPlanItems and FloorPlanComments in Db
-  private async Task<(List<Guid> floorPlanItemsIds, List<Guid> floorPlanCommentsIds)> GetFloorPlanRelatedIdsAsync()
+  private async Task<(List<FloorPlanItem> floorPlanItems, List<FloorPlanComments> floorPlanComments)> GetFloorPlanRelatedEntitiesAsync()
   {
-    var floorPlanItemsIds = await _context.FloorPlanItems
+    var floorPlanItems = await _context.FloorPlanItems
         .AsNoTracking()
-        .Select(item => item.Id)
         .ToListAsync();
 
-    var floorPlanCommentsIds = await _context.FloorPlanComments
+    var floorPlanComments = await _context.FloorPlanComments
         .AsNoTracking()
-        .Select(comment => comment.Id)
         .ToListAsync();
 
-    return (floorPlanItemsIds, floorPlanCommentsIds);
+    return (floorPlanItems, floorPlanComments);
   }
 
   // Update FloorPlanItems list
@@ -380,16 +378,19 @@ public class FloorPlanService : IFloorPlanService
   {
     if (items is null || !items.Any()) return Result.Success(true);
 
-    // Function to get the list of Ids
-    var (floorPlanItemsIds, floorPlanCommentsIds) = await GetFloorPlanRelatedIdsAsync();
+    // Function to get the list Items and Comments in Db
+    var (floorPlanItemsDb, floorPlanCommentsDb) = await GetFloorPlanRelatedEntitiesAsync();
+
+    var floorPlanItemsIds = floorPlanItemsDb.Select(item => item.Id).ToList();
+    var floorPlanCommentsIds = floorPlanCommentsDb.Select(comment => comment.Id).ToList();
 
     // Get itemIds from the upload list
     var itemIds = items.Select(i => i.Id).ToList();
 
     // Get the current FloorPlanItems in the Db with ID in itemIds
-    var floorPlanItems = await _context.FloorPlanItems
-        .Where(i => i.FloorPlanId == floorPlanId)
-        .ToListAsync();
+    var floorPlanItems = floorPlanItemsDb
+        .Where(i => i.FloorPlanId == floorPlanId && itemIds.Contains(i.Id)) 
+        .ToList();
 
     // Existing ids and missing ids to be added
     var existingItemIds = floorPlanItems.Select(i => i.Id).ToHashSet(); 
