@@ -14,9 +14,7 @@ public class BayConfiguration : EntityBase<Guid>, IAggregateRoot
 
   [Required]
   public required string RackingType { get; set; }
-
-  [Required]
-  public DateTime InstallationDate { get; set; }
+  public DateTime? InstallationDate { get; set; }
   public bool IsEstimatedInstallDate { get; set; }
 
   [Required]
@@ -39,7 +37,7 @@ public class BayConfiguration : EntityBase<Guid>, IAggregateRoot
   public string? Comment { get; set; }
   public bool IsEnableInterimInspection { get; set; }
   public string? InterimInterval { get; set; }
-  public bool HasSplice { get; set; }
+  public bool? HasSplice { get; set; }
   public int Level { get; set; }
   public int Pallets { get; set; }
   public bool HasProtector { get; set; }

@@ -186,10 +186,10 @@ namespace RackLogic.Infrastructure.Data.Migrations
                     b.Property<bool>("HasProtector")
                         .HasColumnType("bit");
 
-                    b.Property<bool>("HasSplice")
+                    b.Property<bool?>("HasSplice")
                         .HasColumnType("bit");
 
-                    b.Property<DateTime>("InstallationDate")
+                    b.Property<DateTime?>("InstallationDate")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("InterimInterval")
@@ -326,8 +326,8 @@ namespace RackLogic.Infrastructure.Data.Migrations
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("DistanceCenterToCenter")
-                        .HasColumnType("int");
+                    b.Property<double?>("DistanceCenterToCenter")
+                        .HasColumnType("float");
 
                     b.Property<int?>("Height")
                         .HasColumnType("int");

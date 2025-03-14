@@ -3,8 +3,8 @@ public enum ComponentType
 {
   Upright,
   Beam,
-  BracingHorizontal,
-  BracingDiagonal,
+  BraceHorizontal,
+  BraceDiagonal,
   RowSpacer,
   Accessories
 }

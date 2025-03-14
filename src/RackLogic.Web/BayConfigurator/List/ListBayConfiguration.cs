@@ -17,8 +17,8 @@ public class ListBayConfiguration(IMediator _mediator) : Endpoint<ListBayConfigu
     var result = await _mediator.Send(
       new ListBayConfiguratorQuery(
         req.WarehouseId,
-        req.PageNumber ?? 0,
-        req.PageSize ?? 0),
+        req.PageNumber ?? 1,
+        req.PageSize ?? 10),
       ct);
 
     if (result.IsSuccess)
@@ -30,7 +30,7 @@ public class ListBayConfiguration(IMediator _mediator) : Endpoint<ListBayConfigu
         PageSize = result.Value.PageSize,
         TotalRecords = result.Value.TotalRecords,
         Data = result.Value.DataDTO.Select(x => x.ToBayConfigurationResponse()).ToList() ?? new List<ListBayConfigurationResponse>()
-    };
+      };
       return;
     }
 

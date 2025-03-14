@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using RackLogic.Core.Common.Entity;
 using RackLogic.UseCases.BayConfigurator;
 using RackLogic.UseCases.BayConfigurator.List;
 using RackLogic.UseCases.Warehouses;
@@ -13,11 +14,18 @@ public class ListBayConfiguratorQueryService(AppDbContext _context) : IListBayCo
           .Include(b => b.Components)
           .Include(b => b.BayConfigurationLevels);
     var totalRecord = await bayConfigurations.CountAsync();
-
-    var result = await bayConfigurations
-          .Skip((pageNumber - 1) * pageSize)
-          .Take(pageSize)
-          .ToListAsync();
+    var result = new List<BayConfiguration>();
+    if (pageNumber > 0 && pageSize > 0)
+    {
+      result = await bayConfigurations
+         .Skip((pageNumber - 1) * pageSize)
+         .Take(pageSize)
+         .ToListAsync();
+    }
+    else
+    {
+      result = await bayConfigurations.ToListAsync();
+    }
 
     return new PagedDataDTO<BayConfigurationDTO>() 
     {

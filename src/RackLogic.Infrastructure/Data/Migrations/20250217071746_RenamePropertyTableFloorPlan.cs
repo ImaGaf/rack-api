@@ -2,37 +2,36 @@
 
 #nullable disable
 
-namespace RackLogic.Infrastructure.Data.Migrations
-{
-    /// <inheritdoc />
-    public partial class RenamePropertyTableFloorPlan : Migration
-    {
-        /// <inheritdoc />
-        protected override void Up(MigrationBuilder migrationBuilder)
-        {
-            migrationBuilder.RenameColumn(
-                name: "totalRack",
-                table: "FloorPlans",
-                newName: "TotalRack");
+namespace RackLogic.Infrastructure.Data.Migrations;
 
-            migrationBuilder.RenameColumn(
-                name: "totalBay",
-                table: "FloorPlans",
-                newName: "TotalBay");
-        }
+  /// <inheritdoc />
+  public partial class RenamePropertyTableFloorPlan : Migration
+  {
+      /// <inheritdoc />
+      protected override void Up(MigrationBuilder migrationBuilder)
+      {
+          migrationBuilder.RenameColumn(
+              name: "totalRack",
+              table: "FloorPlans",
+              newName: "TotalRack");
 
-        /// <inheritdoc />
-        protected override void Down(MigrationBuilder migrationBuilder)
-        {
-            migrationBuilder.RenameColumn(
-                name: "TotalRack",
-                table: "FloorPlans",
-                newName: "totalRack");
+          migrationBuilder.RenameColumn(
+              name: "totalBay",
+              table: "FloorPlans",
+              newName: "TotalBay");
+      }
 
-            migrationBuilder.RenameColumn(
-                name: "TotalBay",
-                table: "FloorPlans",
-                newName: "totalBay");
-        }
-    }
-}
+      /// <inheritdoc />
+      protected override void Down(MigrationBuilder migrationBuilder)
+      {
+          migrationBuilder.RenameColumn(
+              name: "TotalRack",
+              table: "FloorPlans",
+              newName: "totalRack");
+
+          migrationBuilder.RenameColumn(
+              name: "TotalBay",
+              table: "FloorPlans",
+              newName: "totalBay");
+      }
+  }

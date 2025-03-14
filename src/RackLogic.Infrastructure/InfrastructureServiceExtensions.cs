@@ -25,6 +25,7 @@ public static class InfrastructureServiceExtensions
     ILogger logger)
   {
     services.AddSingleton<AppStoreConfigService>();
+    services.AddSingleton<GooglePlayConfigService>();
     string? connectionString = config.GetConnectionString("DefaultConnection");
     Guard.Against.Null(connectionString);
     services.AddDbContext<AppDbContext>(options =>

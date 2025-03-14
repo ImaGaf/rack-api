@@ -55,13 +55,13 @@ public class CreateBayConfigurationHandler(
         request.BayConfiguration.BeamLevels.Select(l => l.Mapping(ComponentType.Beam, bayConfiguration.Id))
     );
     bayConfiguration.BayConfigurationLevels.AddRange(
-        request.BayConfiguration.BracingHorizontalLevels.Select(l => l.Mapping(ComponentType.BracingHorizontal, bayConfiguration.Id))
+        request.BayConfiguration.BracingHorizontalLevels.Select(l => l.Mapping(ComponentType.BraceHorizontal, bayConfiguration.Id))
     );
     bayConfiguration.BayConfigurationLevels.AddRange(
         request.BayConfiguration.RowSpacerLevels.Select(l => l.Mapping(ComponentType.RowSpacer, bayConfiguration.Id))
     );
     bayConfiguration.BayConfigurationLevels.AddRange(
-        request.BayConfiguration.BracingDiagonalLevels.Select(l => l.Mapping(ComponentType.BracingDiagonal, bayConfiguration.Id))
+        request.BayConfiguration.BracingDiagonalLevels.Select(l => l.Mapping(ComponentType.BraceDiagonal, bayConfiguration.Id))
     );
 
     var result = await _bayConfigurationRepository.AddAsync(bayConfiguration, cancellationToken);
