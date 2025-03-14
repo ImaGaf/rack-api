@@ -130,8 +130,8 @@ public static class BayConfiguratorMapper
 
       Upright = bayConfiguration.Components.FirstOrDefault(c => c.ComponentType == ComponentType.Upright)?.Mapping(),
       Beam = bayConfiguration.Components.FirstOrDefault(c => c.ComponentType == ComponentType.Beam)?.Mapping(),
-      BracingHorizontal = bayConfiguration.Components.FirstOrDefault(c => c.ComponentType == ComponentType.BracingHorizontal)?.Mapping(),
-      BracingDiagonal = bayConfiguration.Components.FirstOrDefault(c => c.ComponentType == ComponentType.BracingDiagonal)?.Mapping(),
+      BracingHorizontal = bayConfiguration.Components.FirstOrDefault(c => c.ComponentType == ComponentType.BraceHorizontal)?.Mapping(),
+      BracingDiagonal = bayConfiguration.Components.FirstOrDefault(c => c.ComponentType == ComponentType.BraceDiagonal)?.Mapping(),
       RowSpacer = bayConfiguration.Components.FirstOrDefault(c => c.ComponentType == ComponentType.RowSpacer)?.Mapping(),
 
       BeamLevels = bayConfiguration.BayConfigurationLevels
@@ -140,7 +140,7 @@ public static class BayConfiguratorMapper
                 .ToList(),
 
       BracingHorizontalLevels = bayConfiguration.BayConfigurationLevels
-                .Where(l => l.LevelType == ComponentType.BracingHorizontal)
+                .Where(l => l.LevelType == ComponentType.BraceHorizontal)
                 .Select(l => l.LevelValue)
                 .ToList(),
 
@@ -150,7 +150,7 @@ public static class BayConfiguratorMapper
                 .ToList(),
 
       BracingDiagonalLevels = bayConfiguration.BayConfigurationLevels
-                .Where(l => l.LevelType == ComponentType.BracingDiagonal)
+                .Where(l => l.LevelType == ComponentType.BraceDiagonal)
                 .Select(l => l.Mapping())
                 .ToList(),
 

@@ -1,17 +1,15 @@
 ﻿using System.IdentityModel.Tokens.Jwt;
+using System.Runtime.CompilerServices;
 using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
+using System.Text.Json;
 using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
 using Org.BouncyCastle.Crypto.Parameters;
-using Org.BouncyCastle.Crypto;
+using Org.BouncyCastle.OpenSsl;
 using RackLogic.Core.UserAggregate;
 using RackLogic.Infrastructure.Configuration;
-using Org.BouncyCastle.OpenSsl;
-using System.Drawing;
-using Org.BouncyCastle.Asn1.Pkcs;
-using Org.BouncyCastle.Security;
 
 namespace RackLogic.Infrastructure.Token;
 public static class TokenUtil
@@ -91,6 +89,54 @@ public static class TokenUtil
     return tokenHandler.WriteToken(securityToken);
   }
 
+  public static async Task<string> GenerateDeveloperGooglePlayToken(GooglePlayConfig config)
+  {
+    string jwt = CreateJwt(config.ClientEmail, config.PrivateKey);
+    return await GetAccessToken(jwt);
+  }
+
+  static string CreateJwt(string clientEmail, string privateKey)
+  {
+    var now = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
+    var claims = new List<Claim>
+          {
+              new Claim("iss", clientEmail),
+              new Claim("scope", "https://www.googleapis.com/auth/androidpublisher"),
+              new Claim("aud", "https://oauth2.googleapis.com/token"),
+              new Claim("exp", (now + 180).ToString(), ClaimValueTypes.Integer64),
+              new Claim("iat", now.ToString(), ClaimValueTypes.Integer64)
+          };
+
+    var keyBytes = Convert.FromBase64String(privateKey
+        .Replace("-----BEGIN PRIVATE KEY-----", "")
+        .Replace("-----END PRIVATE KEY-----", "")
+        .Replace("\n", ""));
+
+    var rsa = RSA.Create();
+    rsa.ImportPkcs8PrivateKey(keyBytes, out _);
+
+    var credentials = new SigningCredentials(new RsaSecurityKey(rsa), SecurityAlgorithms.RsaSha256);
+    var header = new JwtHeader(credentials);
+    var token = new JwtSecurityToken(header, new JwtPayload(claims));
+
+    return new JwtSecurityTokenHandler().WriteToken(token);
+  }
+
+  static async Task<string> GetAccessToken(string jwt)
+  {
+    using var client = new HttpClient();
+    var content = new FormUrlEncodedContent(new Dictionary<string, string>
+        {
+            { "grant_type", "urn:ietf:params:oauth:grant-type:jwt-bearer" },
+            { "assertion", jwt }
+        });
+
+    var response = await client.PostAsync("https://oauth2.googleapis.com/token", content);
+    var jsonResponse = await response.Content.ReadAsStringAsync();
+
+    using var jsonDoc = JsonDocument.Parse(jsonResponse);
+    return jsonDoc.RootElement.GetProperty("access_token").GetString() ?? string.Empty;
+  }
 
   private static ECDsa LoadECDsaFromPem(string privateKeyPem)
   {
