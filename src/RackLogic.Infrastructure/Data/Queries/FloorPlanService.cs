@@ -37,6 +37,15 @@ public class FloorPlanService : IFloorPlanService
         .Select(floorPlanComment => floorPlanComment.Id)
         .ToList();
 
+    // Update errorFloorPlanItemIds of the FloorPlanCommentIds with errors
+    var errorFloorPlanItemIdsFromComments = floorPlanComments
+        .Where(comment => errorFloorPlanCommentIds.Contains(comment.Id))
+        .Select(comment => comment.FloorPlanItemId) 
+        .Distinct()
+        .ToList();
+
+    errorFloorPlanItemIds.AddRange(errorFloorPlanItemIdsFromComments.Except(errorFloorPlanItemIds));
+
     return errorFloorPlanCommentIds;
   }
 
@@ -54,6 +63,15 @@ public class FloorPlanService : IFloorPlanService
             existingFloorPlanItemIds.Contains(floorPlanItem.Id))
         .Select(floorPlanItem => floorPlanItem.Id)
         .ToList();
+
+    // Update errorFloorPlanIds of the FloorPlanItems with errors
+    var floorPlanIdsWithErrors = floorPlanItems
+        .Where(floorPlanItem => errorFloorPlanItemIds.Contains(floorPlanItem.Id))
+        .Select(floorPlanItem => floorPlanItem.FloorPlanId)
+        .Distinct()
+        .ToList();
+
+    errorFloorPlanIds.AddRange(floorPlanIdsWithErrors.Except(errorFloorPlanIds));
 
     return errorFloorPlanItemIds;
   }
@@ -105,29 +123,40 @@ public class FloorPlanService : IFloorPlanService
     var errorFloorPlanItemIds = await CheckAndGetErrorsForFloorPlanItemsAsync(floorPlanItems, errorFloorPlanIds);
     var errorFloorPlanCommentIds = await CheckAndGetErrorsForFloorPlanCommentsAsync(floorPlanComments, errorFloorPlanItemIds);
 
-    // Check valid floorPlanItems
-    var validFloorPlanItems = floorPlanItems.Where(i => !errorFloorPlanItemIds.Contains(i.Id)).ToList();
-
     // Check valid floorPlans
     var validFloorPlans = floorPlans
-        .Where(f => !errorFloorPlanIds.Contains(f.Id) && validFloorPlanItems.Any(i => i.FloorPlanId == f.Id))
+        .Where(f =>
+        {
+          var items = floorPlanItems.Where(i => i.FloorPlanId == f.Id).ToList();
+          return !errorFloorPlanIds.Contains(f.Id)
+             && items.Any()
+             && items.All(i => !errorFloorPlanItemIds.Contains(i.Id));
+        })
         .ToList();
 
-    // If no valid FloorPlan is created, return an error.
-    if (!validFloorPlans.Any())
-    {
-      return Result<bool>.Invalid(new List<ValidationError>
-        {
-            new ValidationError("Failed to create new valid FloorPlans with invalid items.")
-        });
-    }
+    // Check valid floorPlanItems
+    var validFloorPlanItems = floorPlanItems
+        .Where(i => !errorFloorPlanItemIds.Contains(i.Id) && validFloorPlans.Any(f => f.Id == i.FloorPlanId))
+        .ToList();
+
+    // Check valid floorPlanComments
+    var validFloorPlanComments = floorPlanComments
+        .Where(c => !errorFloorPlanCommentIds.Contains(c.Id) && validFloorPlanItems.Any(i => i.Id == c.FloorPlanItemId))
+        .ToList();
+
+    // Update errorFloorPlanIds
+    errorFloorPlanIds = floorPlans
+        .Select(f => f.Id) 
+        .Except(validFloorPlans.Select(f => f.Id)) 
+        .ToList();
+
     //Save valid floorPlans to DB
     await _context.FloorPlans.AddRangeAsync(validFloorPlans);
+
     //Save valid floorPlanItems to DB
     await _context.FloorPlanItems.AddRangeAsync(validFloorPlanItems);
 
     // Save valid floorPlanComments to DB
-    var validFloorPlanComments = floorPlanComments.Where(c => !errorFloorPlanCommentIds.Contains(c.Id)).ToList();
     await _context.FloorPlanComments.AddRangeAsync(validFloorPlanComments);
 
     // Save only valid files
@@ -140,7 +169,7 @@ public class FloorPlanService : IFloorPlanService
     await _context.SaveChangesAsync();
 
     // Check and return errors if any
-    if (errorFloorPlanIds.Any() || errorFloorPlanItemIds.Any() || errorFloorPlanCommentIds.Any())
+    if (errorFloorPlanIds.Any())
     {
       var validationErrors = new List<ValidationError>();
 
@@ -148,15 +177,6 @@ public class FloorPlanService : IFloorPlanService
       {
         validationErrors.Add(new ValidationError($"Failed to create floor plans with IDs: {string.Join(", ", errorFloorPlanIds)}"));
       }
-      if (errorFloorPlanItemIds.Any())
-      {
-        validationErrors.Add(new ValidationError($"Failed to create items with IDs: {string.Join(", ", errorFloorPlanItemIds)}"));
-      }
-      if (errorFloorPlanCommentIds.Any())
-      {
-        validationErrors.Add(new ValidationError($"Failed to create comments with IDs: {string.Join(", ", errorFloorPlanCommentIds)}"));
-      }
-
       return Result<bool>.Invalid(validationErrors);
     }
 
@@ -185,91 +205,6 @@ public class FloorPlanService : IFloorPlanService
       }
     }
   }
-
-  // Update FloorPlanAssets list
-  private async Task<Result<bool>> ProcessFloorPlanAsync(UpdateFloorPlanInformationCommand plan, Guid warehouseId)
-  {
-    var floorPlan = await _floorPlanRepository.FirstOrDefaultAsync(x => x.Id == plan.FloorPlanId);
-    if (floorPlan is null)
-      return Result.Invalid(new ValidationError($"Update failed: FloorPlan with ID {plan.FloorPlanId} not found in database."));
-
-    plan.UpdateFloorPlan(floorPlan);
-
-    var itemResult = await UpdateFloorPlanItemsAsync(plan.Items);
-    if (!itemResult.IsSuccess) return itemResult;
-
-    await HandleFileOperationsAsync(plan, warehouseId, floorPlan.Id);
-    await _floorPlanRepository.UpdateAsync(floorPlan);
-
-    return Result.Success(true);
-  }
-
-  // Update FloorPlanItems list
-  private async Task<Result<bool>> UpdateFloorPlanItemsAsync(List<UpdateFloorPlanItemInformationCommand> items)
-  {
-    if (items is null || !items.Any()) return Result.Success(true);
-
-    var itemIds = items.Select(i => i.Id).ToList();
-    var floorPlanItems = await _context.FloorPlanItems.Where(i => itemIds.Contains(i.Id)).ToListAsync();
-    var existingItemIds = floorPlanItems.Select(i => i.Id).ToHashSet();
-    var missingItemIds = itemIds.Except(existingItemIds);
-
-    var validationErrors = missingItemIds
-        .Select(id => new ValidationError($"Update failed: FloorPlanItem with ID {id} not found in database."))
-        .ToList();
-
-    // Update valid items
-    var updatedItems = items
-        .Where(item => existingItemIds.Contains(item.Id))
-        .Join(floorPlanItems, item => item.Id, floorPlanItem => floorPlanItem.Id, (item, floorPlanItem) => new { item, floorPlanItem })
-        .ToList();
-
-    updatedItems.ForEach(x => x.item.UpdateFloorPlanItem(x.floorPlanItem));
-
-    // Process Comments of each FloorPlanItem
-    var commentErrors = new List<ValidationError>();
-
-    foreach (var x in updatedItems.Where(x => x.item.Comments?.Any() == true).ToList())
-    {
-      var result = await UpdateFloorPlanItemCommentsAsync(x.item.Comments, x.floorPlanItem.Id);
-      if (!result.IsSuccess)
-      {
-        commentErrors.AddRange(result.ValidationErrors);
-      }
-    }
-
-    validationErrors.AddRange(commentErrors);
-
-    return validationErrors.Any() ? Result<bool>.Invalid(validationErrors) : Result.Success(true);
-  }
-
-  private async Task<Result<bool>> UpdateFloorPlanItemCommentsAsync(List<UpdateFloorPlanCommentCommand>? comments, Guid floorPlanItemId)
-  {
-    if (comments == null || !comments.Any()) return Result.Success(true);
-
-    var commentIds = comments.Select(c => c.Id).ToList();
-    var existingComments = await _context.FloorPlanComments
-        .Where(c => c.FloorPlanItemId == floorPlanItemId && commentIds.Contains(c.Id))
-        .ToListAsync();
-
-    var existingCommentIds = existingComments.Select(c => c.Id).ToHashSet();
-    var missingCommentIds = commentIds.Except(existingCommentIds);
-
-    var validationErrors = missingCommentIds
-        .Select(id => new ValidationError($"Update failed: FloorPlanComment with ID {id} not found in database."))
-        .ToList();
-
-    // Update valid comments
-    var updatedComments = comments
-        .Where(c => existingCommentIds.Contains(c.Id))
-        .Join(existingComments, c => c.Id, ec => ec.Id, (c, ec) => new { Command = c, Entity = ec })
-        .ToList();
-
-    updatedComments.ForEach(pair => pair.Command.UpdateFloorPlanComment(pair.Entity));
-
-    return validationErrors.Any() ? Result<bool>.Invalid(validationErrors) : Result.Success(true);
-  }
-
 
   // Process files that need to be updated (delete old files, add new files)
   private async Task HandleFileOperationsAsync(UpdateFloorPlanInformationCommand plan, Guid warehouseId, Guid floorPlanId)
@@ -323,14 +258,25 @@ public class FloorPlanService : IFloorPlanService
   {
     var validationErrors = new List<ValidationError>();
 
-    var (existFloorAssetsDb, notExistFloorAssetsDb) = await GetExistingAndNewFloorPlansAsync(floorAssets, warehouseId);
+    // Sort the list of FloorPlans to be processed
+    var (existFloorAssetsDb, notExistFloorAssetsDb, floorPlanIdsToDelete) = await GetFloorPlanCategoriesAsync(floorAssets, warehouseId);
 
+    // Delete FloorPlans
+    if (floorPlanIdsToDelete.Any())
+    {
+      await _context.FloorPlans
+          .Where(fp => floorPlanIdsToDelete.Contains(fp.Id))
+          .ExecuteDeleteAsync();
+    }
+
+    // Update existing FloorPlans in Db
     var updateResult = await ProcessExistingFloorPlansAsync(existFloorAssetsDb, warehouseId);
     if (!updateResult.IsSuccess)
     {
       validationErrors.AddRange(updateResult.ValidationErrors);
     }
 
+    // Create new FloorPlans that not in the Db
     var createResult = await CreateNewFloorPlansAsync(notExistFloorAssetsDb, warehouseId, userCreatedId);
     if (!createResult.IsSuccess)
     {
@@ -340,18 +286,42 @@ public class FloorPlanService : IFloorPlanService
     return validationErrors.Any() ? Result<bool>.Invalid(validationErrors) : Result.Success(true);
   }
 
-  private async Task<(List<UpdateFloorPlanInformationCommand> existFloorAssetsDb, List<UpdateFloorPlanInformationCommand> notExistFloorAssetsDb)> GetExistingAndNewFloorPlansAsync(
-    List<UpdateFloorPlanInformationCommand> floorAssets, Guid warehouseId)
+  // Get list of FloorPlans by warehouseId
+  private async Task<List<FloorPlan>> GetExistingFloorPlansAsync(Guid warehouseId)
   {
-    var existingFloorPlansDb = await _context.FloorPlans
-        .Where(f => floorAssets.Select(p => p.FloorPlanId).Contains(f.Id))
+    return await _context.FloorPlans
+        .Where(f => f.WarehouseId == warehouseId)
         .ToListAsync();
+  }
 
+  private async Task<(List<UpdateFloorPlanInformationCommand> existFloorAssetsDb,
+                     List<UpdateFloorPlanInformationCommand> notExistFloorAssetsDb,
+                     List<Guid> floorPlanIdsToDelete)>
+     GetFloorPlanCategoriesAsync(List<UpdateFloorPlanInformationCommand> floorAssets, Guid warehouseId)
+  {
+    // Get list of existing FloorPlans in Db by warehouseId
+    var existingFloorPlansDb = await GetExistingFloorPlansAsync(warehouseId);
+
+    // Get list of all the FloorPlanIds in the Db
     var existingFloorPlanIds = existingFloorPlansDb.Select(f => f.Id).ToHashSet();
-    var existFloorAssetsDb = floorAssets.Where(p => existingFloorPlanIds.Contains(p.FloorPlanId)).ToList();
-    var notExistFloorAssetsDb = floorAssets.Where(p => !existingFloorPlanIds.Contains(p.FloorPlanId)).ToList();
 
-    return (existFloorAssetsDb, notExistFloorAssetsDb);
+    // Find FloorPlans that already exist in the Db and need to be updated
+    var existFloorAssetsDb = floorAssets
+        .Where(p => existingFloorPlanIds.Contains(p.FloorPlanId))
+        .ToList();
+
+    // Find FloorPlans not in the Db, need to add new
+    var notExistFloorAssetsDb = floorAssets
+        .Where(p => !existingFloorPlanIds.Contains(p.FloorPlanId))
+        .ToList();
+
+    // Find FloorPlans in Db but not in client, need to delete
+    var floorPlanIdsToDelete = existingFloorPlansDb
+        .Where(dbFloorPlan => !floorAssets.Any(fa => fa.FloorPlanId == dbFloorPlan.Id))
+        .Select(dbFloorPlan => dbFloorPlan.Id)
+        .ToList();
+
+    return (existFloorAssetsDb, notExistFloorAssetsDb, floorPlanIdsToDelete);
   }
 
   private async Task<Result<bool>> ProcessExistingFloorPlansAsync(List<UpdateFloorPlanInformationCommand> existFloorAssetsDb, Guid warehouseId)
@@ -367,6 +337,186 @@ public class FloorPlanService : IFloorPlanService
       {
         validationErrors.AddRange(processResult.ValidationErrors);
       }
+    }
+    
+    return validationErrors.Any() ? Result<bool>.Invalid(validationErrors) : Result.Success(true);
+  }
+
+  // Update FloorPlanAsset
+  private async Task<Result<bool>> ProcessFloorPlanAsync(UpdateFloorPlanInformationCommand plan, Guid warehouseId)
+  {
+    var floorPlan = await _floorPlanRepository.FirstOrDefaultAsync(x => x.Id == plan.FloorPlanId);
+    if (floorPlan is null)
+      return Result.Invalid(new ValidationError($"Update failed: FloorPlan with ID {plan.FloorPlanId} not found in database."));
+
+    var itemResult = await UpdateFloorPlanItemsAsync(plan.Items, floorPlan.Id);
+    if (!itemResult.IsSuccess) return itemResult;
+
+    plan.UpdateFloorPlan(floorPlan);
+    await HandleFileOperationsAsync(plan, warehouseId, floorPlan.Id);
+    await _floorPlanRepository.UpdateAsync(floorPlan);
+
+    return Result.Success(true);
+  }
+
+  // Get list of Ids of FloorPlanItems and FloorPlanComments in Db
+  private async Task<(List<Guid> floorPlanItemsIds, List<Guid> floorPlanCommentsIds)> GetFloorPlanRelatedIdsAsync()
+  {
+    var floorPlanItemsIds = await _context.FloorPlanItems
+        .AsNoTracking()
+        .Select(item => item.Id)
+        .ToListAsync();
+
+    var floorPlanCommentsIds = await _context.FloorPlanComments
+        .AsNoTracking()
+        .Select(comment => comment.Id)
+        .ToListAsync();
+
+    return (floorPlanItemsIds, floorPlanCommentsIds);
+  }
+
+  // Update FloorPlanItems list
+  private async Task<Result<bool>> UpdateFloorPlanItemsAsync(List<UpdateFloorPlanItemInformationCommand> items, Guid floorPlanId)
+  {
+    if (items is null || !items.Any()) return Result.Success(true);
+
+    // Function to get the list of Ids
+    var (floorPlanItemsIds, floorPlanCommentsIds) = await GetFloorPlanRelatedIdsAsync();
+
+    // Get itemIds from the upload list
+    var itemIds = items.Select(i => i.Id).ToList();
+
+    // Get the current FloorPlanItems in the Db with ID in itemIds
+    var floorPlanItems = await _context.FloorPlanItems
+        .Where(i => i.FloorPlanId == floorPlanId)
+        .ToListAsync();
+
+    // Existing ids and missing ids to be added
+    var existingItemIds = floorPlanItems.Select(i => i.Id).ToHashSet(); 
+    var missingItemIds = itemIds.Except(existingItemIds);              
+
+    var validationErrors = new List<ValidationError>();
+
+    // 1. Delete Items that are in Db but not in client
+    var itemIdsToDelete = existingItemIds.Except(itemIds).ToList();
+    if (itemIdsToDelete.Any())
+    {
+      _context.FloorPlanItems.RemoveRange(
+          floorPlanItems.Where(i => itemIdsToDelete.Contains(i.Id))
+      );
+    }
+
+    // 2. If itemId is available in Db and client: normal update.
+    var updatedItems = items
+        .Where(item => existingItemIds.Contains(item.Id))
+        .Join(floorPlanItems, item => item.Id, floorPlanItem => floorPlanItem.Id, (item, floorPlanItem) => new { item, floorPlanItem })
+        .ToList();
+
+    updatedItems.ForEach(x => x.item.UpdateFloorPlanItem(x.floorPlanItem));
+
+    // 3. Add new Items that are not in the Db
+    var newItems = items
+        .Where(item => missingItemIds.Contains(item.Id))
+        .Select(item => item.ToCreateFloorPlanItem(floorPlanId))
+        .ToList();
+
+    // Check if new itemId is already in the floorPlanItemsIds already in the Db
+    if (newItems.Any(i => floorPlanItemsIds.Contains(i.Id)))
+    {
+      var conflictingItemIds = newItems.Select(i => i.Id).Where(floorPlanItemsIds.Contains).ToList();
+      return Result<bool>.Invalid(conflictingItemIds.Select(id => new ValidationError($"Item with ID {id} already exists in another FloorPlan.")));
+    }
+
+    // Get all CommentIds in newItems, handle when Comments can be null
+    var newCommentIds = newItems
+        .SelectMany(item => item.Comments?.Select(c => c.Id) ?? Enumerable.Empty<Guid>())
+        .ToList();
+
+    // Check if commentId already exists in Db
+    var conflictingCommentIds = newCommentIds.Where(floorPlanCommentsIds.Contains).ToList();
+
+    if (conflictingCommentIds.Any())
+    {
+      var commentError = conflictingCommentIds.Select(id => new ValidationError($"Comment with ID {id} already exists."));
+      return Result<bool>.Invalid(commentError);
+    }
+
+    if (newItems.Any())
+    {
+      await _context.FloorPlanItems.AddRangeAsync(newItems);
+    }
+
+    // Process Comments of each FloorPlanItem
+    var commentErrors = new List<ValidationError>();
+
+    foreach (var x in updatedItems.Where(x => x.item.Comments?.Any() == true).ToList())
+    {
+      var result = await UpdateFloorPlanItemCommentsAsync(x.item.Comments, x.floorPlanItem.Id);
+      if (!result.IsSuccess)
+      {
+        commentErrors.AddRange(result.ValidationErrors);
+      }
+    }
+
+    validationErrors.AddRange(commentErrors);
+
+    return validationErrors.Any() ? Result<bool>.Invalid(validationErrors) : Result.Success(true);
+  }
+
+  private async Task<Result<bool>> UpdateFloorPlanItemCommentsAsync(List<UpdateFloorPlanCommentCommand>? comments, Guid floorPlanItemId)
+  {
+    if (comments == null || !comments.Any()) return Result.Success(true);
+
+    var commentIds = comments.Select(c => c.Id).ToList();
+
+    // Get current comments in DB for floorPlanItemId
+    var existingComments = await _context.FloorPlanComments
+        .Where(c => c.FloorPlanItemId == floorPlanItemId && commentIds.Contains(c.Id))
+        .ToListAsync();
+
+    var existingCommentIds = existingComments.Select(c => c.Id).ToHashSet();
+    var missingCommentIds = commentIds.Except(existingCommentIds);
+
+    var validationErrors = new List<ValidationError>();
+
+    // Update valid comments
+    var updatedComments = comments
+        .Where(c => existingCommentIds.Contains(c.Id))
+        .Join(existingComments, c => c.Id, ec => ec.Id, (c, ec) => new { Command = c, Entity = ec })
+        .ToList();
+
+    updatedComments.ForEach(pair => pair.Command.UpdateFloorPlanComment(pair.Entity));
+
+    // Delete Comments that are in Db but not in client
+    var commentIdsToDelete = existingCommentIds.Except(commentIds).ToList();
+    if (commentIdsToDelete.Any())
+    {
+      _context.FloorPlanComments.RemoveRange(
+          existingComments.Where(c => commentIdsToDelete.Contains(c.Id))
+      );
+    }
+
+    // Add new Comments that are not in the Db
+    var newComments = comments.Where(c => missingCommentIds.Contains(c.Id))
+                              .Select(c => c.ToFloorPlanComment(floorPlanItemId))
+                              .ToList();
+
+    // Check if new Comment ID already exists in DB
+    var newCommentIds = newComments.Select(c => c.Id).ToHashSet();
+    var existingCommentConflicts = await _context.FloorPlanComments
+        .Where(c => newCommentIds.Contains(c.Id))
+        .Select(c => c.Id)
+        .ToListAsync();
+
+    if (existingCommentConflicts.Any())
+    {
+      var commentError = existingCommentConflicts.Select(id => new ValidationError($"Comment with ID {id} already exists in the database."));
+      return Result<bool>.Invalid(commentError);
+    }
+
+    if (newComments.Any())
+    {
+      await _context.FloorPlanComments.AddRangeAsync(newComments);
     }
 
     return validationErrors.Any() ? Result<bool>.Invalid(validationErrors) : Result.Success(true);
