@@ -340,15 +340,13 @@ public class FloorPlanService : IFloorPlanService
     // Get itemIds from the upload list
     var itemIds = items.Select(i => i.Id);
     // Get the current FloorPlanItems in the Db with ID in itemIds
-    var floorPlanItems = floorPlanItemsDb.Where(i => i.FloorPlanId == floorPlanId && itemIds.Contains(i.Id));
+    var floorPlanItems = floorPlanItemsDb.Where(i => i.FloorPlanId == floorPlanId);
 
     // 1. Delete Items that are in Db but not in client
     var itemIdsToDelete = floorPlanItemsIds.Except(itemIds);
     if (itemIdsToDelete.Any())
     {
-      _context.FloorPlanItems.RemoveRange(
-          floorPlanItems.Where(i => itemIdsToDelete.Contains(i.Id))
-      );
+      _context.FloorPlanItems.RemoveRange(floorPlanItems.Where(i => itemIdsToDelete.Contains(i.Id)));
     }
 
     // Existing ids and missing ids to be added
@@ -362,6 +360,9 @@ public class FloorPlanService : IFloorPlanService
         .ToList();
 
     updatedItems.ForEach(x => x.item.UpdateFloorPlanItem(x.floorPlanItem));
+
+    var floorPlanItemsToUpdate = updatedItems.Select(x => x.floorPlanItem);
+    _context.FloorPlanItems.UpdateRange(floorPlanItemsToUpdate);
 
     // 3. Add new Items that are not in the Db
     var newItems = items
