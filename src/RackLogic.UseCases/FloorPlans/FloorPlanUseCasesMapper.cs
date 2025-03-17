@@ -70,6 +70,7 @@ public static partial class FloorPlanUseCasesMapper
   }
   public static FloorPlanItem ToFloorPlanItem(this UpdateFloorPlanItemInformationCommand item, Guid floorPlanId)
   {
+   // var comments = item.Comments?.Select(c => c.ToFloorPlanComment(item.Id)).ToList() ?? new List<FloorPlanComments>();
     return new FloorPlanItem
     {
       Id = item.Id,
@@ -85,6 +86,27 @@ public static partial class FloorPlanUseCasesMapper
       Comments = new List<FloorPlanComments>()
     };
   }
+  //Create new items for update FloorPlanItems in FloorPlanAsset
+  public static FloorPlanItem ToCreateFloorPlanItem(this UpdateFloorPlanItemInformationCommand item, Guid floorPlanId)
+  {
+     var comments = item.Comments?.Select(c => c.ToFloorPlanComment(item.Id)).ToList() ?? new List<FloorPlanComments>();
+    return new FloorPlanItem
+    {
+      Id = item.Id,
+      FloorPlanId = floorPlanId,
+      Rack = item.Rack,
+      Bay = item.Bay,
+      Offset = item.Offset,
+      Size = item.Size,
+      Width = item.Width,
+      Height = item.Height,
+      ObjectType = item.ObjectType,
+      Rotation = item.Rotation,
+      Comments = comments
+    };
+  }
+
+
   public static FloorPlanComments ToFloorPlanComment(this UpdateFloorPlanCommentCommand comment, Guid floorPlanItemId)
   {
     return new FloorPlanComments
