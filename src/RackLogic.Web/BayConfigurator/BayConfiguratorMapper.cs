@@ -1,5 +1,6 @@
 ﻿using RackLogic.UseCases.BayConfigurator;
 using RackLogic.UseCases.BayConfigurator.Create;
+using RackLogic.UseCases.BayConfigurator.Update;
 using RackLogic.Web.BayConfigurator.List;
 using Riok.Mapperly.Abstractions;
 
@@ -9,4 +10,5 @@ public static partial class BayConfiguratorMapper
 {
   public static partial BayConfigurationCommand ToCreateBayConfigurationCommand(this Create.BayConfigurator request);
   public static partial ListBayConfigurationResponse ToBayConfigurationResponse(this BayConfigurationDTO bay);
+  public static partial BayConfigurationUpdateCommand ToUpdateBayConfigurationCommand(this Update.BayConfiguratorRequest request);
 }

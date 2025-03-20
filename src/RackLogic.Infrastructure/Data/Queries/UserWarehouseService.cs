@@ -1,17 +1,16 @@
 ﻿using System.Data;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using RackLogic.Core.Common.Constants;
 using RackLogic.UseCases.Brands;
 using RackLogic.UseCases.Warehouses;
 
 namespace RackLogic.Infrastructure.Data.Queries;
-public class UserWarehouseService : IUserWarehouseService
+public class UserWarehouseService(
+  AppDbContext _context,
+  RoleManager<IdentityRole<Guid>> _roleManager)
+  : IUserWarehouseService
 {
-  private readonly AppDbContext _context;
-
-  public UserWarehouseService(AppDbContext context)
-  {
-    _context = context;
-  }
 
   public async Task<List<GetAllBrandDTO>> GetAllBrandAsync()
   {
@@ -147,5 +146,20 @@ public class UserWarehouseService : IUserWarehouseService
                   FilePathImage = warehouse.FileImageUrl
                 };
     return await query.ToListAsync();
+  }
+
+  public async Task<bool> CheckPermissionUserRequestAsync(Guid userId, Guid warehouseId)
+  {
+    var result = await _context.UserWarehouseRoles.FirstOrDefaultAsync(x => x.UserId == userId && x.WarehouseId == warehouseId);
+    if (result == null) return false;
+
+    var role = await _roleManager.FindByIdAsync(result.RoleId.ToString());
+    if (role == null) return false;
+
+    if (role.Name != RoleConstant.Premises &&
+      role.Name != RoleConstant.ClientManager &&
+      role.Name != RoleConstant.Inspector) return false;
+
+    return true;
   }
 }

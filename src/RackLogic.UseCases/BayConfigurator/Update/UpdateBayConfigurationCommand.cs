@@ -1,0 +1,52 @@
+﻿using Ardalis.Result;
+using RackLogic.UseCases.BayConfigurator.Create;
+
+namespace RackLogic.UseCases.BayConfigurator.Update;
+public record UpdateBayConfigurationCommand(
+  BayConfigurationUpdateCommand BayConfiguration,
+  Guid WarehouseId,
+  Guid UserId)
+  : Ardalis.SharedKernel.ICommand<Result<bool>>;
+
+
+public record BayConfigurationUpdateCommand(
+    Guid Id,
+    DateTime? CreatedDate,
+    bool IsCustomBrand,
+    string BayConfigId,
+    string RackingType,
+    DateTime? InstallationDate,
+    bool IsEstimatedInstallDate,
+    string AsComplianceVersion,
+    string Supplier,
+    string StructuralDesigner,
+    string ProjectRef,
+    int ToleranceGrade,
+    int TotalBayLoad,
+    string? Comment,
+    bool IsEnableInterimInspection,
+    string? InterimInterval,
+    ComponentCommand UpRight,
+    bool? HasSplice,
+    int Level,
+    int Pallets,
+    bool HasProtector,
+    object? SpliceKits,
+    bool? IsCustomUpRight,
+    ComponentCommand Beam,
+    List<int> BeamLevels,
+    bool? IsCustomBeam,
+    ComponentCommand BracingHorizontal,
+    int BracingLevel,
+    List<int> BracingHorizontalLevels,
+    bool? IsCustomBracingHorizontal,
+    ComponentCommand BracingDiagonal,
+    int BracingDiagonalLevel,
+    List<ComponentCommand> BracingDiagonalLevels,
+    bool? IsCustomBracingDiagonal,
+    ComponentCommand RowSpacer,
+    int RowSpacerLevel,
+    List<int> RowSpacerLevels,
+    bool? IsCustomRowSpacer,
+    List<ComponentCommand>? Accessories,
+    bool? IsCustomAccessories);
