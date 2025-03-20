@@ -32,3 +32,15 @@ public class FloorPlanCommentResponse
   public required string Comment { get; set; }
   public required string Date { get; set; }
 }
+
+public class DefaultSettingsDto
+{
+  public Guid? SingleBin { get; set; }
+  public Guid? PairSingleBin { get; set; }
+  public Guid? DoubleBin { get; set; }
+  public Guid? PairDoubleBin { get; set; }
+  public Guid? TripleBin { get; set; }
+  public Guid? PairTripleBin { get; set; }
+  public Guid? PairQuadBin { get; set; }
+  public Guid? QuadBin { get; set; }
+   }

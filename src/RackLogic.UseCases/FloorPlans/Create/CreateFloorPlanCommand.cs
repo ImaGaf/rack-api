@@ -16,7 +16,8 @@ public record FloorPlanCommand(
     int TotalRack,
     int TotalBay,
     List<FloorPlanItemCommand> Items,
-    List<IFormFile> Files);
+    List<IFormFile> Files,
+    DefaultSettingsCommand DefaultSettings);
 
 public record FloorPlanItemCommand(
     Guid Id,
@@ -28,6 +29,7 @@ public record FloorPlanItemCommand(
     double? Width,
     double? Height,
     string? ObjectType,
+    Guid BayConfigurationId,
     double Rotation);
 
 public record FloorPlanCommentCommand(
@@ -35,4 +37,13 @@ public record FloorPlanCommentCommand(
     string userName,
     string comment);
 
+public record DefaultSettingsCommand(
+    Guid SingleBin, 
+    Guid PairSingleBin, 
+    Guid DoubleBin,
+    Guid PairDoubleBin, 
+    Guid TripleBin, 
+    Guid PairTripleBin, 
+    Guid QuadBin,
+    Guid PairQuadBin);
 

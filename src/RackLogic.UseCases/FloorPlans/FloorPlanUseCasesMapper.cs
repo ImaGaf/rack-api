@@ -1,12 +1,13 @@
 ﻿using Microsoft.AspNetCore.Http;
 using RackLogic.Core.Common.Entity;
+using RackLogic.Core.Common.Enums;
 using RackLogic.UseCases.FloorPlans.Create;
 using RackLogic.UseCases.FloorPlans.Update;
 
 namespace RackLogic.UseCases.FloorPlans;
 public static partial class FloorPlanUseCasesMapper
 {
-  public static FloorPlan ToFloorPlan(this FloorPlanCommand request, Guid warehouseId, Guid userCreatedId)
+  public static FloorPlan ToFloorPlan(this FloorPlanCommand request, Guid warehouseId)
   {
     return new FloorPlan
     {
@@ -17,9 +18,21 @@ public static partial class FloorPlanUseCasesMapper
       Description = request.Description,
       TotalRack = request.TotalRack,
       TotalBay = request.TotalBay,
-      CreatorId = userCreatedId,
       FloorPlanFiles = new List<FloorPlanFiles>(),
-      FloorPlanItems = new List<FloorPlanItem>()
+      FloorPlanItems = new List<FloorPlanItem>(),
+      DefaultSettings = new List<DefaultSettings>()
+    };
+  }
+
+  public static FloorPlanFiles ToFloorPlanFile(this SavedFileInfo savedFile, Guid floorPlanId)
+  {
+    return new FloorPlanFiles
+    {
+      Id = Guid.NewGuid(),
+      FloorPlanId = floorPlanId,
+      FileName = savedFile.FileName,
+      FileUrl = savedFile.FilePath,
+      ContentType = savedFile.ContentType
     };
   }
 
@@ -37,6 +50,7 @@ public static partial class FloorPlanUseCasesMapper
       Height = item.Height,
       ObjectType = item.ObjectType,
       Rotation = item.Rotation,
+      BayConfigurationId = item.BayConfigurationId,
       Comments = new List<FloorPlanComments>()
     };
   }
@@ -65,12 +79,12 @@ public static partial class FloorPlanUseCasesMapper
       TotalBay = request.TotalBay,
       CreatorId = userCreatedId,
       FloorPlanFiles = new List<FloorPlanFiles>(),
-      FloorPlanItems = new List<FloorPlanItem>()
+      FloorPlanItems = new List<FloorPlanItem>(),
+      DefaultSettings = new List<DefaultSettings>() 
     };
   }
   public static FloorPlanItem ToFloorPlanItem(this UpdateFloorPlanItemInformationCommand item, Guid floorPlanId)
   {
-   // var comments = item.Comments?.Select(c => c.ToFloorPlanComment(item.Id)).ToList() ?? new List<FloorPlanComments>();
     return new FloorPlanItem
     {
       Id = item.Id,
@@ -83,6 +97,7 @@ public static partial class FloorPlanUseCasesMapper
       Height = item.Height,
       ObjectType = item.ObjectType,
       Rotation = item.Rotation,
+      BayConfigurationId = item.BayConfigurationId,
       Comments = new List<FloorPlanComments>()
     };
   }
@@ -102,6 +117,7 @@ public static partial class FloorPlanUseCasesMapper
       Height = item.Height,
       ObjectType = item.ObjectType,
       Rotation = item.Rotation,
+      BayConfigurationId = item.BayConfigurationId,
       Comments = comments
     };
   }
@@ -130,7 +146,17 @@ public static partial class FloorPlanUseCasesMapper
         TotalRack: request.TotalRack,
         TotalBay: request.TotalBay,
         Items: request.Items?.Select(i => i.ToFloorPlanItemCommand()).ToList() ?? new List<FloorPlanItemCommand>(),
-        Files: request.Files ?? new List<IFormFile>()
+        Files: request.Files ?? new List<IFormFile>(),
+        DefaultSettings: new DefaultSettingsCommand(
+            SingleBin: request.UpdateDefaultSettings.SingleBin,
+            PairSingleBin: request.UpdateDefaultSettings.PairSingleBin,
+            DoubleBin: request.UpdateDefaultSettings.DoubleBin,
+            PairDoubleBin: request.UpdateDefaultSettings.PairDoubleBin,
+            TripleBin: request.UpdateDefaultSettings.TripleBin,   
+            PairTripleBin: request.UpdateDefaultSettings.PairTripleBin,
+            QuadBin: request.UpdateDefaultSettings.QuadBin,
+            PairQuadBin: request.UpdateDefaultSettings.PairQuadBin  
+        )
     );
   }
 
@@ -146,6 +172,7 @@ public static partial class FloorPlanUseCasesMapper
         Height: item.Height,
         ObjectType: item.ObjectType,
         Rotation: item.Rotation,
+        BayConfigurationId: item.BayConfigurationId, 
         Comments: item.Comments?.Select(c => c.ToFloorPlanCommentCommand()).ToList() ?? new List<FloorPlanCommentCommand>()
     );
   }
@@ -157,18 +184,6 @@ public static partial class FloorPlanUseCasesMapper
         userName: comment.UserName,
         comment: comment.Comment
     );
-  }
-
-  public static FloorPlanFiles ToFloorPlanFile(this SavedFileInfo savedFile, Guid floorPlanId)
-  {
-    return new FloorPlanFiles
-    {
-      Id = Guid.NewGuid(),
-      FloorPlanId = floorPlanId,
-      FileName = savedFile.FileName,
-      FileUrl = savedFile.FilePath,
-      ContentType = savedFile.ContentType
-    };
   }
 
   public static void UpdateFloorPlan(this UpdateFloorPlanInformationCommand request, FloorPlan floorPlan)
@@ -242,5 +257,37 @@ public static partial class FloorPlanUseCasesMapper
       Comment = comment.Comment,
       Date = comment.CreationTime.ToString("yyyy-MM-dd HH:mm:ss")
     };
+  }
+
+  public static List<DefaultSettings> ToDefaultSettings (this DefaultSettingsCommand settingCommand, Guid AssetId)
+  {
+    var settings = settingCommand.MapToEnumDictionary();
+    var result = new List<DefaultSettings>();
+
+    foreach(var setting in settings)
+    {
+      result.Add(new DefaultSettings
+      {
+        FloorPlanId = AssetId,
+        BayConfigurationId = setting.Value,
+        BayConfigCategory = setting.Key
+      });
+    }
+    return result;
+  }
+
+  public static Dictionary<BayConfigurationCategory, Guid> MapToEnumDictionary(this DefaultSettingsCommand command)
+  {
+    return new Dictionary<BayConfigurationCategory, Guid>
+        {
+            { BayConfigurationCategory.SingleBin, command.SingleBin },
+            { BayConfigurationCategory.PairSingleBin, command.PairSingleBin },
+            { BayConfigurationCategory.DoubleBin, command.DoubleBin },
+            { BayConfigurationCategory.PairDoubleBin, command.PairDoubleBin },
+            { BayConfigurationCategory.TripleBin, command.TripleBin },
+            { BayConfigurationCategory.PairTripleBin, command.PairTripleBin },
+            { BayConfigurationCategory.QuadBin, command.QuadBin },
+            { BayConfigurationCategory.PairQuadBin, command.PairQuadBin }
+        };
   }
 }

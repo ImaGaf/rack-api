@@ -39,6 +39,8 @@ public class UpdateFloorPlanInformation
   [Required]
   public required int TotalBay { get; set; }
   [Required]
+  public required UpdateDefaultSetting UpdateDefaultSettings { get; set; }
+  [Required]
   public required List<UpdateFloorPlanItemInformation> Items { get; set; } = new();
 }
 public class UpdateFloorPlanItemInformation
@@ -60,6 +62,8 @@ public class UpdateFloorPlanItemInformation
   public string? ObjectType { get; set; }
   [Required]
   public required double Rotation { get; set; }
+  [Required]
+  public required Guid BayConfigurationId { get; set; }
   public required List<UpdateFloorPlanComment>? Comments { get; set; }
 }
 public class UpdateFloorPlanComment
@@ -75,4 +79,15 @@ public class UpdateFloorPlanComment
   public required string Comment { get; set; }
   [Required]
   public required string Date { get; set; }
+}
+public class UpdateDefaultSetting
+{
+  public Guid SingleBin { get; set; }
+  public Guid PairSingleBin { get; set; }
+  public Guid DoubleBin { get; set; }
+  public Guid PairDoubleBin { get; set; }
+  public Guid TripleBin { get; set; }
+  public Guid PairTripleBin { get; set; }
+  public Guid QuadBin { get; set; }
+  public Guid PairQuadBin { get; set; }
 }

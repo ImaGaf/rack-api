@@ -29,7 +29,8 @@ public class AppDbContext(DbContextOptions<AppDbContext> options,
   public DbSet<BayConfiguration> BayConfigurations => Set<BayConfiguration>();
   public DbSet<Component> Components => Set<Component>();
   public DbSet<BayConfigurationLevels> BayConfigurationLevels => Set<BayConfigurationLevels>();
-  
+  public DbSet<DefaultSettings> DefaultSettings => Set<DefaultSettings>();
+
   protected override void OnModelCreating(ModelBuilder modelBuilder)
   {
     base.OnModelCreating(modelBuilder);
@@ -117,6 +118,18 @@ public class AppDbContext(DbContextOptions<AppDbContext> options,
         .HasOne(p => p.BayConfiguration)
         .WithMany(u => u.BayConfigurationLevels)
         .HasForeignKey(p => p.BayId)
+        .OnDelete(DeleteBehavior.Cascade);
+
+    modelBuilder.Entity<FloorPlan>()
+        .HasMany(f => f.DefaultSettings)
+        .WithOne(ds => ds.FloorPlan)
+        .HasForeignKey(ds => ds.FloorPlanId)
+        .OnDelete(DeleteBehavior.Cascade); 
+
+    modelBuilder.Entity<DefaultSettings>()
+        .HasOne(ds => ds.BayConfiguration)
+        .WithMany()
+        .HasForeignKey(ds => ds.BayConfigurationId)
         .OnDelete(DeleteBehavior.Cascade);
 
   }

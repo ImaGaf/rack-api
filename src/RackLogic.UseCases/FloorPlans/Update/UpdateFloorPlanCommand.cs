@@ -17,6 +17,7 @@ public record UpdateFloorPlanInformationCommand(
   int TotalBay,
   List<string> FileUrlsToDelete,
   List<IFormFile> Files,
+  UpdateDefaultSettingsCommand UpdateDefaultSettings,
   List<UpdateFloorPlanItemInformationCommand> Items);
 
 public record UpdateFloorPlanItemInformationCommand(
@@ -29,6 +30,7 @@ public record UpdateFloorPlanItemInformationCommand(
   double? Height,
   string? ObjectType,
   double Rotation,
+  Guid BayConfigurationId,
   List<UpdateFloorPlanCommentCommand>? Comments);
 
 public record UpdateFloorPlanCommentCommand(
@@ -36,3 +38,13 @@ public record UpdateFloorPlanCommentCommand(
   string UserName,
   string Comment,
   string Date);
+
+public record UpdateDefaultSettingsCommand(
+    Guid SingleBin,
+    Guid PairSingleBin,
+    Guid DoubleBin,
+    Guid PairDoubleBin,
+    Guid TripleBin,
+    Guid PairTripleBin,
+    Guid QuadBin,
+    Guid PairQuadBin);
