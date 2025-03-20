@@ -1,37 +1,30 @@
 ﻿using Ardalis.Result;
 using Ardalis.SharedKernel;
-using Microsoft.AspNetCore.Identity;
-using RackLogic.Core.Common.Constants;
 using RackLogic.Core.Common.Entity;
 using RackLogic.Core.Common.Enums;
 using RackLogic.Core.Interfaces;
+using RackLogic.UseCases.Warehouses;
 
 namespace RackLogic.UseCases.BayConfigurator.Create;
 public class CreateBayConfigurationHandler(
-  IRepositoryWithExpression<UserWarehouseRole> _userWarehouseRoleRepository,
-  IRepositoryWithExpression<BayConfiguration> _bayConfigurationRepository,
-  RoleManager<IdentityRole<Guid>> _roleManager) : ICommandHandler<CreateBayConfigurationCommand, Result<bool>>
+  IUserWarehouseService _userWarehouseService,
+  IRepositoryWithExpression<BayConfiguration> _bayConfigurationRepository)
+  : ICommandHandler<CreateBayConfigurationCommand, Result<bool>>
 {
   public async Task<Result<bool>> Handle(CreateBayConfigurationCommand request, CancellationToken cancellationToken)
   {
-    if (!await CheckPermissionUserRequestAsync(request.UserId, request.WarehouseId)) return Result.Forbidden();
+    if (!await _userWarehouseService.CheckPermissionUserRequestAsync(request.UserId, request.WarehouseId)) return Result.Forbidden();
+
+    if (await CheckUniqueForBayConfigIdAsync(request.BayConfiguration.BayConfigId, request.WarehouseId)) return Result.Invalid(new ValidationError("BayConfigId must be unique."));
 
     return await AddConfigurationAsync(request, cancellationToken);
   }
 
-  private async Task<bool> CheckPermissionUserRequestAsync(Guid userId, Guid warehouseId)
+  private async Task<bool> CheckUniqueForBayConfigIdAsync(string bayConfigId, Guid warehouseId)
   {
-    var result = await _userWarehouseRoleRepository.FirstOrDefaultAsync(x => x.UserId == userId && x.WarehouseId == warehouseId);
-    if (result == null) return false;
+    var result = await _bayConfigurationRepository.FirstOrDefaultAsync(x => x.WarahouseId == warehouseId && x.BayConfigId.Equals(bayConfigId));
 
-    var role = await _roleManager.FindByIdAsync(result.RoleId.ToString());
-    if (role == null) return false;
-
-    if (role.Name != RoleConstant.Premises &&
-      role.Name != RoleConstant.ClientManager &&
-      role.Name != RoleConstant.Inspector) return false;
-
-    return true;
+    return result is not null;
   }
 
   private async Task<bool> AddConfigurationAsync(CreateBayConfigurationCommand request, CancellationToken cancellationToken)
