@@ -128,10 +128,9 @@ public class AppDbContext(DbContextOptions<AppDbContext> options,
 
     modelBuilder.Entity<DefaultSettings>()
         .HasOne(ds => ds.BayConfiguration)
-        .WithMany()
+        .WithMany(ds => ds.DefaultSettings)
         .HasForeignKey(ds => ds.BayConfigurationId)
         .OnDelete(DeleteBehavior.Cascade);
-
   }
 
   public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = new CancellationToken())

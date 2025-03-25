@@ -9,19 +9,21 @@ public class FloorPlanDTO()
   public int TotalBay { get; set; }
   public List<string> FileUrls { get; set; } = new();
   public List<FloorPlanItemResponse> Items { get; set; } = new();
+  public DefaultSettingsResponse DefaultSettings { get; set; } = new();
 }
 
 public class FloorPlanItemResponse
 {
   public Guid? Id { get; set; }
-  public int? Rack { get; set; }
-  public int? Bay { get; set; }
+  public required int Rack { get; set; }
+  public required int Bay { get; set; }
   public required string Offset { get; set; }
   public int? Size { get; set; }
   public double? Width { get; set; }
   public double? Height { get; set; }
   public string? ObjectType { get; set; }
   public required double Rotation { get; set; }
+  public Guid? BayConfigurationId { get; set; }
   public List<FloorPlanCommentResponse>? Comments { get; set; }
 }
 
@@ -33,7 +35,7 @@ public class FloorPlanCommentResponse
   public required string Date { get; set; }
 }
 
-public class DefaultSettingsDto
+public class DefaultSettingsResponse
 {
   public Guid? SingleBin { get; set; }
   public Guid? PairSingleBin { get; set; }
@@ -41,6 +43,6 @@ public class DefaultSettingsDto
   public Guid? PairDoubleBin { get; set; }
   public Guid? TripleBin { get; set; }
   public Guid? PairTripleBin { get; set; }
-  public Guid? PairQuadBin { get; set; }
   public Guid? QuadBin { get; set; }
-   }
+  public Guid? PairQuadBin { get; set; }
+}

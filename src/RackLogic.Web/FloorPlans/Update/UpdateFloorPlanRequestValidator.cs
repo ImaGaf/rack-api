@@ -52,6 +52,10 @@ public class UpdateFloorPlanRequestValidator : Validator<UpdateFloorPlanRequest>
         item.RuleFor(i => i.Rotation)
             .NotNull().WithMessage("Rotation is required and must be correctly formatted.");
 
+        item.RuleFor(i => i.BayConfigurationId)
+            .NotEmpty().When(i => i.IsRequiredBayConfig == true)
+            .WithMessage("BayConfigurationId for Bays is required.");
+
         // Check list Comments
         item.RuleForEach(i => i.Comments).ChildRules(comment =>
         {
@@ -65,9 +69,7 @@ public class UpdateFloorPlanRequestValidator : Validator<UpdateFloorPlanRequest>
               .NotEmpty().WithMessage("Comment content is required.");
 
           comment.RuleFor(c => c.Date)
-              .NotEmpty().WithMessage("Date is required.")
-              .Must(date => DateTime.TryParse(date, out _))
-              .WithMessage("Date must be in the format 'yyyy-MM-dd'.");
+              .NotEmpty().WithMessage("Date is required.");
         });
       });
 

@@ -29,7 +29,8 @@ public record FloorPlanItemCommand(
     double? Width,
     double? Height,
     string? ObjectType,
-    Guid BayConfigurationId,
+    Guid? BayConfigurationId,
+    bool? IsRequiredBayConfig,
     double Rotation);
 
 public record FloorPlanCommentCommand(
@@ -38,12 +39,12 @@ public record FloorPlanCommentCommand(
     string comment);
 
 public record DefaultSettingsCommand(
-    Guid SingleBin, 
-    Guid PairSingleBin, 
-    Guid DoubleBin,
-    Guid PairDoubleBin, 
-    Guid TripleBin, 
-    Guid PairTripleBin, 
-    Guid QuadBin,
-    Guid PairQuadBin);
+    Guid? SingleBin, 
+    Guid? PairSingleBin, 
+    Guid? DoubleBin,
+    Guid? PairDoubleBin, 
+    Guid? TripleBin, 
+    Guid? PairTripleBin, 
+    Guid? QuadBin,
+    Guid? PairQuadBin);
 

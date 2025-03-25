@@ -64,7 +64,8 @@ public class FloorPlanItem
   public string? ObjectType { get; set; }
   [Required]
   public required double Rotation { get; set; }
-  public required Guid BayConfigurationId { get; set; }
+  public Guid? BayConfigurationId { get; set; }
+  public bool? IsRequiredBayConfig { get; set; }
 }
 
 public class Comment
@@ -82,14 +83,14 @@ public class Comment
 
 public class DefaultSettings
 {
-  public Guid SingleBin { get; set; }
-  public Guid PairSingleBin { get; set; }
-  public Guid DoubleBin { get; set; }
-  public Guid PairDoubleBin { get; set; }
-  public Guid TripleBin { get; set; }
-  public Guid PairTripleBin { get; set; }
-  public Guid QuadBin { get; set; }
-  public Guid PairQuadBin { get; set; }
+  public Guid? SingleBin { get; set; }
+  public Guid? PairSingleBin { get; set; }
+  public Guid? DoubleBin { get; set; }
+  public Guid? PairDoubleBin { get; set; }
+  public Guid? TripleBin { get; set; }
+  public Guid? PairTripleBin { get; set; }
+  public Guid? QuadBin { get; set; }
+  public Guid? PairQuadBin { get; set; }
 }
 
 

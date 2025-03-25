@@ -1,15 +1,12 @@
 ﻿using System.Text.RegularExpressions;
 using Ardalis.Result;
 using FastEndpoints;
-using FluentValidation;
 using MediatR;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using RackLogic.UseCases.FloorPlans.Update;
 using RackLogic.Web.Exceptions;
-using RackLogic.Web.FloorPlans.Create;
 using RackLogic.Web.Models;
 using RackLogic.Web.Services;
 

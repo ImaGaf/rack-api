@@ -44,6 +44,10 @@ public class CreateFloorAssetRequestValidator : Validator<CreateFloorAssetReques
 
         item.RuleFor(i => i.Rotation)
             .NotNull().WithMessage("Rotation is required and must be correctly formatted.");
+
+        item.RuleFor(i => i.BayConfigurationId)
+            .NotEmpty().When(i => i.IsRequiredBayConfig == true)
+            .WithMessage("BayConfigurationId for Bays is required.");
       });
 
       floorPlan.RuleForEach(fp => fp.Files)
