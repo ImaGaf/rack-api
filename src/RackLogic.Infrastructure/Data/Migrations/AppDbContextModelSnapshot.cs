@@ -363,6 +363,30 @@ namespace RackLogic.Infrastructure.Data.Migrations
                     b.ToTable("Components");
                 });
 
+            modelBuilder.Entity("RackLogic.Core.Common.Entity.DefaultSettings", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("BayConfigCategory")
+                        .HasColumnType("int");
+
+                    b.Property<Guid?>("BayConfigurationId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("FloorPlanId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("BayConfigurationId");
+
+                    b.HasIndex("FloorPlanId");
+
+                    b.ToTable("DefaultSettings");
+                });
+
             modelBuilder.Entity("RackLogic.Core.Common.Entity.FloorPlan", b =>
                 {
                     b.Property<Guid>("Id")
@@ -518,6 +542,9 @@ namespace RackLogic.Infrastructure.Data.Migrations
 
                     b.Property<int>("Bay")
                         .HasColumnType("int");
+
+                    b.Property<Guid?>("BayConfigurationId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime>("CreationTime")
                         .HasColumnType("datetime2");
@@ -1169,6 +1196,24 @@ namespace RackLogic.Infrastructure.Data.Migrations
                     b.Navigation("BayConfiguration");
                 });
 
+            modelBuilder.Entity("RackLogic.Core.Common.Entity.DefaultSettings", b =>
+                {
+                    b.HasOne("RackLogic.Core.Common.Entity.BayConfiguration", "BayConfiguration")
+                        .WithMany("DefaultSettings")
+                        .HasForeignKey("BayConfigurationId")
+                        .OnDelete(DeleteBehavior.Cascade);
+
+                    b.HasOne("RackLogic.Core.Common.Entity.FloorPlan", "FloorPlan")
+                        .WithMany("DefaultSettings")
+                        .HasForeignKey("FloorPlanId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("BayConfiguration");
+
+                    b.Navigation("FloorPlan");
+                });
+
             modelBuilder.Entity("RackLogic.Core.Common.Entity.FloorPlan", b =>
                 {
                     b.HasOne("RackLogic.Core.Common.Entity.Warehouse", "Warehouse")
@@ -1355,10 +1400,14 @@ namespace RackLogic.Infrastructure.Data.Migrations
                     b.Navigation("BayConfigurationLevels");
 
                     b.Navigation("Components");
+
+                    b.Navigation("DefaultSettings");
                 });
 
             modelBuilder.Entity("RackLogic.Core.Common.Entity.FloorPlan", b =>
                 {
+                    b.Navigation("DefaultSettings");
+
                     b.Navigation("FloorPlanFiles");
 
                     b.Navigation("FloorPlanItems");

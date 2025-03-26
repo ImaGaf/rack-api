@@ -40,6 +40,8 @@ public class FloorPlanRequest
   [Required]
   public required List<FloorPlanItem> Items { get; set; }
   public List<IFormFile>? Files { get; set; } = new();
+  [Required]
+  public required DefaultSettings DefaultSettings { get; set; }
 }
 
 public class FloorPlanItem
@@ -62,6 +64,8 @@ public class FloorPlanItem
   public string? ObjectType { get; set; }
   [Required]
   public required double Rotation { get; set; }
+  public Guid? BayConfigurationId { get; set; }
+  public bool? IsRequiredBayConfig { get; set; }
 }
 
 public class Comment
@@ -76,3 +80,17 @@ public class Comment
   [Required]
   public required string comment { get; set; }
 }
+
+public class DefaultSettings
+{
+  public Guid? SingleBin { get; set; }
+  public Guid? PairSingleBin { get; set; }
+  public Guid? DoubleBin { get; set; }
+  public Guid? PairDoubleBin { get; set; }
+  public Guid? TripleBin { get; set; }
+  public Guid? PairTripleBin { get; set; }
+  public Guid? QuadBin { get; set; }
+  public Guid? PairQuadBin { get; set; }
+}
+
+

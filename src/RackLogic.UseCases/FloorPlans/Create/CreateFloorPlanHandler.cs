@@ -1,17 +1,17 @@
-﻿using Ardalis.Result;
+﻿using System.Text.RegularExpressions;
+using Ardalis.Result;
 using Ardalis.SharedKernel;
-using Microsoft.AspNetCore.Identity;
-using RackLogic.Core.Common.Constants;
+using Microsoft.EntityFrameworkCore;
 using RackLogic.Core.Common.Entity;
 using RackLogic.Core.Interfaces;
+using RackLogic.UseCases.Warehouses;
 
 namespace RackLogic.UseCases.FloorPlans.Create;
 public class CreateFloorPlanHandler(
   IRepositoryWithExpression<FloorPlan> _floorPlanRepository,
-  IRepositoryWithExpression<UserWarehouseRole> _userWarehouseRoleRepository,
   IRepositoryWithExpression<Warehouse> _warehouseRepository,
   IFloorPlanService _floorPlanService,
-RoleManager<IdentityRole<Guid>> _roleManager)
+  IUserWarehouseService _userWarehouseService)
   : ICommandHandler<CreateFloorPlanCommand, Result<bool>>
 {
   public async Task<Result<bool>> Handle(CreateFloorPlanCommand request, CancellationToken cancellationToken)
@@ -23,34 +23,43 @@ RoleManager<IdentityRole<Guid>> _roleManager)
     if (await _floorPlanRepository.FirstOrDefaultAsync(x => x.WarehouseId == request.WarehouseId) != null) return Result.Invalid(new ValidationError("This Warehouse already has a Floor Plan!"));
 
     // Check user permissions
-    var userCreatedId = request.UserCreatedId;
-    if (!await CheckPermissionUserRequestAsync(userCreatedId, request.WarehouseId)) return Result.Forbidden();
+    if (!await _userWarehouseService.CheckPermissionUserRequestAsync(request.UserCreatedId, request.WarehouseId)) return Result.Forbidden();
 
-    var createOrUpdateResult = await _floorPlanService.CreateFloorPlanAssetsAsync(
-        request.FloorPlans,
-        request.WarehouseId,
-        request.UserCreatedId
-    );
+    // Validate BayConfigurationId and DefaultSettings
+    var validationResult = await _floorPlanService.ValidateBayConfigurationIdAndDefaultSettingsAsync(
+      request.FloorPlans, 
+      request.WarehouseId, 
+      cancellationToken);
 
-    if (!createOrUpdateResult.IsSuccess)
-    {
-      return Result<bool>.Invalid(createOrUpdateResult.ValidationErrors);
-    }
+    if (!validationResult.IsSuccess) return validationResult;
 
-    return Result.Success(true);
+    return await AddFloorPlanAsync(request, request.WarehouseId, cancellationToken);
   }
-  private async Task<bool> CheckPermissionUserRequestAsync(Guid userId, Guid warehouseId)
+
+  private async Task<Result<bool>> AddFloorPlanAsync(CreateFloorPlanCommand request, Guid warehouseId, CancellationToken cancellationToken)
   {
-    var result = await _userWarehouseRoleRepository.FirstOrDefaultAsync(x => x.UserId == userId && x.WarehouseId == warehouseId);
-    if (result == null) return false;
 
-    var role = await _roleManager.FindByIdAsync(result.RoleId.ToString());
-    if (role == null) return false;
+    try
+    {
+      //Mapping FloorPlan and FloorPlanFiles
+      var floorPlans = request.FloorPlans.Select(x => x.ToFloorPlan(warehouseId));
+      //Save Files
+      var floorPlanFiles = await _floorPlanService.SaveFloorPlanFilesAsync(request.FloorPlans, warehouseId);
+      floorPlans = floorPlans.ToList().MapFloorPlanFilesToFloorPlan(floorPlanFiles);
+      var results = await _floorPlanRepository.AddRangeAsync(floorPlans, cancellationToken);
+      return results.Any();
+    }
+    catch (DbUpdateException ex)
+    {
+      var errorMessage = ex?.InnerException?.Message;
 
-    if (role.Name != RoleConstant.Premises &&
-      role.Name != RoleConstant.ClientManager &&
-      role.Name != RoleConstant.Inspector) return false;
-
-    return true;
+      //Use regex to find GUID in error message
+      var match = Regex.Match(errorMessage ?? "", @"\(([^)]+)\)");
+      if (match.Success && Guid.TryParse(match.Groups[1].Value, out Guid duplicateId))
+      {
+        return Result.Invalid(new ValidationError($"Duplicate Id: {duplicateId}"));
+      }
+      throw;
+    }
   }
 }
