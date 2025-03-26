@@ -59,8 +59,7 @@ public class CreateFloorPlanHandler(
       {
         return Result.Invalid(new ValidationError($"Duplicate Id: {duplicateId}"));
       }
-
-      return Result.Invalid(new ValidationError(errorMessage));
+      throw;
     }
   }
 }

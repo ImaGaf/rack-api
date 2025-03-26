@@ -3,6 +3,7 @@ using Ardalis.Result;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using RackLogic.Core.Common.Entity;
+using RackLogic.Core.Common.Enums;
 using RackLogic.Core.Interfaces;
 using RackLogic.UseCases.FloorPlans;
 using RackLogic.UseCases.FloorPlans.Create;
@@ -53,7 +54,7 @@ public class FloorPlanService : IFloorPlanService
       CancellationToken cancellationToken)
   {
     var validBayConfigIds = await _bayConfigurationRepository
-        .ListAsync(bc => bc.WarahouseId == warehouseId, cancellationToken);
+        .FindAsync(bc => bc.WarahouseId == warehouseId, cancellationToken);
     var validBayConfigIdSet = new HashSet<Guid>(validBayConfigIds.Select(bc => bc.Id));
 
     if (!validBayConfigIdSet.Any())
@@ -61,8 +62,7 @@ public class FloorPlanService : IFloorPlanService
 
     var invalidItems = floorPlans
         .SelectMany(fp => fp.Items)
-        .Where(item => item.BayConfigurationId.HasValue && !validBayConfigIdSet.Contains(item.BayConfigurationId.Value))
-        .ToList();
+        .Where(item => item.BayConfigurationId.HasValue && !validBayConfigIdSet.Contains(item.BayConfigurationId.Value));
 
     if (invalidItems.Any())
       return Result.Invalid(new ValidationError($"Invalid BayConfigurationId(s): {string.Join(", ", invalidItems.Select(i => i.BayConfigurationId))} in FloorPlanItems."));
@@ -70,14 +70,14 @@ public class FloorPlanService : IFloorPlanService
     var invalidSetting = floorPlans
         .SelectMany(fp => new[]
         {
-                new { Name = "SingleBin", Value = fp.DefaultSettings.SingleBin },
-                new { Name = "PairSingleBin", Value = fp.DefaultSettings.PairSingleBin },
-                new { Name = "DoubleBin", Value = fp.DefaultSettings.DoubleBin },
-                new { Name = "PairDoubleBin", Value = fp.DefaultSettings.PairDoubleBin },
-                new { Name = "TripleBin", Value = fp.DefaultSettings.TripleBin },
-                new { Name = "PairTripleBin", Value = fp.DefaultSettings.PairTripleBin },
-                new { Name = "QuadBin", Value = fp.DefaultSettings.QuadBin },
-                new { Name = "PairQuadBin", Value = fp.DefaultSettings.PairQuadBin }
+                new { Name = BayConfigurationCategory.SingleBin.ToString(), Value = fp.DefaultSettings.SingleBin },
+                new { Name = BayConfigurationCategory.PairSingleBin.ToString(), Value = fp.DefaultSettings.PairSingleBin },
+                new { Name = BayConfigurationCategory.DoubleBin.ToString(), Value = fp.DefaultSettings.DoubleBin },
+                new { Name = BayConfigurationCategory.PairDoubleBin.ToString(), Value = fp.DefaultSettings.PairDoubleBin },
+                new { Name = BayConfigurationCategory.TripleBin.ToString(), Value = fp.DefaultSettings.TripleBin },
+                new { Name = BayConfigurationCategory.PairTripleBin.ToString(), Value = fp.DefaultSettings.PairTripleBin },
+                new { Name = BayConfigurationCategory.QuadBin.ToString(), Value = fp.DefaultSettings.QuadBin },
+                new { Name = BayConfigurationCategory.PairQuadBin.ToString(), Value = fp.DefaultSettings.PairQuadBin }
         })
         .FirstOrDefault(ds => ds.Value.HasValue && !validBayConfigIdSet.Contains(ds.Value.Value));
 
@@ -180,7 +180,7 @@ public class FloorPlanService : IFloorPlanService
       {
         return Result.Invalid(new ValidationError($"Duplicate Id: {duplicateId}"));
       }
-      return Result.Invalid(new ValidationError(errorMessage));
+      throw;
     }
 
     return Result.Success(true);
