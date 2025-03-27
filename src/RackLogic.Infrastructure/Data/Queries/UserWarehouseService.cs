@@ -1,4 +1,5 @@
 ﻿using System.Data;
+using System.Linq;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using RackLogic.Core.Common.Constants;
@@ -30,29 +31,30 @@ public class UserWarehouseService(
   public async Task<List<OEMBrandDTO>> GetAllBrandsAsync()
   {
     var brands = await _context.OEMBrands
+        .Where(x => x.WarehouseId == null)
         .OrderBy(brand => brand.Name)
         .ToListAsync();
 
     return brands.Select(brand => brand.ToOEMBrandDTO()).ToList();
   }
 
-  public async Task<(List<ListComponentBrandDTO> Products, int TotalRecords)> GetProductsByBrandAsync(Guid brandId, int pageNumber, int pageSize)
+  public async Task<(List<ListComponentBrandDTO> Products, int TotalRecords)> GetProductsByBrandAsync(Guid? brandId, int pageNumber, int pageSize)
   {
-    var queryListProducts = from product in _context.Products
-                            where product.ManufacturerId == brandId
-                            select new ListComponentBrandDTO
+    var queryListProducts = _context.Products
+                            .Where(x => brandId == null || x.ManufacturerId == brandId)
+                            .Select ( x => new ListComponentBrandDTO
                             {
-                              Id = product.Id,
-                              Category = product.Category,
-                              Height = product.Height,
-                              Width = product.Width,
-                              Length = product.Length,
-                              Code = product.Code,
-                              Description = product.Description,
-                              Orientation = product.Orientation,
-                              DistanceCenterToCenter = product.DistanceCenterToCenter,
-                              Type = product.Type
-                            };
+                              Id = x.Id,
+                              Category = x.Category,
+                              Height = x.Height,
+                              Width = x.Width,
+                              Length = x.Length,
+                              Code = x.Code,
+                              Description = x.Description,
+                              Orientation = x.Orientation,
+                              DistanceCenterToCenter = x.DistanceCenterToCenter,
+                              Type = x.Type
+                            });
 
     int totalRecords = await queryListProducts.CountAsync();
     var pageSizeProduct = pageSize == 0? totalRecords : pageSize;

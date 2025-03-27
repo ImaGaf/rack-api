@@ -26,7 +26,8 @@ public static partial class BrandUseCasesMapper
     {
         Id = brand.Id,
         Name = brand.Name,
-        Path = brand.Path
+        Path = brand.Path,
+        Code = brand.Code,
     };
 }
 
