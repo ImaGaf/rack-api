@@ -15,7 +15,7 @@ public class GetListComponentBrand(IMediator _mediator) : Endpoint<GetListCompon
 {
   public override void Configure()
   {
-    Get("/brand-OEM/product/{brandId}");
+    Get("/brand-OEM/product");
     DontThrowIfValidationFails();
   }
 
@@ -32,8 +32,8 @@ public class GetListComponentBrand(IMediator _mediator) : Endpoint<GetListCompon
     }
 
     // Default value if PageNumber or PageSize is not passed
-    var pageNumber = req.PageNumber ?? 0;
-    var pageSize = req.PageSize ?? 0;
+    var pageNumber = req.PageNumber ?? 1;
+    var pageSize = req.PageSize ?? 10;
 
     var result = await _mediator.Send(new GetComponentsByBrandQuery(req.BrandId, pageNumber, pageSize), ct);
 

@@ -9,6 +9,7 @@ public record CreateBayConfigurationCommand(
   : Ardalis.SharedKernel.ICommand<Result<bool>>;
 
 public record BayConfigurationCommand(
+    ManufacturerCommand Manufacturer,
     DateTime? CreatedDate,
     bool IsCustomBrand,
     string BayConfigId,
@@ -22,7 +23,7 @@ public record BayConfigurationCommand(
     int ToleranceGrade,
     int TotalBayLoad,
     string? Comment,
-    bool IsEnableInterimInspection,
+    bool? IsEnableInterimInspection,
     string? InterimInterval,
     ComponentCommand UpRight,
     bool? HasSplice,
@@ -65,4 +66,11 @@ public record ComponentCommand(
     int? LowerHeight,
     int? UpperHeight,
     bool? IsXBrace
+);
+
+public record ManufacturerCommand(
+  Guid? Id,
+  string Name,
+  string? Code,
+  string? Path
 );
