@@ -10,6 +10,7 @@ namespace RackLogic.UseCases.FloorPlans.Create;
 public class CreateFloorPlanHandler(
   IRepositoryWithExpression<FloorPlan> _floorPlanRepository,
   IRepositoryWithExpression<Warehouse> _warehouseRepository,
+  IRepositoryWithExpression<BayConfiguration> _bayConfigurationRepository,
   IFloorPlanService _floorPlanService,
   IUserWarehouseService _userWarehouseService)
   : ICommandHandler<CreateFloorPlanCommand, Result<bool>>
@@ -41,8 +42,9 @@ public class CreateFloorPlanHandler(
 
     try
     {
+      var bayConfigurations = await _bayConfigurationRepository.FindAsync(f => f.WarahouseId == warehouseId);
       //Mapping FloorPlan and FloorPlanFiles
-      var floorPlans = request.FloorPlans.Select(x => x.ToFloorPlan(warehouseId));
+      var floorPlans = request.FloorPlans.Select(x => x.ToFloorPlan(warehouseId, bayConfigurations));
       //Save Files
       var floorPlanFiles = await _floorPlanService.SaveFloorPlanFilesAsync(request.FloorPlans, warehouseId);
       floorPlans = floorPlans.ToList().MapFloorPlanFilesToFloorPlan(floorPlanFiles);

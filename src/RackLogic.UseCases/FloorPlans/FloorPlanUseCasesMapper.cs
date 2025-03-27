@@ -8,7 +8,7 @@ namespace RackLogic.UseCases.FloorPlans;
 public static partial class FloorPlanUseCasesMapper
 {
   //Map For Create New FloorPlan
-  public static FloorPlan ToFloorPlan(this FloorPlanCommand request, Guid warehouseId)
+  public static FloorPlan ToFloorPlan(this FloorPlanCommand request, Guid warehouseId, IEnumerable<BayConfiguration> bayConfiguration)
   {
     return new FloorPlan
     {
@@ -20,11 +20,11 @@ public static partial class FloorPlanUseCasesMapper
       TotalRack = request.TotalRack,
       TotalBay = request.TotalBay,
       FloorPlanFiles = new List<FloorPlanFiles>(),
-      FloorPlanItems = request.Items.Select(i => i.ToFloorPlanItem(request.FloorPlanId)).ToList(),
-      DefaultSettings = request.DefaultSettings.ToDefaultSettings(request.FloorPlanId)
+      FloorPlanItems = request.Items.Select(i => i.ToFloorPlanItem(request.FloorPlanId, bayConfiguration)).ToList(),
+      DefaultSettings = request.DefaultSettings.ToDefaultSettings(bayConfiguration, request.FloorPlanId)
     };
   }
-  public static FloorPlanItem ToFloorPlanItem(this FloorPlanItemCommand item, Guid floorPlanId)
+  public static FloorPlanItem ToFloorPlanItem(this FloorPlanItemCommand item, Guid floorPlanId, IEnumerable<BayConfiguration> bayConfigurations)
   {
     return new FloorPlanItem
     {
@@ -38,7 +38,7 @@ public static partial class FloorPlanUseCasesMapper
       Height = item.Height,
       ObjectType = item.ObjectType,
       Rotation = item.Rotation,
-      BayConfigurationId = item.BayConfigurationId,
+      BayConfigurationId = GetBayConfigurationIdFromBayConfigId(item.BayConfigurationId, bayConfigurations),
       Comments = item.Comments?.Select(c => c.ToFloorPlanComment(item.Id)).ToList()
     };
   }
@@ -55,7 +55,7 @@ public static partial class FloorPlanUseCasesMapper
 
 
   // Map For Create new FloorPlanUpdate
-  public static FloorPlan ToUpdateFloorPlan(this UpdateFloorPlanInformationCommand request, Guid warehouseId)
+  public static FloorPlan ToUpdateFloorPlan(this UpdateFloorPlanInformationCommand request, Guid warehouseId, IEnumerable<BayConfiguration> bayConfiguration)
   {
     return new FloorPlan
     {
@@ -67,11 +67,11 @@ public static partial class FloorPlanUseCasesMapper
       TotalRack = request.TotalRack,
       TotalBay = request.TotalBay,
       FloorPlanFiles = new List<FloorPlanFiles>(),
-      FloorPlanItems = request.Items.Select(i => i.ToUpdateFloorPlanItem(request.FloorPlanId)).ToList(),
-      DefaultSettings = request.DefaultSettings.ToDefaultSettings(request.FloorPlanId)
+      FloorPlanItems = request.Items.Select(i => i.ToUpdateFloorPlanItem(request.FloorPlanId, bayConfiguration)).ToList(),
+      DefaultSettings = request.DefaultSettings.ToDefaultSettings(bayConfiguration,request.FloorPlanId)
     };
   }
-  public static FloorPlanItem ToUpdateFloorPlanItem(this UpdateFloorPlanItemInformationCommand item, Guid floorPlanId)
+  public static FloorPlanItem ToUpdateFloorPlanItem(this UpdateFloorPlanItemInformationCommand item, Guid floorPlanId, IEnumerable<BayConfiguration> bayConfigurations)
   {
     return new FloorPlanItem
     {
@@ -85,7 +85,7 @@ public static partial class FloorPlanUseCasesMapper
       Height = item.Height,
       ObjectType = item.ObjectType,
       Rotation = item.Rotation,
-      BayConfigurationId = item.BayConfigurationId,
+      BayConfigurationId = GetBayConfigurationIdFromBayConfigId(item.BayConfigurationId, bayConfigurations),
       Comments = item.Comments?.Select(c => c.ToUpdateFloorPlanComment(item.Id)).ToList()
     };
   }
@@ -102,7 +102,7 @@ public static partial class FloorPlanUseCasesMapper
 
 
   //Create new items for update FloorPlanItems in FloorPlan
-  public static FloorPlanItem ToCreateFloorPlanItem(this UpdateFloorPlanItemInformationCommand item, Guid floorPlanId)
+  public static FloorPlanItem ToCreateFloorPlanItem(this UpdateFloorPlanItemInformationCommand item, Guid floorPlanId, IEnumerable<BayConfiguration> bayConfigurations)
   {
     var comments = item.Comments?.Select(c => c.ToFloorPlanComment(item.Id)).ToList() ?? new List<FloorPlanComments>();
     return new FloorPlanItem
@@ -117,12 +117,10 @@ public static partial class FloorPlanUseCasesMapper
       Height = item.Height,
       ObjectType = item.ObjectType,
       Rotation = item.Rotation,
-      BayConfigurationId = item.BayConfigurationId,
+      BayConfigurationId = GetBayConfigurationIdFromBayConfigId(item.BayConfigurationId, bayConfigurations),
       Comments = comments
     };
   }
-
-
   public static FloorPlanComments ToFloorPlanComment(this UpdateFloorPlanCommentCommand comment, Guid floorPlanItemId)
   {
     return new FloorPlanComments
@@ -182,16 +180,16 @@ public static partial class FloorPlanUseCasesMapper
   }
 
   //Map FloorPlan update from request
-  public static void UpdateFloorPlan(this UpdateFloorPlanInformationCommand request, FloorPlan floorPlan)
+  public static void UpdateFloorPlan(this UpdateFloorPlanInformationCommand request, FloorPlan floorPlan, IEnumerable<BayConfiguration> bayConfiguration)
   {
     floorPlan.AssetName = request.Title;
     floorPlan.FloorNumber = request.Floor;
     floorPlan.Description = request.Description;
     floorPlan.TotalRack = request.TotalRack;
     floorPlan.TotalBay = request.TotalBay;
-    floorPlan.DefaultSettings = request.DefaultSettings.ToDefaultSettings(request.FloorPlanId);
+    floorPlan.DefaultSettings = request.DefaultSettings.ToDefaultSettings(bayConfiguration,request.FloorPlanId);
   }
-  public static void UpdateFloorPlanItem(this UpdateFloorPlanItemInformationCommand item, FloorPlanItem floorPlanItem)
+  public static void UpdateFloorPlanItem(this UpdateFloorPlanItemInformationCommand item, FloorPlanItem floorPlanItem, IEnumerable<BayConfiguration> bayConfiguration)
   {
     floorPlanItem.Rack = item.Rack;
     floorPlanItem.Bay = item.Bay;
@@ -201,7 +199,7 @@ public static partial class FloorPlanUseCasesMapper
     floorPlanItem.Height = item.Height;
     floorPlanItem.ObjectType = item.ObjectType;
     floorPlanItem.Rotation = item.Rotation;
-    floorPlanItem.BayConfigurationId = item.BayConfigurationId;
+    floorPlanItem.BayConfigurationId = GetBayConfigurationIdFromBayConfigId(item.BayConfigurationId, bayConfiguration);
   }
   public static void UpdateFloorPlanComment(this UpdateFloorPlanCommentCommand comment, FloorPlanComments floorPlanComment)
   {
@@ -211,7 +209,7 @@ public static partial class FloorPlanUseCasesMapper
   }
 
   //Map FloorPlan to FloorPlanDTO
-  public static FloorPlanDTO ToFloorPlanDTO(this FloorPlan floorPlan)
+  public static FloorPlanDTO ToFloorPlanDTO(this FloorPlan floorPlan, List<BayConfiguration> bayConfigurations)
   {
     return new FloorPlanDTO
     {
@@ -222,14 +220,16 @@ public static partial class FloorPlanUseCasesMapper
       TotalRack = floorPlan.TotalRack,
       TotalBay = floorPlan.TotalBay,
       FileUrls = floorPlan.FloorPlanFiles.Select(file => file.FileUrl).ToList(),
-      Items = floorPlan.FloorPlanItems.Select(i => i.ToFloorPlanItemResponse()).ToList(),
-      DefaultSettings = MapFloorPlanToDefaultSettingsResponse(floorPlan)
+      Items = floorPlan.FloorPlanItems.Select(i => i.ToFloorPlanItemResponse(bayConfigurations)).ToList(),
+      DefaultSettings = MapFloorPlanToDefaultSettingsResponse(floorPlan, bayConfigurations)
     };
   }
 
   // Map from FloorPlanItem to FloorPlanItemDTO
-  public static FloorPlanItemResponse ToFloorPlanItemResponse(this FloorPlanItem item)
+  public static FloorPlanItemResponse ToFloorPlanItemResponse(this FloorPlanItem item, List<BayConfiguration> bayConfigurations)
   {
+    var bayConfigDict = bayConfigurations.ToDictionary(bc => bc.Id, bc => bc.BayConfigId);
+
     return new FloorPlanItemResponse
     {
       Id = item.Id,
@@ -241,7 +241,9 @@ public static partial class FloorPlanUseCasesMapper
       Height = item.Height,
       ObjectType = item.ObjectType,
       Rotation = item.Rotation,
-      BayConfigurationId = item.BayConfigurationId,
+      BayConfigurationId = item.BayConfigurationId.HasValue && bayConfigDict.TryGetValue(item.BayConfigurationId.Value, out var bayConfigId)
+            ? bayConfigId
+            : null,
       Comments = item.Comments?.Select(c => c.ToFloorPlanCommentResponse()).ToList() ?? new List<FloorPlanCommentResponse>()
     };
   }
@@ -259,26 +261,27 @@ public static partial class FloorPlanUseCasesMapper
   }
 
   //ToDefaultSettings for Create
-  public static List<DefaultSettings> ToDefaultSettings(this DefaultSettingsCommand settingCommand, Guid AssetId)
+  public static List<DefaultSettings> ToDefaultSettings(this DefaultSettingsCommand settingCommand, IEnumerable<BayConfiguration> bayConfigurations,Guid AssetId)
   {
     var settings = settingCommand.MapToEnumDictionary();
     var result = new List<DefaultSettings>();
 
     foreach (var setting in settings)
     {
+      var bayConfigurationId = bayConfigurations.FirstOrDefault(f => f.BayConfigId.Equals(setting.Value))?.Id;
       result.Add(new DefaultSettings
       {
         FloorPlanId = AssetId,
-        BayConfigurationId = setting.Value,
+        BayConfigurationId = bayConfigurationId,
         BayConfigCategory = setting.Key
       });
     }
     return result;
   }
 
-  public static Dictionary<BayConfigurationCategory, Guid?> MapToEnumDictionary(this DefaultSettingsCommand command)
+  public static Dictionary<BayConfigurationCategory, string?> MapToEnumDictionary(this DefaultSettingsCommand command)
   {
-    return new Dictionary<BayConfigurationCategory, Guid?>
+    return new Dictionary<BayConfigurationCategory, string?>
         {
             { BayConfigurationCategory.SingleBin, command.SingleBin },
             { BayConfigurationCategory.PairSingleBin, command.PairSingleBin },
@@ -292,18 +295,18 @@ public static partial class FloorPlanUseCasesMapper
   }
 
   //ToDefaultSettings for Update
-
-  public static List<DefaultSettings> ToDefaultSettings(this UpdateDefaultSettingsCommand updateCommand, Guid assetId)
+  public static List<DefaultSettings> ToDefaultSettings(this UpdateDefaultSettingsCommand updateCommand,IEnumerable<BayConfiguration> bayConfigurations, Guid assetId)
   {
     var settings = updateCommand.MapToEnumDictionary();
     var result = new List<DefaultSettings>();
 
     foreach (var setting in settings)
     {
+      var bayConfigurationId = bayConfigurations.FirstOrDefault(f => f.BayConfigId.Equals(setting.Value))?.Id; 
       result.Add(new DefaultSettings
       {
         FloorPlanId = assetId,
-        BayConfigurationId = setting.Value,
+        BayConfigurationId = bayConfigurationId,
         BayConfigCategory = setting.Key
       });
     }
@@ -311,9 +314,9 @@ public static partial class FloorPlanUseCasesMapper
     return result;
   }
 
-  public static Dictionary<BayConfigurationCategory, Guid?> MapToEnumDictionary(this UpdateDefaultSettingsCommand command)
+  public static Dictionary<BayConfigurationCategory, string?> MapToEnumDictionary(this UpdateDefaultSettingsCommand command)
   {
-    return new Dictionary<BayConfigurationCategory, Guid?>
+    return new Dictionary<BayConfigurationCategory, string?>
     {
         { BayConfigurationCategory.SingleBin, command.SingleBin },
         { BayConfigurationCategory.PairSingleBin, command.PairSingleBin },
@@ -337,20 +340,47 @@ public static partial class FloorPlanUseCasesMapper
     return floorPlans;
   }
 
-  public static DefaultSettingsResponse MapFloorPlanToDefaultSettingsResponse(FloorPlan floorPlan)
+  //Map FloorPlan to FloorPlanDTO
+  public static DefaultSettingsResponse MapFloorPlanToDefaultSettingsResponse(FloorPlan floorPlan, List<BayConfiguration> bayConfigurations)
   {
-    var defaultSettingsDict = floorPlan.DefaultSettings.ToDictionary(ds => ds.BayConfigCategory, ds => ds.BayConfigurationId);
+    //Dictionary map BayConfigCategory -> BayConfigurationId 
+    var defaultSettingsDict = floorPlan.DefaultSettings
+        .ToDictionary(ds => ds.BayConfigCategory, ds => ds.BayConfigurationId);
+
+    //Dictionary map Id( BayConfigurations) -> BayConfigId 
+    var bayConfigDict = bayConfigurations
+        .ToDictionary(bc => bc.Id, bc => bc.BayConfigId);
+
+    // Function to get BayConfigId value from defaultSettingsDict and bayConfigDict
+    string? GetMappedValue(BayConfigurationCategory category)
+    {
+      if (!defaultSettingsDict.TryGetValue(category, out var bayConfigurationId) || bayConfigurationId == null)
+        return null;
+
+      return bayConfigDict.TryGetValue(bayConfigurationId.Value, out var bayConfigId)
+          ? bayConfigId
+          : null;
+    }
 
     return new DefaultSettingsResponse
     {
-      SingleBin = defaultSettingsDict.ContainsKey(BayConfigurationCategory.SingleBin) ? defaultSettingsDict[BayConfigurationCategory.SingleBin] : null,
-      PairSingleBin = defaultSettingsDict.ContainsKey(BayConfigurationCategory.PairSingleBin) ? defaultSettingsDict[BayConfigurationCategory.PairSingleBin] : null,
-      DoubleBin = defaultSettingsDict.ContainsKey(BayConfigurationCategory.DoubleBin) ? defaultSettingsDict[BayConfigurationCategory.DoubleBin] : null,
-      PairDoubleBin = defaultSettingsDict.ContainsKey(BayConfigurationCategory.PairDoubleBin) ? defaultSettingsDict[BayConfigurationCategory.PairDoubleBin] : null,
-      TripleBin = defaultSettingsDict.ContainsKey(BayConfigurationCategory.TripleBin) ? defaultSettingsDict[BayConfigurationCategory.TripleBin] : null,
-      PairTripleBin = defaultSettingsDict.ContainsKey(BayConfigurationCategory.PairTripleBin) ? defaultSettingsDict[BayConfigurationCategory.PairTripleBin] : null,
-      QuadBin = defaultSettingsDict.ContainsKey(BayConfigurationCategory.QuadBin) ? defaultSettingsDict[BayConfigurationCategory.QuadBin] : null,
-      PairQuadBin = defaultSettingsDict.ContainsKey(BayConfigurationCategory.PairQuadBin) ? defaultSettingsDict[BayConfigurationCategory.PairQuadBin] : null
+      SingleBin = GetMappedValue(BayConfigurationCategory.SingleBin),
+      PairSingleBin = GetMappedValue(BayConfigurationCategory.PairSingleBin),
+      DoubleBin = GetMappedValue(BayConfigurationCategory.DoubleBin),
+      PairDoubleBin = GetMappedValue(BayConfigurationCategory.PairDoubleBin),
+      TripleBin = GetMappedValue(BayConfigurationCategory.TripleBin),
+      PairTripleBin = GetMappedValue(BayConfigurationCategory.PairTripleBin),
+      QuadBin = GetMappedValue(BayConfigurationCategory.QuadBin),
+      PairQuadBin = GetMappedValue(BayConfigurationCategory.PairQuadBin),
     };
+  }
+
+  //Get BayConfigurationId From BayConfigId
+  public static Guid? GetBayConfigurationIdFromBayConfigId(string? bayConfigId, IEnumerable<BayConfiguration> bayConfigurations)
+  {
+    if (string.IsNullOrEmpty(bayConfigId)) return null;
+
+    var bayConfig = bayConfigurations.FirstOrDefault(bc => bc.BayConfigId == bayConfigId);
+    return bayConfig?.Id; 
   }
 }
