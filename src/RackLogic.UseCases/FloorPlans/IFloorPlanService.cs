@@ -7,12 +7,13 @@ namespace RackLogic.UseCases.FloorPlans;
 public interface IFloorPlanService
 {
   Task<List<FloorPlanDTO>> GetFloorPlansWithFilesByWarehouseIdAsync(Guid warehouseId);
-  Task<Result<bool>> CreateFloorPlanAssetsAsync(
-    List<FloorPlanCommand> floorAssets,
-    Guid warehouseId,
-    Guid userCreatedId);
   Task<Result<bool>> CreateOrUpdateFloorAsssetsAsync(
     List<UpdateFloorPlanInformationCommand> floorAssets,
     Guid warehouseId,
     Guid userCreatedId);
+  Task<Result<bool>> ValidateBayConfigurationIdAndDefaultSettingsAsync(
+    List<FloorPlanCommand> floorPlans,
+    Guid warehouseId,
+    CancellationToken cancellationToken);
+  Task<List<FloorPlanFiles>> SaveFloorPlanFilesAsync(List<FloorPlanCommand> floorPlanRequests, Guid warehouseId);
 }

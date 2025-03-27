@@ -56,4 +56,5 @@ public class BayConfiguration : EntityBase<Guid>, IAggregateRoot
   public int BeamLevel { get; set; }
   public List<Component> Components { get; set; } = new List<Component>();
   public List<BayConfigurationLevels> BayConfigurationLevels { get; set; } = new List<BayConfigurationLevels>();
+  public List<DefaultSettings> DefaultSettings { get; set; } = new List<DefaultSettings>();
 }

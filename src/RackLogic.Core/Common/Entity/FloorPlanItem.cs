@@ -12,4 +12,5 @@ public class FloorPlanItem : BaseEntityCustom
   public double? Height { get; set; }
   public string? ObjectType { get; set; }
   public required double Rotation { get; set; }
+  public Guid? BayConfigurationId { get; set; }
 }
