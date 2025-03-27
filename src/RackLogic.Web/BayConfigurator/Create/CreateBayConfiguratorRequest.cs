@@ -7,6 +7,7 @@ public class CreateBayConfiguratorRequest
 
 public class BayConfigurator
 {
+  public required Manufacturer Manufacturer { get; set; }
   public DateTime? CreatedDate { get; set; }
   public bool IsCustomBrand { get; set; }
   public required string BayConfigId { get; set; }
@@ -20,7 +21,7 @@ public class BayConfigurator
   public int ToleranceGrade { get; set; }
   public int TotalBayLoad { get; set; }
   public string? Comment { get; set; }
-  public bool IsEnableInterimInspection { get; set; }
+  public bool? IsEnableInterimInspection { get; set; }
   public string? InterimInterval { get; set; }
   public required Component UpRight { get; set; }
   public bool? HasSplice { get; set; }
@@ -64,4 +65,12 @@ public class Component
   public int? LowerHeight { get; set; }
   public int? UpperHeight { get; set; }
   public bool? IsXBrace { get; set; }
+}
+
+public class Manufacturer
+{
+  public Guid? Id { get; set; } = new Guid();
+  public required string Name { get; set; }
+  public string? Code { get; set; }
+  public string? Path { get; set; }
 }

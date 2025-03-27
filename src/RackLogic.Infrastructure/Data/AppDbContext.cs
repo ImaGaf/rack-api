@@ -107,6 +107,12 @@ public class AppDbContext(DbContextOptions<AppDbContext> options,
         .HasForeignKey(p => p.WarahouseId)
         .OnDelete(DeleteBehavior.Cascade);
 
+    modelBuilder.Entity<BayConfiguration>()
+        .HasOne(p => p.Manufacturer)
+        .WithMany(u => u.BayConfigurations)
+        .HasForeignKey(p => p.ManufacturerId)
+        .OnDelete(DeleteBehavior.Cascade);
+
     modelBuilder.Entity<Component>()
         .HasOne(p => p.BayConfiguration)
         .WithMany(u => u.Components)
@@ -118,6 +124,12 @@ public class AppDbContext(DbContextOptions<AppDbContext> options,
         .WithMany(u => u.BayConfigurationLevels)
         .HasForeignKey(p => p.BayId)
         .OnDelete(DeleteBehavior.Cascade);
+
+    modelBuilder.Entity<OEMBrand>()
+        .HasOne(p => p.Warehouse)
+        .WithMany(u => u.OEMBrands)
+        .HasForeignKey(p => p.WarehouseId)
+        .OnDelete(DeleteBehavior.NoAction);
 
   }
 

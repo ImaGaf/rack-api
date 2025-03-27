@@ -2,6 +2,7 @@
 
 public class BayConfigurationDTO
 {
+  public ManufacturerDTO? Manufacturer { get; set; }
   public Guid Id { get; set; }
   public DateTime CreatedDate { get; set; }
   public bool IsCustomBrand { get; set; }
@@ -61,4 +62,12 @@ public class ComponentDTO
   public int? LowerHeight { get; set; }
   public int? UpperHeight { get; set; }
   public bool? IsXBrace { get; set; }
+}
+
+public class ManufacturerDTO
+{
+  public Guid? Id { get; set; } = new Guid();
+  public string? Name { get; set; }
+  public string? Code { get; set; }
+  public string? Path { get; set; }
 }

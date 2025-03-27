@@ -8,11 +8,12 @@ public class GetListComponentBrandValidator : Validator<GetListComponentBrandReq
   public GetListComponentBrandValidator()
   {
     RuleFor(x => x.BrandId)
-        .NotEmpty().WithMessage("BrandId is required.")
         .Must(BeValidGuid).WithMessage("Invalid BrandId format.");
   }
-  private bool BeValidGuid(Guid guid)
+  private bool BeValidGuid(Guid? guid)
   {
+    if (guid is null) return true;
+
     return guid != Guid.Empty; // Ensure it's not an empty GUID
   }
 }

@@ -225,6 +225,9 @@ namespace RackLogic.Infrastructure.Data.Migrations
                     b.Property<int>("Level")
                         .HasColumnType("int");
 
+                    b.Property<Guid?>("ManufacturerId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<int>("Pallets")
                         .HasColumnType("int");
 
@@ -265,6 +268,8 @@ namespace RackLogic.Infrastructure.Data.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("ManufacturerId");
 
                     b.HasIndex("WarahouseId");
 
@@ -628,13 +633,21 @@ namespace RackLogic.Infrastructure.Data.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<string>("Code")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Path")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<Guid?>("WarehouseId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.HasKey("Id");
+
+                    b.HasIndex("WarehouseId");
 
                     b.ToTable("OEMBrands");
                 });
@@ -1138,11 +1151,18 @@ namespace RackLogic.Infrastructure.Data.Migrations
 
             modelBuilder.Entity("RackLogic.Core.Common.Entity.BayConfiguration", b =>
                 {
+                    b.HasOne("RackLogic.Core.Common.Entity.OEMBrand", "Manufacturer")
+                        .WithMany("BayConfigurations")
+                        .HasForeignKey("ManufacturerId")
+                        .OnDelete(DeleteBehavior.Cascade);
+
                     b.HasOne("RackLogic.Core.Common.Entity.Warehouse", "Warehouses")
                         .WithMany("Configurations")
                         .HasForeignKey("WarahouseId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("Manufacturer");
 
                     b.Navigation("Warehouses");
                 });
@@ -1228,6 +1248,16 @@ namespace RackLogic.Infrastructure.Data.Migrations
                         .IsRequired();
 
                     b.Navigation("User");
+
+                    b.Navigation("Warehouse");
+                });
+
+            modelBuilder.Entity("RackLogic.Core.Common.Entity.OEMBrand", b =>
+                {
+                    b.HasOne("RackLogic.Core.Common.Entity.Warehouse", "Warehouse")
+                        .WithMany("OEMBrands")
+                        .HasForeignKey("WarehouseId")
+                        .OnDelete(DeleteBehavior.NoAction);
 
                     b.Navigation("Warehouse");
                 });
@@ -1371,6 +1401,8 @@ namespace RackLogic.Infrastructure.Data.Migrations
 
             modelBuilder.Entity("RackLogic.Core.Common.Entity.OEMBrand", b =>
                 {
+                    b.Navigation("BayConfigurations");
+
                     b.Navigation("Products");
                 });
 
@@ -1379,6 +1411,8 @@ namespace RackLogic.Infrastructure.Data.Migrations
                     b.Navigation("Configurations");
 
                     b.Navigation("FloorPlans");
+
+                    b.Navigation("OEMBrands");
 
                     b.Navigation("UserWarehouseRoles");
                 });

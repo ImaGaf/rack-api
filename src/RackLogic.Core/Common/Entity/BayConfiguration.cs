@@ -4,6 +4,8 @@ using Ardalis.SharedKernel;
 namespace RackLogic.Core.Common.Entity;
 public class BayConfiguration : EntityBase<Guid>, IAggregateRoot
 {
+  public Guid? ManufacturerId { get; set; }
+  public OEMBrand? Manufacturer { get; set; }
   public Guid WarahouseId { get; set; }
   public Warehouse? Warehouses { get; set; }
   public DateTime CreatedDate { get; set; }
