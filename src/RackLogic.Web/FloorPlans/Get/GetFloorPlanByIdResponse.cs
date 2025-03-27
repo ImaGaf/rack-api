@@ -23,7 +23,7 @@ public class FloorPlanItemResponse
   public double? Height { get; set; }
   public string? ObjectType { get; set; }
   public required double Rotation { get; set; }
-  public Guid? BayConfigurationId { get; set; }
+  public string? BayConfigurationId { get; set; }
   public List<FloorPlanCommentResponse>? Comments { get; set; }
 }
 
@@ -37,12 +37,12 @@ public class FloorPlanCommentResponse
 
 public class DefaultSettingsResponse
 {
-  public Guid? SingleBin { get; set; }
-  public Guid? PairSingleBin { get; set; }
-  public Guid? DoubleBin { get; set; }
-  public Guid? PairDoubleBin { get; set; }
-  public Guid? TripleBin { get; set; }
-  public Guid? PairTripleBin { get; set; }
-  public Guid? QuadBin { get; set; }
-  public Guid? PairQuadBin { get; set; }
+  public string? SingleBin { get; set; }
+  public string? PairSingleBin { get; set; }
+  public string? DoubleBin { get; set; }
+  public string? PairDoubleBin { get; set; }
+  public string? TripleBin { get; set; }
+  public string? PairTripleBin { get; set; }
+  public string? QuadBin { get; set; }
+  public string? PairQuadBin { get; set; }
 }

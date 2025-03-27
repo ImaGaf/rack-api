@@ -55,17 +55,17 @@ public class FloorPlanService : IFloorPlanService
   {
     var validBayConfigIds = await _bayConfigurationRepository
         .FindAsync(bc => bc.WarahouseId == warehouseId, cancellationToken);
-    var validBayConfigIdSet = new HashSet<Guid>(validBayConfigIds.Select(bc => bc.Id));
+    var validBayConfigIdSet = new HashSet<string>(validBayConfigIds.Select(bc => bc.BayConfigId));
 
     if (!validBayConfigIdSet.Any())
-      return Result.Invalid(new ValidationError("No valid BayConfigurationId for this WarehouseId."));
+      return Result.Invalid(new ValidationError("No valid BayConfigId for this WarehouseId."));
 
     var invalidItems = floorPlans
         .SelectMany(fp => fp.Items)
-        .Where(item => item.BayConfigurationId.HasValue && !validBayConfigIdSet.Contains(item.BayConfigurationId.Value));
+        .Where(item => !string.IsNullOrEmpty(item.BayConfigurationId) && !validBayConfigIdSet.Contains(item.BayConfigurationId));
 
     if (invalidItems.Any())
-      return Result.Invalid(new ValidationError($"Invalid BayConfigurationId(s): {string.Join(", ", invalidItems.Select(i => i.BayConfigurationId))} in FloorPlanItems."));
+      return Result.Invalid(new ValidationError($"Invalid BayConfigId(s): {string.Join(", ", invalidItems.Select(i => i.BayConfigurationId))} in FloorPlanItems."));
 
     var invalidSetting = floorPlans
         .SelectMany(fp => new[]
@@ -79,16 +79,20 @@ public class FloorPlanService : IFloorPlanService
                 new { Name = BayConfigurationCategory.QuadBin.ToString(), Value = fp.DefaultSettings.QuadBin },
                 new { Name = BayConfigurationCategory.PairQuadBin.ToString(), Value = fp.DefaultSettings.PairQuadBin }
         })
-        .FirstOrDefault(ds => ds.Value.HasValue && !validBayConfigIdSet.Contains(ds.Value.Value));
+        .FirstOrDefault(ds => !string.IsNullOrEmpty(ds.Value) && !validBayConfigIdSet.Contains(ds.Value));
 
     if (invalidSetting != null)
-      return Result.Invalid(new ValidationError($"Invalid BayConfigurationId for {invalidSetting.Name} in DefaultSettings."));
+      return Result.Invalid(new ValidationError($"Invalid BayConfigId for {invalidSetting.Name} in DefaultSettings."));
 
     return Result.Success(true);
   }
 
   public async Task<List<FloorPlanDTO>> GetFloorPlansWithFilesByWarehouseIdAsync(Guid warehouseId)
   {
+    var bayConfigurations = await _context.BayConfigurations
+        .Where(bc => bc.WarahouseId == warehouseId)
+        .ToListAsync();
+
     //Get list FloorPlans by WarehouseId
     var floorPlans = await _context.FloorPlans
         .Include(f => f.FloorPlanFiles)
@@ -98,7 +102,7 @@ public class FloorPlanService : IFloorPlanService
         .Where(f => f.WarehouseId == warehouseId)
         .ToListAsync();
 
-    return floorPlans.Select(FloorPlanUseCasesMapper.ToFloorPlanDTO).ToList();
+    return floorPlans.Select(floorPlan => floorPlan.ToFloorPlanDTO(bayConfigurations)).ToList();
   }
 
   // Process files that need to be updated (delete old files, add new files)
@@ -190,20 +194,21 @@ public class FloorPlanService : IFloorPlanService
   {
     if (!floorPlansToCreate.Any()) return Result.Success(true);
 
-      //Map floorPlansToCreate to FloorPlanCommand
-      var floorPlansCommands = floorPlansToCreate
-       .Select(fp => fp.ToFloorPlanCommand())
-       .ToList();
+    var bayConfigurations = await _bayConfigurationRepository.FindAsync(f => f.WarahouseId == warehouseId);
+    //Map floorPlansToCreate to FloorPlanCommand
+    var floorPlansCommands = floorPlansToCreate
+     .Select(fp => fp.ToFloorPlanCommand())
+     .ToList();
 
-      //Mapping FloorPlan and FloorPlanFiles
-      var floorPlans = floorPlansToCreate.Select(fp => fp.ToUpdateFloorPlan(warehouseId)).ToList();
-      //Save Files
-      var floorPlanFiles = await SaveFloorPlanFilesAsync(floorPlansCommands, warehouseId);
-      floorPlans = floorPlans.MapFloorPlanFilesToFloorPlan(floorPlanFiles);
+    //Mapping FloorPlan and FloorPlanFiles
+    var floorPlans = floorPlansToCreate.Select(fp => fp.ToUpdateFloorPlan(warehouseId, bayConfigurations)).ToList();
+    //Save Files
+    var floorPlanFiles = await SaveFloorPlanFilesAsync(floorPlansCommands, warehouseId);
+    floorPlans = floorPlans.MapFloorPlanFilesToFloorPlan(floorPlanFiles);
 
-       await _context.FloorPlans.AddRangeAsync(floorPlans);
+    await _context.FloorPlans.AddRangeAsync(floorPlans);
 
-      return Result.Success(true);
+    return Result.Success(true);
   }
 
   // Get list of FloorPlans by warehouseId
@@ -249,14 +254,15 @@ public class FloorPlanService : IFloorPlanService
   // Update FloorPlanAsset
   private async Task<Result<bool>> ProcessFloorPlanAsync(UpdateFloorPlanInformationCommand plan, Guid warehouseId)
   {
+    var bayConfigurations = await _bayConfigurationRepository.FindAsync(f => f.WarahouseId == warehouseId);
     var floorPlan = await _context.FloorPlans
         .Include(fp => fp.DefaultSettings)
         .FirstOrDefaultAsync(x => x.Id == plan.FloorPlanId);
     if (floorPlan is null)  return Result.Invalid(new ValidationError($"Update failed: FloorPlan with ID {plan.FloorPlanId} not found in database."));
 
-    plan.UpdateFloorPlan(floorPlan);
+    plan.UpdateFloorPlan(floorPlan, bayConfigurations);
 
-    var itemResult = await UpdateFloorPlanItemsAsync(plan.Items, floorPlan.Id);
+    var itemResult = await UpdateFloorPlanItemsAsync(plan.Items, floorPlan.Id, bayConfigurations);
     if (!itemResult.IsSuccess) return itemResult;
 
     await HandleFileOperationsAsync(plan, warehouseId, floorPlan.Id);
@@ -278,7 +284,7 @@ public class FloorPlanService : IFloorPlanService
   }
 
   // Update FloorPlanItems list
-  private async Task<Result<bool>> UpdateFloorPlanItemsAsync(IEnumerable<UpdateFloorPlanItemInformationCommand> items, Guid floorPlanId)
+  private async Task<Result<bool>> UpdateFloorPlanItemsAsync(IEnumerable<UpdateFloorPlanItemInformationCommand> items, Guid floorPlanId, IEnumerable<BayConfiguration> bayConfigurations)
   {
     if (items is null || !items.Any()) return Result.Success(true);
 
@@ -310,7 +316,7 @@ public class FloorPlanService : IFloorPlanService
         .Join(floorPlanItems, item => item.Id, floorPlanItem => floorPlanItem.Id, (item, floorPlanItem) => new { item, floorPlanItem })
         .ToList();
 
-    updatedItems.ForEach(x => x.item.UpdateFloorPlanItem(x.floorPlanItem));
+    updatedItems.ForEach(x => x.item.UpdateFloorPlanItem(x.floorPlanItem, bayConfigurations));
 
     var floorPlanItemsToUpdate = updatedItems.Select(x => x.floorPlanItem);
     _context.FloorPlanItems.UpdateRange(floorPlanItemsToUpdate);
@@ -318,7 +324,7 @@ public class FloorPlanService : IFloorPlanService
     // 3. Add new Items that are not in the Db
     var newItems = items
         .Where(item => missingItemIds.Contains(item.Id))
-        .Select(item => item.ToCreateFloorPlanItem(floorPlanId));
+        .Select(item => item.ToCreateFloorPlanItem(floorPlanId, bayConfigurations));
 
     // Check if new itemId is already in the floorPlanItemsIds already in the Db
     if (newItems.Any(i => floorPlanItemsIds.Contains(i.Id)))

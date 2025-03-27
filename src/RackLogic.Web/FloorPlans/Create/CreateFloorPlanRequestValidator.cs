@@ -47,7 +47,7 @@ public class CreateFloorAssetRequestValidator : Validator<CreateFloorAssetReques
 
         item.RuleFor(i => i.BayConfigurationId)
             .NotEmpty().When(i => i.IsRequiredBayConfig == true)
-            .WithMessage("BayConfigurationId for Bays is required.");
+            .WithMessage("BayConfigurationId for FloorPlanItems is required.");
       });
 
       floorPlan.RuleForEach(fp => fp.Files)

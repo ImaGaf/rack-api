@@ -54,7 +54,7 @@ public class UpdateFloorPlanRequestValidator : Validator<UpdateFloorPlanRequest>
 
         item.RuleFor(i => i.BayConfigurationId)
             .NotEmpty().When(i => i.IsRequiredBayConfig == true)
-            .WithMessage("BayConfigurationId for Bays is required.");
+            .WithMessage("BayConfigurationId for FloorPlanItems is required.");
 
         // Check list Comments
         item.RuleForEach(i => i.Comments).ChildRules(comment =>
