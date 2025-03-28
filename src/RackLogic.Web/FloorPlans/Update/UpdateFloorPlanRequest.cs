@@ -63,7 +63,7 @@ public class UpdateFloorPlanItemInformation
   [Required]
   public required double Rotation { get; set; }
   [Required]
-  public Guid? BayConfigurationId { get; set; }
+  public string? BayConfigurationId { get; set; }
   public bool? IsRequiredBayConfig { get; set; }
   public required List<UpdateFloorPlanComment>? Comments { get; set; }
 }
@@ -83,12 +83,12 @@ public class UpdateFloorPlanComment
 }
 public class UpdateDefaultSetting
 {
-  public Guid? SingleBin { get; set; }
-  public Guid? PairSingleBin { get; set; }
-  public Guid? DoubleBin { get; set; }
-  public Guid? PairDoubleBin { get; set; }
-  public Guid? TripleBin { get; set; }
-  public Guid? PairTripleBin { get; set; }
-  public Guid? QuadBin { get; set; }
-  public Guid? PairQuadBin { get; set; }
+  public string? SingleBin { get; set; }
+  public string? PairSingleBin { get; set; }
+  public string? DoubleBin { get; set; }
+  public string? PairDoubleBin { get; set; }
+  public string? TripleBin { get; set; }
+  public string? PairTripleBin { get; set; }
+  public string? QuadBin { get; set; }
+  public string? PairQuadBin { get; set; }
 }

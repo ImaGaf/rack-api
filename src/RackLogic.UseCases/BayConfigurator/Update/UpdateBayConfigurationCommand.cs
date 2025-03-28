@@ -10,6 +10,7 @@ public record UpdateBayConfigurationCommand(
 
 
 public record BayConfigurationUpdateCommand(
+    ManufacturerCommand Manufacturer,
     Guid Id,
     DateTime? CreatedDate,
     bool IsCustomBrand,
@@ -24,7 +25,7 @@ public record BayConfigurationUpdateCommand(
     int ToleranceGrade,
     int TotalBayLoad,
     string? Comment,
-    bool IsEnableInterimInspection,
+    bool? IsEnableInterimInspection,
     string? InterimInterval,
     ComponentCommand UpRight,
     bool? HasSplice,

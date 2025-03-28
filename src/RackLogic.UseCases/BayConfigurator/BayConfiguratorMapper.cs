@@ -19,7 +19,7 @@ public static class BayConfiguratorMapper
       BayConfigId = bay.BayConfigId,
       RackingType = bay.RackingType,
       InstallationDate = bay.InstallationDate,
-      IsEnableInterimInspection = bay.IsEnableInterimInspection,
+      IsEnableInterimInspection = bay.IsEnableInterimInspection ?? false,
       ASComplianceVersion = bay.AsComplianceVersion,
       Supplier = bay.Supplier,
       StructuralDesigner = bay.StructuralDesigner,
@@ -98,6 +98,7 @@ public static class BayConfiguratorMapper
     return new BayConfigurationDTO()
     {
       Id = bayConfiguration.Id,
+      Manufacturer = bayConfiguration.Manufacturer.Mapping(),
       CreatedDate = bayConfiguration.CreatedDate,
       IsCustomBrand = bayConfiguration.IsCustomBrand,
       BayConfigId = bayConfiguration.BayConfigId,
@@ -161,19 +162,6 @@ public static class BayConfiguratorMapper
     };
   }
 
-  private static ComponentDTO Mapping(this BayConfigurationLevels level)
-  {
-    return new ComponentDTO() 
-    {
-      Id = level.Id,
-      ComponentType = level.LevelType.ToString(),
-      Orientation = level.Orientation,
-      LowerHeight = level.LowerHeight,
-      UpperHeight = level.UpperHeight,
-      IsXBrace = level.IsXBrace
-    };
-  }
-
   public static ComponentDTO Mapping(this Component component)
   {
     return new ComponentDTO()
@@ -193,6 +181,43 @@ public static class BayConfiguratorMapper
       LowerHeight = component.LowerHeight,
       UpperHeight = component.UpperHeight,
       IsXBrace = component.IsXBrace
+    };
+  }
+
+  public static OEMBrand Mapping(this ManufacturerCommand manufacturer, Guid warehouseId)
+  {
+    return new OEMBrand()
+    {
+      Id = new Guid(),
+      Name = manufacturer.Name,
+      Code = manufacturer.Code,
+      WarehouseId = warehouseId
+    };
+  }
+
+  private static ComponentDTO Mapping(this BayConfigurationLevels level)
+  {
+    return new ComponentDTO() 
+    {
+      Id = level.Id,
+      ComponentType = level.LevelType.ToString(),
+      Orientation = level.Orientation,
+      LowerHeight = level.LowerHeight,
+      UpperHeight = level.UpperHeight,
+      IsXBrace = level.IsXBrace
+    };
+  }
+
+  private static ManufacturerDTO? Mapping(this OEMBrand? brand)
+  {
+    if (brand is null) return null;
+
+    return new ManufacturerDTO()
+    {
+      Id = brand.Id,
+      Name = brand.Name,
+      Code = brand.Code,
+      Path = brand.Path,
     };
   }
 

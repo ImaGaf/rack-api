@@ -10,6 +10,7 @@ public class UpdateBayConfigurationHandler(
   IUserWarehouseService _userWarehouseService,
   IRepositoryWithExpression<BayConfiguration> _bayConfigurationRepository,
   IRepositoryWithExpression<BayConfigurationLevels> _bayConfigurationLevelsRepository,
+  IRepositoryWithExpression<OEMBrand> _oEMBrandRepository,
   IRepositoryWithExpression<Component> _componentRepository)
   : ICommandHandler<UpdateBayConfigurationCommand, Result<bool>>
 {
@@ -26,7 +27,7 @@ public class UpdateBayConfigurationHandler(
       return Result.NotFound();
     }
 
-    return await UpdateConfigurationAsync(bayConfig, request.BayConfiguration, cancellationToken);
+    return await UpdateConfigurationAsync(bayConfig, request.BayConfiguration, request.WarehouseId, cancellationToken);
   }
 
   private async Task<bool> CheckUniqueForBayConfigIdAsync(string bayConfigId, Guid warehouseId, Guid bayId)
@@ -39,13 +40,23 @@ public class UpdateBayConfigurationHandler(
     return result is not null;
   }
 
-  private async Task<bool> UpdateConfigurationAsync(BayConfiguration bayConfig, BayConfigurationUpdateCommand request, CancellationToken cancellationToken)
+  private async Task<bool> UpdateConfigurationAsync(BayConfiguration bayConfig, BayConfigurationUpdateCommand request, Guid warehouseId, CancellationToken cancellationToken)
   {
+    var brand = await _oEMBrandRepository.FirstOrDefaultAsync(x => x.Id == request.Manufacturer.Id);
+    if (brand is null)
+    {
+      bayConfig.Manufacturer = request.Manufacturer.Mapping(warehouseId);
+    }
+    else
+    {
+      bayConfig.ManufacturerId = brand.Id;
+    }
+
     bayConfig.IsCustomBrand = request.IsCustomBrand;
     bayConfig.BayConfigId = request.BayConfigId;
     bayConfig.RackingType = request.RackingType;
     bayConfig.InstallationDate = request.InstallationDate;
-    bayConfig.IsEnableInterimInspection = request.IsEnableInterimInspection;
+    bayConfig.IsEnableInterimInspection = request.IsEnableInterimInspection ?? false;
     bayConfig.ASComplianceVersion = request.AsComplianceVersion;
     bayConfig.Supplier = request.Supplier;
     bayConfig.StructuralDesigner = request.StructuralDesigner;

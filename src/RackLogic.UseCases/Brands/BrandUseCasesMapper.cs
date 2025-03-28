@@ -10,7 +10,28 @@ public static partial class BrandUseCasesMapper
     List<ListComponentBrandDTO> products,
     int totalRecords)
   {
+    var pageSize = request.PageSize;
+    var pageNumber = request.PageNumber;
+    if (request.IsGetAll ?? false)
+    {
+      pageNumber = 1;
+      pageSize = totalRecords;
+    }
     return new PagedDataDTO<ListComponentBrandDTO>
+    {
+      PageNumber = pageNumber,
+      PageSize = pageSize,
+      TotalRecords = totalRecords,
+      DataDTO = products
+    };
+  }
+
+  public static PagedDataDTO<GetAllBrandDTO> ToPagedDataDTO(
+    this GetComponentsByBrandQuery request,
+    List<GetAllBrandDTO> products,
+    int totalRecords)
+  {
+    return new PagedDataDTO<GetAllBrandDTO>
     {
       PageNumber = request.PageNumber,
       PageSize = request.PageSize,
@@ -26,7 +47,8 @@ public static partial class BrandUseCasesMapper
     {
         Id = brand.Id,
         Name = brand.Name,
-        Path = brand.Path
+        Path = brand.Path,
+        Code = brand.Code,
     };
 }
 

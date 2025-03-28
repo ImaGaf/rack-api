@@ -1,8 +1,11 @@
-﻿namespace RackLogic.Web.BayConfigurator.List;
+﻿using RackLogic.Web.BayConfigurator.Create;
+
+namespace RackLogic.Web.BayConfigurator.List;
 
 public class ListBayConfigurationResponse
 {
   public Guid Id { get; set; }
+  public Manufacturer? Manufacturer { get; set; }
   public DateTime CreatedDate { get; set; }
   public bool IsCustomBrand { get; set; }
   public string? BayConfigId { get; set; }

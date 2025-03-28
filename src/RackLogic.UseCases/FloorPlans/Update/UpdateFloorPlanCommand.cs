@@ -30,7 +30,7 @@ public record UpdateFloorPlanItemInformationCommand(
   double? Height,
   string? ObjectType,
   double Rotation,
-  Guid? BayConfigurationId,
+  string? BayConfigurationId,
   bool? IsRequiredBayConfig,
   List<UpdateFloorPlanCommentCommand>? Comments);
 
@@ -41,11 +41,11 @@ public record UpdateFloorPlanCommentCommand(
   DateTime Date);
 
 public record UpdateDefaultSettingsCommand(
-    Guid? SingleBin,
-    Guid? PairSingleBin,
-    Guid? DoubleBin,
-    Guid? PairDoubleBin,
-    Guid? TripleBin,
-    Guid? PairTripleBin,
-    Guid? QuadBin,
-    Guid? PairQuadBin);
+    string? SingleBin,
+    string? PairSingleBin,
+    string? DoubleBin,
+    string? PairDoubleBin,
+    string? TripleBin,
+    string? PairTripleBin,
+    string? QuadBin,
+    string? PairQuadBin);

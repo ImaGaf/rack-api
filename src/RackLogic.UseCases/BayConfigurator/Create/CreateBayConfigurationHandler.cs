@@ -8,7 +8,8 @@ using RackLogic.UseCases.Warehouses;
 namespace RackLogic.UseCases.BayConfigurator.Create;
 public class CreateBayConfigurationHandler(
   IUserWarehouseService _userWarehouseService,
-  IRepositoryWithExpression<BayConfiguration> _bayConfigurationRepository)
+  IRepositoryWithExpression<BayConfiguration> _bayConfigurationRepository,
+  IRepositoryWithExpression<OEMBrand> _oEMBrandRepository)
   : ICommandHandler<CreateBayConfigurationCommand, Result<bool>>
 {
   public async Task<Result<bool>> Handle(CreateBayConfigurationCommand request, CancellationToken cancellationToken)
@@ -29,8 +30,18 @@ public class CreateBayConfigurationHandler(
 
   private async Task<bool> AddConfigurationAsync(CreateBayConfigurationCommand request, CancellationToken cancellationToken)
   {
+    var brand = await _oEMBrandRepository.FirstOrDefaultAsync(x => x.Id == request.BayConfiguration.Manufacturer.Id);
     var bayConfiguration = request.BayConfiguration.Mapping(request.WarehouseId);
 
+    // Add Manufacturer to Bay Configuration
+    if (brand is null)
+    {
+      bayConfiguration.Manufacturer = request.BayConfiguration.Manufacturer.Mapping(request.WarehouseId);
+    }
+    else
+    {
+      bayConfiguration.ManufacturerId = brand.Id;
+    }
     // Add Components to BayConfiguration
     bayConfiguration.Components.Add(request.BayConfiguration.UpRight.Mapping(bayConfiguration.Id));
     bayConfiguration.Components.Add(request.BayConfiguration.Beam.Mapping(bayConfiguration.Id));
