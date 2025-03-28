@@ -35,7 +35,7 @@ public class GetListComponentBrand(IMediator _mediator) : Endpoint<GetListCompon
     var pageNumber = req.PageNumber ?? 1;
     var pageSize = req.PageSize ?? 10;
 
-    var result = await _mediator.Send(new GetComponentsByBrandQuery(req.BrandId, pageNumber, pageSize), ct);
+    var result = await _mediator.Send(new GetComponentsByBrandQuery(req.BrandId, pageNumber, pageSize, req.IsGetAll), ct);
 
     if (result.IsSuccess)
     {
@@ -45,8 +45,8 @@ public class GetListComponentBrand(IMediator _mediator) : Endpoint<GetListCompon
                     .ToList();
       Response = new PageResponse<GetListComponentBrandResponse>
       {
-        PageNumber = pageNumber,
-        PageSize = pageSize,
+        PageNumber = result.Value.PageNumber,
+        PageSize = result.Value.PageSize,
         TotalRecords = result.Value.TotalRecords,
         Data = responseList
       };

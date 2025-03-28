@@ -7,4 +7,5 @@ public class GetListComponentBrandRequest : PaginationRequest
 {
   [FromQuery]
   public Guid? BrandId { get; set; }
+  public bool? IsGetAll { get; set; }
 }

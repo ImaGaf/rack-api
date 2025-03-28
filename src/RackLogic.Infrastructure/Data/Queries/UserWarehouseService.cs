@@ -38,7 +38,7 @@ public class UserWarehouseService(
     return brands.Select(brand => brand.ToOEMBrandDTO()).ToList();
   }
 
-  public async Task<(List<ListComponentBrandDTO> Products, int TotalRecords)> GetProductsByBrandAsync(Guid? brandId, int pageNumber, int pageSize)
+  public async Task<(List<ListComponentBrandDTO> Products, int TotalRecords)> GetProductsByBrandAsync(Guid? brandId, int pageNumber, int pageSize, bool isGetAll)
   {
     var queryListProducts = _context.Products
                             .Where(x => brandId == null || x.ManufacturerId == brandId)
@@ -57,12 +57,16 @@ public class UserWarehouseService(
                             });
 
     int totalRecords = await queryListProducts.CountAsync();
-    var pageSizeProduct = pageSize == 0? totalRecords : pageSize;
+    if (isGetAll)
+    {
+      pageNumber = 1;
+      pageSize = totalRecords;
+    }
 
     var products = await queryListProducts
                 .OrderBy(p => p.Category)
                 .Skip((pageNumber - 1) * pageSize)
-                .Take(pageSizeProduct)
+                .Take(pageSize)
                 .ToListAsync();
 
     return (products, totalRecords);
