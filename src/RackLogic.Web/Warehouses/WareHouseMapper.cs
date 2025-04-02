@@ -13,6 +13,8 @@ using RackLogic.Web.Warehouses.GetListManageUsers;
 using RackLogic.Web.Warehouses.GetWarehouseFinalUse;
 using RackLogic.Web.Warehouses.GetListWarehouses;
 using Riok.Mapperly.Abstractions;
+using RackLogic.Web.Brands.CreateProduct;
+using RackLogic.UseCases.Brands.CreateProduct;
 
 namespace RackLogic.Web.Warehouses;
 
@@ -27,5 +29,7 @@ public static partial class WareHouseMapper
   public static partial CreateWarehouseCommand ToCreateWarehouseCommand(this CreateWarehouseRequest request, ClaimsPrincipal user);
   public static partial GetAllResponse GetAllBrandResponse(this GetAllBrandDTO request);
   public static partial GetWarehouseFinalUseResponse GetWarehousesFinalUseByUser(this WarehousesDTO request);
+  public static partial CreateProductCommand ToCreateProductCommand(this CreateProductRequest request);
+  public static partial GetProductsByCategoryResponse ToCreateProductResponse(this ProductDTO request);
   public static partial GetWarehouseByIdQuery ToGetWarehouseByIdQuery(this GetWarehouseByIdRequest request);
 }

@@ -105,7 +105,7 @@ public class AppDbContext(DbContextOptions<AppDbContext> options,
     modelBuilder.Entity<BayConfiguration>()
         .HasOne(p => p.Warehouses)
         .WithMany(u => u.Configurations)
-        .HasForeignKey(p => p.WarahouseId)
+        .HasForeignKey(p => p.WarehouseId)
         .OnDelete(DeleteBehavior.Cascade);
 
     modelBuilder.Entity<BayConfiguration>()

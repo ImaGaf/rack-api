@@ -10,7 +10,7 @@ public class ListBayConfiguratorQueryService(AppDbContext _context) : IListBayCo
   public async Task<PagedDataDTO<BayConfigurationDTO>> ListAsync(Guid warehouseId, int pageNumber, int pageSize)
   {
     var bayConfigurations = _context.BayConfigurations
-          .Where(x => x.WarahouseId == warehouseId)
+          .Where(x => x.WarehouseId == warehouseId)
           .Include(b => b.Components)
           .Include(b => b.BayConfigurationLevels)
           .Include(b => b.Manufacturer);

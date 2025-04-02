@@ -1,17 +1,35 @@
-﻿namespace RackLogic.Core.Common.Entity;
-public class Products
+﻿using Ardalis.SharedKernel;
+
+namespace RackLogic.Core.Common.Entity;
+public class Products : EntityBase<Guid>, IAggregateRoot
 {
-  public Guid Id { get; set; } = Guid.NewGuid();
-  public string? Category { get; set; }
-  public double? Height { get; set; }
-  public double? Width { get; set; }
-  public double? Length { get; set; }
+  public string? Category { get; set; } // Upright, Beam, Brace, Row Spacer...
+  public string? Type { get; set; } // Specific type within the category (if applicable)
+
+  // Dimensions
+  public int? Height { get; set; }
+  public int? Width { get; set; }
+  public int? Length { get; set; } // Not explicitly listed, but may be useful
+  public int? MaterialThickness { get; set; } // For Upright
+  public int? DepthOfFrame { get; set; } // For Brace (horizontal & diagonal)
+  public int? DistanceCenterToCenter { get; set; } // For Brace (horizontal & diagonal)
+  public int? ClearanceBetweenFrames { get; set; } // For Row Spacer
+  public int? ClearEntryWidth { get; set; } // For Beam
+
+  // Technical specifications
+  public string? Orientation { get; set; } // Not explicitly listed, but may be useful
+  public string? BeamStyle { get; set; } // For Beam
+  public string? ConnectorType { get; set; } // For Beam
+  public string? FinishType { get; set; } // For multiple categories
+
+  // General information
   public double? Code { get; set; }
   public string? Description { get; set; }
-  public string? Orientation { get; set; }
-  public double? Price { get; set; }
-  public double? DistanceCenterToCenter { get; set; }
-  public string? Type { get; set; }
+
+  // Manufacturer details
   public Guid? ManufacturerId { get; set; }
-  public required OEMBrand Manufacturer { get; set; }
+  public OEMBrand? Manufacturer { get; set; }
+
+  public Guid? WarehouseId { get; set; }
+  public Warehouse? Warehouse { get; set; }
 }

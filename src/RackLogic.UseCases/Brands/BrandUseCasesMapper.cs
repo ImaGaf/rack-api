@@ -1,4 +1,5 @@
 ﻿using RackLogic.Core.Common.Entity;
+using RackLogic.UseCases.Brands.CreateProduct;
 using RackLogic.UseCases.Brands.GetListComponentBrand;
 using RackLogic.UseCases.Warehouses;
 
@@ -76,6 +77,57 @@ public static partial class BrandUseCasesMapper
     {
       Brand = brand.ToOEMBrandDTO(),
       Components = products.Select(p => p.ToListComponentBrandDTO()).ToList()
+    };
+  }
+
+  public static Products Mapping(this CreateProductCommand product)
+  {
+    return new Products()
+    {
+      Category = product.Category,
+      Type = product.Type,
+      Height = product.Height,
+      Width = product.Width,
+      Length= product.Length,
+      MaterialThickness = product.MaterialThickness,
+      DepthOfFrame = product.DepthOfFrame,
+      DistanceCenterToCenter= product.DistanceCenterToCenter,
+      ClearanceBetweenFrames = product.ClearanceBetweenFrames,
+      ClearEntryWidth = product.ClearEntryWidth,
+      Orientation = product.Orientation,
+      BeamStyle = product.BeamStyle,
+      ConnectorType = product.ConnectorType,
+      FinishType = product.FinishType,
+      Code = double.TryParse(product.Code, out double code) ? code : 0,
+      Description = product.Description,
+      ManufacturerId = product.ManufacturerId,
+      WarehouseId = product.WarehouseId
+    };
+  }
+
+  public static ProductDTO Mapping(this Products product)
+  {
+    return new ProductDTO()
+    {
+      Id = product.Id,
+      Category = product.Category,
+      Type = product.Type,
+      Height = product.Height,
+      Width = product.Width,
+      Length = product.Length,
+      MaterialThickness = product.MaterialThickness,
+      DepthOfFrame = product.DepthOfFrame,
+      DistanceCenterToCenter = product.DistanceCenterToCenter,
+      ClearanceBetweenFrames = product.ClearanceBetweenFrames,
+      ClearEntryWidth = product.ClearEntryWidth,
+      Orientation = product.Orientation,
+      BeamStyle = product.BeamStyle,
+      ConnectorType = product.ConnectorType,
+      FinishType = product.FinishType,
+      Code = product.Code,
+      Description = product.Description,
+      ManufacturerId = product.ManufacturerId,
+      WarehouseId = product.WarehouseId
     };
   }
 

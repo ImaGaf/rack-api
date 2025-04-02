@@ -15,7 +15,7 @@ public static class BayConfiguratorMapper
       Id = new Guid(),
       CreatedDate = DateTime.Now,
       IsCustomBrand = bay.IsCustomBrand,
-      WarahouseId = warehouseId,
+      WarehouseId = warehouseId,
       BayConfigId = bay.BayConfigId,
       RackingType = bay.RackingType,
       InstallationDate = bay.InstallationDate,
