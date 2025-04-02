@@ -132,8 +132,8 @@ public class UserWarehouseService(
         .Select(w => new WarehousesDTO
         {
           WarahouseId = w.Id,
-          Name = w.CompanyName, 
-          FilePathImage = w.FileImageUrl 
+          Name = w.CompanyName,
+          FilePathImage = w.FileImageUrl
         })
         .FirstOrDefaultAsync();
 
@@ -167,5 +167,13 @@ public class UserWarehouseService(
       role.Name != RoleConstant.Inspector) return false;
 
     return true;
+  }
+
+  public async Task<WarehouseProfileDTO?> GetWarehouseByIdAsync(Guid warehouseId)
+  {
+    return await _context.Warehouses
+                  .Where(w => w.Id == warehouseId)
+                  .Select(w => w.ToResponse())
+                  .FirstOrDefaultAsync();
   }
 }
