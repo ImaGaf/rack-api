@@ -7,9 +7,9 @@ public class DefaultSettings : EntityBase<Guid>, IAggregateRoot
 {
   [Required]
   public Guid FloorPlanId { get; set; }
-  public FloorPlan? FloorPlan { get; set; }
   public Guid? BayConfigurationId { get; set; }
-  public BayConfiguration? BayConfiguration { get; set; }
   [Required]
   public BayConfigurationCategory BayConfigCategory { get; set; }
+  public virtual FloorPlan? FloorPlan { get; set; }
+  public virtual BayConfiguration? BayConfiguration { get; set; }
 }

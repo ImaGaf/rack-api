@@ -2,6 +2,8 @@
 using RackLogic.Infrastructure;
 using RackLogic.Infrastructure.Data.Repositories;
 using RackLogic.Infrastructure.Email;
+using RackLogic.UseCases.Users;
+using RackLogic.Web.Services;
 
 namespace RackLogic.Web.Configurations;
 
@@ -12,6 +14,7 @@ public static class ServiceConfigs
     services.AddInfrastructureServices(builder.Configuration, logger)
             .AddMediatrConfigs();
 
+    services.AddScoped<IUser, CurrentUser>();
 
     if (builder.Environment.IsDevelopment())
     {

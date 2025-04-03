@@ -7,7 +7,7 @@ public class OEMBrand : EntityBase<Guid>, IAggregateRoot
   public string? Path { get; set; }
   public string? Code { get; set; }
   public Guid? WarehouseId { get; set; }
-  public Warehouse? Warehouse { get; set; }
-  public List<Products> Products { get; set; } = new List<Products>();
-  public List<BayConfiguration> BayConfigurations { get; set; } = new List<BayConfiguration>();
+  public virtual Warehouse? Warehouse { get; set; }
+  public virtual ICollection<Products> Products { get; set; } = new List<Products>();
+  public virtual ICollection<BayConfiguration> BayConfigurations { get; set; } = new List<BayConfiguration>();
 }

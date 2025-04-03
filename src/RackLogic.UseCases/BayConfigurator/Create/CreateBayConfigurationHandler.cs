@@ -58,9 +58,11 @@ public class CreateBayConfigurationHandler(
     bayConfiguration.BayConfigurationLevels.AddRange(
         request.BayConfiguration.BeamLevels.Select(l => l.Mapping(ComponentType.Beam, bayConfiguration.Id))
     );
+
     bayConfiguration.BayConfigurationLevels.AddRange(
         request.BayConfiguration.BracingHorizontalLevels.Select(l => l.Mapping(ComponentType.BraceHorizontal, bayConfiguration.Id))
     );
+
     bayConfiguration.BayConfigurationLevels.AddRange(
         request.BayConfiguration.RowSpacerLevels.Select(l => l.Mapping(ComponentType.RowSpacer, bayConfiguration.Id))
     );
