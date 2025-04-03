@@ -12,6 +12,6 @@ public class CreateProductHandler
   {
     var result = await _productRepository.AddAsync(request.Mapping());
 
-    return result.Mapping();
+    return result.ToProductDto();
   }
 }

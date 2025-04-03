@@ -1,11 +1,11 @@
 ﻿using FastEndpoints;
 using FluentValidation;
 
-namespace RackLogic.Web.Brands.GetListComponentBrand;
+namespace RackLogic.Web.Brands.GetListProductsBrand;
 
-public class GetListComponentBrandValidator : Validator<GetListComponentBrandRequest>
+public class GetListProductsBrandValidator : Validator<GetListProductsBrandRequest>
 {
-  public GetListComponentBrandValidator()
+  public GetListProductsBrandValidator()
   {
     RuleFor(x => x.BrandId)
         .Must(BeValidGuid).WithMessage("Invalid BrandId format.");

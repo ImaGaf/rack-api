@@ -17,8 +17,8 @@ public class ListBayConfiguration(IMediator _mediator) : Endpoint<ListBayConfigu
     var result = await _mediator.Send(
       new ListBayConfiguratorQuery(
         req.WarehouseId,
-        req.PageNumber ?? 1,
-        req.PageSize ?? 10),
+        req.PageNumber,
+        req.PageSize),
       ct);
 
     if (result.IsSuccess)

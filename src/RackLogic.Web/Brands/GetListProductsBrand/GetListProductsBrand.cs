@@ -2,16 +2,16 @@
 using MediatR;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
-using RackLogic.UseCases.Brands.GetListComponentBrand;
+using RackLogic.UseCases.Brands.GetListProductsBrand;
 using RackLogic.Web.Exceptions;
 using RackLogic.Web.Models;
 using RackLogic.Web.Warehouses;
 
-namespace RackLogic.Web.Brands.GetListComponentBrand;
+namespace RackLogic.Web.Brands.GetListProductsBrand;
 
 [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
 
-public class GetListComponentBrand(IMediator _mediator) : Endpoint<GetListComponentBrandRequest, PageResponse<GetListComponentBrandResponse>>
+public class GetListProductsBrand(IMediator _mediator) : Endpoint<GetListProductsBrandRequest, PageResponse<GetListProductsBrandResponse>>
 {
   public override void Configure()
   {
@@ -19,10 +19,10 @@ public class GetListComponentBrand(IMediator _mediator) : Endpoint<GetListCompon
     DontThrowIfValidationFails();
   }
 
-  public override async Task HandleAsync(GetListComponentBrandRequest req, CancellationToken ct)
+  public override async Task HandleAsync(GetListProductsBrandRequest req, CancellationToken ct)
   {
     //valid data
-    var validator = new GetListComponentBrandValidator();
+    var validator = new GetListProductsBrandValidator();
     var validationResult = validator.Validate(req);
 
     if (!validationResult.IsValid)
@@ -31,19 +31,15 @@ public class GetListComponentBrand(IMediator _mediator) : Endpoint<GetListCompon
       throw new InvalidException(errors);
     }
 
-    // Default value if PageNumber or PageSize is not passed
-    var pageNumber = req.PageNumber ?? 1;
-    var pageSize = req.PageSize ?? 10;
-
-    var result = await _mediator.Send(new GetComponentsByBrandQuery(req.BrandId, pageNumber, pageSize, req.IsGetAll), ct);
+    var result = await _mediator.Send(new GetProductsByBrandQuery(req.BrandId, req.WarehouseId, req.IsGetAll, req.PageNumber, req.PageSize), ct);
 
     if (result.IsSuccess)
     {
       // Mapper list of ListComponentBrandDTO to list of ListComponentBrandResponse
       var responseList = result.Value.DataDTO
-                    .Select(WareHouseMapper.GetComponentBrandRespond)
+                    .Select(WareHouseMapper.GetListProductsBrandRespond)
                     .ToList();
-      Response = new PageResponse<GetListComponentBrandResponse>
+      Response = new PageResponse<GetListProductsBrandResponse>
       {
         PageNumber = result.Value.PageNumber,
         PageSize = result.Value.PageSize,

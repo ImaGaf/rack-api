@@ -264,14 +264,14 @@ namespace RackLogic.Infrastructure.Data.Migrations
                         .HasMaxLength(5)
                         .HasColumnType("int");
 
-                    b.Property<Guid>("WarahouseId")
+                    b.Property<Guid>("WarehouseId")
                         .HasColumnType("uniqueidentifier");
 
                     b.HasKey("Id");
 
                     b.HasIndex("ManufacturerId");
 
-                    b.HasIndex("WarahouseId");
+                    b.HasIndex("WarehouseId");
 
                     b.ToTable("BayConfigurations");
                 });
@@ -685,42 +685,65 @@ namespace RackLogic.Infrastructure.Data.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<string>("BeamStyle")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("Category")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("ClearEntryWidth")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("ClearanceBetweenFrames")
+                        .HasColumnType("int");
 
                     b.Property<double?>("Code")
                         .HasColumnType("float");
 
+                    b.Property<string>("ConnectorType")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("DepthOfFrame")
+                        .HasColumnType("int");
+
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<double?>("DistanceCenterToCenter")
-                        .HasColumnType("float");
+                    b.Property<int?>("DistanceCenterToCenter")
+                        .HasColumnType("int");
 
-                    b.Property<double?>("Height")
-                        .HasColumnType("float");
+                    b.Property<string>("FinishType")
+                        .HasColumnType("nvarchar(max)");
 
-                    b.Property<double?>("Length")
-                        .HasColumnType("float");
+                    b.Property<int?>("Height")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("Length")
+                        .HasColumnType("int");
 
                     b.Property<Guid?>("ManufacturerId")
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<int?>("MaterialThickness")
+                        .HasColumnType("int");
+
                     b.Property<string>("Orientation")
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<double?>("Price")
-                        .HasColumnType("float");
 
                     b.Property<string>("Type")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<double?>("Width")
-                        .HasColumnType("float");
+                    b.Property<Guid?>("WarehouseId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int?>("Width")
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
                     b.HasIndex("ManufacturerId");
+
+                    b.HasIndex("WarehouseId");
 
                     b.ToTable("Products");
                 });
@@ -1185,7 +1208,7 @@ namespace RackLogic.Infrastructure.Data.Migrations
 
                     b.HasOne("RackLogic.Core.Common.Entity.Warehouse", "Warehouses")
                         .WithMany("Configurations")
-                        .HasForeignKey("WarahouseId")
+                        .HasForeignKey("WarehouseId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -1314,7 +1337,14 @@ namespace RackLogic.Infrastructure.Data.Migrations
                         .HasForeignKey("ManufacturerId")
                         .OnDelete(DeleteBehavior.Restrict);
 
+                    b.HasOne("RackLogic.Core.Common.Entity.Warehouse", "Warehouse")
+                        .WithMany("Products")
+                        .HasForeignKey("WarehouseId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
                     b.Navigation("Manufacturer");
+
+                    b.Navigation("Warehouse");
                 });
 
             modelBuilder.Entity("RackLogic.Core.Common.Entity.PurchaseRecord", b =>
@@ -1462,6 +1492,8 @@ namespace RackLogic.Infrastructure.Data.Migrations
                     b.Navigation("FloorPlans");
 
                     b.Navigation("OEMBrands");
+
+                    b.Navigation("Products");
 
                     b.Navigation("UserWarehouseRoles");
                 });
