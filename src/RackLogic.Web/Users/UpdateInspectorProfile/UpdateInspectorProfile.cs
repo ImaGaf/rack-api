@@ -29,10 +29,10 @@ public class UpdateInspectorProfile(IMediator _mediator) : Endpoint<UpdateInspec
       throw new InvalidException(errors);
     }
 
-    var userCreatedId = User.GetUserId();
+    var userId = User.GetUserId();
     var userRegisterRole = User.GetUserRegisteredRole();
 
-    var result = await _mediator.Send(req.ToInspectorProfileCommand(userCreatedId, userRegisterRole), ct);
+    var result = await _mediator.Send(req.ToInspectorProfileCommand(userId, userRegisterRole), ct);
 
     if (result.IsSuccess)
     {

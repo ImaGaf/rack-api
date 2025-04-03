@@ -17,18 +17,18 @@ public class UpdateInspectorProfileHandler(
 {
   public async Task<Result<bool>> Handle(UpdateInspectorProfileCommand request, CancellationToken cancellationToken)
   {
-    var creatorId = request.UserCreatedId; 
-    var creatorRole = request.UserRegisterRole;
+    var userId = request.UserCreatedId; 
+    var userRole = request.UserRegisterRole;
 
     // Check if User exists
-    var user = await _userManager.FindByIdAsync(creatorId.ToString());
+    var user = await _userManager.FindByIdAsync(userId.ToString());
     if (user == null) return Result.Invalid(new ValidationError("User not found."));
 
     // Check if User Register Role is Inspector
-    if (creatorRole != RoleConstant.Inspector) return Result.Invalid(new ValidationError("User must have the Inspector role."));
+    if (userRole != RoleConstant.Inspector) return Result.Invalid(new ValidationError("User must have the Inspector role."));
 
     // Check if Userd already exists in InspectorProfile table
-    var existingInspectorProfile = await _inspectorProfileRepository.FirstOrDefaultAsync(i => i.UserId == creatorId, cancellationToken);
+    var existingInspectorProfile = await _inspectorProfileRepository.FirstOrDefaultAsync(i => i.UserId == userId, cancellationToken);
 
     // Path folder
     var rootPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "InspectorProfileImage");
@@ -38,20 +38,22 @@ public class UpdateInspectorProfileHandler(
       // Update InspectorProfile
       existingInspectorProfile.UpdateInspectorProfileFromRequest(request);
       await _inspectorProfileRepository.UpdateToContextAsync(existingInspectorProfile);
-      await _fileService.DeleteFilesAsyncByUserId(existingInspectorProfile.UserId, rootPath);
+      await _fileService.DeleteFilesByUserIdAsync(existingInspectorProfile.UserId, rootPath);
 
       // Call func Update File
-      if (!await AddFileAsync(existingInspectorProfile, creatorId, request.FileImageInspector, rootPath, cancellationToken)) return Result.Error("Failed to save Inspector logo file.");
+      if (!await AddFileAsync(existingInspectorProfile, userId, request.FileImageInspector, rootPath, cancellationToken)) 
+        return Result.Error("Failed to save Inspector logo file.");
     }
 
     else
     {
       // Create InspectorProfile 
-      var inspectorProfile = request.ToInspectorProfile(creatorId);
+      var inspectorProfile = request.ToInspectorProfile(userId);
       await _inspectorProfileRepository.AddToContextAsync(inspectorProfile);
 
       // Call func Savefile
-      if (!await AddFileAsync(inspectorProfile, creatorId, request.FileImageInspector, rootPath, cancellationToken)) return Result.Error("Failed to save Inspector logo file.");
+      if (!await AddFileAsync(inspectorProfile, userId, request.FileImageInspector, rootPath, cancellationToken)) 
+        return Result.Error("Failed to save Inspector logo file.");
     }
 
     return Result.Success(true);
@@ -59,7 +61,7 @@ public class UpdateInspectorProfileHandler(
 
   private async Task<bool> AddFileAsync(InspectorProfile inspectorProfile , Guid inspectorId, IFormFile fileInspectorImage, string rootPath, CancellationToken cancellationToken)
   {
-    var savedFiles = await _fileService.SaveFilesAsyncByUserId(inspectorId, new List<IFormFile> { fileInspectorImage }, rootPath);
+    var savedFiles = await _fileService.SaveFilesByUserIdAsync(inspectorId, new List<IFormFile> { fileInspectorImage }, rootPath);
     var savedFile = savedFiles.FirstOrDefault();
 
     if (savedFile == null) return false;

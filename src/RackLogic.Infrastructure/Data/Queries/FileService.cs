@@ -83,7 +83,7 @@ public class FileService : IFileService
     return fileInfoList;
   }
 
-  public Task<List<string>> DeleteFilesAsyncByUserId(Guid userId, string rootPath)
+  public Task<List<string>> DeleteFilesByUserIdAsync(Guid userId, string rootPath)
   {
     string folderPath = Path.Combine(rootPath, userId.ToString());
     var nonExistentFiles = new List<string>();
@@ -103,7 +103,7 @@ public class FileService : IFileService
     return Task.FromResult(nonExistentFiles);
   }
 
-  public async Task<List<SavedFileInfo>> SaveFilesAsyncByUserId(Guid userId, List<IFormFile> files, string rootPath)
+  public async Task<List<SavedFileInfo>> SaveFilesByUserIdAsync(Guid userId, List<IFormFile> files, string rootPath)
   {
     string folderName = Path.GetFileName(rootPath);
     string folderPath = Path.Combine(rootPath, userId.ToString());

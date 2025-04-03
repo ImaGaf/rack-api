@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Http;
 
 namespace RackLogic.UseCases.Users.UpdateInspectorProfile;
 public record UpdateInspectorProfileCommand(
-  Guid UserCreatedId,
+  Guid UserId,
   string UserRegisterRole,
   string CompanyName,
   string ABN,
