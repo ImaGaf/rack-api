@@ -17,7 +17,7 @@ public class UpdateInspectorProfileHandler(
 {
   public async Task<Result<bool>> Handle(UpdateInspectorProfileCommand request, CancellationToken cancellationToken)
   {
-    var userId = request.UserCreatedId; 
+    var userId = request.UserId; 
     var userRole = request.UserRegisterRole;
 
     // Check if User exists
