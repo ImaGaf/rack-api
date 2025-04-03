@@ -6,7 +6,6 @@ namespace RackLogic.Core.Common.Entity;
 public class Component : EntityBase<Guid>, IAggregateRoot
 {
   public Guid BayId { get; set; }
-  public BayConfiguration? BayConfiguration { get; set; }
   [Required]
   public required ComponentType ComponentType { get; set; }
   public int? Height { get; set; }
@@ -22,4 +21,5 @@ public class Component : EntityBase<Guid>, IAggregateRoot
   public int? LowerHeight { get; set; }
   public int? UpperHeight { get; set; }
   public bool? IsXBrace { get; set; }
+  public virtual BayConfiguration? BayConfiguration { get; set; }
 }

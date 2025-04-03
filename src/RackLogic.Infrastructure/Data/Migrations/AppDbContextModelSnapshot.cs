@@ -1434,8 +1434,7 @@ namespace RackLogic.Infrastructure.Data.Migrations
 
                     b.HasOne("RackLogic.Core.Common.Entity.Warehouse", "Warehouse")
                         .WithMany("Products")
-                        .HasForeignKey("WarehouseId")
-                        .OnDelete(DeleteBehavior.Restrict);
+                        .HasForeignKey("WarehouseId");
 
                     b.Navigation("Manufacturer");
 

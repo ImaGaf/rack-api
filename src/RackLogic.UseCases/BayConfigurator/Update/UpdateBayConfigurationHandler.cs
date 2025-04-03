@@ -89,22 +89,29 @@ public class UpdateBayConfigurationHandler(
     {
       bayConfig.Components.AddRange(request.Accessories.Select(c => c.Mapping(bayConfig.Id)));
     }
+
     await _componentRepository.DeleteAsync(x => x.BayId == request.Id);
+
     bayConfig.BayConfigurationLevels.Clear();
+
     bayConfig.BayConfigurationLevels.AddRange(
         request.BeamLevels.Select(l => l.Mapping(ComponentType.Beam, bayConfig.Id))
     );
+
     bayConfig.BayConfigurationLevels.AddRange(
         request.BracingHorizontalLevels.Select(l => l.Mapping(ComponentType.BraceHorizontal, bayConfig.Id))
     );
+
     bayConfig.BayConfigurationLevels.AddRange(
         request.RowSpacerLevels.Select(l => l.Mapping(ComponentType.RowSpacer, bayConfig.Id))
     );
+
     bayConfig.BayConfigurationLevels.AddRange(
         request.BracingDiagonalLevels.Select(l => l.Mapping(ComponentType.BraceDiagonal, bayConfig.Id))
     );
 
     await _bayConfigurationRepository.UpdateAsync(bayConfig);
+
     return true;
   }
 }

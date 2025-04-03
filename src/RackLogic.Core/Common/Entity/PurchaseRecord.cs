@@ -4,7 +4,7 @@ namespace RackLogic.Core.Common.Entity;
 public class PurchaseRecord : BaseEntityCustom
 {
   public required Guid UserId { get; set; }
-  public ApplicationUser? User { get; set; }
+  public virtual ApplicationUser? User { get; set; }
   public required string PurchaseToken { get; set; } // transactionInfo.TransactionId
   public required string OrderId { get; set; } // same OriginalTransactionId in IOS
   public required string ProductId { get; set; }

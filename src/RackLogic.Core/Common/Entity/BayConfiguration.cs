@@ -5,9 +5,7 @@ namespace RackLogic.Core.Common.Entity;
 public class BayConfiguration : EntityBase<Guid>, IAggregateRoot
 {
   public Guid? ManufacturerId { get; set; }
-  public OEMBrand? Manufacturer { get; set; }
   public Guid WarehouseId { get; set; }
-  public Warehouse? Warehouses { get; set; }
   public DateTime CreatedDate { get; set; }
   public bool IsCustomBrand { get; set; }
 
@@ -54,7 +52,9 @@ public class BayConfiguration : EntityBase<Guid>, IAggregateRoot
   public int BracingDiagonalLevel { get; set; }
   public int BracingLevel { get; set; }
   public int BeamLevel { get; set; }
-  public List<Component> Components { get; set; } = new List<Component>();
-  public List<BayConfigurationLevels> BayConfigurationLevels { get; set; } = new List<BayConfigurationLevels>();
-  public List<DefaultSettings> DefaultSettings { get; set; } = new List<DefaultSettings>();
+  public virtual OEMBrand? Manufacturer { get; set; }
+  public virtual Warehouse? Warehouses { get; set; }
+  public virtual List<Component> Components { get; set; } = new List<Component>();
+  public virtual List<BayConfigurationLevels> BayConfigurationLevels { get; set; } = new List<BayConfigurationLevels>();
+  public virtual List<DefaultSettings> DefaultSettings { get; set; } = new List<DefaultSettings>();
 }

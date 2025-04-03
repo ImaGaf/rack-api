@@ -121,7 +121,7 @@ public class UserWarehouseService(
         .Where(w => w.Id == warehouseFinalUse.WarehouseId)
         .Select(w => new WarehousesDTO
         {
-          WarahouseId = w.Id,
+          WarehouseId = w.Id,
           Name = w.CompanyName,
           FilePathImage = w.FileImageUrl
         })
@@ -137,7 +137,7 @@ public class UserWarehouseService(
                 on userWarehouseRole.WarehouseId equals warehouse.Id
                 select new WarehousesDTO
                 {
-                  WarahouseId = warehouse.Id,
+                  WarehouseId = warehouse.Id,
                   Name = warehouse.CompanyName,
                   FilePathImage = warehouse.FileImageUrl
                 };

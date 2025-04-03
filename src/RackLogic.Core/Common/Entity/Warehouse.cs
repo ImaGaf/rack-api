@@ -5,7 +5,6 @@ public class Warehouse : BaseEntityCustom
 {
   public required string CompanyName { get; set; }
   public required Guid OwnerId { get; set; }
-  public ApplicationUser? User { get; set; }
   public required string ABN { get; set; }
   public required string SiteAddress { get; set; }
   public required string ClientPhoneNumber { get; set; }
@@ -15,9 +14,10 @@ public class Warehouse : BaseEntityCustom
   public required string OwnerLastName { get; set; }
   public required string OwnerEmailAddress { get; set; }
   public required string OwnerPhoneNumber { get; set; }
-  public required ICollection<UserWarehouseRole> UserWarehouseRoles { get; set; }
-  public required ICollection<FloorPlan> FloorPlans { get; set; }
-  public List<OEMBrand> OEMBrands { get; set; } = new List<OEMBrand>();
-  public List<BayConfiguration> Configurations { get; set; } = new List<BayConfiguration>();
-  public List<Products> Products { get; set; } = new List<Products>();
+  public virtual ApplicationUser? User { get; set; }
+  public virtual required ICollection<FloorPlan> FloorPlans { get; set; }
+  public virtual required ICollection<UserWarehouseRole> UserWarehouseRoles { get; set; }
+  public virtual ICollection<OEMBrand> OEMBrands { get; set; } = new List<OEMBrand>();
+  public virtual ICollection<BayConfiguration> Configurations { get; set; } = new List<BayConfiguration>();
+  public virtual ICollection<Products> Products { get; set; } = new List<Products>();
 }
