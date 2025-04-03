@@ -32,8 +32,8 @@ public class FileService : IFileService
     return Task.FromResult(nonExistentFiles);
   }
 
-public async Task<List<SavedFileInfo>> SaveFilesAsync(Guid warehouseId, Guid? floorPlanId, List<IFormFile> files)
-{
+  public async Task<List<SavedFileInfo>> SaveFilesAsync(Guid warehouseId, Guid? floorPlanId, List<IFormFile> files)
+  {
     var rootPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "Warehouse");
     string folderPath;
     if (floorPlanId.HasValue)
@@ -49,37 +49,95 @@ public async Task<List<SavedFileInfo>> SaveFilesAsync(Guid warehouseId, Guid? fl
 
     if (!Directory.Exists(folderPath))
     {
-        Directory.CreateDirectory(folderPath);
+      Directory.CreateDirectory(folderPath);
     }
 
     var fileInfoList = new List<SavedFileInfo>();
 
     foreach (var file in files)
     {
-        var fileName = Path.GetFileName(file.FileName);
-        var filePath = Path.Combine(folderPath, fileName);
-        
+      var fileName = Path.GetFileName(file.FileName);
+      var filePath = Path.Combine(folderPath, fileName);
+
       if (File.Exists(filePath))
       {
         continue;
       }
       // Save file to folder
       using (var stream = new FileStream(filePath, FileMode.Create))
-        {
-            await file.CopyToAsync(stream);
-        }
+      {
+        await file.CopyToAsync(stream);
+      }
 
-        // Save info file to list
-        fileInfoList.Add(new SavedFileInfo
-        {
-          FilePath = floorPlanId.HasValue
-                ? $"Warehouse/{warehouseId}/FloorPlan/{floorPlanId}/{fileName}"
-                : $"Warehouse/{warehouseId}/Logo/{fileName}",
-          FileName = fileName,
-          ContentType = file.ContentType
-        });
+      // Save info file to list
+      fileInfoList.Add(new SavedFileInfo
+      {
+        FilePath = floorPlanId.HasValue
+              ? $"Warehouse/{warehouseId}/FloorPlan/{floorPlanId}/{fileName}"
+              : $"Warehouse/{warehouseId}/Logo/{fileName}",
+        FileName = fileName,
+        ContentType = file.ContentType
+      });
     }
 
     return fileInfoList;
-}
   }
+
+  public Task<List<string>> DeleteFilesByUserIdAsync(Guid userId, string rootPath)
+  {
+    string folderPath = Path.Combine(rootPath, userId.ToString());
+    var nonExistentFiles = new List<string>();
+
+    if (Directory.Exists(folderPath))
+    {
+      var files = Directory.GetFiles(folderPath);
+      foreach (var file in files)
+      {
+        File.Delete(file);
+      }
+    }
+    else
+    {
+      nonExistentFiles.Add(folderPath);
+    }
+    return Task.FromResult(nonExistentFiles);
+  }
+
+  public async Task<List<SavedFileInfo>> SaveFilesByUserIdAsync(Guid userId, List<IFormFile> files, string rootPath)
+  {
+    string folderName = Path.GetFileName(rootPath);
+    string folderPath = Path.Combine(rootPath, userId.ToString());
+
+    if (!Directory.Exists(folderPath))
+    {
+      Directory.CreateDirectory(folderPath);
+    }
+
+    var fileInfoList = new List<SavedFileInfo>();
+
+    foreach (var file in files)
+    {
+      var fileName = Path.GetFileName(file.FileName);
+      var filePath = Path.Combine(folderPath, fileName);
+
+      if (File.Exists(filePath))
+      {
+        continue;
+      }
+
+      using (var stream = new FileStream(filePath, FileMode.Create))
+      {
+        await file.CopyToAsync(stream);
+      }
+
+      fileInfoList.Add(new SavedFileInfo
+      {
+        FilePath = $"{folderName}/{userId}/{fileName}",
+        FileName = fileName,
+        ContentType = file.ContentType
+      });
+    }
+
+    return fileInfoList;
+  }
+}
