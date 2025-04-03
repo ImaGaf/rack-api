@@ -33,7 +33,7 @@ public class UpdateBayConfigurationHandler(
   private async Task<bool> CheckUniqueForBayConfigIdAsync(string bayConfigId, Guid warehouseId, Guid bayId)
   {
     var result = await _bayConfigurationRepository.FirstOrDefaultAsync(x => 
-      x.WarahouseId == warehouseId &&
+      x.WarehouseId == warehouseId &&
       x.Id != bayId &&
       x.BayConfigId.Equals(bayConfigId));
 

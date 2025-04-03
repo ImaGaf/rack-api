@@ -6,7 +6,7 @@ public class BayConfiguration : EntityBase<Guid>, IAggregateRoot
 {
   public Guid? ManufacturerId { get; set; }
   public OEMBrand? Manufacturer { get; set; }
-  public Guid WarahouseId { get; set; }
+  public Guid WarehouseId { get; set; }
   public Warehouse? Warehouses { get; set; }
   public DateTime CreatedDate { get; set; }
   public bool IsCustomBrand { get; set; }

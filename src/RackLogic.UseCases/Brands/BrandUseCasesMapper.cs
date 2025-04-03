@@ -1,13 +1,17 @@
 ﻿using RackLogic.Core.Common.Entity;
-using RackLogic.UseCases.Brands.GetListComponentBrand;
+using RackLogic.UseCases.Brands.CreateProduct;
+using RackLogic.UseCases.Brands.GetListProductsBrand;
 using RackLogic.UseCases.Warehouses;
+using Riok.Mapperly.Abstractions;
 
 namespace RackLogic.UseCases.Brands;
+
+[Mapper(IncludedMembers = MemberVisibility.All, RequiredMappingStrategy = RequiredMappingStrategy.Target)]
 public static partial class BrandUseCasesMapper
 {
-  public static PagedDataDTO<ListComponentBrandDTO> ToPagedDataDTO(
-    this GetComponentsByBrandQuery request,
-    List<ListComponentBrandDTO> products,
+  public static PagedDataDTO<ProductDTO> ToPagedDataDTO(
+    this GetProductsByBrandQuery request,
+    List<ProductDTO> products,
     int totalRecords)
   {
     var pageSize = request.PageSize;
@@ -17,7 +21,7 @@ public static partial class BrandUseCasesMapper
       pageNumber = 1;
       pageSize = totalRecords;
     }
-    return new PagedDataDTO<ListComponentBrandDTO>
+    return new PagedDataDTO<ProductDTO>
     {
       PageNumber = pageNumber,
       PageSize = pageSize,
@@ -27,7 +31,7 @@ public static partial class BrandUseCasesMapper
   }
 
   public static PagedDataDTO<GetAllBrandDTO> ToPagedDataDTO(
-    this GetComponentsByBrandQuery request,
+    this GetProductsByBrandQuery request,
     List<GetAllBrandDTO> products,
     int totalRecords)
   {
@@ -42,31 +46,13 @@ public static partial class BrandUseCasesMapper
 
   // Map from OEMBrand to OEMBrandDTO
   public static OEMBrandDTO ToOEMBrandDTO(this OEMBrand brand)
-{
+  {
     return new OEMBrandDTO
     {
-        Id = brand.Id,
-        Name = brand.Name,
-        Path = brand.Path,
-        Code = brand.Code,
-    };
-}
-
-  // Map from Product to ListComponentBrandDTO
-  public static ListComponentBrandDTO ToListComponentBrandDTO(this Products product)
-  {
-    return new ListComponentBrandDTO
-    {
-      Id = product.Id,
-      Category = product.Category,
-      Height = product.Height,
-      Width = product.Width,
-      Length = product.Length,
-      Code = product.Code,
-      Description = product.Description,
-      Orientation = product.Orientation,
-      DistanceCenterToCenter = product.DistanceCenterToCenter,
-      Type = product.Type
+      Id = brand.Id,
+      Name = brand.Name,
+      Path = brand.Path,
+      Code = brand.Code,
     };
   }
 
@@ -75,8 +61,34 @@ public static partial class BrandUseCasesMapper
     return new GetAllBrandDTO
     {
       Brand = brand.ToOEMBrandDTO(),
-      Components = products.Select(p => p.ToListComponentBrandDTO()).ToList()
+      Components = products.Select(p => p.ToProductDto()).ToList()
     };
   }
 
+  public static Products Mapping(this CreateProductCommand product)
+  {
+    return new Products()
+    {
+      Category = product.Category,
+      Type = product.Type,
+      Height = product.Height,
+      Width = product.Width,
+      Length = product.Length,
+      MaterialThickness = product.MaterialThickness,
+      DepthOfFrame = product.DepthOfFrame,
+      DistanceCenterToCenter = product.DistanceCenterToCenter,
+      ClearanceBetweenFrames = product.ClearanceBetweenFrames,
+      ClearEntryWidth = product.ClearEntryWidth,
+      Orientation = product.Orientation,
+      BeamStyle = product.BeamStyle,
+      ConnectorType = product.ConnectorType,
+      FinishType = product.FinishType,
+      Code = double.TryParse(product.Code, out double code) ? code : 0,
+      Description = product.Description,
+      ManufacturerId = product.ManufacturerId,
+      WarehouseId = product.WarehouseId
+    };
+  }
+
+  public static partial ProductDTO ToProductDto(this Products product);
 }

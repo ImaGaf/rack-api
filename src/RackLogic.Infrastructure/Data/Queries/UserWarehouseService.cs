@@ -38,36 +38,26 @@ public class UserWarehouseService(
     return brands.Select(brand => brand.ToOEMBrandDTO()).ToList();
   }
 
-  public async Task<(List<ListComponentBrandDTO> Products, int TotalRecords)> GetProductsByBrandAsync(Guid? brandId, int pageNumber, int pageSize, bool isGetAll)
+  public async Task<(List<ProductDTO> Products, int TotalRecords)> GetProductsByBrandAsync(Guid? brandId, Guid? warehouseId, int pageNumber, int pageSize, bool isGetAll)
   {
-    var queryListProducts = _context.Products
-                            .Where(x => brandId == null || x.ManufacturerId == brandId)
-                            .Select ( x => new ListComponentBrandDTO
-                            {
-                              Id = x.Id,
-                              Category = x.Category,
-                              Height = x.Height,
-                              Width = x.Width,
-                              Length = x.Length,
-                              Code = x.Code,
-                              Description = x.Description,
-                              Orientation = x.Orientation,
-                              DistanceCenterToCenter = x.DistanceCenterToCenter,
-                              Type = x.Type
-                            });
+    var baseQuery = _context.Products
+        .Where(x => 
+          (brandId == null || x.ManufacturerId == brandId) &&
+          (warehouseId == null || x.WarehouseId == warehouseId));
 
-    int totalRecords = await queryListProducts.CountAsync();
-    if (isGetAll)
+    int totalRecords = await baseQuery.CountAsync();
+
+    if (!isGetAll)
     {
-      pageNumber = 1;
-      pageSize = totalRecords;
+      baseQuery = baseQuery
+        .OrderBy(p => p.Category)
+        .Skip((pageNumber - 1) * pageSize)
+        .Take(pageSize);
     }
 
-    var products = await queryListProducts
-                .OrderBy(p => p.Category)
-                .Skip((pageNumber - 1) * pageSize)
-                .Take(pageSize)
-                .ToListAsync();
+    var products = await baseQuery
+        .Select(x => x.ToProductDto())
+        .ToListAsync();
 
     return (products, totalRecords);
   }

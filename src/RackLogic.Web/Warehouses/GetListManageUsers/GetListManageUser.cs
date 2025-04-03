@@ -22,17 +22,13 @@ public class GetListManageUser(IMediator _mediator) : Endpoint<GetManageUserRequ
     var validator = new GetUserRequestValidator();
     var validationResult = validator.Validate(req);
 
-    // Default value if PageNumber or PageSize is not passed
-    int pageNumber = req.PageNumber ?? 1;
-    int pageSize = req.PageSize ?? 10;
-
     if (!validationResult.IsValid)
     {
       var errors = validationResult.Errors.Select(e => e.ErrorMessage).ToList();
       throw new InvalidException(errors);
     }
 
-    var result = await _mediator.Send(new GetListManageUsersQuery(req.WarehouseId, pageNumber, pageSize), ct);
+    var result = await _mediator.Send(new GetListManageUsersQuery(req.WarehouseId, req.PageNumber, req.PageSize), ct);
 
     if (result.IsSuccess)
     {
@@ -43,8 +39,8 @@ public class GetListManageUser(IMediator _mediator) : Endpoint<GetManageUserRequ
 
       Response = new PageResponse<GetManageUserRespon>
                    {
-                     PageNumber = pageNumber,
-                     PageSize = pageSize,
+                     PageNumber = req.PageNumber,
+                     PageSize = req.PageSize,
                      TotalRecords = result.Value.TotalRecords,
                      Data = responseList
                    };

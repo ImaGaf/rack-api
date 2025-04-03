@@ -23,7 +23,7 @@ public class CreateBayConfigurationHandler(
 
   private async Task<bool> CheckUniqueForBayConfigIdAsync(string bayConfigId, Guid warehouseId)
   {
-    var result = await _bayConfigurationRepository.FirstOrDefaultAsync(x => x.WarahouseId == warehouseId && x.BayConfigId.Equals(bayConfigId));
+    var result = await _bayConfigurationRepository.FirstOrDefaultAsync(x => x.WarehouseId == warehouseId && x.BayConfigId.Equals(bayConfigId));
 
     return result is not null;
   }

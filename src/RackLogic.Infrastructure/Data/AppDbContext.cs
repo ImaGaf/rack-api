@@ -42,6 +42,12 @@ public class AppDbContext(DbContextOptions<AppDbContext> options,
       .HasForeignKey(p => p.ManufacturerId)
       .OnDelete(DeleteBehavior.Restrict);
 
+    modelBuilder.Entity<Products>()
+      .HasOne(p => p.Warehouse)
+      .WithMany(b => b.Products)
+      .HasForeignKey(p => p.WarehouseId)
+      .OnDelete(DeleteBehavior.Restrict);
+
     modelBuilder.Entity<Warehouse>()
       .HasOne(w => w.User)
       .WithMany(u => u.OwnedWarehouses)
@@ -105,7 +111,7 @@ public class AppDbContext(DbContextOptions<AppDbContext> options,
     modelBuilder.Entity<BayConfiguration>()
         .HasOne(p => p.Warehouses)
         .WithMany(u => u.Configurations)
-        .HasForeignKey(p => p.WarahouseId)
+        .HasForeignKey(p => p.WarehouseId)
         .OnDelete(DeleteBehavior.Cascade);
 
     modelBuilder.Entity<BayConfiguration>()

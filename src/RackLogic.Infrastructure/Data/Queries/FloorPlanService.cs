@@ -54,7 +54,7 @@ public class FloorPlanService : IFloorPlanService
       CancellationToken cancellationToken)
   {
     var validBayConfigIds = await _bayConfigurationRepository
-        .FindAsync(bc => bc.WarahouseId == warehouseId, cancellationToken);
+        .FindAsync(bc => bc.WarehouseId == warehouseId, cancellationToken);
     var validBayConfigIdSet = new HashSet<string>(validBayConfigIds.Select(bc => bc.BayConfigId));
 
     if (!validBayConfigIdSet.Any())
@@ -90,7 +90,7 @@ public class FloorPlanService : IFloorPlanService
   public async Task<List<FloorPlanDTO>> GetFloorPlansWithFilesByWarehouseIdAsync(Guid warehouseId)
   {
     var bayConfigurations = await _context.BayConfigurations
-        .Where(bc => bc.WarahouseId == warehouseId)
+        .Where(bc => bc.WarehouseId == warehouseId)
         .ToListAsync();
 
     //Get list FloorPlans by WarehouseId
@@ -194,7 +194,7 @@ public class FloorPlanService : IFloorPlanService
   {
     if (!floorPlansToCreate.Any()) return Result.Success(true);
 
-    var bayConfigurations = await _bayConfigurationRepository.FindAsync(f => f.WarahouseId == warehouseId);
+    var bayConfigurations = await _bayConfigurationRepository.FindAsync(f => f.WarehouseId == warehouseId);
     //Map floorPlansToCreate to FloorPlanCommand
     var floorPlansCommands = floorPlansToCreate
      .Select(fp => fp.ToFloorPlanCommand())
@@ -254,7 +254,7 @@ public class FloorPlanService : IFloorPlanService
   // Update FloorPlanAsset
   private async Task<Result<bool>> ProcessFloorPlanAsync(UpdateFloorPlanInformationCommand plan, Guid warehouseId)
   {
-    var bayConfigurations = await _bayConfigurationRepository.FindAsync(f => f.WarahouseId == warehouseId);
+    var bayConfigurations = await _bayConfigurationRepository.FindAsync(f => f.WarehouseId == warehouseId);
     var floorPlan = await _context.FloorPlans
         .Include(fp => fp.DefaultSettings)
         .FirstOrDefaultAsync(x => x.Id == plan.FloorPlanId);

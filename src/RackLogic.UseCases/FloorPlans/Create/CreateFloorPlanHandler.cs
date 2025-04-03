@@ -42,7 +42,7 @@ public class CreateFloorPlanHandler(
 
     try
     {
-      var bayConfigurations = await _bayConfigurationRepository.FindAsync(f => f.WarahouseId == warehouseId);
+      var bayConfigurations = await _bayConfigurationRepository.FindAsync(f => f.WarehouseId == warehouseId);
       //Mapping FloorPlan and FloorPlanFiles
       var floorPlans = request.FloorPlans.Select(x => x.ToFloorPlan(warehouseId, bayConfigurations));
       //Save Files
