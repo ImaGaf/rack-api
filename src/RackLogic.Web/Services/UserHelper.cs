@@ -13,4 +13,9 @@ public static class UserHelper
   {
     return user?.Claims.FirstOrDefault(x => x.Type == "UserName")?.Value ?? string.Empty;
   }
+
+  public static string GetUserRegisteredRole(this ClaimsPrincipal? user)
+  {
+    return user?.Claims.FirstOrDefault(x => x.Type == ClaimTypes.Role)?.Value ?? string.Empty;
+  }
 }

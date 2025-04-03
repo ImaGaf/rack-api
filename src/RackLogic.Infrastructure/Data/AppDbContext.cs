@@ -30,6 +30,7 @@ public class AppDbContext(DbContextOptions<AppDbContext> options,
   public DbSet<Component> Components => Set<Component>();
   public DbSet<BayConfigurationLevels> BayConfigurationLevels => Set<BayConfigurationLevels>();
   public DbSet<DefaultSettings> DefaultSettings => Set<DefaultSettings>();
+  public DbSet<InspectorProfile> InspectorProfiles => Set<InspectorProfile>();
 
   protected override void OnModelCreating(ModelBuilder modelBuilder)
   {
@@ -143,6 +144,11 @@ public class AppDbContext(DbContextOptions<AppDbContext> options,
         .WithMany(ds => ds.DefaultSettings)
         .HasForeignKey(ds => ds.BayConfigurationId)
         .OnDelete(DeleteBehavior.Cascade);
+
+    modelBuilder.Entity<InspectorProfile>()
+        .HasOne(i => i.User)
+        .WithOne(u => u.InspectorProfile)
+        .HasForeignKey<InspectorProfile>(i => i.UserId);
   }
 
   public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = new CancellationToken())

@@ -599,9 +599,87 @@ namespace RackLogic.Infrastructure.Data.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("BayConfigurationId");
+
                     b.HasIndex("FloorPlanId");
 
                     b.ToTable("FloorPlanItems");
+                });
+
+            modelBuilder.Entity("RackLogic.Core.Common.Entity.InspectorProfile", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("ABN")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("CompanyAddress")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("CompanyMainPhone")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Companyname")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("CreationTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid?>("CreatorId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("DeleterId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("DeletionTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("FileImageName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("FileImageUrl")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("InspectorEmailAddress")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("InspectorFirstName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("InspectorLastName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("InspectorPhoneNumber")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime?>("LastModificationTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid?>("LastModifierId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId")
+                        .IsUnique();
+
+                    b.ToTable("InspectorProfiles");
                 });
 
             modelBuilder.Entity("RackLogic.Core.Common.Entity.Invitation", b =>
@@ -1269,13 +1347,30 @@ namespace RackLogic.Infrastructure.Data.Migrations
 
             modelBuilder.Entity("RackLogic.Core.Common.Entity.FloorPlanItem", b =>
                 {
+                    b.HasOne("RackLogic.Core.Common.Entity.BayConfiguration", "BayConfiguration")
+                        .WithMany()
+                        .HasForeignKey("BayConfigurationId");
+
                     b.HasOne("RackLogic.Core.Common.Entity.FloorPlan", "FloorPlan")
                         .WithMany("FloorPlanItems")
                         .HasForeignKey("FloorPlanId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.Navigation("BayConfiguration");
+
                     b.Navigation("FloorPlan");
+                });
+
+            modelBuilder.Entity("RackLogic.Core.Common.Entity.InspectorProfile", b =>
+                {
+                    b.HasOne("RackLogic.Core.UserAggregate.ApplicationUser", "User")
+                        .WithOne("InspectorProfile")
+                        .HasForeignKey("RackLogic.Core.Common.Entity.InspectorProfile", "UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("RackLogic.Core.Common.Entity.Invitation", b =>
@@ -1468,6 +1563,8 @@ namespace RackLogic.Infrastructure.Data.Migrations
 
             modelBuilder.Entity("RackLogic.Core.UserAggregate.ApplicationUser", b =>
                 {
+                    b.Navigation("InspectorProfile");
+
                     b.Navigation("Invitations");
 
                     b.Navigation("OwnedWarehouses");
