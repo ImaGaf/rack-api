@@ -12,12 +12,13 @@ namespace RackLogic.UseCases.Users.UpdateInspectorProfile;
 public class UpdateInspectorProfileHandler(
   UserManager<ApplicationUser> _userManager,
   IFileService _fileService,
+  IUser _user,
   IRepositoryWithExpression<InspectorProfile> _inspectorProfileRepository)
   : ICommandHandler<UpdateInspectorProfileCommand, Result<bool>>
 {
   public async Task<Result<bool>> Handle(UpdateInspectorProfileCommand request, CancellationToken cancellationToken)
   {
-    var userId = request.UserId; 
+    var userId = _user.Id ?? Guid.Empty; 
     var userRole = request.UserRegisterRole;
 
     // Check if User exists
@@ -36,7 +37,7 @@ public class UpdateInspectorProfileHandler(
     if (existingInspectorProfile != null)
     {
       // Update InspectorProfile
-      existingInspectorProfile.UpdateInspectorProfileFromRequest(request);
+      existingInspectorProfile.UpdateInspectorWithNullCheck(request);
       await _inspectorProfileRepository.UpdateToContextAsync(existingInspectorProfile);
       await _fileService.DeleteFilesByUserIdAsync(existingInspectorProfile.UserId, rootPath);
 
@@ -59,15 +60,19 @@ public class UpdateInspectorProfileHandler(
     return Result.Success(true);
   }
 
-  private async Task<bool> AddFileAsync(InspectorProfile inspectorProfile , Guid inspectorId, IFormFile fileInspectorImage, string rootPath, CancellationToken cancellationToken)
+  private async Task<bool> AddFileAsync(InspectorProfile inspectorProfile , Guid inspectorId, IFormFile? fileInspectorImage, string rootPath, CancellationToken cancellationToken)
   {
-    var savedFiles = await _fileService.SaveFilesByUserIdAsync(inspectorId, new List<IFormFile> { fileInspectorImage }, rootPath);
-    var savedFile = savedFiles.FirstOrDefault();
+    if (fileInspectorImage is not null)
+    {
+      var savedFiles = await _fileService.SaveFilesByUserIdAsync(inspectorId, new List<IFormFile> { fileInspectorImage }, rootPath);
+      var savedFile = savedFiles.FirstOrDefault();
 
-    if (savedFile == null) return false;
+      if (savedFile == null) return false;
 
-    inspectorProfile.FileImageUrl = savedFile.FilePath;
-    inspectorProfile.FileImageName = savedFile.FileName;
+      inspectorProfile.FileImageUrl = savedFile.FilePath;
+      inspectorProfile.FileImageName = savedFile.FileName;
+    }
+    
     await _inspectorProfileRepository.SaveChangesAsync(cancellationToken);
 
     return true;

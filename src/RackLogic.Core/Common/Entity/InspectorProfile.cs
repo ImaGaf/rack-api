@@ -5,7 +5,7 @@ public class InspectorProfile : BaseEntityCustom
 {
   public Guid UserId { get; set; }
   public ApplicationUser? User { get; set; }
-  public required string Companyname { get; set; }
+  public required string CompanyName { get; set; }
   public required string ABN { get; set; }
   public required string CompanyAddress { get; set; }
   public required string CompanyMainPhone { get; set; }

@@ -4,16 +4,15 @@ using Microsoft.AspNetCore.Http;
 
 namespace RackLogic.UseCases.Users.UpdateInspectorProfile;
 public record UpdateInspectorProfileCommand(
-  Guid UserId,
-  string UserRegisterRole,
-  string CompanyName,
-  string ABN,
-  string CompanyAddress,
-  string CompanyMainPhone,
-  IFormFile FileImageInspector,
-  string InspectorFirstName,
-  string InspectorLastName,
-  string InspectorPhoneNumber,
-  string InspectorEmailAddress)
+  string? UserRegisterRole,
+  string? CompanyName,
+  string? ABN,
+  string? CompanyAddress,
+  string? CompanyMainPhone,
+  IFormFile? FileImageInspector,
+  string? InspectorFirstName,
+  string? InspectorLastName,
+  string? InspectorPhoneNumber,
+  string? InspectorEmailAddress)
   : ICommand<Result<bool>>;
 
