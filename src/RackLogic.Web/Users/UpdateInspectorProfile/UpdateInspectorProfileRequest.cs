@@ -1,25 +1,14 @@
-﻿using System.ComponentModel.DataAnnotations;
-
-namespace RackLogic.Web.Users.UpdateInspectorProfile;
+﻿namespace RackLogic.Web.Users.UpdateInspectorProfile;
 
 public class UpdateInspectorProfileRequest
 {
-  [Required]
-  public required string CompanyName { get; set; }
-  [Required]
-  public required string ABN { get; set; }
-  [Required]
-  public required string CompanyAddress { get; set; }
-  [Required]
-  public required string CompanyMainPhone { get; set; }
-  [Required]
-  public required IFormFile FileImageInspector { get; set; }
-  [Required]
-  public required string InspectorFirstName { get; set; }
-  [Required]
-  public required string InspectorLastName { get; set; }
-  [Required]
-  public required string InspectorPhoneNumber { get; set; }
-  [Required]
-  public required string InspectorEmailAddress { get; set; }
+  public string? CompanyName { get; set; }
+  public string? ABN { get; set; }
+  public string? CompanyAddress { get; set; }
+  public string? CompanyMainPhone { get; set; }
+  public IFormFile? FileImageInspector { get; set; }
+  public string? InspectorFirstName { get; set; }
+  public string? InspectorLastName { get; set; }
+  public string? InspectorPhoneNumber { get; set; }
+  public string? InspectorEmailAddress { get; set; }
 }

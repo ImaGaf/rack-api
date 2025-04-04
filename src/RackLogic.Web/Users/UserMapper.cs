@@ -12,6 +12,6 @@ namespace RackLogic.Web.Users;
 public static partial class UserMapper
 {
   public static partial RegisterUserCommand ToUserCommand(this RegisterUserRequest request);
-  public static partial UpdateInspectorProfileCommand ToInspectorProfileCommand(this UpdateInspectorProfileRequest request, Guid userId, string userRegisterRole);
+  public static partial UpdateInspectorProfileCommand ToInspectorProfileCommand(this UpdateInspectorProfileRequest request, string userRegisterRole);
   public static partial GetInspectorProfileResponse GetInspectorProfile(this InspectorProfileDTO request );
 }

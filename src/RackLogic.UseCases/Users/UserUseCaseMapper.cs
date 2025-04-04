@@ -1,43 +1,43 @@
 ﻿using RackLogic.Core.Common.Entity;
 using RackLogic.UseCases.Users.UpdateInspectorProfile;
+using Riok.Mapperly.Abstractions;
 
 namespace RackLogic.UseCases.Users;
+[Mapper(RequiredMappingStrategy = RequiredMappingStrategy.Target)]
 public static partial class UserUseCaseMapper
 {
-  public static void UpdateInspectorProfileFromRequest(this InspectorProfile existingProfile, UpdateInspectorProfileCommand request)
+  public static void UpdateInspectorWithNullCheck(this InspectorProfile existingProfile, UpdateInspectorProfileCommand request)
   {
-    existingProfile.Companyname = request.CompanyName;
-    existingProfile.ABN = request.ABN;
-    existingProfile.CompanyAddress = request.CompanyAddress;
-    existingProfile.CompanyMainPhone = request.CompanyMainPhone;
-    existingProfile.InspectorFirstName = request.InspectorFirstName;
-    existingProfile.InspectorLastName = request.InspectorLastName;
-    existingProfile.InspectorEmailAddress = request.InspectorEmailAddress;
-    existingProfile.InspectorPhoneNumber = request.InspectorPhoneNumber;
+    existingProfile.CompanyName = request.CompanyName ?? existingProfile.CompanyName;
+    existingProfile.ABN = request.ABN ?? existingProfile.ABN;
+    existingProfile.CompanyAddress = request.CompanyAddress ?? existingProfile.CompanyAddress;
+    existingProfile.CompanyMainPhone = request.CompanyMainPhone ?? existingProfile.CompanyMainPhone;
+    existingProfile.InspectorFirstName = request.InspectorFirstName ?? existingProfile.InspectorFirstName;
+    existingProfile.InspectorLastName = request.InspectorLastName ?? existingProfile.InspectorLastName;
+    existingProfile.InspectorEmailAddress = request.InspectorEmailAddress ?? existingProfile.InspectorEmailAddress;
+    existingProfile.InspectorPhoneNumber = request.InspectorPhoneNumber ?? existingProfile.InspectorPhoneNumber;
   }
 
-  public static InspectorProfile ToInspectorProfile(this UpdateInspectorProfileCommand request, Guid creatorId)
-  {
-    return new InspectorProfile
-    {
-      UserId = creatorId,
-      Companyname = request.CompanyName,
-      ABN = request.ABN,
-      CompanyAddress = request.CompanyAddress,
-      CompanyMainPhone = request.CompanyMainPhone,
-      InspectorFirstName = request.InspectorFirstName,
-      InspectorLastName = request.InspectorLastName,
-      InspectorEmailAddress = request.InspectorEmailAddress,
-      InspectorPhoneNumber = request.InspectorPhoneNumber
-    };
-  }
+  [MapperIgnoreSource(nameof(UpdateInspectorProfileCommand.FileImageInspector))]
+  [MapperIgnoreTarget(nameof(InspectorProfile.User))]
+  [MapperIgnoreTarget(nameof(InspectorProfile.FileImageName))]
+  [MapperIgnoreTarget(nameof(InspectorProfile.FileImageUrl))]
+  [MapperIgnoreTarget(nameof(InspectorProfile.IsDeleted))]
+  [MapperIgnoreTarget(nameof(InspectorProfile.DeleterId))]
+  [MapperIgnoreTarget(nameof(InspectorProfile.DeletionTime))]
+  [MapperIgnoreTarget(nameof(InspectorProfile.LastModificationTime))]
+  [MapperIgnoreTarget(nameof(InspectorProfile.LastModifierId))]
+  [MapperIgnoreTarget(nameof(InspectorProfile.CreationTime))]
+  [MapperIgnoreTarget(nameof(InspectorProfile.CreatorId))]
+  [MapperIgnoreTarget(nameof(InspectorProfile.Id))]
+  public static partial InspectorProfile ToInspectorProfile(this UpdateInspectorProfileCommand request, Guid userId);
 
   public static InspectorProfileDTO ToInspectorProfileDTO(this InspectorProfile profile)
   {
     return new InspectorProfileDTO
     {
       UserId = profile.UserId,
-      CompanyName = profile.Companyname,
+      CompanyName = profile.CompanyName,
       ABN = profile.ABN,
       CompanyAddress = profile.CompanyAddress,
       CompanyMainPhone = profile.CompanyMainPhone,
