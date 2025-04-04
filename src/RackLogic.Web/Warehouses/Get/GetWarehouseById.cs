@@ -10,7 +10,7 @@ using RackLogic.Web.Models;
 namespace RackLogic.Web.Warehouses.Get;
 
 [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-public class GetWarehouseById(IMediator _mediator) : Endpoint<GetWarehouseByIdRequest, ApiResponse<Result<WarehouseProfileDTO>>>
+public class GetWarehouseById(IMediator _mediator) : Endpoint<GetWarehouseByIdRequest, ApiResponse<WarehouseProfileDTO>>
 {
   public override void Configure()
   {
@@ -24,7 +24,7 @@ public class GetWarehouseById(IMediator _mediator) : Endpoint<GetWarehouseByIdRe
 
     if (result.IsSuccess)
     {
-      Response = new ApiResponse<Result<WarehouseProfileDTO>>(result);
+      Response = new ApiResponse<WarehouseProfileDTO>(result);
       return;
     }
 
