@@ -192,8 +192,8 @@ namespace RackLogic.Infrastructure.Data.Migrations
                     b.Property<DateTime?>("InstallationDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("InterimInterval")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int>("InterimInterval")
+                        .HasColumnType("int");
 
                     b.Property<bool?>("IsCustomAccessories")
                         .HasColumnType("bit");
@@ -561,6 +561,9 @@ namespace RackLogic.Infrastructure.Data.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime?>("DeletionTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("DueDate")
                         .HasColumnType("datetime2");
 
                     b.Property<Guid>("FloorPlanId")
@@ -1434,7 +1437,8 @@ namespace RackLogic.Infrastructure.Data.Migrations
 
                     b.HasOne("RackLogic.Core.Common.Entity.Warehouse", "Warehouse")
                         .WithMany("Products")
-                        .HasForeignKey("WarehouseId");
+                        .HasForeignKey("WarehouseId")
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.Navigation("Manufacturer");
 

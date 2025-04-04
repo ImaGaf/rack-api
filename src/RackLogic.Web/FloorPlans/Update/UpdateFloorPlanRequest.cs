@@ -65,12 +65,13 @@ public class UpdateFloorPlanItemInformation
   [Required]
   public string? BayConfigurationId { get; set; }
   public bool? IsRequiredBayConfig { get; set; }
+  public DateTime? DueDate { get; set; }
   public required List<UpdateFloorPlanComment>? Comments { get; set; }
 }
 public class UpdateFloorPlanComment
 {
   public Guid? Id { get; set; }
-  public UpdateFloorPlanComment(Guid ? id = null)
+  public UpdateFloorPlanComment(Guid? id = null)
   {
     Id = id ?? Guid.NewGuid();
   }

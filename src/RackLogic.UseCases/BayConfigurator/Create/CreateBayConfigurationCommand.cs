@@ -1,4 +1,5 @@
 ﻿using Ardalis.Result;
+using RackLogic.UseCases.Common.Constants;
 
 namespace RackLogic.UseCases.BayConfigurator.Create;
 
@@ -24,7 +25,6 @@ public record BayConfigurationCommand(
     int TotalBayLoad,
     string? Comment,
     bool? IsEnableInterimInspection,
-    string? InterimInterval,
     ComponentCommand UpRight,
     bool? HasSplice,
     int Level,
@@ -48,7 +48,8 @@ public record BayConfigurationCommand(
     List<int> RowSpacerLevels,
     bool? IsCustomRowSpacer,
     List<ComponentCommand>? Accessories,
-    bool? IsCustomAccessories
+    bool? IsCustomAccessories,
+    int InterimInterval = BayConfigurationDefaultValue.InterimInterval
   );
 
 public record ComponentCommand(

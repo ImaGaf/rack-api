@@ -31,7 +31,8 @@ public record FloorPlanItemCommand(
     string? ObjectType,
     string? BayConfigurationId,
     bool? IsRequiredBayConfig,
-    double Rotation);
+    double Rotation,
+    DateTime? DueDate);
 
 public record FloorPlanCommentCommand(
     Guid Id,

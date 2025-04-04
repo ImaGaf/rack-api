@@ -36,7 +36,7 @@ public class BayConfiguration : EntityBase<Guid>, IAggregateRoot
   public int TotalBayLoad { get; set; }
   public string? Comment { get; set; }
   public bool IsEnableInterimInspection { get; set; }
-  public string? InterimInterval { get; set; }
+  public int InterimInterval { get; set; }
   public bool? HasSplice { get; set; }
   public int Level { get; set; }
   public int Pallets { get; set; }
