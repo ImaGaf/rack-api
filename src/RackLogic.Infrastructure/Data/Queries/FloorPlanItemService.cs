@@ -25,9 +25,7 @@ public class FloorPlanItemService : IFloorPlanItemService
                             .Where(x => x.FloorPlan!.WarehouseId == request.WarehouseId)
                             .Skip(((request.pageNumber - 1) * request.pageSize))
                             .Take(request.pageSize)
-
-                            // TODO: Need property DueDate to sor Decsending
-                            //.OrderByDescending(x => x.DueDate)
+                            .OrderByDescending(x => x.DueDate)
                             .ToListAsync();
 
     return new PagedDataDTO<InspectionFloorPlanItemDto>()

@@ -32,6 +32,7 @@ public record UpdateFloorPlanItemInformationCommand(
   double Rotation,
   string? BayConfigurationId,
   bool? IsRequiredBayConfig,
+  DateTime? DueDate,
   List<UpdateFloorPlanCommentCommand>? Comments);
 
 public record UpdateFloorPlanCommentCommand(

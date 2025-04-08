@@ -5,6 +5,7 @@ public class FloorPlanItem : BaseEntityCustom
   public required int Bay { get; set; }
   public required Guid FloorPlanId { get; set; }
   public Guid? BayConfigurationId { get; set; }
+  public DateTime? DueDate { get; set; }
   public required string Offset { get; set; }
   public int? Size { get; set; }
   public double? Width { get; set; }

@@ -24,6 +24,7 @@ public class FloorPlanItemResponse
   public string? ObjectType { get; set; }
   public required double Rotation { get; set; }
   public string? BayConfigurationId { get; set; }
+  public DateTime? DueDate { get; set; }
   public List<FloorPlanCommentResponse>? Comments { get; set; }
 }
 
