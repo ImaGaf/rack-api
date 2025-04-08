@@ -432,6 +432,9 @@ namespace RackLogic.Infrastructure.Data.Migrations
                     b.Property<Guid>("FloorPlanItemId")
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<Guid?>("InspectionId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
 
@@ -453,6 +456,8 @@ namespace RackLogic.Infrastructure.Data.Migrations
                     b.HasIndex("ComponentId");
 
                     b.HasIndex("FloorPlanItemId");
+
+                    b.HasIndex("InspectionId");
 
                     b.HasIndex("RelatedComponentId");
 
@@ -723,6 +728,69 @@ namespace RackLogic.Infrastructure.Data.Migrations
                     b.HasIndex("FloorPlanId");
 
                     b.ToTable("FloorPlanItems");
+                });
+
+            modelBuilder.Entity("RackLogic.Core.Common.Entity.Inspection", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Authorise")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid?>("AuthorisePersonId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("AuthorisedPersonId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("BayId")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ClientId")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("CreationTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid?>("CreatorId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("DeleterId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("DeletionTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid>("FloorPlanItemId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("InspectionDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsConfirmAuthorization")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime?>("LastModificationTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid?>("LastModifierId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("NextInspectionDate")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AuthorisePersonId");
+
+                    b.HasIndex("FloorPlanItemId");
+
+                    b.ToTable("Inspection");
                 });
 
             modelBuilder.Entity("RackLogic.Core.Common.Entity.InspectorProfile", b =>
@@ -1468,6 +1536,10 @@ namespace RackLogic.Infrastructure.Data.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("RackLogic.Core.Common.Entity.Inspection", null)
+                        .WithMany("DefectLogs")
+                        .HasForeignKey("InspectionId");
+
                     b.HasOne("RackLogic.Core.Common.Entity.Component", "RelatedComponent")
                         .WithMany()
                         .HasForeignKey("RelatedComponentId");
@@ -1538,6 +1610,23 @@ namespace RackLogic.Infrastructure.Data.Migrations
                     b.Navigation("BayConfiguration");
 
                     b.Navigation("FloorPlan");
+                });
+
+            modelBuilder.Entity("RackLogic.Core.Common.Entity.Inspection", b =>
+                {
+                    b.HasOne("RackLogic.Core.UserAggregate.ApplicationUser", "AuthorisePerson")
+                        .WithMany()
+                        .HasForeignKey("AuthorisePersonId");
+
+                    b.HasOne("RackLogic.Core.Common.Entity.FloorPlanItem", "FloorPlanItem")
+                        .WithMany("Inspections")
+                        .HasForeignKey("FloorPlanItemId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("AuthorisePerson");
+
+                    b.Navigation("FloorPlanItem");
                 });
 
             modelBuilder.Entity("RackLogic.Core.Common.Entity.InspectorProfile", b =>
@@ -1732,6 +1821,13 @@ namespace RackLogic.Infrastructure.Data.Migrations
                 {
                     b.Navigation("Comments");
 
+                    b.Navigation("DefectLogs");
+
+                    b.Navigation("Inspections");
+                });
+
+            modelBuilder.Entity("RackLogic.Core.Common.Entity.Inspection", b =>
+                {
                     b.Navigation("DefectLogs");
                 });
 
