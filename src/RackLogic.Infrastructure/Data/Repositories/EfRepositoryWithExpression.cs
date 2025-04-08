@@ -62,12 +62,20 @@ public class EfRepositoryWithExpression<T> : EfRepository<T>, IRepositoryWithExp
     return await query.FirstOrDefaultAsync(cancellationToken: cancellationToken);
   }
 
-  public async Task<List<T>> ListAsync(Expression<Func<T, bool>> predicate, CancellationToken cancellationToken = default)
+  public async Task<List<T>> GetListAsync(Ardalis.Specification.ISpecification<T> specification, CancellationToken cancellationToken = default)
+  {
+    var queryResult = await ApplySpecification(specification).ToListAsync(cancellationToken);
+
+    return specification.PostProcessingAction == null ? queryResult : specification.PostProcessingAction(queryResult).ToList();
+  }
+
+  public async Task<List<T>> GetListAsync(Expression<Func<T, bool>> predicate, CancellationToken cancellationToken = default)
   {
     var query = _dbContext.Set<T>().Where(predicate);
 
     return await query.ToListAsync(cancellationToken);
   }
+
   public async Task SaveContextAsync(CancellationToken cancellationToken = default)
   {
       await _dbContext.SaveChangesAsync(cancellationToken);

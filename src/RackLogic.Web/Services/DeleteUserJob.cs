@@ -109,13 +109,13 @@ public class DeleteUserJob : BackgroundService
     var clientEditorRole = await roleManager.FindByNameAsync(RoleConstant.ClientEditor);
 
     //Get list of warehouses belonging to user Premises
-    var userWarehouses = await warehouseRepository.ListAsync(w => w.OwnerId == user.Id, cancellationToken);
+    var userWarehouses = await warehouseRepository.GetListAsync(w => w.OwnerId == user.Id, cancellationToken);
 
     //Delele folder in wwwroot related to Warehouse
     await DeleteWarehouseFoldersAsync(userWarehouses.Select(w => w.Id).ToList());
 
     // Get the list of Users in the warehouses of the deleted user
-    var relatedUserRoles = await userWarehouseRoleRepository.ListAsync(
+    var relatedUserRoles = await userWarehouseRoleRepository.GetListAsync(
         uwr => userWarehouses.Select(w => w.Id).Contains(uwr.WarehouseId) &&
                (uwr.RoleId == clientManagerRole!.Id || uwr.RoleId == clientEditorRole!.Id),
         cancellationToken);
@@ -152,7 +152,7 @@ public class DeleteUserJob : BackgroundService
       CancellationToken cancellationToken)
   {
     // Delete warehouses created by Inspector account
-    var userWarehouses = await warehouseRepository.ListAsync(w => w.OwnerId == user.Id, cancellationToken);
+    var userWarehouses = await warehouseRepository.GetListAsync(w => w.OwnerId == user.Id, cancellationToken);
     await warehouseRepository.DeleteRangeAsync(userWarehouses, cancellationToken);
 
     //Delele folder in wwwroot related to Warehouse
@@ -190,7 +190,7 @@ public class DeleteUserJob : BackgroundService
     var userWarehouseRoleRepository = scope.ServiceProvider.GetRequiredService<IRepositoryWithExpression<UserWarehouseRole>>();
 
     // Find and delete roles associated with userId
-    var userRoles = await userWarehouseRoleRepository.ListAsync(uwr => uwr.UserId == userId, cancellationToken);
+    var userRoles = await userWarehouseRoleRepository.GetListAsync(uwr => uwr.UserId == userId, cancellationToken);
     await userWarehouseRoleRepository.DeleteRangeAsync(userRoles, cancellationToken);
   }
 

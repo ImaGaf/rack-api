@@ -6,12 +6,14 @@ using Microsoft.EntityFrameworkCore;
 using RackLogic.Core.Common.Entity;
 using RackLogic.Core.ContributorAggregate;
 using RackLogic.Core.UserAggregate;
+using RackLogic.UseCases.Users;
 
 namespace RackLogic.Infrastructure.Data;
-public class AppDbContext(DbContextOptions<AppDbContext> options,
+public class AppDbContext(DbContextOptions<AppDbContext> options, IUser user,
   IDomainEventDispatcher? dispatcher) : IdentityDbContext<ApplicationUser, IdentityRole<Guid>, Guid>(options)
 {
   private readonly IDomainEventDispatcher? _dispatcher = dispatcher;
+  private readonly IUser _user = user;
 
   public DbSet<Contributor> Contributors => Set<Contributor>();
   public DbSet<UserOtp> UserOtps => Set<UserOtp>();
@@ -40,6 +42,21 @@ public class AppDbContext(DbContextOptions<AppDbContext> options,
 
   public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = new CancellationToken())
   {
+    foreach (var entry in ChangeTracker.Entries<BaseEntityCustom>())
+    {
+      if (entry.State == EntityState.Added)
+      {
+        entry.Entity.CreatorId = _user?.Id;
+        entry.Entity.CreationTime = DateTime.UtcNow;
+      }
+
+      if (entry.State == EntityState.Modified)
+      {
+        entry.Entity.LastModifierId = _user?.Id;
+        entry.Entity.LastModificationTime = DateTime.UtcNow;
+      }
+    }
+
     int result = await base.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
 
     // ignore events if no dispatcher provided
