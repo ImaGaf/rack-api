@@ -15,4 +15,5 @@ public class FloorPlanItem : BaseEntityCustom
   public BayConfiguration? BayConfiguration { get; set; }
   public virtual FloorPlan? FloorPlan { get; set; }
   public virtual ICollection<FloorPlanComments>? Comments { get; set; }
+  public virtual ICollection<DefectLog>? DefectLogs { get; set; }
 }

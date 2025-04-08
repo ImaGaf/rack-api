@@ -1,0 +1,21 @@
+﻿using RackLogic.Core.Common.Enums;
+
+namespace RackLogic.Core.Common.Entity;
+
+public class DefectLog : BaseEntityCustom
+{
+  public string? TicketId { get; set; }
+  public Guid ComponentId { get; set; }
+  public Guid FloorPlanItemId { get; set; }
+  public Guid? RelatedComponentId { get; set; }
+  public DefectGrade? DefectGrade { get; set; }
+  public DefectPriority? DefectPriority { get; set; }
+  public DefectType? DefectType { get; set; }
+  public CorrectiveAction? CorrectiveAction { get; set; }
+  public string? Comment  {get; set; }
+  public virtual Component? Component { get; set; }
+  public virtual FloorPlanItem? FloorPlanItem { get; set; }
+  public virtual Component? RelatedComponent { get; set; }
+
+  public virtual ICollection<DefectLogFiles>? DefectLogFiles { get; set; }
+}
