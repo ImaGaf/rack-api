@@ -1,7 +1,8 @@
 ﻿using Ardalis.Result;
+using RackLogic.UseCases.Brands;
 
-namespace RackLogic.UseCases.Brands.CreateProduct;
-public record CreateProductCommand(
+namespace RackLogic.UseCases.BayConfigurator.CreateProduct;
+public record CreateCustomComponentCommand(
   string Category,
   string? Type,
   int? Height,

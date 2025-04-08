@@ -1,11 +1,11 @@
 ﻿using FastEndpoints;
 using FluentValidation;
 
-namespace RackLogic.Web.Brands.CreateProduct;
+namespace RackLogic.Web.BayConfigurator.CreateProduct;
 
-public class CreateProductRequestValidator : Validator<CreateProductRequest>
+public class CreateCustomComponentValidator : Validator<CreateCustomComponentRequest>
 {
-  public CreateProductRequestValidator()
+  public CreateCustomComponentValidator()
   {
     RuleFor(x => x.Category)
             .NotEmpty().WithMessage("Category is required.")

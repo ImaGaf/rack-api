@@ -7,7 +7,7 @@ using RackLogic.Web.Models;
 
 namespace RackLogic.Web.FloorPlanItems.ListInspectionFloorPlanItem;
 
-public class ListInspectionFloorPlabItem(IMediator _mediator) : Endpoint<InspectionFloorPlanItemRequest, ApiResponse<PagedDataDTO<InspectionFloorPlanItemDto>>>
+public class ListInspectionFloorPlabItem(IMediator _mediator) : Endpoint<InspectionFloorPlanItemRequest, PageResponse<InspectionFloorPlanItemDto>>
 {
   public override void Configure()
   {
@@ -20,7 +20,13 @@ public class ListInspectionFloorPlabItem(IMediator _mediator) : Endpoint<Inspect
 
     if (result.IsSuccess)
     {
-      Response = new ApiResponse<PagedDataDTO<InspectionFloorPlanItemDto>>(result);
+      Response = new PageResponse<InspectionFloorPlanItemDto>
+      {
+        Data = result.Value.DataDTO,
+        PageNumber = result.Value.PageNumber,
+        PageSize = result.Value.PageSize,
+        TotalRecords = result.Value.TotalRecords
+      };
 
       return;
     }

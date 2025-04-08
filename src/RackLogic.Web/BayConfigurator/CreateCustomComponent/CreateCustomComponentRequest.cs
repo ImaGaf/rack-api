@@ -1,6 +1,6 @@
-﻿namespace RackLogic.Web.Brands.CreateProduct;
+﻿namespace RackLogic.Web.BayConfigurator.CreateProduct;
 
-public class CreateProductRequest
+public class CreateCustomComponentRequest
 {
   public required string Category { get; set; }
   public string? Type { get; set; }

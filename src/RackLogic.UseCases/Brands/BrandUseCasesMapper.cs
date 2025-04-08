@@ -1,5 +1,5 @@
 ﻿using RackLogic.Core.Common.Entity;
-using RackLogic.UseCases.Brands.CreateProduct;
+using RackLogic.UseCases.BayConfigurator.CreateProduct;
 using RackLogic.UseCases.Brands.GetListProductsBrand;
 using RackLogic.UseCases.Warehouses;
 using Riok.Mapperly.Abstractions;
@@ -65,7 +65,7 @@ public static partial class BrandUseCasesMapper
     };
   }
 
-  public static Products Mapping(this CreateProductCommand product)
+  public static Products Mapping(this CreateCustomComponentCommand product)
   {
     return new Products()
     {
