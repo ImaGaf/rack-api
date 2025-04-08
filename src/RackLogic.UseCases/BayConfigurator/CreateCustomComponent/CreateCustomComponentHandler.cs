@@ -4,7 +4,7 @@ using RackLogic.Core.Common.Entity;
 using RackLogic.Core.Interfaces;
 using RackLogic.UseCases.Brands;
 
-namespace RackLogic.UseCases.BayConfigurator.CreateProduct;
+namespace RackLogic.UseCases.BayConfigurator.CreateCustomComponent;
 public class CreateCustomComponentHandler
   (IRepositoryWithExpression<Products> _productRepository)
   : ICommandHandler<CreateCustomComponentCommand, Result<ProductDTO>>

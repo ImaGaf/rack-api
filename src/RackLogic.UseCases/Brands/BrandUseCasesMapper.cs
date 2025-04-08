@@ -1,5 +1,5 @@
 ﻿using RackLogic.Core.Common.Entity;
-using RackLogic.UseCases.BayConfigurator.CreateProduct;
+using RackLogic.UseCases.BayConfigurator.CreateCustomComponent;
 using RackLogic.UseCases.Brands.GetListProductsBrand;
 using RackLogic.UseCases.Warehouses;
 using Riok.Mapperly.Abstractions;

@@ -14,7 +14,7 @@ using RackLogic.Web.Warehouses.GetListWarehouses;
 using Riok.Mapperly.Abstractions;
 using RackLogic.Web.Brands.GetListProductsBrand;
 using RackLogic.Web.BayConfigurator.CreateProduct;
-using RackLogic.UseCases.BayConfigurator.CreateProduct;
+using RackLogic.UseCases.BayConfigurator.CreateCustomComponent;
 
 namespace RackLogic.Web.Warehouses;
 
