@@ -83,7 +83,7 @@ public static partial class BrandUseCasesMapper
       BeamStyle = product.BeamStyle,
       ConnectorType = product.ConnectorType,
       FinishType = product.FinishType,
-      Code = double.TryParse(product.Code, out double code) ? code : 0,
+      Code = product.Code,
       Description = product.Description,
       ManufacturerId = product.ManufacturerId,
       WarehouseId = product.WarehouseId

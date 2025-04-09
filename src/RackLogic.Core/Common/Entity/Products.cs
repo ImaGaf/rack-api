@@ -23,7 +23,7 @@ public class Products : EntityBase<Guid>, IAggregateRoot
   public string? FinishType { get; set; } // For multiple categories
 
   // General information
-  public double? Code { get; set; }
+  public string? Code { get; set; }
   public string? Description { get; set; }
 
   // Manufacturer details
