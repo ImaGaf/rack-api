@@ -420,6 +420,9 @@ namespace RackLogic.Infrastructure.Data.Migrations
                     b.Property<int?>("DefectPriority")
                         .HasColumnType("int");
 
+                    b.Property<int?>("DefectStatus")
+                        .HasColumnType("int");
+
                     b.Property<int?>("DefectType")
                         .HasColumnType("int");
 
@@ -511,6 +514,52 @@ namespace RackLogic.Infrastructure.Data.Migrations
                     b.HasIndex("DefectLogId");
 
                     b.ToTable("DefectLogFiles");
+                });
+
+            modelBuilder.Entity("RackLogic.Core.Common.Entity.DefectLogHistory", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreationTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid?>("CreatorId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("DefectLogId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("DeleterId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("DeletionTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime?>("LastModificationTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid?>("LastModifierId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Note")
+                        .HasMaxLength(1000)
+                        .HasColumnType("nvarchar(1000)");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("DefectLogId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("DefectLogHistory");
                 });
 
             modelBuilder.Entity("RackLogic.Core.Common.Entity.FloorPlan", b =>
@@ -1527,7 +1576,7 @@ namespace RackLogic.Infrastructure.Data.Migrations
                     b.HasOne("RackLogic.Core.Common.Entity.Component", "Component")
                         .WithMany()
                         .HasForeignKey("ComponentId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("RackLogic.Core.Common.Entity.FloorPlanItem", "FloorPlanItem")
@@ -1536,9 +1585,10 @@ namespace RackLogic.Infrastructure.Data.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("RackLogic.Core.Common.Entity.Inspection", null)
+                    b.HasOne("RackLogic.Core.Common.Entity.Inspection", "Inspection")
                         .WithMany("DefectLogs")
-                        .HasForeignKey("InspectionId");
+                        .HasForeignKey("InspectionId")
+                        .OnDelete(DeleteBehavior.NoAction);
 
                     b.HasOne("RackLogic.Core.Common.Entity.Component", "RelatedComponent")
                         .WithMany()
@@ -1547,6 +1597,8 @@ namespace RackLogic.Infrastructure.Data.Migrations
                     b.Navigation("Component");
 
                     b.Navigation("FloorPlanItem");
+
+                    b.Navigation("Inspection");
 
                     b.Navigation("RelatedComponent");
                 });
@@ -1560,6 +1612,25 @@ namespace RackLogic.Infrastructure.Data.Migrations
                         .IsRequired();
 
                     b.Navigation("DefectLog");
+                });
+
+            modelBuilder.Entity("RackLogic.Core.Common.Entity.DefectLogHistory", b =>
+                {
+                    b.HasOne("RackLogic.Core.Common.Entity.DefectLog", "DefectLog")
+                        .WithMany("DefectLogHistories")
+                        .HasForeignKey("DefectLogId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("RackLogic.Core.UserAggregate.ApplicationUser", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("DefectLog");
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("RackLogic.Core.Common.Entity.FloorPlan", b =>
@@ -1806,6 +1877,8 @@ namespace RackLogic.Infrastructure.Data.Migrations
             modelBuilder.Entity("RackLogic.Core.Common.Entity.DefectLog", b =>
                 {
                     b.Navigation("DefectLogFiles");
+
+                    b.Navigation("DefectLogHistories");
                 });
 
             modelBuilder.Entity("RackLogic.Core.Common.Entity.FloorPlan", b =>

@@ -8,9 +8,11 @@ public class DefectLogConfiguration : IEntityTypeConfiguration<DefectLog>
 {
   public void Configure(EntityTypeBuilder<DefectLog> builder)
   {
-    builder.HasOne(d => d.Component).WithMany().HasForeignKey(d => d.ComponentId).OnDelete(DeleteBehavior.Restrict);
+    builder.HasOne(d => d.Component).WithMany().HasForeignKey(d => d.ComponentId).OnDelete(DeleteBehavior.Cascade);
 
     builder.HasOne(d => d.FloorPlanItem).WithMany(f => f.DefectLogs).HasForeignKey(d => d.FloorPlanItemId).OnDelete(DeleteBehavior.Cascade);
+
+    builder.HasOne(d => d.Inspection).WithMany(f => f.DefectLogs).HasForeignKey(d => d.InspectionId).OnDelete(DeleteBehavior.NoAction);
 
     builder.Property(d => d.Comment).HasMaxLength(1000);
 
