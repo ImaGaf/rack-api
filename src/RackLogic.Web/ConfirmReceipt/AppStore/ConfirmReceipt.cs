@@ -3,12 +3,13 @@ using FastEndpoints;
 using MediatR;
 using RackLogic.UseCases.ConfirmReceipt.AppStore;
 using RackLogic.Web.Exceptions;
+using RackLogic.Web.Models;
 
 namespace RackLogic.Web.ConfirmReceipt.AppStore;
 
 public class ConfirmReceipt(
   IMediator _mediator)
-  : Endpoint<ConfirmReceiptRequest, bool>
+  : Endpoint<ConfirmReceiptRequest, ApiResponse<bool>>
 {
   public override void Configure()
   {
@@ -30,7 +31,7 @@ public class ConfirmReceipt(
 
     if (result.IsSuccess)
     {
-      Response = result.Value;
+      Response = new ApiResponse<bool>(result.Value);
       return;
     }
 

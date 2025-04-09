@@ -3,11 +3,12 @@ using FastEndpoints;
 using MediatR;
 using RackLogic.UseCases.BayConfigurator.Update;
 using RackLogic.Web.Exceptions;
+using RackLogic.Web.Models;
 using RackLogic.Web.Services;
 
 namespace RackLogic.Web.BayConfigurator.Update;
 
-public class UpdateBayConfigurator(IMediator _mediator) : Endpoint<UpdateBayConfiguratorRequest, bool>
+public class UpdateBayConfigurator(IMediator _mediator) : Endpoint<UpdateBayConfiguratorRequest, ApiResponse<bool>>
 {
   public override void Configure()
   {
@@ -46,7 +47,7 @@ public class UpdateBayConfigurator(IMediator _mediator) : Endpoint<UpdateBayConf
 
     if (result.IsSuccess)
     {
-      Response = result.Value;
+      Response = new ApiResponse<bool>(result.Value);
       return;
     }
 

@@ -3,11 +3,12 @@ using FastEndpoints;
 using MediatR;
 using RackLogic.UseCases.ConfirmReceipt.GooglePlay;
 using RackLogic.Web.Exceptions;
+using RackLogic.Web.Models;
 
 namespace RackLogic.Web.ConfirmReceipt.GooglePlay;
 
 public class ConfirmReceiptGooglePlay(IMediator _mediator)
-  : Endpoint<ConfirmReceiptGooglePlayRequest, bool>
+  : Endpoint<ConfirmReceiptGooglePlayRequest, ApiResponse<bool>>
 {
   public override void Configure()
   {
@@ -29,7 +30,7 @@ public class ConfirmReceiptGooglePlay(IMediator _mediator)
 
     if (result.IsSuccess)
     {
-      Response = result.Value;
+      Response = new ApiResponse<bool>(result.Value);
       return;
     }
 

@@ -4,12 +4,13 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using RackLogic.Web.Brands.GetProductsByCategory;
 using RackLogic.Web.Exceptions;
+using RackLogic.Web.Models;
 using RackLogic.Web.Warehouses;
 
 namespace RackLogic.Web.BayConfigurator.CreateProduct;
 
 [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-public class CreateCustomComponent(IMediator _mediator) : Endpoint<CreateCustomComponentRequest, GetProductsByCategoryResponse>
+public class CreateCustomComponent(IMediator _mediator) : Endpoint<CreateCustomComponentRequest, ApiResponse<GetProductsByCategoryResponse>>
 {
   public override void Configure()
   {
@@ -32,7 +33,7 @@ public class CreateCustomComponent(IMediator _mediator) : Endpoint<CreateCustomC
 
     if (result.IsSuccess)
     {
-      Response = result.Value.ToCreateProductResponse();
+      Response = new ApiResponse<GetProductsByCategoryResponse>(result.Value.ToCreateProductResponse());
       return;
     }
 
