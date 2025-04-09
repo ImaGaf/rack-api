@@ -405,6 +405,9 @@ namespace RackLogic.Infrastructure.Data.Migrations
                     b.Property<Guid>("ComponentId")
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<int>("ComponentIndex")
+                        .HasColumnType("int");
+
                     b.Property<int?>("CorrectiveAction")
                         .HasColumnType("int");
 
@@ -432,6 +435,9 @@ namespace RackLogic.Infrastructure.Data.Migrations
                     b.Property<DateTime?>("DeletionTime")
                         .HasColumnType("datetime2");
 
+                    b.Property<string>("DrawPosition")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<Guid>("FloorPlanItemId")
                         .HasColumnType("uniqueidentifier");
 
@@ -439,6 +445,9 @@ namespace RackLogic.Infrastructure.Data.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<bool?>("IsRear")
                         .HasColumnType("bit");
 
                     b.Property<DateTime?>("LastModificationTime")
