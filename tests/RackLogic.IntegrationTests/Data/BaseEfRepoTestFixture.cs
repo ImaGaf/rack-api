@@ -1,9 +1,10 @@
 ﻿using Ardalis.SharedKernel;
-using RackLogic.Core.ContributorAggregate;
-using RackLogic.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using NSubstitute;
+using RackLogic.Core.ContributorAggregate;
+using RackLogic.Infrastructure.Data;
+using RackLogic.UseCases.Users;
 
 namespace RackLogic.IntegrationTests.Data;
 
@@ -15,8 +16,9 @@ public abstract class BaseEfRepoTestFixture
   {
     var options = CreateNewContextOptions();
     var _fakeEventDispatcher = Substitute.For<IDomainEventDispatcher>();
+    var _user = Substitute.For<IUser>();
 
-    _dbContext = new AppDbContext(options, _fakeEventDispatcher);
+    _dbContext = new AppDbContext(options, _user, _fakeEventDispatcher);
   }
 
   protected static DbContextOptions<AppDbContext> CreateNewContextOptions()
