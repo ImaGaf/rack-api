@@ -1020,8 +1020,8 @@ namespace RackLogic.Infrastructure.Data.Migrations
                     b.Property<int?>("ClearanceBetweenFrames")
                         .HasColumnType("int");
 
-                    b.Property<double?>("Code")
-                        .HasColumnType("float");
+                    b.Property<string>("Code")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("ConnectorType")
                         .HasColumnType("nvarchar(max)");

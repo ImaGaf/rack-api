@@ -16,7 +16,7 @@ public class ProductDTO
   public string? BeamStyle { get; set; }
   public string? ConnectorType { get; set; }
   public string? FinishType { get; set; }
-  public double? Code { get; set; }
+  public string? Code { get; set; }
   public string? Description { get; set; }
   public Guid? ManufacturerId { get; set; }
   public Guid? WarehouseId { get; set; }
