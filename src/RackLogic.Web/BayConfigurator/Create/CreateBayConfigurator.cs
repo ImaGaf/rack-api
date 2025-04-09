@@ -5,12 +5,13 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using RackLogic.UseCases.BayConfigurator.Create;
 using RackLogic.Web.Exceptions;
+using RackLogic.Web.Models;
 using RackLogic.Web.Services;
 
 namespace RackLogic.Web.BayConfigurator.Create;
 
 [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-public class CreateBayConfigurator(IMediator _mediator) : Endpoint<CreateBayConfiguratorRequest, bool>
+public class CreateBayConfigurator(IMediator _mediator) : Endpoint<CreateBayConfiguratorRequest, ApiResponse<bool>>
 {
   public override void Configure()
   {
@@ -49,7 +50,7 @@ public class CreateBayConfigurator(IMediator _mediator) : Endpoint<CreateBayConf
 
     if (result.IsSuccess)
     {
-      Response = result.Value;
+      Response = new ApiResponse<bool>(result.Value);
       return;
     }
 
