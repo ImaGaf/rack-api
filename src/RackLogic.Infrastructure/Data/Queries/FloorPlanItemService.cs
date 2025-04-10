@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Ardalis.GuardClauses;
+using Microsoft.EntityFrameworkCore;
 using RackLogic.UseCases.Common.Constants;
 using RackLogic.UseCases.FloorPlanItems;
 using RackLogic.UseCases.FloorPlanItems.Inspection;
@@ -35,5 +36,22 @@ public class FloorPlanItemService : IFloorPlanItemService
       PageSize = request.pageSize <= 0 ? PaginationDefaultValue.PageSize : request.pageSize,
       DataDTO = items.Select(x => x.ToInspectionFloorPlanItemDto()).ToList()
     };
+  }
+
+  public async Task<bool> UpdateInspectionDueDate(Guid floorPlanItemId)
+  {
+    var item = Guard.Against.Null(
+      await _context.FloorPlanItems
+        .Include(f => f.BayConfiguration)
+        .FirstOrDefaultAsync(f => f.Id == floorPlanItemId)
+      );
+
+    item.DueDate = DateTime.UtcNow.AddDays(item.BayConfiguration!.InterimInterval);
+
+    _context.FloorPlanItems.Update(item);
+
+    await _context.SaveChangesAsync();
+
+    return true;
   }
 }

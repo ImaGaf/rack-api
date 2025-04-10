@@ -7,7 +7,6 @@ public class DefectLogDto
   public string? TicketId { get; set; }
   public Guid ComponentId { get; set; }
   public Guid FloorPlanItemId { get; set; }
-  public Guid? InspectionId { get; set; }
   public Guid? RelatedComponentId { get; set; }
   public string? DrawPosition { get; set; }
   public int ComponentIndex { get; set; }

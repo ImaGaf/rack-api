@@ -6,4 +6,5 @@ namespace RackLogic.UseCases.FloorPlanItems;
 public interface IFloorPlanItemService
 {
   Task<PagedDataDTO<InspectionFloorPlanItemDto>> GetListInspectionItem(InspectionFloorPlanItemQuery request);
+  Task<bool> UpdateInspectionDueDate(Guid floorPlanItemId);
 }
