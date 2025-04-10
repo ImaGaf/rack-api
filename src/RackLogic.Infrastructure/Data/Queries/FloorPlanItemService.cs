@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using RackLogic.UseCases.Common.Constants;
 using RackLogic.UseCases.FloorPlanItems;
+using RackLogic.UseCases.FloorPlanItems.GetDetail;
 using RackLogic.UseCases.FloorPlanItems.Inspection;
 using RackLogic.UseCases.Warehouses;
 
@@ -16,7 +17,23 @@ public class FloorPlanItemService : IFloorPlanItemService
     _context = context;
   }
 
-  public async Task<PagedDataDTO<InspectionFloorPlanItemDto>> GetListInspectionItem(InspectionFloorPlanItemQuery request)
+
+  public async Task<FloorPlanItemDto?> GetDetailAsync(GetDetailFloorPlanItemQuery query, CancellationToken cancellationToken = default)
+  {
+    var floorPlanItem = await _context.FloorPlanItems
+                                    .Include(x => x.Inspection)
+                                    .Include(x => x.BayConfiguration!).ThenInclude(b => b.BayConfigurationLevels)
+                                    .Include(x => x.BayConfiguration!).ThenInclude(b => b.Components)
+                                    .Include(x => x.DefectLogs!)
+                                      .ThenInclude(x => x.Component)
+                                    .Include(x => x.DefectLogs!)
+                                      .ThenInclude(x => x.Component)
+                                    .FirstOrDefaultAsync(x => x.Id == query.floorPlanItemId, cancellationToken);
+
+    return floorPlanItem != null ? floorPlanItem.Mapping() : null;
+  }
+
+  public async Task<PagedDataDTO<InspectionFloorPlanItemDto>> GetListInspectionItemAsync(InspectionFloorPlanItemQuery request, CancellationToken cancellationToken)
   {
     var totalItem = await _context.FloorPlanItems.CountAsync(x => x.FloorPlan!.WarehouseId == request.WarehouseId);
 
