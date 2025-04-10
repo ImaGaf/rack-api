@@ -8,7 +8,6 @@ public record CreateDefectLogCommand : ICommand<Result<DefectLogDto>>
 {
   public required Guid ComponentId { get; init; }
   public required Guid FloorPlanItemId { get; init; }
-  public Guid? InspectionId { get; init; }
   public Guid? RelatedComponentId { get; init; }
   public required int DefectType { get; init; }
   public required int DefectGrade { get; init; }
