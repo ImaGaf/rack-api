@@ -4,9 +4,9 @@ using RackLogic.Core.Common.Entity;
 
 namespace RackLogic.Infrastructure.Data.Config;
 
-public class DefectLogFilesConfiguration : IEntityTypeConfiguration<DefectLogFiles>
+public class DefectLogFileConfiguration : IEntityTypeConfiguration<DefectLogFile>
 {
-  public void Configure(EntityTypeBuilder<DefectLogFiles> builder)
+  public void Configure(EntityTypeBuilder<DefectLogFile> builder)
   {
     builder.HasOne(f => f.DefectLog).WithMany(d => d.DefectLogFiles).HasForeignKey(f => f.DefectLogId).OnDelete(DeleteBehavior.Cascade);
 

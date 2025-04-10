@@ -399,8 +399,8 @@ namespace RackLogic.Infrastructure.Data.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Comment")
-                        .HasMaxLength(1000)
-                        .HasColumnType("nvarchar(1000)");
+                        .HasMaxLength(2000)
+                        .HasColumnType("nvarchar(2000)");
 
                     b.Property<Guid>("ComponentId")
                         .HasColumnType("uniqueidentifier");
@@ -460,8 +460,8 @@ namespace RackLogic.Infrastructure.Data.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("TicketId")
-                        .HasMaxLength(10)
-                        .HasColumnType("nvarchar(10)");
+                        .HasMaxLength(12)
+                        .HasColumnType("nvarchar(12)");
 
                     b.HasKey("Id");
 
@@ -476,7 +476,7 @@ namespace RackLogic.Infrastructure.Data.Migrations
                     b.ToTable("DefectLog");
                 });
 
-            modelBuilder.Entity("RackLogic.Core.Common.Entity.DefectLogFiles", b =>
+            modelBuilder.Entity("RackLogic.Core.Common.Entity.DefectLogFile", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -522,7 +522,7 @@ namespace RackLogic.Infrastructure.Data.Migrations
 
                     b.HasIndex("DefectLogId");
 
-                    b.ToTable("DefectLogFiles");
+                    b.ToTable("DefectLogFile");
                 });
 
             modelBuilder.Entity("RackLogic.Core.Common.Entity.DefectLogHistory", b =>
@@ -558,6 +558,9 @@ namespace RackLogic.Infrastructure.Data.Migrations
                     b.Property<string>("Note")
                         .HasMaxLength(1000)
                         .HasColumnType("nvarchar(1000)");
+
+                    b.Property<int>("Type")
+                        .HasColumnType("int");
 
                     b.Property<Guid>("UserId")
                         .HasColumnType("uniqueidentifier");
@@ -1612,7 +1615,7 @@ namespace RackLogic.Infrastructure.Data.Migrations
                     b.Navigation("RelatedComponent");
                 });
 
-            modelBuilder.Entity("RackLogic.Core.Common.Entity.DefectLogFiles", b =>
+            modelBuilder.Entity("RackLogic.Core.Common.Entity.DefectLogFile", b =>
                 {
                     b.HasOne("RackLogic.Core.Common.Entity.DefectLog", "DefectLog")
                         .WithMany("DefectLogFiles")

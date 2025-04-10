@@ -23,6 +23,6 @@ public class DefectLog : BaseEntityCustom
   public virtual Component? RelatedComponent { get; set; }
   public virtual Inspection? Inspection { get; set; }
 
-  public virtual ICollection<DefectLogFiles>? DefectLogFiles { get; set; }
+  public virtual ICollection<DefectLogFile>? DefectLogFiles { get; set; }
   public virtual ICollection<DefectLogHistory>? DefectLogHistories { get; set; }
 }

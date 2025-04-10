@@ -17,6 +17,7 @@ using RackLogic.Infrastructure.Configuration;
 using RackLogic.UseCases.BayConfigurator.List;
 using RackLogic.UseCases.FloorPlanItems;
 using RackLogic.UseCases.Users;
+using RackLogic.UseCases.DefectLogs;
 
 namespace RackLogic.Infrastructure;
 public static class InfrastructureServiceExtensions
@@ -45,8 +46,8 @@ public static class InfrastructureServiceExtensions
            .AddScoped<IFloorPlanService, FloorPlanService>()
            .AddScoped<IUserTokenRepository, UserTokenRepository>()
            .AddScoped<IUserInspectorService, UserInspectorService>()
-           .AddScoped<IFloorPlanItemService, FloorPlanItemService>();
-
+           .AddScoped<IFloorPlanItemService, FloorPlanItemService>()
+           .AddScoped<IDefectLogHistoryService, DefectLogHistoryService>();
 
     logger.LogInformation("{Project} services registered", "Infrastructure");
 

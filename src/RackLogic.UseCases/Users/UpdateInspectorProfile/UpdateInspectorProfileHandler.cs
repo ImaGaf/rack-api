@@ -64,7 +64,7 @@ public class UpdateInspectorProfileHandler(
   {
     if (fileInspectorImage is not null)
     {
-      var savedFiles = await _fileService.SaveFilesByUserIdAsync(inspectorId, new List<IFormFile> { fileInspectorImage }, rootPath);
+      var savedFiles = await _fileService.SaveFilesAsync(inspectorId, new List<IFormFile> { fileInspectorImage }, rootPath);
       var savedFile = savedFiles.FirstOrDefault();
 
       if (savedFile == null) return false;
