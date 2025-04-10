@@ -103,10 +103,10 @@ public class FileService : IFileService
     return Task.FromResult(nonExistentFiles);
   }
 
-  public async Task<List<SavedFileInfo>> SaveFilesByUserIdAsync(Guid userId, List<IFormFile> files, string rootPath)
+  public async Task<List<SavedFileInfo>> SaveFilesAsync(Guid id, List<IFormFile> files, string rootPath)
   {
     string folderName = Path.GetFileName(rootPath);
-    string folderPath = Path.Combine(rootPath, userId.ToString());
+    string folderPath = Path.Combine(rootPath, id.ToString());
 
     if (!Directory.Exists(folderPath))
     {
@@ -132,7 +132,7 @@ public class FileService : IFileService
 
       fileInfoList.Add(new SavedFileInfo
       {
-        FilePath = $"{folderName}/{userId}/{fileName}",
+        FilePath = $"{folderName}/{id}/{fileName}",
         FileName = fileName,
         ContentType = file.ContentType
       });

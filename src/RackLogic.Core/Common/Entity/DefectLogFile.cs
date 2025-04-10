@@ -1,6 +1,6 @@
 ﻿namespace RackLogic.Core.Common.Entity;
 
-public class DefectLogFiles : BaseEntityCustom
+public class DefectLogFile : BaseEntityCustom
 {
   public Guid DefectLogId { get; set; }
   public virtual DefectLog? DefectLog { get; set; }
