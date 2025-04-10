@@ -1,6 +1,4 @@
-﻿using System.Data;
-using System.Linq;
-using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using RackLogic.Core.Common.Constants;
 using RackLogic.UseCases.Brands;
@@ -41,7 +39,7 @@ public class UserWarehouseService(
   public async Task<(List<ProductDTO> Products, int TotalRecords)> GetProductsByBrandAsync(Guid? brandId, Guid? warehouseId, int pageNumber, int pageSize, bool isGetAll)
   {
     var baseQuery = _context.Products
-        .Where(x => 
+        .Where(x =>
           (brandId == null || x.ManufacturerId == brandId) &&
           (warehouseId == null || x.WarehouseId == warehouseId));
 
@@ -114,7 +112,7 @@ public class UserWarehouseService(
     var warehouseFinalUse = await _context.WarehouseFinalUses
     .FirstOrDefaultAsync(wf => wf.UserId == userId);
 
-    if (warehouseFinalUse == null)  return null;
+    if (warehouseFinalUse == null) return null;
 
     // Query warehouse information based on WarehouseId from WarehouseFinalUse
     var warehouse = await _context.Warehouses
@@ -165,5 +163,22 @@ public class UserWarehouseService(
                   .Where(w => w.Id == warehouseId)
                   .Select(w => w.ToResponse())
                   .FirstOrDefaultAsync();
+  }
+
+  public async Task<OEMBrandDTO> GetBrandByComponentAsync(Guid componentId)
+  {
+    var component = await _context.Components
+      .Include(c => c.BayConfiguration!)
+      .ThenInclude(b => b.Manufacturer)
+      .FirstOrDefaultAsync(c => c.Id == componentId);
+
+    var brand = component!.BayConfiguration!.Manufacturer;
+
+    if (brand == null)
+    {
+      return new OEMBrandDTO();
+    }
+
+    return new OEMBrandDTO { Id = brand.Id, Name = brand.Name, Path = brand.Path, Code = brand.Code };
   }
 }

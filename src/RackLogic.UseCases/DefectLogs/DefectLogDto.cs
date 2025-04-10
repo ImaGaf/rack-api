@@ -1,4 +1,5 @@
 ﻿using RackLogic.Core.Common.Enums;
+using RackLogic.UseCases.Brands;
 
 namespace RackLogic.UseCases.DefectLogs;
 
@@ -19,6 +20,7 @@ public class DefectLogDto
   public DateTime CreationTime { get; set; }
   public Guid? CreatorId { get; set; }
   public string? Comment { get; set; }
+  public OEMBrandDTO? OEMBrand { get; set; }
   public List<DefectLogFileDto>? DefectLogFiles { get; set; }
   public List<DefectLogHistoryDto>? DefectLogHistories { get; set; }
 }

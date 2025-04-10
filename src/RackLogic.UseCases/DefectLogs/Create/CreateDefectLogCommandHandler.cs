@@ -6,12 +6,14 @@ using RackLogic.Core.Interfaces;
 using RackLogic.UseCases.Common.Extensions;
 using RackLogic.UseCases.FloorPlanItems;
 using RackLogic.UseCases.FloorPlans;
+using RackLogic.UseCases.Warehouses;
 
 namespace RackLogic.UseCases.DefectLogs.Create;
 
 public class CreateDefectLogCommandHandler(
   IRepositoryWithExpression<DefectLog> defectLogRepository,
   IFloorPlanItemService floorPlanItemService,
+  IUserWarehouseService userWarehouseService,
   IDefectLogHistoryService defectLogHistoryService,
   IFileService fileService)
   : ICommandHandler<CreateDefectLogCommand, Result<DefectLogDto>>
@@ -44,7 +46,6 @@ public class CreateDefectLogCommandHandler(
 
       entity.DefectLogFiles = fileEntities;
     }
-
     await defectLogRepository.AddAsync(entity, cancellationToken: cancellationToken);
 
     await floorPlanItemService.UpdateInspectionDueDate(request.FloorPlanItemId);
@@ -52,7 +53,12 @@ public class CreateDefectLogCommandHandler(
     var historyDetails = DefectHistoryType.Created.GetDescription();
     await defectLogHistoryService.CreateAsync(entity, historyDetails, (int)DefectHistoryType.Created, cancellationToken);
 
-    return Result.Success(entity.ToDto());
+    var brand = await userWarehouseService.GetBrandByComponentAsync(request.ComponentId);
+
+    var result = entity.ToDto();
+    result.OEMBrand = brand;
+
+    return Result.Success(result);
   }
 
   private string GenerateTicketId()
