@@ -8,6 +8,8 @@ public class DefectLogFileConfiguration : IEntityTypeConfiguration<DefectLogFile
 {
   public void Configure(EntityTypeBuilder<DefectLogFile> builder)
   {
+    builder.ToTable("DefectLogFiles");
+
     builder.HasOne(f => f.DefectLog).WithMany(d => d.DefectLogFiles).HasForeignKey(f => f.DefectLogId).OnDelete(DeleteBehavior.Cascade);
 
     builder.Property(f => f.FileName).HasMaxLength(100);

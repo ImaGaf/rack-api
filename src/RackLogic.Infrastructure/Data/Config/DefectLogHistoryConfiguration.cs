@@ -7,6 +7,8 @@ public class DefectLogHistoryConfiguration : IEntityTypeConfiguration<DefectLogH
 {
   public void Configure(EntityTypeBuilder<DefectLogHistory> builder)
   {
+    builder.ToTable("DefectLogHistories");
+
     builder.HasOne(d => d.DefectLog).WithMany(dh => dh.DefectLogHistories).HasForeignKey(d => d.DefectLogId).OnDelete(DeleteBehavior.Cascade);
 
     builder.HasOne(d => d.User).WithMany().HasForeignKey(d => d.UserId).OnDelete(DeleteBehavior.Cascade);

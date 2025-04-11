@@ -12,4 +12,5 @@ public interface IUserWarehouseService
   Task<WarehousesDTO?> GetLastWarehouseForUserAsync(Guid userId);
   Task<bool> CheckPermissionUserRequestAsync(Guid userId, Guid warehouseId);
   Task<WarehouseProfileDTO?> GetWarehouseByIdAsync(Guid warehouseId);
+  Task<OEMBrandDTO> GetBrandByComponentAsync(Guid componentId);
 }
