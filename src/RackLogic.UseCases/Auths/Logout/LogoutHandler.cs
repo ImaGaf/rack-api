@@ -3,7 +3,7 @@ using Ardalis.SharedKernel;
 
 namespace RackLogic.UseCases.Auths.Logout;
 public class LogoutHandler(
-  IUserService _userService)
+  IAuthService _userService)
   : ICommandHandler<LogoutCommand, Result>
 {
   public async Task<Result> Handle(LogoutCommand request, CancellationToken cancellationToken)

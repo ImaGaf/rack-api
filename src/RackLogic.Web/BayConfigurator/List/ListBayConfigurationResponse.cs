@@ -54,7 +54,7 @@ public class ComponentResponse
   public int? Height { get; set; }
   public int? Width { get; set; }
   public int? Length { get; set; }
-  public float? Code { get; set; }
+  public string? Code { get; set; }
   public string? Description { get; set; }
   public string? Orientation { get; set; }
   public int? DistanceCenterToCenter { get; set; }

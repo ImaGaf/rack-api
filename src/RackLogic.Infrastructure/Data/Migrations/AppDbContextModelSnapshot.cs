@@ -1138,7 +1138,8 @@ namespace RackLogic.Infrastructure.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("UserId");
+                    b.HasIndex("UserId")
+                        .IsUnique();
 
                     b.ToTable("PurchaseRecords");
                 });
@@ -1423,6 +1424,8 @@ namespace RackLogic.Infrastructure.Data.Migrations
                         .IsUnique()
                         .HasDatabaseName("UserNameIndex")
                         .HasFilter("[NormalizedUserName] IS NOT NULL");
+
+                    b.HasIndex("ParentId");
 
                     b.ToTable("AspNetUsers", (string)null);
                 });
@@ -1772,8 +1775,8 @@ namespace RackLogic.Infrastructure.Data.Migrations
             modelBuilder.Entity("RackLogic.Core.Common.Entity.PurchaseRecord", b =>
                 {
                     b.HasOne("RackLogic.Core.UserAggregate.ApplicationUser", "User")
-                        .WithMany("Purchases")
-                        .HasForeignKey("UserId")
+                        .WithOne("Purchase")
+                        .HasForeignKey("RackLogic.Core.Common.Entity.PurchaseRecord", "UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -1866,6 +1869,16 @@ namespace RackLogic.Infrastructure.Data.Migrations
                     b.Navigation("PhoneNumber");
                 });
 
+            modelBuilder.Entity("RackLogic.Core.UserAggregate.ApplicationUser", b =>
+                {
+                    b.HasOne("RackLogic.Core.UserAggregate.ApplicationUser", "Parent")
+                        .WithMany("Children")
+                        .HasForeignKey("ParentId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.Navigation("Parent");
+                });
+
             modelBuilder.Entity("RackLogic.Core.UserAggregate.UserOtp", b =>
                 {
                     b.HasOne("RackLogic.Core.UserAggregate.ApplicationUser", "User")
@@ -1938,13 +1951,15 @@ namespace RackLogic.Infrastructure.Data.Migrations
 
             modelBuilder.Entity("RackLogic.Core.UserAggregate.ApplicationUser", b =>
                 {
+                    b.Navigation("Children");
+
                     b.Navigation("InspectorProfile");
 
                     b.Navigation("Invitations");
 
                     b.Navigation("OwnedWarehouses");
 
-                    b.Navigation("Purchases");
+                    b.Navigation("Purchase");
 
                     b.Navigation("UserOtps");
                 });
