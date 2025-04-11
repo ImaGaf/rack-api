@@ -33,6 +33,9 @@ public class AppDbContext(DbContextOptions<AppDbContext> options, IUser user,
   public DbSet<BayConfigurationLevels> BayConfigurationLevels => Set<BayConfigurationLevels>();
   public DbSet<DefaultSettings> DefaultSettings => Set<DefaultSettings>();
   public DbSet<InspectorProfile> InspectorProfiles => Set<InspectorProfile>();
+  public DbSet<Inspection> Inspections => Set<Inspection>();
+  public DbSet<DefectLog> DefectLogs => Set<DefectLog>();
+  public DbSet<DefectLogHistory> DefectLogHistories => Set<DefectLogHistory>();
 
   protected override void OnModelCreating(ModelBuilder modelBuilder)
   {

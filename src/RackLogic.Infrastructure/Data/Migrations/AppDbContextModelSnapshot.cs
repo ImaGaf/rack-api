@@ -473,7 +473,7 @@ namespace RackLogic.Infrastructure.Data.Migrations
 
                     b.HasIndex("RelatedComponentId");
 
-                    b.ToTable("DefectLog");
+                    b.ToTable("DefectLogs", (string)null);
                 });
 
             modelBuilder.Entity("RackLogic.Core.Common.Entity.DefectLogFile", b =>
@@ -522,7 +522,7 @@ namespace RackLogic.Infrastructure.Data.Migrations
 
                     b.HasIndex("DefectLogId");
 
-                    b.ToTable("DefectLogFile");
+                    b.ToTable("DefectLogFiles", (string)null);
                 });
 
             modelBuilder.Entity("RackLogic.Core.Common.Entity.DefectLogHistory", b =>
@@ -571,7 +571,7 @@ namespace RackLogic.Infrastructure.Data.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("DefectLogHistory");
+                    b.ToTable("DefectLogHistories", (string)null);
                 });
 
             modelBuilder.Entity("RackLogic.Core.Common.Entity.FloorPlan", b =>
@@ -851,7 +851,7 @@ namespace RackLogic.Infrastructure.Data.Migrations
 
                     b.HasIndex("FloorPlanItemId");
 
-                    b.ToTable("Inspection");
+                    b.ToTable("Inspections");
                 });
 
             modelBuilder.Entity("RackLogic.Core.Common.Entity.InspectorProfile", b =>

@@ -8,6 +8,8 @@ public class DefectLogConfiguration : IEntityTypeConfiguration<DefectLog>
 {
   public void Configure(EntityTypeBuilder<DefectLog> builder)
   {
+    builder.ToTable("DefectLogs");
+
     builder.HasOne(d => d.Component).WithMany().HasForeignKey(d => d.ComponentId).OnDelete(DeleteBehavior.Cascade);
 
     builder.HasOne(d => d.FloorPlanItem).WithMany(f => f.DefectLogs).HasForeignKey(d => d.FloorPlanItemId).OnDelete(DeleteBehavior.Cascade);
