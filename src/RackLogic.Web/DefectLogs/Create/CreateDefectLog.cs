@@ -15,7 +15,7 @@ public class CreateDefectLog(IMediator _mediator) : Endpoint<CreateDefectLogComm
 {
   public override void Configure()
   {
-    Post("/defect-logs/create");
+    Post("/defect-logs");
     AllowFileUploads();
     DontThrowIfValidationFails();
   }

@@ -47,7 +47,8 @@ public static class InfrastructureServiceExtensions
            .AddScoped<IUserTokenRepository, UserTokenRepository>()
            .AddScoped<IUserInspectorService, UserInspectorService>()
            .AddScoped<IFloorPlanItemService, FloorPlanItemService>()
-           .AddScoped<IDefectLogHistoryService, DefectLogHistoryService>();
+           .AddScoped<IDefectLogHistoryService, DefectLogHistoryService>()
+           .AddScoped<IDefectLogService, DefectLogService>();
 
     logger.LogInformation("{Project} services registered", "Infrastructure");
 
