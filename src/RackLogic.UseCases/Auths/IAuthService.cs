@@ -3,7 +3,7 @@ using RackLogic.Core.UserAggregate;
 using RackLogic.UseCases.Auths.Login;
 
 namespace RackLogic.UseCases.Auths;
-public interface IUserService
+public interface IAuthService
 {
   Task<LoginDTO> GenerateUserTokenAsync(ApplicationUser user);
   Task<ClaimsPrincipal> GetPrincipalFromExpiredTokenAsync(string token); 

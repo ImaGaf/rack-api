@@ -1,17 +1,15 @@
 ﻿using System.Security.Claims;
-using Azure.Core;
 using Microsoft.AspNetCore.Identity;
-using Org.BouncyCastle.Asn1.Ocsp;
 using RackLogic.Core.UserAggregate;
 using RackLogic.Infrastructure.Token;
 using RackLogic.UseCases.Auths;
 using RackLogic.UseCases.Auths.Login;
 
 namespace RackLogic.Infrastructure.Data.Queries;
-public class UserSevice(
+public class AuthService(
         UserManager<ApplicationUser> userManager,
         AppDbContext applicationDbContext,
-        TokenSettings tokenSettings) : IUserService
+        TokenSettings tokenSettings) : IAuthService
 {
   private readonly UserManager<ApplicationUser> _userManager = userManager;
   private readonly TokenSettings _tokenSettings = tokenSettings;

@@ -6,7 +6,7 @@ using RackLogic.Core.UserAggregate;
 namespace RackLogic.UseCases.Auths.RefeshToken;
 public class RefreshTokenHandler(
   UserManager<ApplicationUser> _userManager,
-  IUserService _userService) 
+  IAuthService _userService) 
   : ICommandHandler<RefreshTokenCommand, Result<RefreshTokenDTO>>
 {
   public async Task<Result<RefreshTokenDTO>> Handle(RefreshTokenCommand request, CancellationToken cancellationToken)

@@ -2,13 +2,14 @@
 using MediatR;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
+using RackLogic.UseCases.Users;
 using RackLogic.UseCases.Users.Get;
 using RackLogic.Web.Models;
 
 namespace RackLogic.Web.Users.Get;
 
 [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-public class Get(IMediator _mediator) : EndpointWithoutRequest<ApiResponse<GetUserResponse>>
+public class Get(IMediator _mediator) : EndpointWithoutRequest<ApiResponse<UserDTO>>
 {
   public override void Configure()
   {
@@ -17,20 +18,11 @@ public class Get(IMediator _mediator) : EndpointWithoutRequest<ApiResponse<GetUs
 
   public override async Task HandleAsync(CancellationToken ct)
   {
-    var result = await _mediator.Send(new GetUserQuery(User), ct);
+    var result = await _mediator.Send(new GetUserQuery(), ct);
 
     if (result.IsSuccess)
     {
-      Response = new ApiResponse<GetUserResponse>(
-        new GetUserResponse() 
-        {
-          FirstName = result.Value.FirstName,
-          LastName = result.Value.LastName,
-          Email = result.Value.Email,
-          PhoneNumber = result.Value.PhoneNumber ,
-          RegistedRole = result.Value.RegisteredRole,
-          IsPaid = result.Value.IsPaid,
-        });
+      Response = new ApiResponse<UserDTO>(result.Value);
       return;
     }
 

@@ -8,6 +8,8 @@ public class PurchaseRecordConfiguration : IEntityTypeConfiguration<PurchaseReco
 {
   public void Configure(EntityTypeBuilder<PurchaseRecord> builder)
   {
-    builder.HasOne(p => p.User).WithMany(u => u.Purchases).HasForeignKey(p => p.UserId).OnDelete(DeleteBehavior.Cascade);
+    builder.HasOne(p => p.User)
+      .WithOne(u => u.Purchase)
+      .HasForeignKey<PurchaseRecord>(i => i.UserId);
   }
 }

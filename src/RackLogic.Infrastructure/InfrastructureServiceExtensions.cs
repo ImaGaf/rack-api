@@ -39,7 +39,7 @@ public static class InfrastructureServiceExtensions
            .AddScoped<IListContributorsQueryService, ListContributorsQueryService>()
            .AddScoped<IListBayConfiguratorQueryService, ListBayConfiguratorQueryService>()
            .AddScoped<IDeleteContributorService, DeleteContributorService>()
-           .AddScoped<IUserService, UserSevice>()
+           .AddScoped<IAuthService, AuthService>()
            .AddScoped<IStoreNotificationService, StoreNotificationService>()
            .AddScoped<IUserWarehouseService, UserWarehouseService>()
            .AddScoped<IFileService, FileService>()
@@ -47,7 +47,8 @@ public static class InfrastructureServiceExtensions
            .AddScoped<IUserTokenRepository, UserTokenRepository>()
            .AddScoped<IUserInspectorService, UserInspectorService>()
            .AddScoped<IFloorPlanItemService, FloorPlanItemService>()
-           .AddScoped<IDefectLogHistoryService, DefectLogHistoryService>();
+           .AddScoped<IDefectLogHistoryService, DefectLogHistoryService>()
+           .AddScoped<IUserService, UserService>();
 
     logger.LogInformation("{Project} services registered", "Infrastructure");
 
