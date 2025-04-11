@@ -13,7 +13,7 @@ public class GetInspectorProfileHandler(
   {
     var creatorId = request.UserCreatedId;
     var existingInspectorProfile = await _inspectorProfileRepository.FirstOrDefaultAsync(i => i.UserId == creatorId, cancellationToken);
-    if (existingInspectorProfile == null) return Result.Invalid(new ValidationError("User does not have inspector profile."));
+    if (existingInspectorProfile == null) return new InspectorProfileDTO() { UserId = creatorId};
 
     var inspectorProfile = await _userInspectorService.GetInspectorProfileAsync(creatorId);
     return Result.Success(inspectorProfile);

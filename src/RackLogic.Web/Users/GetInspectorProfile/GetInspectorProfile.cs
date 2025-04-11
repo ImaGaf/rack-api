@@ -1,20 +1,19 @@
-﻿using FastEndpoints;
+﻿using Ardalis.Result;
+using FastEndpoints;
 using MediatR;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
+using RackLogic.UseCases.Users;
 using RackLogic.UseCases.Users.GetInspectorProfile;
-using RackLogic.Web.FloorPlans.Get;
-using RackLogic.Web.FloorPlans;
+using RackLogic.Web.Exceptions;
 using RackLogic.Web.Models;
 using RackLogic.Web.Services;
-using Ardalis.Result;
-using RackLogic.Web.Exceptions;
 
 namespace RackLogic.Web.Users.GetInspectorProfile;
 
 [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
 
-public class GetInspectorProfile(IMediator _mediator) : EndpointWithoutRequest<ApiResponse<GetInspectorProfileResponse>>
+public class GetInspectorProfile(IMediator _mediator) : EndpointWithoutRequest<ApiResponse<InspectorProfileDTO>>
 {
   public override void Configure()
   {
@@ -29,7 +28,7 @@ public class GetInspectorProfile(IMediator _mediator) : EndpointWithoutRequest<A
 
     if (result.IsSuccess)
     {
-      Response = new ApiResponse<GetInspectorProfileResponse>(UserMapper.GetInspectorProfile(result.Value));
+      Response = new ApiResponse<InspectorProfileDTO>(result.Value);
       return;
     }
 

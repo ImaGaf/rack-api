@@ -13,5 +13,4 @@ public static partial class UserMapper
 {
   public static partial RegisterUserCommand ToUserCommand(this RegisterUserRequest request);
   public static partial UpdateInspectorProfileCommand ToInspectorProfileCommand(this UpdateInspectorProfileRequest request, string userRegisterRole);
-  public static partial GetInspectorProfileResponse GetInspectorProfile(this InspectorProfileDTO request );
 }
