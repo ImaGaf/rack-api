@@ -70,6 +70,8 @@ public class CreateBayConfigurationHandler(
         request.BayConfiguration.BracingDiagonalLevels.Select(l => l.Mapping(ComponentType.BraceDiagonal, bayConfiguration.Id))
     );
 
+    bayConfiguration.SWLSignage = new SWLSignage() {  BayConfigurationId = bayConfiguration.Id};
+
     var result = await _bayConfigurationRepository.AddAsync(bayConfiguration, cancellationToken);
 
     return result is not null;

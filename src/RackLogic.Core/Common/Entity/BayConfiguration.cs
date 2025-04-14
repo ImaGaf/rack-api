@@ -6,6 +6,7 @@ public class BayConfiguration : EntityBase<Guid>, IAggregateRoot
 {
   public Guid? ManufacturerId { get; set; }
   public Guid WarehouseId { get; set; }
+  public Guid SWLSignageId { get; set; }
   public DateTime CreatedDate { get; set; }
   public bool IsCustomBrand { get; set; }
 
@@ -54,6 +55,7 @@ public class BayConfiguration : EntityBase<Guid>, IAggregateRoot
   public int BeamLevel { get; set; }
   public virtual OEMBrand? Manufacturer { get; set; }
   public virtual Warehouse? Warehouses { get; set; }
+  public virtual SWLSignage? SWLSignage { get; set; }
   public virtual List<Component> Components { get; set; } = new List<Component>();
   public virtual List<BayConfigurationLevels> BayConfigurationLevels { get; set; } = new List<BayConfigurationLevels>();
   public virtual List<DefaultSettings> DefaultSettings { get; set; } = new List<DefaultSettings>();
