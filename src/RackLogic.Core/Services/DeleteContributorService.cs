@@ -15,7 +15,7 @@ namespace RackLogic.Core.Services;
 /// <param name="_repository"></param>
 /// <param name="_mediator"></param>
 /// <param name="_logger"></param>
-public class DeleteContributorService(IRepository<Contributor> _repository,
+public class DeleteContributorService(Ardalis.SharedKernel.IRepository<Contributor> _repository,
   IMediator _mediator,
   ILogger<DeleteContributorService> _logger) : IDeleteContributorService
 {

@@ -28,8 +28,8 @@ public class CreateFloorPlanHandler(
 
     // Validate BayConfigurationId and DefaultSettings
     var validationResult = await _floorPlanService.ValidateBayConfigurationIdAndDefaultSettingsAsync(
-      request.FloorPlans, 
-      request.WarehouseId, 
+      request.FloorPlans,
+      request.WarehouseId,
       cancellationToken);
 
     if (!validationResult.IsSuccess) return validationResult;

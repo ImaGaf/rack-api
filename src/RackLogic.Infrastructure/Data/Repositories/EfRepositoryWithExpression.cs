@@ -78,21 +78,21 @@ public class EfRepositoryWithExpression<T> : EfRepository<T>, IRepositoryWithExp
 
   public async Task SaveContextAsync(CancellationToken cancellationToken = default)
   {
-      await _dbContext.SaveChangesAsync(cancellationToken);
+    await _dbContext.SaveChangesAsync(cancellationToken);
   }
 
   public async Task SaveEntityAsync(T entity, CancellationToken cancellationToken = default)
   {
-      _dbContext.Attach(entity);
-      _dbContext.Entry(entity).State = EntityState.Added; 
-      await _dbContext.SaveChangesAsync(cancellationToken);
+    _dbContext.Attach(entity);
+    _dbContext.Entry(entity).State = EntityState.Added;
+    await _dbContext.SaveChangesAsync(cancellationToken);
   }
 
   public async Task UpdateToContextAsync(T entity, bool autoSave = false, CancellationToken cancellationToken = default)
   {
-    _dbContext.Set<T>().Update(entity); 
+    _dbContext.Set<T>().Update(entity);
 
-    if (autoSave) 
+    if (autoSave)
     {
       await _dbContext.SaveChangesAsync(cancellationToken);
     }

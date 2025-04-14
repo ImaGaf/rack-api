@@ -10,7 +10,7 @@ public class InspectionFloorPlanItemHandler(
 {
   public async Task<Result<PagedDataDTO<InspectionFloorPlanItemDto>>> Handle(InspectionFloorPlanItemQuery request, CancellationToken cancellationToken)
   {
-    var items = await _floorPlanItemService.GetListInspectionItem(request);
+    var items = await _floorPlanItemService.GetListInspectionItemAsync(request);
 
     return Result.Success(items);
   }

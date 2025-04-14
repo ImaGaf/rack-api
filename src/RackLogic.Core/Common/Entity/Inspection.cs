@@ -5,7 +5,7 @@ namespace RackLogic.Core.Common.Entity;
 public class Inspection : BaseEntityCustom
 {
   public Guid FloorPlanItemId { get; set; }
-  public Guid AuthorisedPersonId { get; set; }
+  public Guid AuthorisePersonId { get; set; }
   public DateTime InspectionDate { get; set; }
   public DateTime NextInspectionDate { get; set; }
   public string? BayId { get; set; }
@@ -14,5 +14,4 @@ public class Inspection : BaseEntityCustom
   public bool IsConfirmAuthorization { get; set; }
   public virtual FloorPlanItem? FloorPlanItem { get; set; }
   public virtual ApplicationUser? AuthorisePerson { get; set; }
-  public virtual ICollection<DefectLog>? DefectLogs { get; set; }
 }
