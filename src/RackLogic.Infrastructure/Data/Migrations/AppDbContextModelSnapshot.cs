@@ -243,6 +243,9 @@ namespace RackLogic.Infrastructure.Data.Migrations
                     b.Property<int>("RowSpacerLevel")
                         .HasColumnType("int");
 
+                    b.Property<Guid>("SWLSignageId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<string>("SpliceKits")
                         .HasColumnType("nvarchar(max)");
 
@@ -1145,6 +1148,68 @@ namespace RackLogic.Infrastructure.Data.Migrations
                     b.ToTable("PurchaseRecords");
                 });
 
+            modelBuilder.Entity("RackLogic.Core.Common.Entity.SWLSignage", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("BayConfigurationId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<float?>("BulkPalletsLevelMaximumLoad")
+                        .HasColumnType("real");
+
+                    b.Property<int?>("BulkPalletsNumberOfLevels")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("CreationTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid?>("CreatorId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("DeleterId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("DeletionTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<float?>("FirstBeamLevelMeasurementFGL")
+                        .HasColumnType("real");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime?>("LastModificationTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid?>("LastModifierId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<float?>("PalletWeight")
+                        .HasColumnType("real");
+
+                    b.Property<float?>("SecondBeamLevelMeasurementFGL")
+                        .HasColumnType("real");
+
+                    b.Property<float?>("ShelvingLevelMaximumLoad")
+                        .HasColumnType("real");
+
+                    b.Property<int?>("ShelvingNumberOfLevel")
+                        .HasColumnType("int");
+
+                    b.Property<float?>("ToTalBayLoad")
+                        .HasColumnType("real");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("BayConfigurationId")
+                        .IsUnique();
+
+                    b.ToTable("SWLSignageEntries");
+                });
+
             modelBuilder.Entity("RackLogic.Core.Common.Entity.UserWarehouseRole", b =>
                 {
                     b.Property<Guid>("Id")
@@ -1785,6 +1850,17 @@ namespace RackLogic.Infrastructure.Data.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("RackLogic.Core.Common.Entity.SWLSignage", b =>
+                {
+                    b.HasOne("RackLogic.Core.Common.Entity.BayConfiguration", "BayConfiguration")
+                        .WithOne("SWLSignage")
+                        .HasForeignKey("RackLogic.Core.Common.Entity.SWLSignage", "BayConfigurationId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("BayConfiguration");
+                });
+
             modelBuilder.Entity("RackLogic.Core.Common.Entity.UserWarehouseRole", b =>
                 {
                     b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole<System.Guid>", "Role")
@@ -1899,6 +1975,8 @@ namespace RackLogic.Infrastructure.Data.Migrations
                     b.Navigation("Components");
 
                     b.Navigation("DefaultSettings");
+
+                    b.Navigation("SWLSignage");
                 });
 
             modelBuilder.Entity("RackLogic.Core.Common.Entity.DefectLog", b =>

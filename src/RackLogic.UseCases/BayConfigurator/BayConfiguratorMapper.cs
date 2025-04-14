@@ -3,10 +3,14 @@ using Ardalis.Specification;
 using RackLogic.Core.Common.Entity;
 using RackLogic.Core.Common.Enums;
 using RackLogic.UseCases.BayConfigurator.Create;
+using RackLogic.UseCases.BayConfigurator.GetSWL;
+using RackLogic.UseCases.BayConfigurator.UpdateSWL;
+using Riok.Mapperly.Abstractions;
 using Component = RackLogic.Core.Common.Entity.Component;
 
 namespace RackLogic.UseCases.BayConfigurator;
-public static class BayConfiguratorMapper
+[Mapper(RequiredMappingStrategy = RequiredMappingStrategy.None)]
+public static partial class BayConfiguratorMapper
 {
   public static BayConfiguration Mapping(this BayConfigurationCommand bay, Guid warehouseId)
   {
@@ -194,6 +198,39 @@ public static class BayConfiguratorMapper
       WarehouseId = warehouseId
     };
   }
+
+  public static SWLSignage Mapping(this SWLSignage signage, UpdateSWLCommand command)
+  {
+    signage.PalletWeight = command.PalletWeight ?? signage.PalletWeight;
+    signage.BulkPalletsNumberOfLevels = command.BulkPalletsNumberOfLevels ?? signage.BulkPalletsNumberOfLevels;
+    signage.BulkPalletsLevelMaximumLoad = command.BulkPalletsLevelMaximumLoad ?? signage.BulkPalletsLevelMaximumLoad;
+    signage.ShelvingNumberOfLevel = command.ShelvingNumberOfLevel ?? signage.ShelvingNumberOfLevel;
+    signage.ShelvingLevelMaximumLoad = command.ShelvingLevelMaximumLoad ?? signage.ShelvingLevelMaximumLoad;
+    signage.ToTalBayLoad = command.ToTalBayLoad ?? signage.ToTalBayLoad;
+    signage.FirstBeamLevelMeasurementFGL = command.FirstBeamLevelMeasurementFGL ?? signage.FirstBeamLevelMeasurementFGL;
+    signage.SecondBeamLevelMeasurementFGL = command.SecondBeamLevelMeasurementFGL ?? signage.SecondBeamLevelMeasurementFGL;
+
+    return signage;
+  }
+  public static partial SWLSignage ToEntity(this UpdateSWLCommand request);
+
+  public static partial SWLSignageDTO ToDto(SWLSignage signage);
+
+  public static SWLSignageDTO ToDto(this BayConfiguration? config)
+  {
+    var dto = ToDto(config?.SWLSignage ?? new SWLSignage());
+    MapFromBayConfiguration(config, dto);
+    return dto;
+  }
+
+  [MapProperty(nameof(BayConfiguration.InstallationDate), nameof(SWLSignageDTO.InstallationDate))]
+  [MapProperty(nameof(BayConfiguration.ASComplianceVersion), nameof(SWLSignageDTO.ASComplianceVersion))]
+  [MapProperty(nameof(BayConfiguration.Supplier), nameof(SWLSignageDTO.Supplier))]
+  [MapProperty(nameof(BayConfiguration.StructuralDesigner), nameof(SWLSignageDTO.StructuralDesigner))]
+  [MapProperty(nameof(BayConfiguration.ProjectRef), nameof(SWLSignageDTO.ProjectRef))]
+  [MapProperty(nameof(BayConfiguration.ToleranceGrade), nameof(SWLSignageDTO.ToleranceGrade))]
+  [MapProperty(nameof(BayConfiguration.Manufacturer.Name), nameof(SWLSignageDTO.Manufacturer))]
+  public static partial void MapFromBayConfiguration(BayConfiguration? config, SWLSignageDTO dto);
 
   private static ComponentDTO Mapping(this BayConfigurationLevels level)
   {
