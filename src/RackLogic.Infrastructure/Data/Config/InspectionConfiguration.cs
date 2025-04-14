@@ -8,6 +8,8 @@ public class InspectionConfiguration : IEntityTypeConfiguration<Inspection>
 {
   public void Configure(EntityTypeBuilder<Inspection> builder)
   {
+    builder.ToTable("Inspections");
+
     builder.HasOne(x => x.FloorPlanItem).WithOne(x => x.Inspection).HasForeignKey<Inspection>(x => x.FloorPlanItemId);
   }
 }

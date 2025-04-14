@@ -12,7 +12,7 @@ using RackLogic.Infrastructure.Data;
 namespace RackLogic.Infrastructure.Data.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20250410102745_Alter_Inspection_Table")]
+    [Migration("20250414023709_Alter_Inspection_Table")]
     partial class Alter_Inspection_Table
     {
         /// <inheritdoc />
@@ -476,7 +476,7 @@ namespace RackLogic.Infrastructure.Data.Migrations
 
                     b.HasIndex("RelatedComponentId");
 
-                    b.ToTable("DefectLog");
+                    b.ToTable("DefectLogs", (string)null);
                 });
 
             modelBuilder.Entity("RackLogic.Core.Common.Entity.DefectLogFile", b =>
@@ -525,7 +525,7 @@ namespace RackLogic.Infrastructure.Data.Migrations
 
                     b.HasIndex("DefectLogId");
 
-                    b.ToTable("DefectLogFile");
+                    b.ToTable("DefectLogFiles", (string)null);
                 });
 
             modelBuilder.Entity("RackLogic.Core.Common.Entity.DefectLogHistory", b =>
@@ -574,7 +574,7 @@ namespace RackLogic.Infrastructure.Data.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("DefectLogHistory");
+                    b.ToTable("DefectLogHistories", (string)null);
                 });
 
             modelBuilder.Entity("RackLogic.Core.Common.Entity.FloorPlan", b =>
@@ -855,7 +855,7 @@ namespace RackLogic.Infrastructure.Data.Migrations
                     b.HasIndex("FloorPlanItemId")
                         .IsUnique();
 
-                    b.ToTable("Inspection");
+                    b.ToTable("Inspections", (string)null);
                 });
 
             modelBuilder.Entity("RackLogic.Core.Common.Entity.InspectorProfile", b =>
@@ -1142,7 +1142,8 @@ namespace RackLogic.Infrastructure.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("UserId");
+                    b.HasIndex("UserId")
+                        .IsUnique();
 
                     b.ToTable("PurchaseRecords");
                 });
@@ -1427,6 +1428,8 @@ namespace RackLogic.Infrastructure.Data.Migrations
                         .IsUnique()
                         .HasDatabaseName("UserNameIndex")
                         .HasFilter("[NormalizedUserName] IS NOT NULL");
+
+                    b.HasIndex("ParentId");
 
                     b.ToTable("AspNetUsers", (string)null);
                 });
@@ -1777,8 +1780,8 @@ namespace RackLogic.Infrastructure.Data.Migrations
             modelBuilder.Entity("RackLogic.Core.Common.Entity.PurchaseRecord", b =>
                 {
                     b.HasOne("RackLogic.Core.UserAggregate.ApplicationUser", "User")
-                        .WithMany("Purchases")
-                        .HasForeignKey("UserId")
+                        .WithOne("Purchase")
+                        .HasForeignKey("RackLogic.Core.Common.Entity.PurchaseRecord", "UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -1871,6 +1874,16 @@ namespace RackLogic.Infrastructure.Data.Migrations
                     b.Navigation("PhoneNumber");
                 });
 
+            modelBuilder.Entity("RackLogic.Core.UserAggregate.ApplicationUser", b =>
+                {
+                    b.HasOne("RackLogic.Core.UserAggregate.ApplicationUser", "Parent")
+                        .WithMany("Children")
+                        .HasForeignKey("ParentId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.Navigation("Parent");
+                });
+
             modelBuilder.Entity("RackLogic.Core.UserAggregate.UserOtp", b =>
                 {
                     b.HasOne("RackLogic.Core.UserAggregate.ApplicationUser", "User")
@@ -1938,13 +1951,15 @@ namespace RackLogic.Infrastructure.Data.Migrations
 
             modelBuilder.Entity("RackLogic.Core.UserAggregate.ApplicationUser", b =>
                 {
+                    b.Navigation("Children");
+
                     b.Navigation("InspectorProfile");
 
                     b.Navigation("Invitations");
 
                     b.Navigation("OwnedWarehouses");
 
-                    b.Navigation("Purchases");
+                    b.Navigation("Purchase");
 
                     b.Navigation("UserOtps");
                 });

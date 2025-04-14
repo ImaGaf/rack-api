@@ -12,20 +12,20 @@ namespace RackLogic.Infrastructure.Data.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropForeignKey(
-                name: "FK_Inspection_AspNetUsers_AuthorisePersonId",
-                table: "Inspection");
+                name: "FK_Inspections_AspNetUsers_AuthorisePersonId",
+                table: "Inspections");
 
             migrationBuilder.DropIndex(
-                name: "IX_Inspection_FloorPlanItemId",
-                table: "Inspection");
+                name: "IX_Inspections_FloorPlanItemId",
+                table: "Inspections");
 
             migrationBuilder.DropColumn(
                 name: "AuthorisedPersonId",
-                table: "Inspection");
+                table: "Inspections");
 
             migrationBuilder.AlterColumn<Guid>(
                 name: "AuthorisePersonId",
-                table: "Inspection",
+                table: "Inspections",
                 type: "uniqueidentifier",
                 nullable: false,
                 defaultValue: new Guid("00000000-0000-0000-0000-000000000000"),
@@ -41,14 +41,14 @@ namespace RackLogic.Infrastructure.Data.Migrations
                 defaultValue: new Guid("00000000-0000-0000-0000-000000000000"));
 
             migrationBuilder.CreateIndex(
-                name: "IX_Inspection_FloorPlanItemId",
-                table: "Inspection",
+                name: "IX_Inspections_FloorPlanItemId",
+                table: "Inspections",
                 column: "FloorPlanItemId",
                 unique: true);
 
             migrationBuilder.AddForeignKey(
-                name: "FK_Inspection_AspNetUsers_AuthorisePersonId",
-                table: "Inspection",
+                name: "FK_Inspections_AspNetUsers_AuthorisePersonId",
+                table: "Inspections",
                 column: "AuthorisePersonId",
                 principalTable: "AspNetUsers",
                 principalColumn: "Id",
@@ -59,12 +59,12 @@ namespace RackLogic.Infrastructure.Data.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropForeignKey(
-                name: "FK_Inspection_AspNetUsers_AuthorisePersonId",
-                table: "Inspection");
+                name: "FK_Inspections_AspNetUsers_AuthorisePersonId",
+                table: "Inspections");
 
             migrationBuilder.DropIndex(
-                name: "IX_Inspection_FloorPlanItemId",
-                table: "Inspection");
+                name: "IX_Inspections_FloorPlanItemId",
+                table: "Inspections");
 
             migrationBuilder.DropColumn(
                 name: "InspectionId",
@@ -72,7 +72,7 @@ namespace RackLogic.Infrastructure.Data.Migrations
 
             migrationBuilder.AlterColumn<Guid>(
                 name: "AuthorisePersonId",
-                table: "Inspection",
+                table: "Inspections",
                 type: "uniqueidentifier",
                 nullable: true,
                 oldClrType: typeof(Guid),
@@ -80,19 +80,19 @@ namespace RackLogic.Infrastructure.Data.Migrations
 
             migrationBuilder.AddColumn<Guid>(
                 name: "AuthorisedPersonId",
-                table: "Inspection",
+                table: "Inspections",
                 type: "uniqueidentifier",
                 nullable: false,
                 defaultValue: new Guid("00000000-0000-0000-0000-000000000000"));
 
             migrationBuilder.CreateIndex(
-                name: "IX_Inspection_FloorPlanItemId",
-                table: "Inspection",
+                name: "IX_Inspections_FloorPlanItemId",
+                table: "Inspections",
                 column: "FloorPlanItemId");
 
             migrationBuilder.AddForeignKey(
-                name: "FK_Inspection_AspNetUsers_AuthorisePersonId",
-                table: "Inspection",
+                name: "FK_Inspections_AspNetUsers_AuthorisePersonId",
+                table: "Inspections",
                 column: "AuthorisePersonId",
                 principalTable: "AspNetUsers",
                 principalColumn: "Id");

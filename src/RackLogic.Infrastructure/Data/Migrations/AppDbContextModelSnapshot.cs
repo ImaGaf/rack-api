@@ -852,7 +852,7 @@ namespace RackLogic.Infrastructure.Data.Migrations
                     b.HasIndex("FloorPlanItemId")
                         .IsUnique();
 
-                    b.ToTable("Inspections");
+                    b.ToTable("Inspections", (string)null);
                 });
 
             modelBuilder.Entity("RackLogic.Core.Common.Entity.InspectorProfile", b =>
