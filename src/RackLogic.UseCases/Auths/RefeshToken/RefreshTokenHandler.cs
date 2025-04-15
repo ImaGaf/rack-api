@@ -28,7 +28,7 @@ public class RefreshTokenHandler(
       return Result.Invalid(new ValidationError("Refresh token expired."));
     }
 
-    var token = await _userService.GenerateUserTokenAsync(user);
+    var token = await _userService.GenerateUserTokenAsync(user, request.warehouseId);
     return new RefreshTokenDTO() { AccessToken = token.AccessToken, RefreshToken = token.RefreshToken , ExpiresIn = token.ExpiresIn};
   }
 }
