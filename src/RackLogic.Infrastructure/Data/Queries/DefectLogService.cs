@@ -1,6 +1,13 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Ardalis.Result;
+using Ardalis.Specification;
+using Microsoft.EntityFrameworkCore;
 using RackLogic.Core.Common.Entity;
+using RackLogic.Core.Common.Enums;
+using RackLogic.UseCases.Common.Constants;
 using RackLogic.UseCases.DefectLogs;
+using RackLogic.UseCases.DefectLogs.Count;
+using RackLogic.UseCases.DefectLogs.List;
+using RackLogic.UseCases.Warehouses;
 
 namespace RackLogic.Infrastructure.Data.Queries;
 
@@ -8,6 +15,30 @@ public class DefectLogService(
   AppDbContext dbContext
 ) : IDefectLogService
 {
+  public async Task<CountDefectLogDto> CountAsync(CountDefectLogQuery request, CancellationToken cancellationToken)
+  {
+    var defectLogs = await dbContext.DefectLogs.Where(x => x.FloorPlanItem!.FloorPlan!.WarehouseId == request.WareHouseId)
+                                               .ToListAsync(cancellationToken);
+
+    var priorities = defectLogs.GroupBy(x => x.DefectPriority).Select(x => new PriorityDto
+    {
+      Type = x.Key.ToString(),
+      Count = x.Count()
+    }).ToList();
+
+    var statues = defectLogs.GroupBy(x => x.DefectStatus).Select(x => new StatusDto
+    {
+      Type = x.Key.ToString(),
+      Count = x.Count()
+    }).ToList();
+
+    return new CountDefectLogDto
+    {
+      Priorities = priorities,
+      Statuses = statues
+    };
+  }
+
   public async Task<DefectLog?> GetByIdAsync(Guid id, CancellationToken cancellationToken)
   {
     var defectLog = await dbContext.DefectLogs
@@ -25,5 +56,48 @@ public class DefectLogService(
     defectLog!.DefectLogHistories = histories;
 
     return defectLog;
+  }
+
+  public async Task<PagedDataDTO<DefectLogDto>> GetListAsync(GetListDefectLogQuery request, CancellationToken cancellationToken)
+  {
+    var query = dbContext.DefectLogs
+      .Include(x => x.DefectLogFiles)
+      .Include(x => x.Component!)
+        .ThenInclude(c => c.BayConfiguration!)
+          .ThenInclude(b => b.Manufacturer)
+      .Include(x => x.RelatedComponent)
+      .Include(x => x.FloorPlanItem)
+      .Where(x => x.FloorPlanItem!.FloorPlan!.WarehouseId == request.WarehouseId)
+      .Where(x => request.AssetId != null ? x.FloorPlanItem!.FloorPlanId == request.AssetId : true)
+      .Where(x => request.Rack != null ? x.FloorPlanItem!.Rack == request.Rack : true)
+      .Where(x => request.Bay != null ? x.FloorPlanItem!.Bay == request.Bay : true);
+
+    switch (request.SortBy)
+    {
+      case SortBy.Newest:
+        query = query.OrderBy(x => x.CreationTime);
+        break;
+      case SortBy.Oldest:
+        query = query.OrderByDescending(x => x.CreationTime);
+        break;
+      case SortBy.HighToLow:
+        query = query.OrderBy(x => x.DefectPriority);
+        break;
+      case SortBy.LowToHigh:
+        query = query.OrderByDescending(x => x.DefectPriority);
+        break;
+    }
+
+    var result = await query.Skip((request.pageNumber - 1) * request.pageSize).Take(request.pageSize).ToListAsync();
+
+    var totalItem = await query.CountAsync();
+
+    return new PagedDataDTO<DefectLogDto>
+    {
+      TotalRecords = totalItem,
+      PageNumber = request.pageNumber <= 0 ? PaginationDefaultValue.PageNumber : request.pageNumber,
+      PageSize = request.pageSize <= 0 ? PaginationDefaultValue.PageSize : request.pageSize,
+      DataDTO = result.Select(x => x.ToDto()).ToList()
+    };
   }
 }
