@@ -3,6 +3,5 @@
 namespace RackLogic.UseCases.Auths.RefeshToken;
 public record RefreshTokenCommand (
   string AccessToken,
-  string RefreshToken,
-  Guid? warehouseId)
+  string RefreshToken)
   : Ardalis.SharedKernel.ICommand<Result<RefreshTokenDTO>>;

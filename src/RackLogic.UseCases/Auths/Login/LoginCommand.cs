@@ -4,6 +4,5 @@ namespace RackLogic.UseCases.Auths.Login;
 public record LoginCommand(
   string Email,
   string Password,
-  bool isRememberMe,
-  Guid? WarehouseId)
+  bool isRememberMe)
   : Ardalis.SharedKernel.ICommand<Result<LoginDTO>>;

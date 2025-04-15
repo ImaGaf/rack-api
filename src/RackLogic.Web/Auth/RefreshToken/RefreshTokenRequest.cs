@@ -8,6 +8,4 @@ public class RefreshTokenRequest
   public string? AccessToken { get; set; }
   [Required]
   public string? RefreshToken { get; set; }
-
-  public Guid? WarehouseId { get; set; }
 }

@@ -32,7 +32,7 @@ public class LoginHandler(
     var result = await _signInManager.CheckPasswordSignInAsync(user, request.Password, true);
     if (result.Succeeded)
     {
-      var token = await _userService.GenerateUserTokenAsync(user, request.WarehouseId);
+      var token = await _userService.GenerateUserTokenAsync(user);
       return token;
     }
 

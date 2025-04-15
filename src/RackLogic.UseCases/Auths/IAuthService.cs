@@ -5,7 +5,7 @@ using RackLogic.UseCases.Auths.Login;
 namespace RackLogic.UseCases.Auths;
 public interface IAuthService
 {
-  Task<LoginDTO> GenerateUserTokenAsync(ApplicationUser user, Guid? warehouseId);
+  Task<LoginDTO> GenerateUserTokenAsync(ApplicationUser user, Guid? warehouseId = null);
   Task<ClaimsPrincipal> GetPrincipalFromExpiredTokenAsync(string token); 
   Task UpdateSecurityStampByUserNameAsync(string userName);
 }
