@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using RackLogic.Core.Common.Constants;
 using RackLogic.UseCases.Brands;
 using RackLogic.UseCases.Warehouses;
+using RackLogic.UseCases.Warehouses.SearchWarehouse;
 
 namespace RackLogic.Infrastructure.Data.Queries;
 public class UserWarehouseService(
@@ -180,5 +181,37 @@ public class UserWarehouseService(
     }
 
     return new OEMBrandDTO { Id = brand.Id, Name = brand.Name, Path = brand.Path, Code = brand.Code };
+  }
+
+  public async Task<PagedDataDTO<WarehouseDto>> SearchWarehouseByUserIdAsync(SearchWarehouseQuery request, Guid? userId, CancellationToken cancellationToken)
+  {
+    var query = from userWarehouseRole in _context.UserWarehouseRoles 
+      where userWarehouseRole.UserId == userId
+      join warehouse in _context.Warehouses
+        on userWarehouseRole.WarehouseId equals warehouse.Id
+      select warehouse;
+
+    if (request.Search != null)
+    {
+      var search = request.Search.Trim().ToLower();
+      query = query.Where(w => w.CompanyName.ToLower().Contains(search) || 
+                               w.SiteAddress.ToLower().Contains(search));
+    }
+
+    var totalItem = await query.CountAsync(cancellationToken);
+
+    var result = await query
+      .Skip((request.PageNumber - 1) * request.PageSize)
+      .Take(request.PageSize)
+      .Select(x => x.ToDto())
+      .ToListAsync(cancellationToken);
+
+    return new PagedDataDTO<WarehouseDto>
+    {
+      TotalRecords = totalItem,
+      PageNumber = request.PageNumber,
+      PageSize = request.PageSize,
+      DataDTO = result
+    };
   }
 }

@@ -1,4 +1,5 @@
 ﻿using RackLogic.UseCases.Brands;
+using RackLogic.UseCases.Warehouses.SearchWarehouse;
 
 namespace RackLogic.UseCases.Warehouses;
 public interface IUserWarehouseService
@@ -13,4 +14,5 @@ public interface IUserWarehouseService
   Task<bool> CheckPermissionUserRequestAsync(Guid userId, Guid warehouseId);
   Task<WarehouseProfileDTO?> GetWarehouseByIdAsync(Guid warehouseId);
   Task<OEMBrandDTO> GetBrandByComponentAsync(Guid componentId);
+  Task<PagedDataDTO<WarehouseDto>> SearchWarehouseByUserIdAsync(SearchWarehouseQuery request, Guid? userId, CancellationToken cancellationToken = default);
 }
