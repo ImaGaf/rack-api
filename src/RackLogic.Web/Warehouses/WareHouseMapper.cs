@@ -15,6 +15,8 @@ using Riok.Mapperly.Abstractions;
 using RackLogic.Web.Brands.GetListProductsBrand;
 using RackLogic.Web.BayConfigurator.CreateProduct;
 using RackLogic.UseCases.BayConfigurator.CreateCustomComponent;
+using RackLogic.UseCases.Warehouses.SearchWarehouse;
+using RackLogic.Web.Warehouses.SearchWarehouse;
 
 namespace RackLogic.Web.Warehouses;
 
@@ -32,4 +34,5 @@ public static partial class WareHouseMapper
   public static partial CreateCustomComponentCommand ToCreateProductCommand(this CreateCustomComponentRequest request);
   public static partial GetProductsByCategoryResponse ToCreateProductResponse(this ProductDTO request);
   public static partial GetWarehouseByIdQuery ToGetWarehouseByIdQuery(this GetWarehouseByIdRequest request);
+  public static partial SearchWarehouseQuery ToQuery(this SearchWarehouseRequest request);
 }

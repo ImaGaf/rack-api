@@ -60,11 +60,17 @@ public class FloorPlanItemService : IFloorPlanItemService
     var item = Guard.Against.Null(
       await _context.FloorPlanItems
         .Include(f => f.BayConfiguration)
+        .Include(f => f.FloorPlan)
         .FirstOrDefaultAsync(f => f.Id == floorPlanItemId)
       );
 
-    item.DueDate = DateTime.UtcNow.AddDays(item.BayConfiguration!.InterimInterval);
+    var warehouseId = item.FloorPlan!.WarehouseId;
+    var warehouse = Guard.Against.Null(await _context.Warehouses.FirstOrDefaultAsync(w => w.Id == warehouseId));
 
+    item.DueDate = DateTime.UtcNow.AddDays(item.BayConfiguration!.InterimInterval);
+    warehouse.InspectionDueDate = DateTime.UtcNow.AddYears(1);
+
+    _context.Warehouses.Update(warehouse);
     _context.FloorPlanItems.Update(item);
 
     await _context.SaveChangesAsync();

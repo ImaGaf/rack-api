@@ -1,17 +1,16 @@
-﻿using System.Security.Claims;
-using Ardalis.Result;
+﻿using Ardalis.Result;
 using Ardalis.SharedKernel;
+using RackLogic.UseCases.Users;
 
 namespace RackLogic.UseCases.Warehouses.GetListWarehouses;
-public class GetListWarehousesHandler(IUserWarehouseService _userWarehouse) : IQueryHandler<GetListWarehousesQuery, Result<List<WarehousesDTO>>>
+public class GetListWarehousesHandler(
+  IUserWarehouseService _userWarehouse,
+  IUser _user
+  ) : IQueryHandler<GetListWarehousesQuery, Result<List<WarehousesDTO>>>
 {
   public async Task<Result<List<WarehousesDTO>>> Handle(GetListWarehousesQuery request, CancellationToken cancellationToken)
   {
-    var userIdClaim = request.User.FindFirst(ClaimTypes.NameIdentifier);
-    if (userIdClaim == null) return Result.Invalid(new ValidationError("User not found."));
-    var userId = Guid.Parse(userIdClaim.Value);
-
-    var Warehouses = await _userWarehouse.GetWarehousesByUserIdAsync(userId);
+    var Warehouses = await _userWarehouse.GetWarehousesByUserIdAsync(_user.Id!.Value);
     if (Warehouses == null)
     {
       return Result.Success(new List<WarehousesDTO>());

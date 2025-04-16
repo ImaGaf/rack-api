@@ -14,6 +14,7 @@ public class Warehouse : BaseEntityCustom
   public required string OwnerLastName { get; set; }
   public required string OwnerEmailAddress { get; set; }
   public required string OwnerPhoneNumber { get; set; }
+  public DateTime? InspectionDueDate { get; set; }
   public virtual ApplicationUser? User { get; set; }
   public virtual required ICollection<FloorPlan> FloorPlans { get; set; }
   public virtual required ICollection<UserWarehouseRole> UserWarehouseRoles { get; set; }

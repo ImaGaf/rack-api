@@ -21,7 +21,7 @@ public class GetListWarehouses(IMediator _mediator) : EndpointWithoutRequest<Api
   public override async Task HandleAsync(CancellationToken ct)
   {
 
-    var result = await _mediator.Send(new GetListWarehousesQuery(User), ct);
+    var result = await _mediator.Send(new GetListWarehousesQuery(), ct);
 
     if (result.IsSuccess)
     {

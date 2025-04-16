@@ -1333,6 +1333,9 @@ namespace RackLogic.Infrastructure.Data.Migrations
                     b.Property<string>("FileImageUrl")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<DateTime?>("InspectionDueDate")
+                        .HasColumnType("datetime2");
+
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
 
