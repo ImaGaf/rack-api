@@ -19,7 +19,7 @@ public class GetWarehouseFinalUse(IMediator _mediator) : EndpointWithoutRequest<
   }
   public override async Task HandleAsync(CancellationToken ct)
   {
-    var result = await _mediator.Send(new GetWarehouseFinalUseQuery(User), ct);
+    var result = await _mediator.Send(new GetWarehouseFinalUseQuery(), ct);
 
     if (result.IsSuccess)
     {

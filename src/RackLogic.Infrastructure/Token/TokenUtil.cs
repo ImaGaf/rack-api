@@ -1,5 +1,4 @@
 ﻿using System.IdentityModel.Tokens.Jwt;
-using System.Runtime.CompilerServices;
 using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
@@ -14,27 +13,19 @@ using RackLogic.Infrastructure.Configuration;
 namespace RackLogic.Infrastructure.Token;
 public static class TokenUtil
 {
-  public static string GetToken(TokenSettings appSettings, ApplicationUser user, List<Claim> roleClaims)
+  public static string GetToken(TokenSettings appSettings, ApplicationUser user, List<Claim> userClaims)
   {
     var secretKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(appSettings.SecretKey));
     var signInCredentials = new SigningCredentials(secretKey, SecurityAlgorithms.HmacSha256);
 
-    var userClaims = new List<Claim>
-      {
-          new(ClaimTypes.NameIdentifier, user.Id.ToString()),
-          new ("UserName", user.UserName??""),
-          new (ClaimTypes.Name, user.FirstName??""),
-          new Claim(ClaimTypes.Role, user.RegisteredRole ?? "")
-      };
-    userClaims.AddRange(roleClaims);
-    var tokeOptions = new JwtSecurityToken(
+    var tokenOptions = new JwtSecurityToken(
         issuer: appSettings.Issuer,
         audience: appSettings.Audience,
         claims: userClaims,
         expires: DateTime.UtcNow.AddSeconds(appSettings.TokenExpireSeconds),
         signingCredentials: signInCredentials
     );
-    var tokenString = new JwtSecurityTokenHandler().WriteToken(tokeOptions);
+    var tokenString = new JwtSecurityTokenHandler().WriteToken(tokenOptions);
     return tokenString;
   }
 

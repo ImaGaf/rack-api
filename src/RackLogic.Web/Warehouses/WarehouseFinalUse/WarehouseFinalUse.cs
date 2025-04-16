@@ -3,6 +3,7 @@ using FastEndpoints;
 using MediatR;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
+using RackLogic.UseCases.Auths.Login;
 using RackLogic.UseCases.Warehouses.WarehouseFinalUse;
 using RackLogic.Web.Exceptions;
 using RackLogic.Web.Models;
@@ -11,7 +12,7 @@ namespace RackLogic.Web.Warehouses.WarehouseFinalUse;
 
 [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
 
-public class WarehouseFinalUse(IMediator _mediator) : Endpoint<WarehouseFinalUseRequest, ApiResponse<bool>>
+public class WarehouseFinalUse(IMediator _mediator) : Endpoint<WarehouseFinalUseRequest, ApiResponse<LoginDTO>>
 {
   public override void Configure()
   {
@@ -30,11 +31,11 @@ public class WarehouseFinalUse(IMediator _mediator) : Endpoint<WarehouseFinalUse
       throw new InvalidException(errors);
     }
 
-    var result = await _mediator.Send(new WarehouseFinalUseCommand(User, req.WarehouseId), ct);
+    var result = await _mediator.Send(new WarehouseFinalUseCommand(req.WarehouseId), ct);
 
     if (result.IsSuccess)
     {
-      Response = new ApiResponse<bool>(result.Value);
+      Response = new ApiResponse<LoginDTO>(result.Value);
       return;
     }
 

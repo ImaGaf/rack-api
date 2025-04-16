@@ -1,21 +1,28 @@
-﻿using System.Security.Claims;
-using Ardalis.Result;
+﻿using Ardalis.Result;
 using Ardalis.SharedKernel;
+using Microsoft.AspNetCore.Identity;
 using RackLogic.Core.Common.Entity;
 using RackLogic.Core.Interfaces;
+using RackLogic.Core.UserAggregate;
+using RackLogic.UseCases.Auths;
+using RackLogic.UseCases.Auths.Login;
+using RackLogic.UseCases.Users;
 
 namespace RackLogic.UseCases.Warehouses.WarehouseFinalUse;
 public class WarehouseFinalUseHandler(
   IRepositoryWithExpression<WarehouseFinalUses> _warehouseFinalUseRepository,
-  IRepositoryWithExpression<UserWarehouseRole> _userWarehouseRoleRepository)
-  : ICommandHandler<WarehouseFinalUseCommand, Result<bool>>
+  IRepositoryWithExpression<UserWarehouseRole> _userWarehouseRoleRepository,
+  UserManager<ApplicationUser> _userManager,
+  IAuthService _authService,
+  IUser _user)
+  : ICommandHandler<WarehouseFinalUseCommand, Result<LoginDTO>>
 {
-  public async Task<Result<bool>> Handle(WarehouseFinalUseCommand request, CancellationToken cancellationToken)
+  public async Task<Result<LoginDTO>> Handle(WarehouseFinalUseCommand request, CancellationToken cancellationToken)
   {
-    if (!request.User.Identity?.IsAuthenticated ?? false) return Result.Unauthorized();
-    var userIdClaim = request.User.FindFirst(ClaimTypes.NameIdentifier);
+    if (!_user.IsAuthenticated!.Value) return Result.Unauthorized();
+    var userIdClaim = _user.Id;
     if (userIdClaim == null) return Result.Invalid(new ValidationError("User not found."));
-    var userId = Guid.Parse(userIdClaim.Value);
+    var userId = _user.Id!.Value;
 
     // Check if user has permission to work in this warehouse
     var userHasAccess = await _userWarehouseRoleRepository
@@ -36,6 +43,20 @@ public class WarehouseFinalUseHandler(
       WarehouseId = request.WarehouseId
     };
     await _warehouseFinalUseRepository.AddAsync(newWarehouseFinalUse, cancellationToken);
-    return Result.Success(true);
+
+    var user = await _userManager.FindByIdAsync(userId.ToString());
+    if (user == null)
+      return Result.Invalid(new ValidationError("User record not found."));
+
+    var loginDto = await _authService.GenerateUserTokenAsync(user, request.WarehouseId);
+
+    var result = new LoginDTO()
+    {
+      AccessToken = loginDto.AccessToken,
+      RefreshToken = loginDto.RefreshToken,
+      ExpiresIn = loginDto.ExpiresIn
+    };
+
+    return Result.Success(result);
   }
 }

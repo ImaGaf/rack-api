@@ -156,7 +156,8 @@ app.UseMiddleware<GlobalExceptionMiddleware>();
 using (var scope = app.Services.CreateScope())
 {
   var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole<Guid>>>();
-  await AppDbContextSeed.SeedRolesAsync(roleManager);
+  var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+  await AppDbContextSeed.SeedRolesAsync(roleManager, dbContext);
 }
 
 app.Run();

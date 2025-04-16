@@ -10,7 +10,7 @@ namespace RackLogic.Web.Auth;
 public static partial class AuthMapper
 {
   public static partial LoginCommand ToLoginCommand(this LoginRequest request);
-  public static partial LoginResponse ToLogiResponse(this LoginDTO request);
+  public static partial LoginResponse ToLoginResponse(this LoginDTO request);
 
   public static partial RefreshTokenCommand ToRefreshTokenCommand(this RefreshTokenRequest request);
   public static partial RefreshTokenResponse ToRefreshTokenResponse(this RefreshTokenDTO request);

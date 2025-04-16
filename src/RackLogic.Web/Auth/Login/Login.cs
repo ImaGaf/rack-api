@@ -30,7 +30,7 @@ public class Login(IMediator _mediator) : Endpoint<LoginRequest, ApiResponse<Log
 
     if (result.IsSuccess)
     {
-      Response = new ApiResponse<LoginResponse>(AuthMapper.ToLogiResponse(result.Value));
+      Response = new ApiResponse<LoginResponse>(AuthMapper.ToLoginResponse(result.Value));
       return;
     }
 

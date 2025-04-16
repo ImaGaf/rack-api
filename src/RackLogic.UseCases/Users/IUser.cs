@@ -3,4 +3,5 @@
 public interface IUser
 {
   public Guid? Id { get; }
+  public bool? IsAuthenticated { get; }
 }

@@ -37,6 +37,7 @@ public class AppDbContext(DbContextOptions<AppDbContext> options, IUser user,
   public DbSet<DefectLog> DefectLogs => Set<DefectLog>();
   public DbSet<DefectLogHistory> DefectLogHistories => Set<DefectLogHistory>();
   public DbSet<SWLSignage> SWLSignageEntries => Set<SWLSignage>();
+  public DbSet<RolePermission> RolePermissions => Set<RolePermission>();
 
   protected override void OnModelCreating(ModelBuilder modelBuilder)
   {

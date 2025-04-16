@@ -1,9 +1,6 @@
-﻿using System.Security.Claims;
-using Ardalis.Result;
+﻿using Ardalis.Result;
 using Ardalis.SharedKernel;
+using RackLogic.UseCases.Auths.Login;
 
 namespace RackLogic.UseCases.Warehouses.WarehouseFinalUse;
-public record WarehouseFinalUseCommand(
-  ClaimsPrincipal User,
-  Guid WarehouseId)
-  : ICommand<Result<bool>>;
+public record WarehouseFinalUseCommand(Guid WarehouseId) : ICommand<Result<LoginDTO>>;
