@@ -24,7 +24,7 @@ public class BayConfigurationDTO
   public int Level { get; set; }
   public int Pallets { get; set; }
   public bool HasProtector { get; set; }
-  public object? SpliceKits { get; set; }
+  public ComponentDTO? SpliceKits { get; set; }
   public bool? IsCustomUpRight { get; set; }
   public ComponentDTO? Beam { get; set; }
   public List<int?>? BeamLevels { get; set; }

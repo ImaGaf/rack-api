@@ -6,5 +6,6 @@ public enum ComponentType
   BraceHorizontal,
   BraceDiagonal,
   RowSpacer,
-  Accessories
+  Accessories,
+  Splice,
 }

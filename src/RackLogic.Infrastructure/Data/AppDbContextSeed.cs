@@ -46,7 +46,7 @@ public class AppDbContextSeed
           }
         },
         {
-            "client-manager", new List<string>
+            "manager", new List<string>
             {
                 PermissionConstant.Account.FullThemselves,
                 PermissionConstant.UserRole.CreateEditor,
@@ -63,7 +63,7 @@ public class AppDbContextSeed
             }
         },
         {
-            "client-editor", new List<string>
+            "editor", new List<string>
             {
                 PermissionConstant.DefectLog.Create,
                 PermissionConstant.DefectLog.View,

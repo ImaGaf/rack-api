@@ -28,7 +28,7 @@ public class EditRoleUser(IMediator _mediator) : Endpoint<EditRoleUserRequest, A
       var errors = validationResult.Errors.Select(e => e.ErrorMessage).ToList();
       throw new InvalidException(errors);
     }
-    var result = await _mediator.Send(new EditRoleUserCommand(User, req.UserId, req.WarehouseId, req.Role), ct);
+    var result = await _mediator.Send(new EditRoleUserCommand(req.UserId, req.WarehouseId, req.Role), ct);
 
     if (result.IsSuccess)
     {

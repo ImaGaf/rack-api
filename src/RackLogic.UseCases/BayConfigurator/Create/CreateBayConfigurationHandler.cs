@@ -54,6 +54,11 @@ public class CreateBayConfigurationHandler(
       bayConfiguration.Components.AddRange(request.BayConfiguration.Accessories.Select(c => c.Mapping(bayConfiguration.Id)));
     }
 
+    if (request.BayConfiguration.SpliceKits != null)
+    {
+      bayConfiguration.Components.Add(request.BayConfiguration.SpliceKits.Mapping(bayConfiguration.Id));
+    }
+
     // Add Levels to BayConfiguration
     bayConfiguration.BayConfigurationLevels.AddRange(
         request.BayConfiguration.BeamLevels.Select(l => l.Mapping(ComponentType.Beam, bayConfiguration.Id))
