@@ -31,7 +31,7 @@ public record BayConfigurationUpdateCommand(
     int Level,
     int Pallets,
     bool HasProtector,
-    object? SpliceKits,
+    ComponentCommand? SpliceKits,
     bool? IsCustomUpRight,
     ComponentCommand Beam,
     List<int> BeamLevels,

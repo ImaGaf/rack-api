@@ -37,7 +37,6 @@ public static partial class BayConfiguratorMapper
       Level = bay.Level,
       Pallets = bay.Pallets,
       HasProtector = bay.HasProtector,
-      SpliceKits = bay.SpliceKits?.ToString(),
       IsCustomUpRight = bay.IsCustomUpRight,
       IsCustomBeam = bay.IsCustomBeam,
       IsCustomBracingHorizontal = bay.IsCustomBracingHorizontal,
@@ -122,7 +121,6 @@ public static partial class BayConfiguratorMapper
       Level = bayConfiguration.Level,
       Pallets = bayConfiguration.Pallets,
       HasProtector = bayConfiguration.HasProtector,
-      SpliceKits = bayConfiguration.SpliceKits,
       IsCustomUpRight = bayConfiguration.IsCustomUpRight,
       IsCustomBeam = bayConfiguration.IsCustomBeam,
       IsCustomBracingHorizontal = bayConfiguration.IsCustomBracingHorizontal,
@@ -138,6 +136,7 @@ public static partial class BayConfiguratorMapper
       BracingHorizontal = bayConfiguration.Components.FirstOrDefault(c => c.ComponentType == ComponentType.BraceHorizontal)?.Mapping(),
       BracingDiagonal = bayConfiguration.Components.FirstOrDefault(c => c.ComponentType == ComponentType.BraceDiagonal)?.Mapping(),
       RowSpacer = bayConfiguration.Components.FirstOrDefault(c => c.ComponentType == ComponentType.RowSpacer)?.Mapping(),
+      SpliceKits = bayConfiguration.Components.FirstOrDefault(c => c.ComponentType == ComponentType.Splice)?.Mapping(),
 
       BeamLevels = bayConfiguration.BayConfigurationLevels
                 .Where(l => l.LevelType == ComponentType.Beam)

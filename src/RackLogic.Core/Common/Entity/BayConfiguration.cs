@@ -42,7 +42,6 @@ public class BayConfiguration : EntityBase<Guid>, IAggregateRoot
   public int Level { get; set; }
   public int Pallets { get; set; }
   public bool HasProtector { get; set; }
-  public string? SpliceKits { get; set; }
   public bool? IsCustomUpRight { get; set; }
   public bool? IsCustomBeam { get; set; }
   public bool? IsCustomBracingHorizontal { get; set; }

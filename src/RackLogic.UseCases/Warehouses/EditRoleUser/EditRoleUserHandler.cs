@@ -6,9 +6,11 @@ using RackLogic.Core.Common.Constants;
 using RackLogic.Core.Common.Entity;
 using RackLogic.Core.Interfaces;
 using RackLogic.Core.UserAggregate;
+using RackLogic.UseCases.Users;
 
 namespace RackLogic.UseCases.Warehouses.EditRoleUser;
 public class EditRoleUserHandler(
+  IUser _user,
   IRepositoryWithExpression<Warehouse> _warehouseRepository,
   IRepositoryWithExpression<UserWarehouseRole> _userWarehouseRoleRepository,
   UserManager<ApplicationUser> _userManager,
@@ -17,12 +19,9 @@ public class EditRoleUserHandler(
 {
   public async Task<Result<bool>> Handle(EditRoleUserCommand request, CancellationToken cancellationToken)
   {
-    if (!request.User.Identity?.IsAuthenticated ?? false) return Result.Unauthorized();
+    if (_user.Id is null) return Result.Unauthorized();
 
-    var UserEditIdString = request.User.Claims.First(x => x.Type == ClaimTypes.NameIdentifier).Value;
-    var UserEditId = Guid.Parse(UserEditIdString);
-
-    if (!await CheckPermissionUserRequestAsync(UserEditId, request.WarehouseId)) return Result.Forbidden("User does not have editing permission!");
+    if (!await CheckPermissionUserRequestAsync(_user.Id, request.WarehouseId)) return Result.Forbidden("User does not have editing permission!");
 
     // Check role request in database
     var role = await _roleManager.FindByNameAsync(request.Role);
@@ -57,7 +56,7 @@ public class EditRoleUserHandler(
     return true;
   }
 
-  private async Task<bool> CheckPermissionUserRequestAsync(Guid userId, Guid warehouseId)
+  private async Task<bool> CheckPermissionUserRequestAsync(Guid? userId, Guid warehouseId)
   {
     var result = await _userWarehouseRoleRepository.FirstOrDefaultAsync(x => x.UserId == userId && x.WarehouseId == warehouseId);
     if (result == null) return false;
@@ -65,7 +64,7 @@ public class EditRoleUserHandler(
     var role = await _roleManager.FindByIdAsync(result.RoleId.ToString());
     if (role == null) return false;
 
-    if (role.Name != RoleConstant.Premises && role.Name != RoleConstant.Inspector) return false;
+    if (role.Name != RoleConstant.Premises && role.Name != RoleConstant.ClientManager) return false;
 
     return true;
   }

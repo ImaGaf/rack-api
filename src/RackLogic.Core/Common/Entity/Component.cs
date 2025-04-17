@@ -21,5 +21,7 @@ public class Component : EntityBase<Guid>, IAggregateRoot
   public int? LowerHeight { get; set; }
   public int? UpperHeight { get; set; }
   public bool? IsXBrace { get; set; }
+  public int? Kit { get; set; }
+  public string? ComponentKit { get; set; }
   public virtual BayConfiguration? BayConfiguration { get; set; }
 }

@@ -30,7 +30,7 @@ public record BayConfigurationCommand(
     int Level,
     int Pallets,
     bool HasProtector,
-    object? SpliceKits,
+    ComponentCommand? SpliceKits,
     bool? IsCustomUpRight,
     ComponentCommand Beam,
     List<int> BeamLevels,
@@ -66,7 +66,9 @@ public record ComponentCommand(
     string? Notes,
     int? LowerHeight,
     int? UpperHeight,
-    bool? IsXBrace
+    bool? IsXBrace,
+    int? Kit,
+    string? ComponentKit
 );
 
 public record ManufacturerCommand(
