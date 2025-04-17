@@ -70,7 +70,6 @@ public class UpdateBayConfigurationHandler(
     bayConfig.Level = request.Level;
     bayConfig.Pallets = request.Pallets;
     bayConfig.HasProtector = request.HasProtector;
-    bayConfig.SpliceKits = request.SpliceKits?.ToString();
     bayConfig.IsCustomUpRight = request.IsCustomUpRight;
     bayConfig.IsCustomBeam = request.IsCustomBeam;
     bayConfig.IsCustomBracingHorizontal = request.IsCustomBracingHorizontal;
@@ -88,6 +87,11 @@ public class UpdateBayConfigurationHandler(
     if (request.Accessories != null)
     {
       bayConfig.Components.AddRange(request.Accessories.Select(c => c.Mapping(bayConfig.Id)));
+    }
+
+    if (request.SpliceKits != null)
+    {
+      bayConfig.Components.Add(request.SpliceKits.Mapping(bayConfig.Id));
     }
 
     await _componentRepository.DeleteAsync(x => x.BayId == request.Id);

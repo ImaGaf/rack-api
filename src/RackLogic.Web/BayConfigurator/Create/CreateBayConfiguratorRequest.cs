@@ -28,7 +28,7 @@ public class BayConfigurator
   public int Level { get; set; }
   public int Pallets { get; set; }
   public bool HasProtector { get; set; }
-  public object? SpliceKits { get; set; }
+  public Component? SpliceKits { get; set; }
   public bool? IsCustomUpRight { get; set; }
   public required Component Beam { get; set; }
   public required List<int> BeamLevels { get; set; }
@@ -65,6 +65,8 @@ public class Component
   public int? LowerHeight { get; set; }
   public int? UpperHeight { get; set; }
   public bool? IsXBrace { get; set; }
+  public int? Kit { get; set; }
+  public string? ComponentKit { get; set; }
 }
 
 public class Manufacturer

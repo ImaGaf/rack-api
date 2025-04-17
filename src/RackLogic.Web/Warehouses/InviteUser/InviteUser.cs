@@ -29,7 +29,7 @@ public class InviteUser(IMediator _mediator) : Endpoint<InviteUserRequest, ApiRe
       throw new InvalidException(errors);
     }
 
-    var result = await _mediator.Send(new InviteUserCommand(User, req.Email, req.WarehouseId, req.Role), ct);
+    var result = await _mediator.Send(new InviteUserCommand(req.Email, req.WarehouseId, req.Role), ct);
 
     if (result.IsSuccess)
     {
