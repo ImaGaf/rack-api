@@ -9,5 +9,6 @@ public record RegisterUserCommand
   string Postcode,
   string Password,
   bool OptOutRackLogicMarketing,
-  string Role)
+  string Role,
+  Guid? WarehouseId)
   : Ardalis.SharedKernel.ICommand<Result<Guid>>;
