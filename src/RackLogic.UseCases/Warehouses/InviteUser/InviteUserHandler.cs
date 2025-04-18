@@ -17,7 +17,7 @@ public class InviteUserHandler(
   UserManager<ApplicationUser> _userManager,
   IConfiguration _configuration,
   IEmailSender _emailSender,
-  IUser _user) 
+  IUser _user)
   : ICommandHandler<InviteUserCommand, Result<bool>>
 {
   public async Task<Result<bool>> Handle(InviteUserCommand request, CancellationToken cancellationToken)
@@ -31,7 +31,6 @@ public class InviteUserHandler(
     var role = await _roleManager.FindByNameAsync(request.Role);
     if (role is null) return Result.Invalid(new ValidationError("Role invalid."));
 
-    // Check warehouse in database
     var result = await _warehouseRepository.FirstOrDefaultAsync(x => x.Id == request.WarehouseId);
     if (result is null) return Result.Invalid(new ValidationError("Warehouse not found."));
 
@@ -42,17 +41,25 @@ public class InviteUserHandler(
 
     if (invitedUser is null)
     {
-      var invitation = await _invitationsRepository.AddAsync(
-        new Invitation() 
-        {
-          Role = request.Role,
-          Email = request.Email,
-          InviteById = inviterId,
-          WarehouseId = request.WarehouseId,
+      var existingInvitation = await _invitationsRepository
+        .FirstOrDefaultAsync(i => i.Email == request.Email &&
+                                  i.WarehouseId == request.WarehouseId,
+          cancellationToken
+        );
 
-        }, cancellationToken);
+      if (existingInvitation == null)
+      {
+        await _invitationsRepository
+          .AddAsync(new Invitation()
+          {
+            Role = request.Role,
+            Email = request.Email,
+            InviteById = inviterId,
+            WarehouseId = request.WarehouseId,
+          }, cancellationToken);
+      }
 
-      var linkUrl = $"{baseUrl}email={invitation.Email},inviterole={request.Role},warehouseId={request.WarehouseId}";
+      var linkUrl = $"{baseUrl}email={request.Email},inviterole={request.Role},warehouseId={request.WarehouseId}";
       var content = BuildEmailInviteContent(linkUrl, logo, inviterName, result.CompanyName, role?.Name);
       return await _emailSender.SendAsync(request.Email, EmailConstants.InviteSubject, content);
     }
@@ -65,7 +72,7 @@ public class InviteUserHandler(
 
     var existingUserRole = await _userWarehouseRoleRepository
       .FirstOrDefaultAsync(uwr => uwr.UserId == invitedUser.Id &&
-                                  uwr.WarehouseId == request.WarehouseId, 
+                                  uwr.WarehouseId == request.WarehouseId,
         cancellationToken
     );
 
@@ -86,7 +93,7 @@ public class InviteUserHandler(
     return await _emailSender.SendAsync(request.Email, EmailConstants.InviteExistedUserSubject, contentEmail);
   }
 
-  private string BuildEmailInviteContent( string link, string logo, string inviterName, string locationName, string? roleName)
+  private string BuildEmailInviteContent(string link, string logo, string inviterName, string locationName, string? roleName)
   {
     var templatePath = Path.Combine("wwwroot", "EmailTemplates", "InviteUser.html");
     var emailContent = System.IO.File.ReadAllText(templatePath);
