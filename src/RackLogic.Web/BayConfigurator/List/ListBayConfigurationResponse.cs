@@ -1,4 +1,5 @@
-﻿using RackLogic.Web.BayConfigurator.Create;
+﻿using RackLogic.UseCases.BayConfigurator.GetSWL;
+using RackLogic.Web.BayConfigurator.Create;
 
 namespace RackLogic.Web.BayConfigurator.List;
 
@@ -45,6 +46,8 @@ public class ListBayConfigurationResponse
   public bool? IsCustomRowSpacer { get; set; }
   public List<ComponentResponse>? Accessories { get; set; }
   public bool? IsCustomAccessories { get; set; }
+
+  public SWLSignageDTO? SWLSignage { get; set; }
 }
 
 public class ComponentResponse

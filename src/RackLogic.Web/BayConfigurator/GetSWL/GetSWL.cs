@@ -11,7 +11,7 @@ public class GetSWL(IMediator _mediator) : Endpoint<GetSWLRequest, ApiResponse<S
 {
   public override void Configure()
   {
-    Get("/bay-configurators/SWL/{BayConfigurationId}");
+    Get("/bay-configurators/SWL/{Id}");
     DontThrowIfValidationFails();
   }
 

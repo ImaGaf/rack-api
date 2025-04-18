@@ -161,7 +161,8 @@ public static partial class BayConfiguratorMapper
       Accessories = bayConfiguration.Components
                 .Where(c => c.ComponentType == ComponentType.Accessories)
                 .Select(c => c.Mapping())
-                .ToList()
+                .ToList(),
+      SWLSignage = bayConfiguration.ToDto()
     };
   }
 
@@ -213,6 +214,7 @@ public static partial class BayConfiguratorMapper
   }
   public static partial SWLSignage ToEntity(this UpdateSWLCommand request);
 
+  [MapperIgnoreTarget(nameof(SWLSignage.Id))]
   public static partial SWLSignageDTO ToDto(SWLSignage signage);
 
   public static SWLSignageDTO ToDto(this BayConfiguration? config)

@@ -2,7 +2,7 @@
 
 public class UpdateSWLRequest
 {
-  public Guid BayConfigurationId { get; set; }
+  public Guid Id { get; set; }
   public float? PalletWeight { get; set; }
   public int? BulkPalletsNumberOfLevels { get; set; }
   public float? BulkPalletsLevelMaximumLoad { get; set; }

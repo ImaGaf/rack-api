@@ -7,7 +7,7 @@ public class UpdateSWLRequestValidator : Validator<UpdateSWLRequest>
 {
   public UpdateSWLRequestValidator()
   {
-    RuleFor(x => x.BayConfigurationId)
+    RuleFor(x => x.Id)
       .NotNull()
       .WithMessage("SWL Id is required.");
   }

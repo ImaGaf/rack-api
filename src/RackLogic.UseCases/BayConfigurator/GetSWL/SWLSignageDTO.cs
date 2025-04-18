@@ -2,7 +2,6 @@
 public class SWLSignageDTO
 {
   public Guid Id { get; set; }
-  public Guid BayConfigurationId { get; set; }
   public DateTime? InstallationDate { get; set; }
   public string? ASComplianceVersion { get; set; }
   public string? Manufacturer { get; set; }

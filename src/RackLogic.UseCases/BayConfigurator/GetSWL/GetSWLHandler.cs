@@ -11,7 +11,7 @@ public class GetSWLHandler(
   public async Task<Result<SWLSignageDTO>> Handle(GetSWLCommand request, CancellationToken cancellationToken)
   {
     var bayConfiguration = await _bayConfigurationRepositoy.FirstOrDefaultAsync(
-      x => x.Id == request.BayConfigurationId,
+      x => x.Id == request.Id,
       includes:
         [i => i.SWLSignage,
         i => i.Manufacturer],

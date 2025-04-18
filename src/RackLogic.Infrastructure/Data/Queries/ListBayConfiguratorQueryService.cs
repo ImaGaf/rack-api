@@ -13,7 +13,8 @@ public class ListBayConfiguratorQueryService(AppDbContext _context) : IListBayCo
           .Where(x => x.WarehouseId == warehouseId)
           .Include(b => b.Components)
           .Include(b => b.BayConfigurationLevels)
-          .Include(b => b.Manufacturer);
+          .Include(b => b.Manufacturer)
+          .Include(b => b.SWLSignage);
     var totalRecord = await bayConfigurations.CountAsync();
     var result = new List<BayConfiguration>();
     if (pageNumber > 0 && pageSize > 0)
