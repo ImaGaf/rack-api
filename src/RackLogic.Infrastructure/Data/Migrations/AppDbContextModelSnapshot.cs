@@ -246,9 +246,6 @@ namespace RackLogic.Infrastructure.Data.Migrations
                     b.Property<Guid>("SWLSignageId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<string>("SpliceKits")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("StructuralDesigner")
                         .IsRequired()
                         .HasMaxLength(30)
@@ -328,6 +325,9 @@ namespace RackLogic.Infrastructure.Data.Migrations
                     b.Property<string>("Code")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("ComponentKit")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<int>("ComponentType")
                         .HasColumnType("int");
 
@@ -342,6 +342,9 @@ namespace RackLogic.Infrastructure.Data.Migrations
 
                     b.Property<bool?>("IsXBrace")
                         .HasColumnType("bit");
+
+                    b.Property<int?>("Kit")
+                        .HasColumnType("int");
 
                     b.Property<int?>("Length")
                         .HasColumnType("int");
@@ -1030,6 +1033,9 @@ namespace RackLogic.Infrastructure.Data.Migrations
                     b.Property<string>("Code")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("ComponentType")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("ConnectorType")
                         .HasColumnType("nvarchar(max)");
 
@@ -1058,9 +1064,6 @@ namespace RackLogic.Infrastructure.Data.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("Orientation")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Type")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<Guid?>("WarehouseId")

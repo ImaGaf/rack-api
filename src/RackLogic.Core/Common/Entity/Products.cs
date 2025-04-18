@@ -4,7 +4,7 @@ namespace RackLogic.Core.Common.Entity;
 public class Products : EntityBase<Guid>, IAggregateRoot
 {
   public string? Category { get; set; } // Upright, Beam, Brace, Row Spacer...
-  public string? Type { get; set; } // Specific type within the category (if applicable)
+  public string? ComponentType { get; set; } // Specific type within the category (if applicable)
 
   // Dimensions
   public int? Height { get; set; }
