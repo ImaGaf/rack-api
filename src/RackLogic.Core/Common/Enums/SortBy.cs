@@ -2,8 +2,8 @@
 
 public enum SortBy
 {
-  Newest,
-  Oldest,
-  HighToLow,
-  LowToHigh
+  Newest = 0,
+  Oldest = 1,
+  HighToLow = 2,
+  LowToHigh = 3,
 }

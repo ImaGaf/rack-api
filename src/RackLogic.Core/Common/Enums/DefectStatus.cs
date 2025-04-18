@@ -4,18 +4,10 @@ namespace RackLogic.Core.Common.Enums;
 
 public enum DefectStatus
 {
-  [Display(Description = "Not Started")]
-  NotStarted,
-
-  [Display(Description = "In Progress")]
-  InProgress,
-
-  [Display(Description = "Awaiting Component")]
-  AwaitingComponent,
-
-  [Display(Description = "Repair Scheduled")]
-  RepairScheduled,
-
-  [Display(Description = "Final")]
-  Final
+  ActionRequired = 0,
+  InProgress = 1,
+  RemediateRepair = 2,
+  AwaitingComponent = 3,
+  RepairScheduled = 4,
+  ReadyForInspection = 5,
 }

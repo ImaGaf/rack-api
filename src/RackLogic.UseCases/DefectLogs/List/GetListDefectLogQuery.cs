@@ -10,7 +10,7 @@ public record GetListDefectLogQuery(
     Guid? AssetId,
     int? Rack,
     int? Bay,
-    SortBy SortBy,
+    SortBy? SortBy,
     int pageNumber = 1,
     int pageSize = 6
-): IQuery<Result<PagedDataDTO<DefectLogDto>>>;
+) : IQuery<Result<PagedDataDTO<DefectLogDto>>>;

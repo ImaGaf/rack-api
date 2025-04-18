@@ -2,7 +2,7 @@
 
 public enum DefectPriority
 {
-  High,
-  Medium,
-  Low
+  Urgent = 0,
+  Medium = 1,
+  Low = 2,
 }

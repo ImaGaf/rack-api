@@ -5,6 +5,8 @@ using Microsoft.EntityFrameworkCore;
 using RackLogic.Core.Common.Entity;
 using RackLogic.Core.Common.Enums;
 using RackLogic.Core.Interfaces;
+using RackLogic.UseCases.FloorPlanItems;
+using RackLogic.UseCases.FloorPlanItems.GetDetail;
 using RackLogic.UseCases.FloorPlans;
 using RackLogic.UseCases.FloorPlans.Create;
 using RackLogic.UseCases.FloorPlans.Update;
@@ -258,7 +260,7 @@ public class FloorPlanService : IFloorPlanService
     var floorPlan = await _context.FloorPlans
         .Include(fp => fp.DefaultSettings)
         .FirstOrDefaultAsync(x => x.Id == plan.FloorPlanId);
-    if (floorPlan is null)  return Result.Invalid(new ValidationError($"Update failed: FloorPlan with ID {plan.FloorPlanId} not found in database."));
+    if (floorPlan is null) return Result.Invalid(new ValidationError($"Update failed: FloorPlan with ID {plan.FloorPlanId} not found in database."));
 
     plan.UpdateFloorPlan(floorPlan, bayConfigurations);
 
@@ -415,5 +417,46 @@ public class FloorPlanService : IFloorPlanService
     }
 
     return Result.Success(true);
+  }
+
+  public async Task<FloorPlanDTO?> GetDetailAsync(Guid wareHouseId, Guid floorPlanId, CancellationToken cancellationToken = default)
+  {
+    //var floorPlan = await _context.FloorPlans.Include(x => x.FloorPlanItems!).ThenInclude(x => x.BayConfiguration!)
+    //                                         .Include(x => x.FloorPlanItems!).ThenInclude(x => x.DefectLogs!).ThenInclude(x => x.Component)
+    //                                         .FirstOrDefaultAsync(x => x.Id == floorPlanId, cancellationToken);
+
+    //if (floorPlan == null)
+    //{
+    //  throw new KeyNotFoundException($"FloorPlan with ID {floorPlanId} not found.");
+    //}
+
+    //return floorPlan.ToFloorPlanDTO();
+
+    var bayConfigurations = await _context.BayConfigurations
+        .Where(bc => bc.WarehouseId == wareHouseId)
+        .ToListAsync();
+
+    //Get list FloorPlans by WarehouseId
+    var floorPlan = await _context.FloorPlans
+        .Include(f => f.FloorPlanFiles)
+        .Include(f => f.FloorPlanItems)
+        .ThenInclude(i => i.Comments)
+        .Include(f => f.DefaultSettings)
+        .FirstOrDefaultAsync(f => f.Id == floorPlanId);
+
+    if (floorPlan == null)
+      return null;
+
+    return floorPlan.ToFloorPlanDTO(bayConfigurations);
+  }
+
+  public async Task<IEnumerable<FloorPlanItemDto>?> GetDetailDefectLogAsync(Guid floorPlanId, CancellationToken cancellationToken)
+  {
+    var  floorPlanItems = await _context.FloorPlanItems
+        .Include(i => i.DefectLogs!).ThenInclude(d => d.Component)
+        .Where(i => i.FloorPlanId == floorPlanId)
+        .ToListAsync(cancellationToken);
+
+    return floorPlanItems.Select(x => x.Mapping()).ToList();
   }
 }

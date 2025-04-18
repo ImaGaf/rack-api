@@ -1,5 +1,6 @@
 ﻿using Ardalis.Result;
 using RackLogic.Core.Common.Entity;
+using RackLogic.UseCases.FloorPlanItems.GetDetail;
 using RackLogic.UseCases.FloorPlans.Create;
 using RackLogic.UseCases.FloorPlans.Update;
 
@@ -12,8 +13,10 @@ public interface IFloorPlanService
     Guid warehouseId,
     Guid userCreatedId);
   Task<Result<bool>> ValidateBayConfigurationIdAndDefaultSettingsAsync(
-    List<FloorPlanCommand> floorPlans,
+    List<FloorPlanCommand> floorPlans, 
     Guid warehouseId,
     CancellationToken cancellationToken);
   Task<List<FloorPlanFiles>> SaveFloorPlanFilesAsync(List<FloorPlanCommand> floorPlanRequests, Guid warehouseId);
+  Task<FloorPlanDTO?> GetDetailAsync(Guid wareHouseId, Guid floorPlanId, CancellationToken cancellationToken = default);
+  Task<IEnumerable<FloorPlanItemDto>?> GetDetailDefectLogAsync(Guid floorPlanId, CancellationToken cancellationToken);
 }

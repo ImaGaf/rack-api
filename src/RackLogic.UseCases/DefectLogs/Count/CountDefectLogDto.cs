@@ -10,12 +10,12 @@ public class CountDefectLogDto
 
 public class PriorityDto
 {
-  public string? Type { get; set; }
+  public DefectPriority? Type { get; set; }
   public int Count { get; set; }
 }
 
 public class StatusDto
 {
-  public string? Type { get; set; }
+  public DefectStatus? Type { get; set; }
   public int Count { get; set; }
 }
