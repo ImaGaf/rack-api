@@ -421,22 +421,10 @@ public class FloorPlanService : IFloorPlanService
 
   public async Task<FloorPlanDTO?> GetDetailAsync(Guid wareHouseId, Guid floorPlanId, CancellationToken cancellationToken = default)
   {
-    //var floorPlan = await _context.FloorPlans.Include(x => x.FloorPlanItems!).ThenInclude(x => x.BayConfiguration!)
-    //                                         .Include(x => x.FloorPlanItems!).ThenInclude(x => x.DefectLogs!).ThenInclude(x => x.Component)
-    //                                         .FirstOrDefaultAsync(x => x.Id == floorPlanId, cancellationToken);
-
-    //if (floorPlan == null)
-    //{
-    //  throw new KeyNotFoundException($"FloorPlan with ID {floorPlanId} not found.");
-    //}
-
-    //return floorPlan.ToFloorPlanDTO();
-
     var bayConfigurations = await _context.BayConfigurations
         .Where(bc => bc.WarehouseId == wareHouseId)
         .ToListAsync();
 
-    //Get list FloorPlans by WarehouseId
     var floorPlan = await _context.FloorPlans
         .Include(f => f.FloorPlanFiles)
         .Include(f => f.FloorPlanItems)
@@ -452,7 +440,7 @@ public class FloorPlanService : IFloorPlanService
 
   public async Task<IEnumerable<FloorPlanItemDto>?> GetDetailDefectLogAsync(Guid floorPlanId, CancellationToken cancellationToken)
   {
-    var  floorPlanItems = await _context.FloorPlanItems
+    var floorPlanItems = await _context.FloorPlanItems
         .Include(i => i.DefectLogs!).ThenInclude(d => d.Component)
         .Where(i => i.FloorPlanId == floorPlanId)
         .ToListAsync(cancellationToken);
