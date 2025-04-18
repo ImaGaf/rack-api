@@ -17,25 +17,29 @@ public class DefectLogService(
 {
   public async Task<CountDefectLogDto> CountAsync(CountDefectLogQuery request, CancellationToken cancellationToken)
   {
-    var defectLogs = await dbContext.DefectLogs.Where(x => x.FloorPlanItem!.FloorPlan!.WarehouseId == request.WareHouseId)
-                                               .ToListAsync(cancellationToken);
+    var defectLogs = await dbContext.DefectLogs
+        .Where(x => x.FloorPlanItem!.FloorPlan!.WarehouseId == request.WareHouseId)
+        .ToListAsync(cancellationToken);
 
-    var priorities = defectLogs.GroupBy(x => x.DefectPriority).Select(x => new PriorityDto
-    {
-      Type = x.Key.ToString(),
-      Count = x.Count()
-    }).ToList();
+    var priorities = Enum.GetValues<DefectPriority>()
+        .Select(priority => new PriorityDto
+        {
+          Type = priority,
+          Count = defectLogs.Count(x => x.DefectPriority == priority)
+        })
+        .ToList();
 
-    var statues = defectLogs.GroupBy(x => x.DefectStatus).Select(x => new StatusDto
-    {
-      Type = x.Key.ToString(),
-      Count = x.Count()
-    }).ToList();
+    var statuses = Enum.GetValues<DefectStatus>()
+        .Select(status => new StatusDto
+        {
+          Type = status,
+          Count = defectLogs.Count(x => x.DefectStatus == status)
+        }).ToList();
 
     return new CountDefectLogDto
     {
       Priorities = priorities,
-      Statuses = statues
+      Statuses = statuses
     };
   }
 
@@ -75,16 +79,19 @@ public class DefectLogService(
     switch (request.SortBy)
     {
       case SortBy.Newest:
-        query = query.OrderBy(x => x.CreationTime);
+        query = query.OrderByDescending(x => x.CreationTime);
         break;
       case SortBy.Oldest:
-        query = query.OrderByDescending(x => x.CreationTime);
+        query = query.OrderBy(x => x.CreationTime);
         break;
       case SortBy.HighToLow:
         query = query.OrderBy(x => x.DefectPriority);
         break;
       case SortBy.LowToHigh:
         query = query.OrderByDescending(x => x.DefectPriority);
+        break;
+      default:
+        query = query.OrderByDescending(x => x.CreationTime);
         break;
     }
 
