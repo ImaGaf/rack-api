@@ -4,7 +4,7 @@ using RackLogic.UseCases.Brands;
 namespace RackLogic.UseCases.BayConfigurator.CreateCustomComponent;
 public record CreateCustomComponentCommand(
   string Category,
-  string? Type,
+  string? ComponentType,
   int? Height,
   int? Width,
   int? Length,

@@ -2,5 +2,5 @@
 
 public class GetSWLRequest
 {
-  public Guid BayConfigurationId { get; set; }
+  public Guid Id { get; set; }
 }

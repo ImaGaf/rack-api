@@ -70,7 +70,7 @@ public static partial class BrandUseCasesMapper
     return new Products()
     {
       Category = product.Category,
-      Type = product.Type,
+      ComponentType = product.ComponentType,
       Height = product.Height,
       Width = product.Width,
       Length = product.Length,

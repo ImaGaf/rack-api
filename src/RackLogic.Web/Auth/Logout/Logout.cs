@@ -16,7 +16,7 @@ public class Logout(IMediator _mediator) : EndpointWithoutRequest
 
   public override async Task HandleAsync(CancellationToken ct)
   {
-    var result = await _mediator.Send(new LogoutCommand(User), ct);
+    var result = await _mediator.Send(new LogoutCommand(), ct);
 
     if (result.IsSuccess)
     {

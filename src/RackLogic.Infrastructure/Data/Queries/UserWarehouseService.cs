@@ -75,7 +75,7 @@ public class UserWarehouseService(
                   Description = product.Description,
                   Orientation = product.Orientation,
                   DistanceCenterToCenter = product.DistanceCenterToCenter,
-                  Type = product.Type
+                  ComponentType = product.ComponentType
                 };
 
     var products = await query.ToListAsync();

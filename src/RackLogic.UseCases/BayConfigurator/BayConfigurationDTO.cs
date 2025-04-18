@@ -1,4 +1,6 @@
-﻿namespace RackLogic.UseCases.BayConfigurator;
+﻿using RackLogic.UseCases.BayConfigurator.GetSWL;
+
+namespace RackLogic.UseCases.BayConfigurator;
 
 public class BayConfigurationDTO
 {
@@ -43,6 +45,8 @@ public class BayConfigurationDTO
   public bool? IsCustomRowSpacer { get; set; }
   public List<ComponentDTO>? Accessories { get; set; }
   public bool? IsCustomAccessories { get; set; }
+
+  public SWLSignageDTO? SWLSignage { get; set; }
 }
 
 public class ComponentDTO
@@ -62,6 +66,8 @@ public class ComponentDTO
   public int? LowerHeight { get; set; }
   public int? UpperHeight { get; set; }
   public bool? IsXBrace { get; set; }
+  public int? Kit { get; set; }
+  public string? ComponentKit { get; set; }
 }
 
 public class ManufacturerDTO

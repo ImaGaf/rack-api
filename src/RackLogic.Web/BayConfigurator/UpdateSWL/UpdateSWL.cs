@@ -13,7 +13,7 @@ public class UpdateSWL(IMediator _mediator) : Endpoint<UpdateSWLRequest, ApiResp
 {
   public override void Configure()
   {
-    Put("/bay-configurators/SWL/{BayConfigurationId}");
+    Put("/bay-configurators/SWL/{Id}");
     DontThrowIfValidationFails();
   }
 

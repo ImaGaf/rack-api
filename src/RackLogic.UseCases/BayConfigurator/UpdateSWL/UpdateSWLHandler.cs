@@ -10,7 +10,7 @@ public class UpdateSWLHandler(
 {
   public async Task<Result<bool>> Handle(UpdateSWLCommand request, CancellationToken cancellationToken)
   {
-    var sWLSignage = await _sWLSignageRepository.FirstOrDefaultAsync(x => x.BayConfigurationId == request.BayConfigurationId, cancellationToken);
+    var sWLSignage = await _sWLSignageRepository.FirstOrDefaultAsync(x => x.BayConfigurationId == request.Id, cancellationToken);
 
     if (sWLSignage is null) return await CreateSWLSignageAsync(request, cancellationToken);
 

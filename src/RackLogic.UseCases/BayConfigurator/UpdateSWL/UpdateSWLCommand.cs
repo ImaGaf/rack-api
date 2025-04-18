@@ -2,7 +2,7 @@
 
 namespace RackLogic.UseCases.BayConfigurator.UpdateSWL;
 public record UpdateSWLCommand(
-  Guid BayConfigurationId,
+  Guid Id,
   float? PalletWeight,
   int? BulkPalletsNumberOfLevels,
   float? BulkPalletsLevelMaximumLoad,
