@@ -8,15 +8,17 @@ using RackLogic.Core.Interfaces;
 using RackLogic.Core.UserAggregate;
 
 namespace RackLogic.UseCases.Users.Create;
+
 public class RegisterUserHandler(
   UserManager<ApplicationUser> _userManager,
   RoleManager<IdentityRole<Guid>> _roleManager,
   IUserStore<ApplicationUser> _userStore,
   IRepositoryWithExpression<Invitation> _invitationsRepository,
-  IRepositoryWithExpression<UserWarehouseRole> _userWarehouseRoleRepository) 
+  IRepositoryWithExpression<UserWarehouseRole> _userWarehouseRoleRepository)
   : ICommandHandler<RegisterUserCommand, Result<Guid>>
 {
   private readonly EmailAddressAttribute _emailAddressAttribute = new();
+
   public async Task<Result<Guid>> Handle(RegisterUserCommand request, CancellationToken cancellationToken)
   {
     var emailStore = (IUserEmailStore<ApplicationUser>)_userStore;
@@ -54,34 +56,61 @@ public class RegisterUserHandler(
       return Result.Error(new ErrorList(errors));
     }
 
-    await HandleInvitationAsync(request.EmailAddress, user, cancellationToken);
+    if (request.WarehouseId != null)
+    {
+      await HandleInvitationAsync(request.EmailAddress, request.WarehouseId.Value, user, cancellationToken);
+    }
     // TODO: Send Email create account.
     //await SendConfirmationEmailAsync(user, userManager, context, email);
     return Result.Success(user.Id);
   }
 
-  private async Task HandleInvitationAsync(string emailInvited, ApplicationUser user, CancellationToken cancellationToken)
+  private async Task HandleInvitationAsync(string emailInvited, Guid warehouseId, ApplicationUser user, CancellationToken cancellationToken)
   {
-    var invitation = await _invitationsRepository.FirstOrDefaultAsync(x => x.Email == emailInvited);
-    if (invitation is null) return;
-
-    var roleId = await _roleManager.FindByNameAsync(invitation.Role);
-    if (roleId is null) return;
-
-    await _userWarehouseRoleRepository.AddAsync(
-      new UserWarehouseRole()
-      {
-        UserId = user.Id,
-        RoleId = roleId.Id,
-        WarehouseId = invitation.WarehouseId,
-      }, cancellationToken);
-
-    if (user.RegisteredRole == RoleConstant.ClientManager || user.RegisteredRole == RoleConstant.ClientEditor)
+    if (user.RegisteredRole == RoleConstant.Repairer || user.RegisteredRole == RoleConstant.Inspector)
     {
+      var invitations = await _invitationsRepository
+        .FindAsync(x => x.Email == emailInvited, cancellationToken);
+
+      if (invitations is null) return;
+
+      foreach (var invitation in invitations)
+      {
+        var role = await _roleManager.FindByNameAsync(invitation.Role);
+        if (role == null) continue;
+
+        await _userWarehouseRoleRepository.AddAsync(new UserWarehouseRole
+        {
+          UserId = user.Id,
+          RoleId = role.Id,
+          WarehouseId = invitation.WarehouseId
+        }, cancellationToken);
+
+        await _invitationsRepository.DeleteAsync(invitation, cancellationToken);
+      }
+    }
+    else
+    {
+      var invitation = await _invitationsRepository
+        .FirstOrDefaultAsync(x => x.Email == emailInvited && x.WarehouseId == warehouseId);
+
+      if (invitation is null) return;
+
+      var roleId = await _roleManager.FindByNameAsync(invitation.Role);
+      if (roleId is null) return;
+
+      await _userWarehouseRoleRepository.AddAsync(
+        new UserWarehouseRole()
+        {
+          UserId = user.Id,
+          RoleId = roleId.Id,
+          WarehouseId = invitation.WarehouseId,
+        }, cancellationToken);
+
       user.ParentId = invitation.InviteById;
       await _userManager.UpdateAsync(user);
-    }
 
-    await _invitationsRepository.DeleteAsync(invitation);
+      await _invitationsRepository.DeleteAsync(invitation, cancellationToken);
+    }
   }
 }
