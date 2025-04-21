@@ -2,6 +2,7 @@
 using RackLogic.Core.Common.Entity;
 using RackLogic.Core.Common.Enums;
 using RackLogic.UseCases.FloorPlans.Create;
+using RackLogic.UseCases.FloorPlans.List;
 using RackLogic.UseCases.FloorPlans.Update;
 
 namespace RackLogic.UseCases.FloorPlans;
@@ -401,5 +402,17 @@ public static partial class FloorPlanUseCasesMapper
 
     var bayConfig = bayConfigurations.FirstOrDefault(bc => bc.BayConfigId == bayConfigId);
     return bayConfig?.Id;
+  }
+
+  public static FloorPlanSimpleDto Mapping(this FloorPlan floorPlan)
+  {
+    return new FloorPlanSimpleDto
+    {
+      AssetId = floorPlan.Id,
+      AssetName = floorPlan.AssetName,
+      FloorNumber = floorPlan.FloorNumber,
+      TotalRack = floorPlan.TotalRack,
+      TotalBay = floorPlan.TotalBay
+    };
   }
 }

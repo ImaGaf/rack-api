@@ -2,6 +2,7 @@
 using RackLogic.Core.Common.Entity;
 using RackLogic.UseCases.FloorPlanItems.GetDetail;
 using RackLogic.UseCases.FloorPlans.Create;
+using RackLogic.UseCases.FloorPlans.List;
 using RackLogic.UseCases.FloorPlans.Update;
 
 namespace RackLogic.UseCases.FloorPlans;
@@ -19,4 +20,5 @@ public interface IFloorPlanService
   Task<List<FloorPlanFiles>> SaveFloorPlanFilesAsync(List<FloorPlanCommand> floorPlanRequests, Guid warehouseId);
   Task<FloorPlanDTO?> GetDetailAsync(Guid wareHouseId, Guid floorPlanId, CancellationToken cancellationToken = default);
   Task<IEnumerable<FloorPlanItemDto>?> GetDetailDefectLogAsync(Guid floorPlanId, CancellationToken cancellationToken);
+  Task<IEnumerable<FloorPlanSimpleDto>> GetListAsync(GetListFloorPlanQuery request, CancellationToken cancellationToken);
 }
