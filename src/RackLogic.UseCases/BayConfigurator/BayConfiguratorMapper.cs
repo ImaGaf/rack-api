@@ -1,10 +1,12 @@
 ﻿using System.ComponentModel;
+using System.Text.RegularExpressions;
 using Ardalis.Specification;
 using RackLogic.Core.Common.Entity;
 using RackLogic.Core.Common.Enums;
 using RackLogic.UseCases.BayConfigurator.Create;
 using RackLogic.UseCases.BayConfigurator.GetSWL;
 using RackLogic.UseCases.BayConfigurator.UpdateSWL;
+using RackLogic.UseCases.Common.Constants;
 using Riok.Mapperly.Abstractions;
 using Component = RackLogic.Core.Common.Entity.Component;
 
@@ -32,7 +34,7 @@ public static partial class BayConfiguratorMapper
       TotalBayLoad = bay.TotalBayLoad,
       Comment = bay.Comment,
       IsEstimatedInstallDate = bay.IsEstimatedInstallDate,
-      InterimInterval = bay.InterimInterval,
+      InterimInterval = bay.InterimInterval.GetInterimIntervalByString() ?? BayConfigurationDefaultValue.InterimInterval,
       HasSplice = bay.HasSplice,
       Level = bay.Level,
       Pallets = bay.Pallets,
@@ -270,5 +272,12 @@ public static partial class BayConfiguratorMapper
     _ = Enum.TryParse(type, true, out ComponentCategory enumType);
 
     return enumType;
+  }
+
+  private static int? GetInterimIntervalByString(this string? interimInterval)
+  {
+    if (string.IsNullOrEmpty(interimInterval)) return null;
+
+    return int.TryParse(Regex.Match(interimInterval, @"\d+").Value, out int result) ? result : null;
   }
 }

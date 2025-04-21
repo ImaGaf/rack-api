@@ -14,7 +14,7 @@ public class Products : EntityBase<Guid>, IAggregateRoot
   public int? DepthOfFrame { get; set; } // For Brace (horizontal & diagonal)
   public int? DistanceCenterToCenter { get; set; } // For Brace (horizontal & diagonal)
   public int? ClearanceBetweenFrames { get; set; } // For Row Spacer
-  public int? ClearEntryWidth { get; set; } // For Beam
+  public string? ClearEntryWidth { get; set; } // For Beam
 
   // Technical specifications
   public string? Orientation { get; set; } // Not explicitly listed, but may be useful
