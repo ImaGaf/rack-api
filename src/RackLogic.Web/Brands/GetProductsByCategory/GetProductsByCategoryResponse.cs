@@ -12,7 +12,7 @@ public class GetProductsByCategoryResponse
   public int? DepthOfFrame { get; set; }
   public int? DistanceCenterToCenter { get; set; }
   public int? ClearanceBetweenFrames { get; set; }
-  public int? ClearEntryWidth { get; set; }
+  public string? ClearEntryWidth { get; set; }
   public string? Orientation { get; set; }
   public string? BeamStyle { get; set; }
   public string? ConnectorType { get; set; }
