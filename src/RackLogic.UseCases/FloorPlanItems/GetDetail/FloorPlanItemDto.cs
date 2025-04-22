@@ -20,7 +20,6 @@ public class FloorPlanItemDto
   public required double Rotation { get; set; }
   public BayConfigurationDTO? BayConfiguration { get; set; }
   public InspectionDto? Inspection { get; set; }
-  public List<DefectLogDto>? DefectLogs { get; set; }
 }
 
 public class InspectionDto
@@ -35,24 +34,3 @@ public class InspectionDto
   public string? Authorise { get; set; }
   public bool IsConfirmAuthorization { get; set; }
 }
-
-public class DefectLogDto
-{
-  public Guid Id { get; set; }
-  public string? TicketId { get; set; }
-  public Guid ComponentId { get; set; }
-  public Guid FloorPlanItemId { get; set; }
-  public Guid? RelatedComponentId { get; set; }
-  public string? DrawPosition { get; set; }
-  public int ComponentIndex { get; set; }
-  public bool? IsRear { get; set; }
-  public DefectGrade? DefectGrade { get; set; }
-  public DefectPriority? DefectPriority { get; set; }
-  public DefectType? DefectType { get; set; }
-  public CorrectiveAction? CorrectiveAction { get; set; }
-  public DefectStatus? DefectStatus { get; set; }
-  public string? Comment { get; set; }
-  public ComponentDTO? Component { get; set; }
-  public ComponentDTO? RelatedComponent { get; set; }
-}
-
