@@ -9,6 +9,7 @@ using RackLogic.UseCases.FloorPlanItems;
 using RackLogic.UseCases.FloorPlanItems.GetDetail;
 using RackLogic.UseCases.FloorPlans;
 using RackLogic.UseCases.FloorPlans.Create;
+using RackLogic.UseCases.FloorPlans.List;
 using RackLogic.UseCases.FloorPlans.Update;
 
 namespace RackLogic.Infrastructure.Data.Queries;
@@ -446,5 +447,16 @@ public class FloorPlanService : IFloorPlanService
         .ToListAsync(cancellationToken);
 
     return floorPlanItems.Select(x => x.Mapping()).ToList();
+  }
+
+  public async Task<IEnumerable<FloorPlanSimpleDto>> GetListAsync(GetListFloorPlanQuery request, CancellationToken cancellationToken)
+  {
+    var floorPlans = await _context.FloorPlans
+        .Where(f => f.WarehouseId == request.wareHouseId)
+        .OrderBy(f => f.AssetName)
+        .Select(f => f.Mapping())
+        .ToListAsync();
+
+    return floorPlans;
   }
 }
