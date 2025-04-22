@@ -1,13 +1,13 @@
 ﻿using RackLogic.Core.Common.Enums;
+using RackLogic.Web.Models;
 
 namespace RackLogic.Web.DefectLogs.List;
 
-public record GetListDefectLogRequest(
-    Guid WarehouseId,
-    Guid? AssetId,
-    int? Rack,
-    int? Bay,
-    SortBy SortBy,
-    int pageNumber = 1,
-    int pageSize = 6
-);
+public class GetListDefectLogRequest : PaginationRequest
+{
+  public Guid WarehouseId { get; set; }
+  public Guid? AssetId { get; set; }
+  public int? Rack { get; set; }
+  public int? Bay { get; set; }
+  public SortBy SortBy { get; set; }
+}
