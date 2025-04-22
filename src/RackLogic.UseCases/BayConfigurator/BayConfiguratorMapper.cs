@@ -20,7 +20,7 @@ public static partial class BayConfiguratorMapper
     return new BayConfiguration()
     {
       Id = new Guid(),
-      CreatedDate = DateTime.Now,
+      CreatedDate = DateTime.UtcNow,
       IsCustomBrand = bay.IsCustomBrand,
       WarehouseId = warehouseId,
       BayConfigId = bay.BayConfigId,

@@ -8,6 +8,6 @@ public class BaseEntityCustom : EntityBase<Guid>, IAggregateRoot
   public virtual DateTime? DeletionTime { get; set; }
   public virtual DateTime? LastModificationTime { get; set; }
   public virtual Guid? LastModifierId { get; set; }
-  public virtual DateTime CreationTime { get; set; } = DateTime.Now;
+  public virtual DateTime CreationTime { get; set; }
   public virtual Guid? CreatorId { get; set; }
 }

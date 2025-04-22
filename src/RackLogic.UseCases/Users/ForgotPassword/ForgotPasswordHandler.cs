@@ -30,8 +30,7 @@ public class ForgotPasswordHandler(
       {
         UserId = user.Id,
         Otp = otp,
-        ResetToken = resetToken,
-        CreationTime = DateTime.Now,
+        ResetToken = resetToken
       });
 
       var baseUrl = _configuration.GetSection("Dashboard:BaseUrl").Value;
@@ -70,7 +69,7 @@ public class ForgotPasswordHandler(
     emailContent = emailContent.Replace("{otp}", otp);
     //emailContent = emailContent.Replace("{reset_link}", resetLink);
     emailContent = emailContent.Replace("{logo}", logo);
-    emailContent = emailContent.Replace("{currentYear}", DateTime.Now.Year.ToString());
+    emailContent = emailContent.Replace("{currentYear}", DateTime.UtcNow.Year.ToString());
 
     return emailContent;
   }

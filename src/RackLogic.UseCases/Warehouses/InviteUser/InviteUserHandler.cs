@@ -102,7 +102,7 @@ public class InviteUserHandler(
     emailContent = emailContent.Replace("{inviter_name}", inviterName);
     emailContent = emailContent.Replace("{location_name}", locationName);
     emailContent = emailContent.Replace("{role_name}", roleName);
-    emailContent = emailContent.Replace("{currentYear}", DateTime.Now.Year.ToString());
+    emailContent = emailContent.Replace("{currentYear}", DateTime.UtcNow.Year.ToString());
 
     return emailContent;
   }
@@ -116,7 +116,7 @@ public class InviteUserHandler(
     emailContent = emailContent.Replace("{inviter_name}", inviterName);
     emailContent = emailContent.Replace("{location_name}", locationName);
     emailContent = emailContent.Replace("{role_name}", roleName);
-    emailContent = emailContent.Replace("{currentYear}", DateTime.Now.Year.ToString());
+    emailContent = emailContent.Replace("{currentYear}", DateTime.UtcNow.Year.ToString());
 
     return emailContent;
   }
