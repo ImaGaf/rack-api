@@ -11,7 +11,7 @@ public record CreateDefectLogCommand : ICommand<Result<DefectLogDto>>
   public Guid? RelatedComponentId { get; init; }
   public required int DefectType { get; init; }
   public required int DefectGrade { get; init; }
-  public required int CorrectiveAction { get; init; }
+  public int? CorrectiveAction { get; init; }
   public required int DefectPriority { get; init; }
   public required int DefectStatus { get; init; }
   public required int ComponentIndex { get; init; }
