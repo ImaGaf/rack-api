@@ -57,7 +57,7 @@ public class DeleteUserHandler(
 
     emailContent = emailContent.Replace("{logo}", logo);
     emailContent = emailContent.Replace("{userDeleteName}", userDeleteName);
-    emailContent = emailContent.Replace("{currentYear}", DateTime.Now.Year.ToString());
+    emailContent = emailContent.Replace("{currentYear}", DateTime.UtcNow.Year.ToString());
 
     return emailContent;
   }

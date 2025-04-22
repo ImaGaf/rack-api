@@ -35,8 +35,7 @@ public class ConfirmPasswordHandler(
     {
       UserId = user.Id,
       Otp = otp,
-      DeleteToken = deleteToken,
-      CreationTime = DateTime.Now,
+      DeleteToken = deleteToken
     }, cancellationToken);
 
     return Result.Success(deleteToken);
