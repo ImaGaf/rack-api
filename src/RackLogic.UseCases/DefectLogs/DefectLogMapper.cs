@@ -1,5 +1,7 @@
 ﻿using RackLogic.Core.Common.Entity;
+using RackLogic.UseCases.Brands;
 using RackLogic.UseCases.DefectLogs.Create;
+using RackLogic.UseCases.FloorPlanItems;
 using Riok.Mapperly.Abstractions;
 
 namespace RackLogic.UseCases.DefectLogs;
@@ -15,7 +17,8 @@ public static partial class DefectLogMapper
   public static DefectLogDto ToDtoWithHistory(this DefectLog entity, bool includeHistories = true)
   {
     var dto = entity.ToDto();
-
+    dto.OEMBrand = entity.Component!.BayConfiguration!.Manufacturer!.ToOEMBrandDTO();
+    dto.Inspection = entity.FloorPlanItem!.Inspection is null ? null : entity.FloorPlanItem!.Inspection.Mapping();
     if (includeHistories && entity.DefectLogHistories != null)
     {
       dto.DefectLogHistories = entity.DefectLogHistories

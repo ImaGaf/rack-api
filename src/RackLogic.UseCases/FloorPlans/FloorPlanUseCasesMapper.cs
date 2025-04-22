@@ -46,9 +46,14 @@ public static partial class FloorPlanUseCasesMapper
       DueDate = bayConfig?.CreatedDate.AddDays(bayConfig.InterimInterval),
       BayConfigurationId = GetBayConfigurationIdFromBayConfigId(item.BayConfigurationId, bayConfigurations),
       Comments = item.Comments?.Select(c => c.ToFloorPlanComment(item.Id)).ToList(),
-      Inspection = new Inspection {FloorPlanItemId = item.Id, InspectionDate = bayConfig?.CreatedDate.AddDays(bayConfig.InterimInterval) ?? DateTime.UtcNow,
-                                     NextInspectionDate = bayConfig?.CreatedDate.AddDays(bayConfig.InterimInterval*2) ?? DateTime.UtcNow,
-                                     IsConfirmAuthorization = false}
+      Inspection = new Inspection
+      {
+        Id = new Guid(),
+        FloorPlanItemId = item.Id,
+        InspectionDate = bayConfig?.CreatedDate.AddDays(bayConfig.InterimInterval) ?? DateTime.UtcNow,
+        NextInspectionDate = bayConfig?.CreatedDate.AddDays(bayConfig.InterimInterval * 2) ?? DateTime.UtcNow,
+        IsConfirmAuthorization = false
+      }
     };
   }
 

@@ -1,6 +1,7 @@
 ﻿using RackLogic.Core.Common.Enums;
 using RackLogic.UseCases.BayConfigurator;
 using RackLogic.UseCases.Brands;
+using RackLogic.UseCases.FloorPlanItems.GetDetail;
 
 namespace RackLogic.UseCases.DefectLogs;
 
@@ -24,6 +25,7 @@ public class DefectLogDto
   public string? Comment { get; set; }
   public OEMBrandDTO? OEMBrand { get; set; }
   public ComponentDTO? Component { get; set; }
+  public InspectionDto? Inspection { get; set; }
   public List<DefectLogFileDto>? DefectLogFiles { get; set; }
   public List<DefectLogHistoryDto>? DefectLogHistories { get; set; }
 }

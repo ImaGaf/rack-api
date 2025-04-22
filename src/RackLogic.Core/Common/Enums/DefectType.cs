@@ -8,6 +8,5 @@ public enum DefectType
   Misalignment,
   Unsecured,
   Missing,
-  Corrosion,
-  Other
+  Corrosion
 }

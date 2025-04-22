@@ -46,8 +46,10 @@ public class DefectLogService(
   public async Task<DefectLog?> GetByIdAsync(Guid id, CancellationToken cancellationToken)
   {
     var defectLog = await dbContext.DefectLogs
+      .Include(d => d.FloorPlanItem!.Inspection)
       .Include(d => d.DefectLogFiles)
-      .Include(d => d.Component)
+      .Include(d => d.RelatedComponent)
+      .Include(d => d.Component!.BayConfiguration!.Manufacturer)
       .FirstOrDefaultAsync(d => d.Id == id, cancellationToken);
 
     var histories = await dbContext.DefectLogHistories
