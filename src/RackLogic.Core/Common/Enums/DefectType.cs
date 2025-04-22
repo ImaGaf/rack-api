@@ -9,5 +9,5 @@ public enum DefectType
   Unsecured,
   Missing,
   Corrosion,
-  Other
+  Other,
 }

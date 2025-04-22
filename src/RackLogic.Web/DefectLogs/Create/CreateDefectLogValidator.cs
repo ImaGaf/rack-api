@@ -1,5 +1,6 @@
 ﻿using FastEndpoints;
 using FluentValidation;
+using RackLogic.Core.Common.Enums;
 using RackLogic.UseCases.DefectLogs.Create;
 
 namespace RackLogic.Web.DefectLogs.Create;
@@ -22,6 +23,7 @@ public class CreateDefectLogValidator : Validator<CreateDefectLogCommand>
 
     RuleFor(x => x.CorrectiveAction)
       .NotNull()
+      .When(x => x.DefectType == (int)DefectType.Other)
       .WithMessage("Corrective Action is required.");
 
     RuleFor(x => x.ComponentIndex)
