@@ -26,7 +26,7 @@ public class InspectionDto
 {
   public Guid Id { get; set; }
   public Guid FloorPlanItemId { get; set; }
-  public Guid AuthorisedPersonId { get; set; }
+  public Guid? AuthorisedPersonId { get; set; }
   public DateTime InspectionDate { get; set; }
   public DateTime NextInspectionDate { get; set; }
   public string? BayId { get; set; }

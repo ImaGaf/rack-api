@@ -31,7 +31,6 @@ public class CreateCustomComponentValidator : Validator<CreateCustomComponentReq
       RuleFor(x => x.BeamStyle).NotEmpty().WithMessage("Beam Style is required for BEAM.");
       RuleFor(x => x.ClearEntryWidth).NotNull().WithMessage("Clear Entry Width is required for BEAM.");
       RuleFor(x => x.Height).NotNull().WithMessage("Height is required for BEAM.");
-      RuleFor(x => x.Width).NotNull().WithMessage("Width is required for BEAM.");
       RuleFor(x => x.ConnectorType).NotEmpty().WithMessage("Connector Type is required for BEAM.");
       RuleFor(x => x.FinishType).NotEmpty().WithMessage("Finish Type is required for BEAM.");
     });

@@ -12,7 +12,7 @@ public record CreateCustomComponentCommand(
   int? DepthOfFrame,
   int? DistanceCenterToCenter,
   int? ClearanceBetweenFrames,
-  int? ClearEntryWidth,
+  string? ClearEntryWidth,
   string? Orientation,
   string? BeamStyle,
   string? ConnectorType,

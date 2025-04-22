@@ -809,7 +809,7 @@ namespace RackLogic.Infrastructure.Data.Migrations
                     b.Property<string>("Authorise")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<Guid>("AuthorisePersonId")
+                    b.Property<Guid?>("AuthorisePersonId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("BayId")
@@ -1024,8 +1024,8 @@ namespace RackLogic.Infrastructure.Data.Migrations
                     b.Property<string>("Category")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("ClearEntryWidth")
-                        .HasColumnType("int");
+                    b.Property<string>("ClearEntryWidth")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int?>("ClearanceBetweenFrames")
                         .HasColumnType("int");
@@ -1813,9 +1813,7 @@ namespace RackLogic.Infrastructure.Data.Migrations
                 {
                     b.HasOne("RackLogic.Core.UserAggregate.ApplicationUser", "AuthorisePerson")
                         .WithMany()
-                        .HasForeignKey("AuthorisePersonId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("AuthorisePersonId");
 
                     b.HasOne("RackLogic.Core.Common.Entity.FloorPlanItem", "FloorPlanItem")
                         .WithOne("Inspection")
