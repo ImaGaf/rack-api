@@ -1,4 +1,4 @@
-﻿namespace RackLogic.Web.FloorPlans.List;
+﻿namespace RackLogic.Web.DefectLogs.GetFilter;
 
 public record GetListFloorPlanRequest
 {

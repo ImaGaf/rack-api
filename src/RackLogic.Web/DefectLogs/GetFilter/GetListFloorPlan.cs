@@ -4,14 +4,14 @@ using MediatR;
 using RackLogic.UseCases.FloorPlans.List;
 using RackLogic.Web.Models;
 
-namespace RackLogic.Web.FloorPlans.List;
+namespace RackLogic.Web.DefectLogs.GetFilter;
 
 public class GetListFloorPlan(IMediator _mediator)
   : Endpoint<GetListFloorPlanRequest, ApiResponse<IEnumerable<FloorPlanSimpleDto>>>
 {
   public override void Configure()
   {
-    Get("/floor-plan/list");
+    Get("/defect-logs/filters");
     DontThrowIfValidationFails();
   }
 
