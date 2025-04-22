@@ -267,6 +267,9 @@ namespace RackLogic.Infrastructure.Data.Migrations
                     b.Property<Guid>("WarehouseId")
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<int?>("XBraceLevel")
+                        .HasColumnType("int");
+
                     b.HasKey("Id");
 
                     b.HasIndex("ManufacturerId");
@@ -319,7 +322,16 @@ namespace RackLogic.Infrastructure.Data.Migrations
                     b.Property<Guid>("BayId")
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<string>("BeamStyle")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<int?>("Category")
+                        .HasColumnType("int");
+
+                    b.Property<string>("ClearEntryWidth")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("ClearanceBetweenFrames")
                         .HasColumnType("int");
 
                     b.Property<string>("Code")
@@ -331,11 +343,17 @@ namespace RackLogic.Infrastructure.Data.Migrations
                     b.Property<int>("ComponentType")
                         .HasColumnType("int");
 
+                    b.Property<string>("ConnectorType")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<double?>("DistanceCenterToCenter")
                         .HasColumnType("float");
+
+                    b.Property<string>("FinishType")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int?>("Height")
                         .HasColumnType("int");
@@ -350,6 +368,9 @@ namespace RackLogic.Infrastructure.Data.Migrations
                         .HasColumnType("int");
 
                     b.Property<int?>("LowerHeight")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("MaterialThickness")
                         .HasColumnType("int");
 
                     b.Property<string>("Notes")
@@ -1038,9 +1059,6 @@ namespace RackLogic.Infrastructure.Data.Migrations
 
                     b.Property<string>("ConnectorType")
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<int?>("DepthOfFrame")
-                        .HasColumnType("int");
 
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");

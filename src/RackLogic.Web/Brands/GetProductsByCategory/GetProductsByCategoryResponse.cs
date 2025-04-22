@@ -9,7 +9,6 @@ public class GetProductsByCategoryResponse
   public int? Width { get; set; }
   public int? Length { get; set; }
   public int? MaterialThickness { get; set; }
-  public int? DepthOfFrame { get; set; }
   public int? DistanceCenterToCenter { get; set; }
   public int? ClearanceBetweenFrames { get; set; }
   public string? ClearEntryWidth { get; set; }

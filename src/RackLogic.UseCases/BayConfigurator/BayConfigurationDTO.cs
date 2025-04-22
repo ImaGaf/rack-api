@@ -39,6 +39,7 @@ public class BayConfigurationDTO
   public int BracingDiagonalLevel { get; set; }
   public List<ComponentDTO>? BracingDiagonalLevels { get; set; }
   public bool? IsCustomBracingDiagonal { get; set; }
+  public int? XBraceLevel { get; set; }
   public ComponentDTO? RowSpacer { get; set; }
   public int RowSpacerLevel { get; set; }
   public List<int?>? RowSpacerLevels { get; set; }
@@ -68,6 +69,11 @@ public class ComponentDTO
   public bool? IsXBrace { get; set; }
   public int? Kit { get; set; }
   public string? ComponentKit { get; set; }
+  public string? BeamStyle { get; set; }
+  public int? MaterialThickness { get; set; }
+  public string? ClearEntryWidth { get; set; }
+  public int? ClearanceBetweenFrames { get; set; }
+  public string? ConnectorType { get; set; }
 }
 
 public class ManufacturerDTO

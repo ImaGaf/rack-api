@@ -9,7 +9,6 @@ public record CreateCustomComponentCommand(
   int? Width,
   int? Length,
   int? MaterialThickness,
-  int? DepthOfFrame,
   int? DistanceCenterToCenter,
   int? ClearanceBetweenFrames,
   string? ClearEntryWidth,

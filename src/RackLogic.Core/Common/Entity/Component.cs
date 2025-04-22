@@ -23,5 +23,11 @@ public class Component : EntityBase<Guid>, IAggregateRoot
   public bool? IsXBrace { get; set; }
   public int? Kit { get; set; }
   public string? ComponentKit { get; set; }
+  public string? FinishType { get; set; }
+  public string? BeamStyle { get; set; }
+  public int? MaterialThickness { get; set; }
+  public string? ClearEntryWidth { get; set; }
+  public int? ClearanceBetweenFrames { get; set; }
+  public string? ConnectorType { get; set; }
   public virtual BayConfiguration? BayConfiguration { get; set; }
 }

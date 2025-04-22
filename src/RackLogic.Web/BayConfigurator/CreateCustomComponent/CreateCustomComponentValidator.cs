@@ -38,7 +38,7 @@ public class CreateCustomComponentValidator : Validator<CreateCustomComponentReq
     When(x => x.Category?.ToUpper() == "BRACE", () =>
     {
       RuleFor(x => x.Orientation).NotEmpty().WithMessage("Orientation is required for BRACE.");
-      RuleFor(x => x.DepthOfFrame).NotNull().WithMessage("Depth of Frame is required for BRACE.");
+      RuleFor(x => x.Width).NotNull().WithMessage("Width is required for BRACE.");
       RuleFor(x => x.DistanceCenterToCenter).NotNull().WithMessage("Distance Center-to-Center is required for BRACE.");
       RuleFor(x => x.Height).NotNull().WithMessage("Height is required for BRACE.");
       RuleFor(x => x.FinishType).NotEmpty().WithMessage("Finish Type is required for BRACE.");

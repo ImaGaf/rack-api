@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using Ardalis.SharedKernel;
+using Microsoft.EntityFrameworkCore.Infrastructure;
 
 namespace RackLogic.Core.Common.Entity;
 public class BayConfiguration : EntityBase<Guid>, IAggregateRoot
@@ -52,6 +53,7 @@ public class BayConfiguration : EntityBase<Guid>, IAggregateRoot
   public int BracingDiagonalLevel { get; set; }
   public int BracingLevel { get; set; }
   public int BeamLevel { get; set; }
+  public int? XBraceLevel { get; set; }
   public virtual OEMBrand? Manufacturer { get; set; }
   public virtual Warehouse? Warehouses { get; set; }
   public virtual SWLSignage? SWLSignage { get; set; }
