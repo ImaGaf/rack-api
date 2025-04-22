@@ -3,20 +3,18 @@ using RackLogic.UseCases.Brands;
 using RackLogic.UseCases.Warehouses;
 using RackLogic.UseCases.Warehouses.CreateWarehouse;
 using RackLogic.UseCases.Warehouses.Get;
+using RackLogic.UseCases.Warehouses.SearchWarehouse;
 using RackLogic.Web.Brands.GetAll;
+using RackLogic.Web.Brands.GetListProductsBrand;
 using RackLogic.Web.Brands.GetOEMBrand;
 using RackLogic.Web.Brands.GetProductsByCategory;
 using RackLogic.Web.Warehouses.CreateWarehouse;
 using RackLogic.Web.Warehouses.Get;
 using RackLogic.Web.Warehouses.GetListManageUsers;
-using RackLogic.Web.Warehouses.GetWarehouseFinalUse;
 using RackLogic.Web.Warehouses.GetListWarehouses;
-using Riok.Mapperly.Abstractions;
-using RackLogic.Web.Brands.GetListProductsBrand;
-using RackLogic.Web.BayConfigurator.CreateProduct;
-using RackLogic.UseCases.BayConfigurator.CreateCustomComponent;
-using RackLogic.UseCases.Warehouses.SearchWarehouse;
+using RackLogic.Web.Warehouses.GetWarehouseFinalUse;
 using RackLogic.Web.Warehouses.SearchWarehouse;
+using Riok.Mapperly.Abstractions;
 
 namespace RackLogic.Web.Warehouses;
 
@@ -31,7 +29,6 @@ public static partial class WareHouseMapper
   public static partial CreateWarehouseCommand ToCreateWarehouseCommand(this CreateWarehouseRequest request, ClaimsPrincipal user);
   public static partial GetAllResponse GetAllBrandResponse(this GetAllBrandDTO request);
   public static partial GetWarehouseFinalUseResponse GetWarehousesFinalUseByUser(this WarehousesDTO request);
-  public static partial CreateCustomComponentCommand ToCreateProductCommand(this CreateCustomComponentRequest request);
   public static partial GetProductsByCategoryResponse ToCreateProductResponse(this ProductDTO request);
   public static partial GetWarehouseByIdQuery ToGetWarehouseByIdQuery(this GetWarehouseByIdRequest request);
   public static partial SearchWarehouseQuery ToQuery(this SearchWarehouseRequest request);

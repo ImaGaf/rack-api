@@ -65,30 +65,5 @@ public static partial class BrandUseCasesMapper
     };
   }
 
-  public static Products Mapping(this CreateCustomComponentCommand product)
-  {
-    return new Products()
-    {
-      Category = product.Category,
-      ComponentType = product.ComponentType,
-      Height = product.Height,
-      Width = product.Width,
-      Length = product.Length,
-      MaterialThickness = product.MaterialThickness,
-      DepthOfFrame = product.DepthOfFrame,
-      DistanceCenterToCenter = product.DistanceCenterToCenter,
-      ClearanceBetweenFrames = product.ClearanceBetweenFrames,
-      ClearEntryWidth = product.ClearEntryWidth,
-      Orientation = product.Orientation,
-      BeamStyle = product.BeamStyle,
-      ConnectorType = product.ConnectorType,
-      FinishType = product.FinishType,
-      Code = product.Code,
-      Description = product.Description,
-      ManufacturerId = product.ManufacturerId,
-      WarehouseId = product.WarehouseId
-    };
-  }
-
   public static partial ProductDTO ToProductDto(this Products product);
 }

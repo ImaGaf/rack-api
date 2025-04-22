@@ -43,6 +43,7 @@ public record BayConfigurationUpdateCommand(
     ComponentCommand BracingDiagonal,
     int BracingDiagonalLevel,
     List<ComponentCommand> BracingDiagonalLevels,
+    int? XBraceLevel,
     bool? IsCustomBracingDiagonal,
     ComponentCommand RowSpacer,
     int RowSpacerLevel,

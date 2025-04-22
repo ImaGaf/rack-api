@@ -4,6 +4,7 @@ using Ardalis.Specification;
 using RackLogic.Core.Common.Entity;
 using RackLogic.Core.Common.Enums;
 using RackLogic.UseCases.BayConfigurator.Create;
+using RackLogic.UseCases.BayConfigurator.CreateCustomComponent;
 using RackLogic.UseCases.BayConfigurator.GetSWL;
 using RackLogic.UseCases.BayConfigurator.UpdateSWL;
 using RackLogic.UseCases.Common.Constants;
@@ -48,7 +49,8 @@ public static partial class BayConfiguratorMapper
       RowSpacerLevel = bay.RowSpacerLevel,
       BracingDiagonalLevel = bay.BracingDiagonalLevel,
       BracingLevel = bay.BracingLevel,
-      BeamLevel = bay.BeamLevels.Count
+      BeamLevel = bay.BeamLevels.Count,
+      XBraceLevel = bay.XBraceLevel
     };
   }
 
@@ -71,7 +73,12 @@ public static partial class BayConfiguratorMapper
       Notes = component.Notes,
       LowerHeight = component.LowerHeight,
       UpperHeight = component.UpperHeight,
-      IsXBrace = component.IsXBrace
+      IsXBrace = component.IsXBrace,
+      BeamStyle = component.BeamStyle,
+      MaterialThickness = component.MaterialThickness,
+      ClearEntryWidth = component.ClearEntryWidth,
+      ClearanceBetweenFrames = component.ClearanceBetweenFrames,
+      ConnectorType = component.ConnectorType
     };
   }
 
@@ -132,7 +139,7 @@ public static partial class BayConfiguratorMapper
       RowSpacerLevel = bayConfiguration.RowSpacerLevel,
       BracingDiagonalLevel = bayConfiguration.BracingDiagonalLevel,
       BracingLevel = bayConfiguration.BracingLevel,
-
+      XBraceLevel = bayConfiguration.XBraceLevel,
       Upright = bayConfiguration.Components.FirstOrDefault(c => c.ComponentType == ComponentType.Upright)?.Mapping(),
       Beam = bayConfiguration.Components.FirstOrDefault(c => c.ComponentType == ComponentType.Beam)?.Mapping(),
       BracingHorizontal = bayConfiguration.Components.FirstOrDefault(c => c.ComponentType == ComponentType.BraceHorizontal)?.Mapping(),
@@ -165,6 +172,30 @@ public static partial class BayConfiguratorMapper
                 .Select(c => c.Mapping())
                 .ToList(),
       SWLSignage = bayConfiguration.ToDto()
+    };
+  }
+
+  public static Products Mapping(this CreateCustomComponentCommand product)
+  {
+    return new Products()
+    {
+      Category = product.Category,
+      ComponentType = product.ComponentType,
+      Height = product.Height,
+      Width = product.Width,
+      Length = product.Length,
+      MaterialThickness = product.MaterialThickness,
+      DistanceCenterToCenter = product.DistanceCenterToCenter,
+      ClearanceBetweenFrames = product.ClearanceBetweenFrames,
+      ClearEntryWidth = product.ClearEntryWidth,
+      Orientation = product.Orientation,
+      BeamStyle = product.BeamStyle,
+      ConnectorType = product.ConnectorType,
+      FinishType = product.FinishType,
+      Code = product.Code,
+      Description = product.Description,
+      ManufacturerId = product.ManufacturerId,
+      WarehouseId = product.WarehouseId
     };
   }
 

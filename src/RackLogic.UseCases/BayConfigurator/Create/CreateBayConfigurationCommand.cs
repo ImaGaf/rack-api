@@ -42,6 +42,7 @@ public record BayConfigurationCommand(
     ComponentCommand BracingDiagonal,
     int BracingDiagonalLevel,
     List<ComponentCommand> BracingDiagonalLevels,
+    int? XBraceLevel,
     bool? IsCustomBracingDiagonal,
     ComponentCommand RowSpacer,
     int RowSpacerLevel,
@@ -68,7 +69,12 @@ public record ComponentCommand(
     int? UpperHeight,
     bool? IsXBrace,
     int? Kit,
-    string? ComponentKit
+    string? ComponentKit,
+    string? BeamStyle,
+    int? MaterialThickness,
+    string? ClearEntryWidth,
+    int? ClearanceBetweenFrames,
+    string? ConnectorType
 );
 
 public record ManufacturerCommand(

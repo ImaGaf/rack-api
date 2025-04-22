@@ -76,6 +76,7 @@ public class UpdateBayConfigurationHandler(
     bayConfig.IsCustomBracingDiagonal = request.IsCustomBracingDiagonal;
     bayConfig.IsCustomRowSpacer = request.IsCustomRowSpacer;
     bayConfig.IsCustomAccessories = request.IsCustomAccessories;
+    bayConfig.XBraceLevel = request.XBraceLevel;
     await _bayConfigurationLevelsRepository.DeleteAsync(x => x.BayId == request.Id);
     bayConfig.Components.Clear();
     bayConfig.Components.Add(request.UpRight.Mapping(bayConfig.Id));
