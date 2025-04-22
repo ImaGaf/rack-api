@@ -3,6 +3,7 @@ using Ardalis.SharedKernel;
 using RackLogic.Core.Common.Entity;
 using RackLogic.Core.Common.Enums;
 using RackLogic.Core.Interfaces;
+using RackLogic.UseCases.Common.Constants;
 using RackLogic.UseCases.Warehouses;
 
 namespace RackLogic.UseCases.BayConfigurator.Update;
@@ -65,7 +66,6 @@ public class UpdateBayConfigurationHandler(
     bayConfig.TotalBayLoad = request.TotalBayLoad;
     bayConfig.Comment = request.Comment;
     bayConfig.IsEstimatedInstallDate = request.IsEstimatedInstallDate;
-    bayConfig.InterimInterval = request.InterimInterval;
     bayConfig.HasSplice = request.HasSplice;
     bayConfig.Level = request.Level;
     bayConfig.Pallets = request.Pallets;
@@ -77,6 +77,7 @@ public class UpdateBayConfigurationHandler(
     bayConfig.IsCustomRowSpacer = request.IsCustomRowSpacer;
     bayConfig.IsCustomAccessories = request.IsCustomAccessories;
     bayConfig.XBraceLevel = request.XBraceLevel;
+    bayConfig.InterimInterval = request.InterimInterval ?? BayConfigurationDefaultValue.InterimInterval;
     await _bayConfigurationLevelsRepository.DeleteAsync(x => x.BayId == request.Id);
     bayConfig.Components.Clear();
     bayConfig.Components.Add(request.UpRight.Mapping(bayConfig.Id));

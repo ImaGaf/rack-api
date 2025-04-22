@@ -51,4 +51,4 @@ public record BayConfigurationUpdateCommand(
     bool? IsCustomRowSpacer,
     List<ComponentCommand>? Accessories,
     bool? IsCustomAccessories,
-    int InterimInterval = BayConfigurationDefaultValue.InterimInterval);
+    int? InterimInterval);

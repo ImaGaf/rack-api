@@ -50,7 +50,7 @@ public record BayConfigurationCommand(
     bool? IsCustomRowSpacer,
     List<ComponentCommand>? Accessories,
     bool? IsCustomAccessories,
-    string? InterimInterval
+    int? InterimInterval
   );
 
 public record ComponentCommand(
