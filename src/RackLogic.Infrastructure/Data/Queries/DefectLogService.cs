@@ -115,9 +115,7 @@ public class DefectLogService(
   {
     var query = dbContext.DefectLogs
       .Include(x => x.DefectLogFiles)
-      .Include(x => x.Component!)
-        .ThenInclude(c => c.BayConfiguration!)
-          .ThenInclude(b => b.Manufacturer)
+      .Include(x => x.Component!).ThenInclude(c => c.BayConfiguration!).ThenInclude(b => b.Manufacturer)
       .Include(x => x.RelatedComponent)
       .Include(x => x.FloorPlanItem)
       .Where(x => x.FloorPlanItemId == request.floorPlanId);
