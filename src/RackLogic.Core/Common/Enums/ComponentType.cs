@@ -6,6 +6,13 @@ public enum ComponentType
   BraceHorizontal,
   BraceDiagonal,
   RowSpacer,
-  Accessories,
   Splice,
+  BasePlate,
+  Hardware,
+  Protectiton,
+  GuideRails,
+  Shims,
+  Signs,
+  Tie,
+  CartonLiveStorage
 }

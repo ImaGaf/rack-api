@@ -7,4 +7,6 @@ public class ListBayConfigurationRequest : PaginationRequest
 {
   [FromRoute]
   public Guid WarehouseId { get; set; }
+  [FromRoute]
+  public bool? IsGetAll{ get; set; }
 }

@@ -60,7 +60,7 @@ public static partial class BayConfiguratorMapper
     {
       Id = new Guid(),
       BayId = bayConfigurationId,
-      ComponentType = component.ComponentType.MappingEnum(),
+      ComponentType = component.ComponentType.MappingEnum(component.Orientation),
       Height = component.Height,
       Width = component.Width,
       Length = component.Length,
@@ -77,7 +77,6 @@ public static partial class BayConfiguratorMapper
       BeamStyle = component.BeamStyle,
       MaterialThickness = component.MaterialThickness,
       ClearEntryWidth = component.ClearEntryWidth,
-      ClearanceBetweenFrames = component.ClearanceBetweenFrames,
       ConnectorType = component.ConnectorType
     };
   }
@@ -146,6 +145,10 @@ public static partial class BayConfiguratorMapper
       BracingDiagonal = bayConfiguration.Components.FirstOrDefault(c => c.ComponentType == ComponentType.BraceDiagonal)?.Mapping(),
       RowSpacer = bayConfiguration.Components.FirstOrDefault(c => c.ComponentType == ComponentType.RowSpacer)?.Mapping(),
       SpliceKits = bayConfiguration.Components.FirstOrDefault(c => c.ComponentType == ComponentType.Splice)?.Mapping(),
+      Accessories = bayConfiguration.Components
+                .Where(c => c.Category == ComponentCategory.ACCESSORIES)
+                .Select(c => c.Mapping())
+                .ToList(),
 
       BeamLevels = bayConfiguration.BayConfigurationLevels
                 .Where(l => l.LevelType == ComponentType.Beam)
@@ -167,10 +170,7 @@ public static partial class BayConfiguratorMapper
                 .Select(l => l.Mapping())
                 .ToList(),
 
-      Accessories = bayConfiguration.Components
-                .Where(c => c.ComponentType == ComponentType.Accessories)
-                .Select(c => c.Mapping())
-                .ToList(),
+      
       SWLSignage = bayConfiguration.ToDto()
     };
   }
@@ -186,7 +186,6 @@ public static partial class BayConfiguratorMapper
       Length = product.Length,
       MaterialThickness = product.MaterialThickness,
       DistanceCenterToCenter = product.DistanceCenterToCenter,
-      ClearanceBetweenFrames = product.ClearanceBetweenFrames,
       ClearEntryWidth = product.ClearEntryWidth,
       Orientation = product.Orientation,
       BeamStyle = product.BeamStyle,
@@ -292,9 +291,9 @@ public static partial class BayConfiguratorMapper
     };
   }
 
-  private static ComponentType MappingEnum(this string type)
+  private static ComponentType MappingEnum(this string type, string? orientation)
   {
-    _ = Enum.TryParse(type, true, out ComponentType enumType);
+    _ = Enum.TryParse($"{type}{orientation}", true, out ComponentType enumType);
 
     return enumType;
   }

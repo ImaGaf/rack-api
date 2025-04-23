@@ -5,5 +5,5 @@ public enum ComponentCategory
   BEAM,
   BRACE,
   BACKTIE,
-  BASEPLATE
+  ACCESSORIES
 }

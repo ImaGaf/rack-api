@@ -10,7 +10,6 @@ public record CreateCustomComponentCommand(
   int? Length,
   int? MaterialThickness,
   int? DistanceCenterToCenter,
-  int? ClearanceBetweenFrames,
   string? ClearEntryWidth,
   string? Orientation,
   string? BeamStyle,

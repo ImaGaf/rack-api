@@ -9,7 +9,6 @@ public class ProductDTO
   public int? Length { get; set; }
   public int? MaterialThickness { get; set; }
   public int? DistanceCenterToCenter { get; set; }
-  public int? ClearanceBetweenFrames { get; set; }
   public string? ClearEntryWidth { get; set; }
   public string? Orientation { get; set; }
   public string? BeamStyle { get; set; }

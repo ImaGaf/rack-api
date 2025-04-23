@@ -12,7 +12,6 @@ public class Products : EntityBase<Guid>, IAggregateRoot
   public int? Length { get; set; } // Not explicitly listed, but may be useful
   public int? MaterialThickness { get; set; } // For Upright
   public int? DistanceCenterToCenter { get; set; } // For Brace (horizontal & diagonal)
-  public int? ClearanceBetweenFrames { get; set; } // For Row Spacer
   public string? ClearEntryWidth { get; set; } // For Beam
 
   // Technical specifications

@@ -27,7 +27,6 @@ public class Component : EntityBase<Guid>, IAggregateRoot
   public string? BeamStyle { get; set; }
   public int? MaterialThickness { get; set; }
   public string? ClearEntryWidth { get; set; }
-  public int? ClearanceBetweenFrames { get; set; }
   public string? ConnectorType { get; set; }
   public virtual BayConfiguration? BayConfiguration { get; set; }
 }

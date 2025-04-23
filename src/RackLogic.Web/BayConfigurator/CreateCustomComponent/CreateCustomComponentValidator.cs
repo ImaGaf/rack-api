@@ -46,7 +46,6 @@ public class CreateCustomComponentValidator : Validator<CreateCustomComponentReq
 
     When(x => x.Category?.ToUpper() == "ROWSPACER", () =>
     {
-      RuleFor(x => x.ClearanceBetweenFrames).NotNull().WithMessage("Clearance Between Frames is required for ROWSPACER.");
       RuleFor(x => x.FinishType).NotEmpty().WithMessage("Finish Type is required for ROWSPACER.");
     });
   }
