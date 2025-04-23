@@ -34,29 +34,6 @@ public static partial class FloorPlanItemMapper
       ObjectType = item.ObjectType,
       BayConfiguration = item.BayConfiguration?.Mapping(),
       Inspection = item.Inspection?.Mapping(),
-      DefectLogs = item.DefectLogs?.Select(x => x.Mapping()).ToList(),
-    };
-  }
-
-  public static DefectLogDto Mapping(this DefectLog defectLog)
-  {
-    return new DefectLogDto
-    {
-      TicketId = defectLog.TicketId,
-      ComponentId = defectLog.ComponentId,
-      FloorPlanItemId = defectLog.FloorPlanItemId,
-      RelatedComponentId = defectLog.RelatedComponentId,
-      DrawPosition = defectLog.DrawPosition,
-      ComponentIndex = defectLog.ComponentIndex,
-      IsRear = defectLog.IsRear,
-      DefectGrade = defectLog.DefectGrade,
-      DefectPriority = defectLog.DefectPriority,
-      DefectType = defectLog.DefectType,
-      DefectStatus = defectLog.DefectStatus,
-      CorrectiveAction = defectLog.CorrectiveAction,
-      Comment = defectLog.Comment,
-      Component = defectLog.Component?.Mapping(),
-      RelatedComponent = defectLog.RelatedComponent?.Mapping()
     };
   }
 

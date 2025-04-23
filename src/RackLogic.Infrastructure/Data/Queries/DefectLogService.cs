@@ -7,6 +7,7 @@ using RackLogic.UseCases.Common.Constants;
 using RackLogic.UseCases.DefectLogs;
 using RackLogic.UseCases.DefectLogs.Count;
 using RackLogic.UseCases.DefectLogs.List;
+using RackLogic.UseCases.FloorPlanItems.ListDefect;
 using RackLogic.UseCases.Warehouses;
 
 namespace RackLogic.Infrastructure.Data.Queries;
@@ -107,6 +108,28 @@ public class DefectLogService(
       PageNumber = request.pageNumber <= 0 ? PaginationDefaultValue.PageNumber : request.pageNumber,
       PageSize = request.pageSize <= 0 ? PaginationDefaultValue.PageSize : request.pageSize,
       DataDTO = result.Select(x => x.ToDto()).ToList()
+    };
+  }
+
+  public async Task<PagedDataDTO<DefectLogDto>> GetListAsync(GetListDefectLogByFloorPlanItemIdQuery request, CancellationToken cancellationToken = default)
+  {
+    var query = dbContext.DefectLogs
+      .Include(x => x.DefectLogFiles)
+      .Include(x => x.Component!).ThenInclude(c => c.BayConfiguration!).ThenInclude(b => b.Manufacturer)
+      .Include(x => x.RelatedComponent)
+      .Include(x => x.FloorPlanItem)
+      .Where(x => x.FloorPlanItemId == request.floorPlanId);
+
+    var result = await query.Skip((request.pageNumber - 1) * request.pageSize).Take(request.pageSize).ToListAsync();
+
+    var totalItem = await query.CountAsync();
+
+    return new PagedDataDTO<DefectLogDto>
+    {
+      TotalRecords = totalItem,
+      PageNumber = request.pageNumber <= 0 ? PaginationDefaultValue.PageNumber : request.pageNumber,
+      PageSize = request.pageSize <= 0 ? PaginationDefaultValue.PageSize : request.pageSize,
+      DataDTO = result.Select(x => x.ToDtoWithHistory()).ToList()
     };
   }
 }
