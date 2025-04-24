@@ -18,7 +18,8 @@ public class ListBayConfiguration(IMediator _mediator) : Endpoint<ListBayConfigu
       new ListBayConfiguratorQuery(
         req.WarehouseId,
         req.PageNumber,
-        req.PageSize),
+        req.PageSize,
+        req.IsGetAll),
       ct);
 
     if (result.IsSuccess)

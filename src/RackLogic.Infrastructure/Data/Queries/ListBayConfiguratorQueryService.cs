@@ -7,7 +7,7 @@ using RackLogic.UseCases.Warehouses;
 namespace RackLogic.Infrastructure.Data.Queries;
 public class ListBayConfiguratorQueryService(AppDbContext _context) : IListBayConfiguratorQueryService
 {
-  public async Task<PagedDataDTO<BayConfigurationDTO>> ListAsync(Guid warehouseId, int pageNumber, int pageSize)
+  public async Task<PagedDataDTO<BayConfigurationDTO>> ListAsync(Guid warehouseId, int pageNumber, int pageSize, bool? isGetAll)
   {
     var bayConfigurations = _context.BayConfigurations
           .Where(x => x.WarehouseId == warehouseId)
@@ -17,7 +17,8 @@ public class ListBayConfiguratorQueryService(AppDbContext _context) : IListBayCo
           .Include(b => b.SWLSignage);
     var totalRecord = await bayConfigurations.CountAsync();
     var result = new List<BayConfiguration>();
-    if (pageNumber > 0 && pageSize > 0)
+    var isAll = isGetAll ?? false;
+    if (!isAll)
     {
       result = await bayConfigurations
          .Skip((pageNumber - 1) * pageSize)
@@ -33,7 +34,7 @@ public class ListBayConfiguratorQueryService(AppDbContext _context) : IListBayCo
     {
       TotalRecords = totalRecord,
       PageNumber = pageNumber,
-      PageSize = pageSize,
+      PageSize = !isAll ? pageSize : totalRecord,
       DataDTO = result.Select(x => x.Mapping()).ToList()
     };
   }

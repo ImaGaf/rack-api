@@ -109,7 +109,7 @@ public class UpdateBayConfigurationHandler(
     );
 
     bayConfig.BayConfigurationLevels.AddRange(
-        request.RowSpacerLevels.Select(l => l.Mapping(ComponentType.RowSpacer, bayConfig.Id))
+        request.RowSpacerLevels.Select(l => l.Mapping(ComponentType.Backtie, bayConfig.Id))
     );
 
     bayConfig.BayConfigurationLevels.AddRange(

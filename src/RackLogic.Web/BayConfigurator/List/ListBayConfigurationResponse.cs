@@ -73,6 +73,5 @@ public class ComponentResponse
   public string? BeamStyle { get; set; }
   public int? MaterialThickness { get; set; }
   public string? ClearEntryWidth { get; set; }
-  public int? ClearanceBetweenFrames { get; set; }
   public string? ConnectorType { get; set; }
 }

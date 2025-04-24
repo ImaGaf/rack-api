@@ -8,7 +8,7 @@ public class ListBayConfiguratorHandler (IListBayConfiguratorQueryService _listB
 {
   public async Task<Result<PagedDataDTO<BayConfigurationDTO>>> Handle(ListBayConfiguratorQuery request, CancellationToken cancellationToken)
   {
-    var result = await _listBayConfiguratorQueryService.ListAsync(request.warehouseId, request.pageNumber, request.pageSize);
+    var result = await _listBayConfiguratorQueryService.ListAsync(request.WarehouseId, request.PageNumber, request.PageSize, request.IsGetAll);
     return Result.Success(result);
   }
 }
