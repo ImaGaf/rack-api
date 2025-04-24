@@ -143,7 +143,7 @@ public static partial class BayConfiguratorMapper
       Beam = bayConfiguration.Components.FirstOrDefault(c => c.ComponentType == ComponentType.Beam)?.Mapping(),
       BracingHorizontal = bayConfiguration.Components.FirstOrDefault(c => c.ComponentType == ComponentType.BraceHorizontal)?.Mapping(),
       BracingDiagonal = bayConfiguration.Components.FirstOrDefault(c => c.ComponentType == ComponentType.BraceDiagonal)?.Mapping(),
-      RowSpacer = bayConfiguration.Components.FirstOrDefault(c => c.ComponentType == ComponentType.RowSpacer)?.Mapping(),
+      RowSpacer = bayConfiguration.Components.FirstOrDefault(c => c.ComponentType == ComponentType.Backtie)?.Mapping(),
       SpliceKits = bayConfiguration.Components.FirstOrDefault(c => c.ComponentType == ComponentType.Splice)?.Mapping(),
       Accessories = bayConfiguration.Components
                 .Where(c => c.Category == ComponentCategory.ACCESSORIES)
@@ -161,7 +161,7 @@ public static partial class BayConfiguratorMapper
                 .ToList(),
 
       RowSpacerLevels = bayConfiguration.BayConfigurationLevels
-                .Where(l => l.LevelType == ComponentType.RowSpacer)
+                .Where(l => l.LevelType == ComponentType.Backtie)
                 .Select(l => l.LevelValue)
                 .ToList(),
 

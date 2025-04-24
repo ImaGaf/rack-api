@@ -5,7 +5,7 @@ public enum ComponentType
   Beam,
   BraceHorizontal,
   BraceDiagonal,
-  RowSpacer,
+  Backtie,
   Splice,
   BasePlate,
   Hardware,
