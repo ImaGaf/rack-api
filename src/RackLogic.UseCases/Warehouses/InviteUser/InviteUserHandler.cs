@@ -36,61 +36,29 @@ public class InviteUserHandler(
 
     var invitedUser = await _userManager.FindByEmailAsync(request.Email);
     var inviterName = _user.UserName ?? "Someone";
-    var baseUrl = _configuration.GetSection("Dashboard:InviteUser").Value;
+    var deepLink = _configuration.GetSection("Dashboard:InviteUser").Value;
+    var baseUrl = _configuration.GetSection("Dashboard:BaseUrl").Value;
     var logo = $"{baseUrl}{_configuration.GetSection("Dashboard:LogoMarket").Value}";
 
     if (invitedUser is null)
-    {
-      var existingInvitation = await _invitationsRepository
-        .FirstOrDefaultAsync(i => i.Email == request.Email &&
-                                  i.WarehouseId == request.WarehouseId,
-          cancellationToken
-        );
+      return await HandlerUserNotExistsAsync(
+        request,
+        inviterId,
+        deepLink,
+        logo,
+        inviterName,
+        result.CompanyName,
+        role?.Name,
+        cancellationToken);
 
-      if (existingInvitation == null)
-      {
-        await _invitationsRepository
-          .AddAsync(new Invitation()
-          {
-            Role = request.Role,
-            Email = request.Email,
-            InviteById = inviterId,
-            WarehouseId = request.WarehouseId,
-          }, cancellationToken);
-      }
-
-      var linkUrl = $"{baseUrl}email={request.Email},inviterole={request.Role},warehouseId={request.WarehouseId}";
-      var content = BuildEmailInviteContent(linkUrl, logo, inviterName, result.CompanyName, role?.Name);
-      return await _emailSender.SendAsync(request.Email, EmailConstants.InviteSubject, content);
-    }
-
-    if (request.Role == RoleConstant.Inspector && invitedUser.RegisteredRole != RoleConstant.Inspector)
-      return Result.Invalid(new ValidationError("The user is not an inspector."));
-
-    if (request.Role == RoleConstant.Repairer && invitedUser.RegisteredRole != RoleConstant.Repairer)
-      return Result.Invalid(new ValidationError("The user is not an repairer."));
-
-    var existingUserRole = await _userWarehouseRoleRepository
-      .FirstOrDefaultAsync(uwr => uwr.UserId == invitedUser.Id &&
-                                  uwr.WarehouseId == request.WarehouseId,
-        cancellationToken
-    );
-
-    if (existingUserRole == null)
-    {
-      await _userWarehouseRoleRepository.AddAsync(
-        new UserWarehouseRole
-        {
-          UserId = invitedUser.Id,
-          WarehouseId = request.WarehouseId,
-          RoleId = role.Id,
-        },
-        cancellationToken
-      );
-    }
-
-    var contentEmail = BuildEmailInviteExistedUserContent(logo, inviterName, result.CompanyName, role?.Name);
-    return await _emailSender.SendAsync(request.Email, EmailConstants.InviteExistedUserSubject, contentEmail);
+    return await HandlerUserExistsAsync(
+      request,
+      invitedUser,
+      role,
+      logo,
+      inviterName,
+      result.CompanyName,
+      cancellationToken);
   }
 
   private string BuildEmailInviteContent(string link, string logo, string inviterName, string locationName, string? roleName)
@@ -132,5 +100,85 @@ public class InviteUserHandler(
     if (role.Name != RoleConstant.Premises && role.Name != RoleConstant.ClientManager) return false;
 
     return true;
+  }
+
+  private async Task<bool> CheckExistingUserInWarehouseAsync(Guid? memberId, Guid warehouseId)
+  {
+    var result = await _userWarehouseRoleRepository.FirstOrDefaultAsync(x => x.WarehouseId == warehouseId && x.UserId == memberId);
+    return result != null;
+  }
+
+  private async Task<bool> HandlerUserNotExistsAsync(
+    InviteUserCommand request,
+    Guid inviterId,
+    string? deepLink,
+    string logo,
+    string inviterName,
+    string companyName,
+    string? roleName,
+    CancellationToken ct)
+  {
+    var existingInvitation = await _invitationsRepository
+    .FirstOrDefaultAsync(i => i.Email == request.Email &&
+                              i.WarehouseId == request.WarehouseId,
+                              ct);
+
+    if (existingInvitation == null)
+    {
+      await _invitationsRepository
+        .AddAsync(new Invitation()
+        {
+          Role = request.Role,
+          Email = request.Email,
+          InviteById = inviterId,
+          WarehouseId = request.WarehouseId,
+        }, ct);
+    }
+
+    var linkUrl = $"{deepLink}email={request.Email},inviterole={request.Role},warehouseId={request.WarehouseId}";
+    var content = BuildEmailInviteContent(linkUrl, logo, inviterName, companyName, roleName);
+    return await _emailSender.SendAsync(request.Email, EmailConstants.InviteSubject, content);
+  }
+
+
+  private async Task<Result<bool>> HandlerUserExistsAsync(
+    InviteUserCommand request,
+    ApplicationUser invitedUser,
+    IdentityRole<Guid> role,
+    string logo,
+    string inviterName,
+    string companyName,
+    CancellationToken cancellationToken)
+  {
+    if (await CheckExistingUserInWarehouseAsync(invitedUser.Id, request.WarehouseId))
+      return Result.Invalid(new ValidationError("The user already exists in the warehouse."));
+
+    if (request.Role == RoleConstant.Inspector && invitedUser.RegisteredRole != RoleConstant.Inspector)
+      return Result.Invalid(new ValidationError("The user is not an inspector."));
+
+    if (request.Role == RoleConstant.Repairer && invitedUser.RegisteredRole != RoleConstant.Repairer)
+      return Result.Invalid(new ValidationError("The user is not an repairer."));
+
+    var existingUserRole = await _userWarehouseRoleRepository
+      .FirstOrDefaultAsync(uwr => uwr.UserId == invitedUser.Id &&
+                                  uwr.WarehouseId == request.WarehouseId,
+        cancellationToken
+    );
+
+    if (existingUserRole == null)
+    {
+      await _userWarehouseRoleRepository.AddAsync(
+        new UserWarehouseRole
+        {
+          UserId = invitedUser.Id,
+          WarehouseId = request.WarehouseId,
+          RoleId = role.Id,
+        },
+        cancellationToken
+      );
+    }
+
+    var contentEmail = BuildEmailInviteExistedUserContent(logo, inviterName, companyName, role?.Name);
+    return await _emailSender.SendAsync(request.Email, EmailConstants.InviteExistedUserSubject, contentEmail);
   }
 }
