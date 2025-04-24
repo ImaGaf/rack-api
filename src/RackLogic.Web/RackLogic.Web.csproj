@@ -39,6 +39,9 @@
     <Content Update="wwwroot\.well-known\assetlinks.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Content Update="wwwroot\assets\images\rack_logo.svg">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
 
 </Project>
