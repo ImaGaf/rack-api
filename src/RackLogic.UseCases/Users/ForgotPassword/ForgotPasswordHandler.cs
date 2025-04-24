@@ -36,8 +36,7 @@ public class ForgotPasswordHandler(
       var baseUrl = _configuration.GetSection("Dashboard:BaseUrl").Value;
       var logo = $"{baseUrl}{_configuration.GetSection("Dashboard:LogoMarket").Value}";
       var forgotPasswordUrl = _configuration.GetSection("Dashboard:ForgotPassword").Value;
-      var resetLink = $"{baseUrl}{forgotPasswordUrl}?userId={user.Id}&resetToken={UrlEncoder.Default.Encode(resetToken)}";
-      var content = BuildEmailContent($"{user.FirstName}", otp, resetLink, logo);
+      var content = BuildEmailContent($"{user.FirstName}", otp, logo);
       var result = await _emailSender.SendAsync(request.Email, "Reset RackPro password", content);
       
       if (result)
@@ -60,14 +59,13 @@ public class ForgotPasswordHandler(
     await _userManager.UpdateAsync(user);
   }
 
-  private string BuildEmailContent(string firstName, string otp,string resetLink , string logo)
+  private string BuildEmailContent(string firstName, string otp, string logo)
   {
     var templatePath = Path.Combine("wwwroot", "EmailTemplates", "ForgotPasswordOtp.html");
     var emailContent = System.IO.File.ReadAllText(templatePath);
 
     emailContent = emailContent.Replace("{first_name}", firstName);
     emailContent = emailContent.Replace("{otp}", otp);
-    //emailContent = emailContent.Replace("{reset_link}", resetLink);
     emailContent = emailContent.Replace("{logo}", logo);
     emailContent = emailContent.Replace("{currentYear}", DateTime.UtcNow.Year.ToString());
 
