@@ -12,8 +12,11 @@ public class DefectLogDto
   public Guid ComponentId { get; set; }
   public Guid FloorPlanItemId { get; set; }
   public Guid? RelatedComponentId { get; set; }
+  public Guid WarehouseId { get; set; }
   public string? DrawPosition { get; set; }
   public int ComponentIndex { get; set; }
+  public int Bay { get; set; }
+  public int Rack { get; set; }
   public bool? IsRear { get; set; }
   public DefectGrade? DefectGrade { get; set; }
   public DefectPriority? DefectPriority { get; set; }
