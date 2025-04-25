@@ -20,6 +20,7 @@ public static partial class FloorPlanItemMapper
   {
     return new FloorPlanItemDto
     {
+      Id = item.Id,
       BayConfigurationId = item.BayConfigurationId,
       DueDate = item.DueDate,
       Bay = item.Bay,
