@@ -1,5 +1,4 @@
-﻿using Ardalis.Result;
-using Ardalis.Specification;
+﻿using Ardalis.Specification;
 using Microsoft.EntityFrameworkCore;
 using RackLogic.Core.Common.Entity;
 using RackLogic.Core.Common.Enums;
@@ -48,6 +47,7 @@ public class DefectLogService(
   {
     var defectLog = await dbContext.DefectLogs
       .Include(d => d.FloorPlanItem!.Inspection)
+      .Include(d => d.FloorPlanItem!.FloorPlan)
       .Include(d => d.DefectLogFiles)
       .Include(d => d.RelatedComponent)
       .Include(d => d.Component!.BayConfiguration!.Manufacturer)
@@ -73,7 +73,7 @@ public class DefectLogService(
         .ThenInclude(c => c.BayConfiguration!)
           .ThenInclude(b => b.Manufacturer)
       .Include(x => x.RelatedComponent)
-      .Include(x => x.FloorPlanItem)
+      .Include(x => x.FloorPlanItem!.FloorPlan)
       .Where(x => x.FloorPlanItem!.FloorPlan!.WarehouseId == request.WarehouseId)
       .Where(x => request.AssetId != null ? x.FloorPlanItem!.FloorPlanId == request.AssetId : true)
       .Where(x => request.Rack != null ? x.FloorPlanItem!.Rack == request.Rack : true)
@@ -117,7 +117,7 @@ public class DefectLogService(
       .Include(x => x.DefectLogFiles)
       .Include(x => x.Component!).ThenInclude(c => c.BayConfiguration!).ThenInclude(b => b.Manufacturer)
       .Include(x => x.RelatedComponent)
-      .Include(x => x.FloorPlanItem)
+      .Include(x => x.FloorPlanItem!.FloorPlan)
       .Where(x => x.FloorPlanItemId == request.floorPlanId);
 
     var result = await query.Skip((request.pageNumber - 1) * request.pageSize).Take(request.pageSize).ToListAsync();
