@@ -107,7 +107,7 @@ public class DefectLogService(
       TotalRecords = totalItem,
       PageNumber = request.pageNumber <= 0 ? PaginationDefaultValue.PageNumber : request.pageNumber,
       PageSize = request.pageSize <= 0 ? PaginationDefaultValue.PageSize : request.pageSize,
-      DataDTO = result.Select(x => x.ToDto()).ToList()
+      DataDTO = result.Select(x => x.ToDtoWithHistory()).ToList()
     };
   }
 
