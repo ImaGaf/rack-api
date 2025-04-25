@@ -24,6 +24,8 @@ public class CreateDefectLogCommandHandler(
 
     entity.Id = Guid.NewGuid();
 
+    entity.RelatedComponentId = entity.RelatedComponentId == Guid.Empty ? null : entity.RelatedComponentId;
+
     entity.TicketId = GenerateTicketId();
 
     if (request.Files is not null && request.Files.Any())
