@@ -18,6 +18,8 @@ public class DefectLogDto
   public int Bay { get; set; }
   public int Rack { get; set; }
   public bool? IsRear { get; set; }
+  public bool? IsXBrace { get; set; }
+  public string? ComponentType { get; set; }
   public DefectGrade? DefectGrade { get; set; }
   public DefectPriority? DefectPriority { get; set; }
   public DefectType? DefectType { get; set; }
