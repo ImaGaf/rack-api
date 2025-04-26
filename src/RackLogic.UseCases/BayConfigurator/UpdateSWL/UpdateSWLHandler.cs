@@ -5,24 +5,31 @@ using RackLogic.Core.Interfaces;
 
 namespace RackLogic.UseCases.BayConfigurator.UpdateSWL;
 public class UpdateSWLHandler(
-  IRepositoryWithExpression<SWLSignage> _sWLSignageRepository)
-  : ICommandHandler<UpdateSWLCommand, Result<bool>>
+  IRepositoryWithExpression<SWLSignage> _sWLSignageRepository,
+  IRepositoryWithExpression<BayConfiguration> _bayConfigurationRepository)
+  : ICommandHandler<UpdateSWLCommand, Result<BayConfigurationDTO>>
 {
-  public async Task<Result<bool>> Handle(UpdateSWLCommand request, CancellationToken cancellationToken)
+  public async Task<Result<BayConfigurationDTO>> Handle(UpdateSWLCommand request, CancellationToken cancellationToken)
   {
     var sWLSignage = await _sWLSignageRepository.FirstOrDefaultAsync(x => x.BayConfigurationId == request.Id, cancellationToken);
 
-    if (sWLSignage is null) return await CreateSWLSignageAsync(request, cancellationToken);
+    if (sWLSignage is null) 
+    {
+      await _sWLSignageRepository.AddAsync(request.ToEntity(), cancellationToken);
+    }
+    else
+    {
+      await _sWLSignageRepository.UpdateAsync(sWLSignage.Mapping(request));
+    }
 
-    await _sWLSignageRepository.UpdateAsync(sWLSignage.Mapping(request));
+    var bayConfig = await _bayConfigurationRepository.FirstOrDefaultAsync(
+      x => x.Id == request.Id,
+      includes:[
+        i => i.SWLSignage,
+        i => i.Components,
+        i => i.BayConfigurationLevels,
+        i => i.Manufacturer]);
 
-    return true;
-  }
-
-  private async Task<bool> CreateSWLSignageAsync(UpdateSWLCommand request, CancellationToken cancellationToken)
-  {
-    var result = await _sWLSignageRepository.AddAsync(request.ToEntity(), cancellationToken);
-
-    return result != null;
+    return bayConfig!.Mapping();
   }
 }

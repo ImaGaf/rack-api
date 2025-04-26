@@ -11,4 +11,4 @@ public record UpdateSWLCommand(
   float? ToTalBayLoad,
   float? FirstBeamLevelMeasurementFGL,
   float? SecondBeamLevelMeasurementFGL)
-  : Ardalis.SharedKernel.ICommand<Result<bool>>;
+  : Ardalis.SharedKernel.ICommand<Result<BayConfigurationDTO>>;
