@@ -12,6 +12,8 @@ public class DefectLog : BaseEntityCustom
   public string? DrawPosition { get; set; }
   public int ComponentIndex { get; set; }
   public bool? IsRear { get; set; }
+  public bool? IsXBrace { get; set; }
+  public string? ComponentType { get; set; }
   public DefectGrade? DefectGrade { get; set; }
   public DefectPriority? DefectPriority { get; set; }
   public DefectType? DefectType { get; set; }

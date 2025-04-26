@@ -331,9 +331,6 @@ namespace RackLogic.Infrastructure.Data.Migrations
                     b.Property<string>("ClearEntryWidth")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("ClearanceBetweenFrames")
-                        .HasColumnType("int");
-
                     b.Property<string>("Code")
                         .HasColumnType("nvarchar(max)");
 
@@ -435,6 +432,9 @@ namespace RackLogic.Infrastructure.Data.Migrations
                     b.Property<int>("ComponentIndex")
                         .HasColumnType("int");
 
+                    b.Property<string>("ComponentType")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<int?>("CorrectiveAction")
                         .HasColumnType("int");
 
@@ -475,6 +475,9 @@ namespace RackLogic.Infrastructure.Data.Migrations
                         .HasColumnType("bit");
 
                     b.Property<bool?>("IsRear")
+                        .HasColumnType("bit");
+
+                    b.Property<bool?>("IsXBrace")
                         .HasColumnType("bit");
 
                     b.Property<DateTime?>("LastModificationTime")
@@ -1047,9 +1050,6 @@ namespace RackLogic.Infrastructure.Data.Migrations
 
                     b.Property<string>("ClearEntryWidth")
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<int?>("ClearanceBetweenFrames")
-                        .HasColumnType("int");
 
                     b.Property<string>("Code")
                         .HasColumnType("nvarchar(max)");
