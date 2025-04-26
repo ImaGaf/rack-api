@@ -3,13 +3,14 @@ using FastEndpoints;
 using MediatR;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
+using RackLogic.UseCases.BayConfigurator;
 using RackLogic.Web.Exceptions;
 using RackLogic.Web.Models;
 
 namespace RackLogic.Web.BayConfigurator.UpdateSWL;
 
 [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-public class UpdateSWL(IMediator _mediator) : Endpoint<UpdateSWLRequest, ApiResponse<bool>>
+public class UpdateSWL(IMediator _mediator) : Endpoint<UpdateSWLRequest, ApiResponse<BayConfigurationDTO>>
 {
   public override void Configure()
   {
@@ -32,7 +33,7 @@ public class UpdateSWL(IMediator _mediator) : Endpoint<UpdateSWLRequest, ApiResp
 
     if (result.IsSuccess)
     {
-      Response = new ApiResponse<bool>(result.Value);
+      Response = new ApiResponse<BayConfigurationDTO>(result.Value);
       return;
     }
 

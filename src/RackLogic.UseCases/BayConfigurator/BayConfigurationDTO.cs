@@ -17,7 +17,7 @@ public class BayConfigurationDTO
   public required string StructuralDesigner { get; set; }
   public required string ProjectRef { get; set; }
   public int ToleranceGrade { get; set; }
-  public int TotalBayLoad { get; set; }
+  public int? TotalBayLoad { get; set; }
   public string? Comment { get; set; }
   public bool IsEnableInterimInspection { get; set; }
   public int InterimInterval { get; set; }
@@ -47,7 +47,13 @@ public class BayConfigurationDTO
   public List<ComponentDTO>? Accessories { get; set; }
   public bool? IsCustomAccessories { get; set; }
 
-  public SWLSignageDTO? SWLSignage { get; set; }
+  public float? PalletWeight { get; set; }
+  public int? BulkPalletsNumberOfLevels { get; set; }
+  public float? BulkPalletsLevelMaximumLoad { get; set; }
+  public int? ShelvingNumberOfLevel { get; set; }
+  public float? ShelvingLevelMaximumLoad { get; set; }
+  public float? FirstBeamLevelMeasurementFGL { get; set; }
+  public float? SecondBeamLevelMeasurementFGL { get; set; }
 }
 
 public class ComponentDTO

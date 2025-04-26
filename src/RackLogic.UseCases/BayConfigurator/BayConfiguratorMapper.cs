@@ -121,7 +121,6 @@ public static partial class BayConfiguratorMapper
       StructuralDesigner = bayConfiguration.StructuralDesigner,
       ProjectRef = bayConfiguration.ProjectRef,
       ToleranceGrade = bayConfiguration.ToleranceGrade,
-      TotalBayLoad = bayConfiguration.TotalBayLoad,
       Comment = bayConfiguration.Comment,
       IsEnableInterimInspection = bayConfiguration.IsEnableInterimInspection,
       InterimInterval = bayConfiguration.InterimInterval,
@@ -170,8 +169,14 @@ public static partial class BayConfiguratorMapper
                 .Select(l => l.Mapping())
                 .ToList(),
 
-      
-      SWLSignage = bayConfiguration.ToDto()
+      PalletWeight = bayConfiguration.SWLSignage?.PalletWeight,
+      BulkPalletsNumberOfLevels = bayConfiguration.SWLSignage?.BulkPalletsNumberOfLevels,
+      BulkPalletsLevelMaximumLoad = bayConfiguration.SWLSignage?.BulkPalletsLevelMaximumLoad,
+      ShelvingNumberOfLevel = bayConfiguration.SWLSignage?.ShelvingNumberOfLevel,
+      ShelvingLevelMaximumLoad = bayConfiguration.SWLSignage?.ShelvingLevelMaximumLoad,
+      FirstBeamLevelMeasurementFGL = bayConfiguration.SWLSignage?.FirstBeamLevelMeasurementFGL,
+      SecondBeamLevelMeasurementFGL = bayConfiguration.SWLSignage?.SecondBeamLevelMeasurementFGL,
+      TotalBayLoad = (int?)(bayConfiguration.SWLSignage?.ToTalBayLoad),
     };
   }
 
