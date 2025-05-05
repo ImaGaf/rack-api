@@ -68,6 +68,7 @@ public class DefectLogService(
   public async Task<PagedDataDTO<DefectLogDto>> GetListAsync(GetListDefectLogQuery request, CancellationToken cancellationToken)
   {
     var query = dbContext.DefectLogs
+      .Include(x => x.Inspection)
       .Include(x => x.DefectLogFiles)
       .Include(x => x.Component!)
         .ThenInclude(c => c.BayConfiguration!)
@@ -114,6 +115,7 @@ public class DefectLogService(
   public async Task<PagedDataDTO<DefectLogDto>> GetListAsync(GetListDefectLogByFloorPlanItemIdQuery request, CancellationToken cancellationToken = default)
   {
     var query = dbContext.DefectLogs
+      .Include(x => x.Inspection)
       .Include(x => x.DefectLogFiles)
       .Include(x => x.Component!).ThenInclude(c => c.BayConfiguration!).ThenInclude(b => b.Manufacturer)
       .Include(x => x.RelatedComponent)
