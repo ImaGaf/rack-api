@@ -4,7 +4,6 @@ using RackLogic.Core.Common.Entity;
 using RackLogic.Core.Common.Enums;
 using RackLogic.Core.Interfaces;
 using RackLogic.UseCases.Common.Extensions;
-using RackLogic.UseCases.FloorPlanItems;
 using RackLogic.UseCases.FloorPlans;
 using RackLogic.UseCases.Warehouses;
 
@@ -12,7 +11,6 @@ namespace RackLogic.UseCases.DefectLogs.Create;
 
 public class CreateDefectLogCommandHandler(
   IRepositoryWithExpression<DefectLog> defectLogRepository,
-  IFloorPlanItemService floorPlanItemService,
   IUserWarehouseService userWarehouseService,
   IDefectLogHistoryService defectLogHistoryService,
   IFileService fileService)
@@ -49,8 +47,6 @@ public class CreateDefectLogCommandHandler(
       entity.DefectLogFiles = fileEntities;
     }
     await defectLogRepository.AddAsync(entity, cancellationToken: cancellationToken);
-
-    await floorPlanItemService.UpdateInspectionDueDate(request.FloorPlanItemId);
 
     var historyDetails = DefectHistoryType.Created.GetDescription();
     await defectLogHistoryService.CreateAsync(entity, historyDetails, (int)DefectHistoryType.Created, cancellationToken);
