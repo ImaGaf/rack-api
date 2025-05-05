@@ -21,7 +21,6 @@ public class FloorPlanItemService : IFloorPlanItemService
   public async Task<FloorPlanItemDto?> GetDetailAsync(GetDetailFloorPlanItemQuery query, CancellationToken cancellationToken = default)
   {
     var floorPlanItem = await _context.FloorPlanItems
-                                    .Include(x => x.Inspection)
                                     .Include(x => x.BayConfiguration!).ThenInclude(b => b.BayConfigurationLevels)
                                     .Include(x => x.BayConfiguration!).ThenInclude(b => b.Components)
                                     .Include(x => x.BayConfiguration!).ThenInclude(b => b.Manufacturer)

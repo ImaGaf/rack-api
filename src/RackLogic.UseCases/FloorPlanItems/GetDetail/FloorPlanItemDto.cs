@@ -9,7 +9,6 @@ public class FloorPlanItemDto
   public required int Rack { get; set; }
   public required int Bay { get; set; }
   public required Guid FloorPlanId { get; set; }
-  public Guid InspectionId { get; set; }
   public Guid? BayConfigurationId { get; set; }
   public DateTime? DueDate { get; set; }
   public required string Offset { get; set; }
@@ -19,13 +18,12 @@ public class FloorPlanItemDto
   public string? ObjectType { get; set; }
   public required double Rotation { get; set; }
   public BayConfigurationDTO? BayConfiguration { get; set; }
-  public InspectionDto? Inspection { get; set; }
 }
 
 public class InspectionDto
 {
   public Guid Id { get; set; }
-  public Guid FloorPlanItemId { get; set; }
+  public Guid FloorPlanId { get; set; }
   public Guid? AuthorisedPersonId { get; set; }
   public DateTime InspectionDate { get; set; }
   public DateTime NextInspectionDate { get; set; }

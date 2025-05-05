@@ -11,4 +11,5 @@ public class FloorPlan : BaseEntityCustom
   public required ICollection<FloorPlanFiles> FloorPlanFiles { get; set; }
   public required ICollection<FloorPlanItem> FloorPlanItems { get; set; }
   public required ICollection<DefaultSettings> DefaultSettings { get; set; }
+  public virtual ICollection<Inspection>? Inspections { get; set; }
 }

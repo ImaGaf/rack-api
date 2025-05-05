@@ -46,7 +46,7 @@ public class DefectLogService(
   public async Task<DefectLog?> GetByIdAsync(Guid id, CancellationToken cancellationToken)
   {
     var defectLog = await dbContext.DefectLogs
-      .Include(d => d.FloorPlanItem!.Inspection)
+      .Include(d => d.Inspection)
       .Include(d => d.FloorPlanItem!.FloorPlan)
       .Include(d => d.DefectLogFiles)
       .Include(d => d.RelatedComponent)
@@ -68,6 +68,7 @@ public class DefectLogService(
   public async Task<PagedDataDTO<DefectLogDto>> GetListAsync(GetListDefectLogQuery request, CancellationToken cancellationToken)
   {
     var query = dbContext.DefectLogs
+      .Include(x => x.Inspection)
       .Include(x => x.DefectLogFiles)
       .Include(x => x.Component!)
         .ThenInclude(c => c.BayConfiguration!)
@@ -114,11 +115,12 @@ public class DefectLogService(
   public async Task<PagedDataDTO<DefectLogDto>> GetListAsync(GetListDefectLogByFloorPlanItemIdQuery request, CancellationToken cancellationToken = default)
   {
     var query = dbContext.DefectLogs
+      .Include(x => x.Inspection)
       .Include(x => x.DefectLogFiles)
       .Include(x => x.Component!).ThenInclude(c => c.BayConfiguration!).ThenInclude(b => b.Manufacturer)
       .Include(x => x.RelatedComponent)
       .Include(x => x.FloorPlanItem!.FloorPlan)
-      .Where(x => x.FloorPlanItemId == request.floorPlanId);
+      .Where(x => x.FloorPlanItemId == request.floorPlanId && x.InspectionId == request.inspectionId);
 
     var result = await query.Skip((request.pageNumber - 1) * request.pageSize).Take(request.pageSize).ToListAsync();
 

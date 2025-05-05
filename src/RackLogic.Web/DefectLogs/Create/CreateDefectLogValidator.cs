@@ -42,6 +42,10 @@ public class CreateDefectLogValidator : Validator<CreateDefectLogCommand>
       .NotEmpty()
       .WithMessage("FloorPlanItemId is required.");
 
+    RuleFor(x => x.InspectionId)
+      .NotEmpty()
+      .WithMessage("InspectionId is required.");
+
     RuleFor(x => x.Comment)
       .MaximumLength(2000);
   }

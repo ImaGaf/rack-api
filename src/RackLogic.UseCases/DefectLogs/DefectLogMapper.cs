@@ -1,7 +1,7 @@
 ﻿using RackLogic.Core.Common.Entity;
 using RackLogic.UseCases.Brands;
 using RackLogic.UseCases.DefectLogs.Create;
-using RackLogic.UseCases.FloorPlanItems;
+using RackLogic.UseCases.Inspections;
 using Riok.Mapperly.Abstractions;
 
 namespace RackLogic.UseCases.DefectLogs;
@@ -18,7 +18,7 @@ public static partial class DefectLogMapper
   {
     var dto = entity.ToDto();
     dto.OEMBrand = entity.Component!.BayConfiguration!.Manufacturer!.ToOEMBrandDTO();
-    dto.Inspection = entity.FloorPlanItem!.Inspection is null ? null : entity.FloorPlanItem!.Inspection.Mapping();
+    dto.Inspection = entity.Inspection!.ToDto();
     dto.Bay = entity.FloorPlanItem!.Bay;
     dto.Rack = entity.FloorPlanItem!.Rack;
     dto.WarehouseId = entity.FloorPlanItem.FloorPlan!.WarehouseId;
