@@ -10,6 +10,6 @@ public class InspectionConfiguration : IEntityTypeConfiguration<Inspection>
   {
     builder.ToTable("Inspections");
 
-    builder.HasOne(x => x.FloorPlanItem).WithOne(x => x.Inspection).HasForeignKey<Inspection>(x => x.FloorPlanItemId);
+    builder.HasOne(x => x.FloorPlan).WithMany(x => x.Inspections).HasForeignKey(x => x.FloorPlanId).OnDelete(DeleteBehavior.NoAction);
   }
 }

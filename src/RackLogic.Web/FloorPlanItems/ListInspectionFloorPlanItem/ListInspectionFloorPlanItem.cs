@@ -1,13 +1,11 @@
-﻿using Ardalis.Result;
-using FastEndpoints;
+﻿using FastEndpoints;
 using MediatR;
 using RackLogic.UseCases.FloorPlanItems.Inspection;
-using RackLogic.UseCases.Warehouses;
 using RackLogic.Web.Models;
 
 namespace RackLogic.Web.FloorPlanItems.ListInspectionFloorPlanItem;
 
-public class ListInspectionFloorPlabItem(IMediator _mediator) : Endpoint<InspectionFloorPlanItemRequest, PageResponse<InspectionFloorPlanItemDto>>
+public class ListInspectionFloorPlanItem(IMediator _mediator) : Endpoint<InspectionFloorPlanItemRequest, PageResponse<InspectionFloorPlanItemDto>>
 {
   public override void Configure()
   {

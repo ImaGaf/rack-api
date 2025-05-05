@@ -29,12 +29,10 @@ public static partial class FloorPlanItemMapper
       Rack = item.Rack,
       Rotation = item.Rotation,
       Height = item.Height,
-      InspectionId = item.InspectionId,
       Size = item.Size,
       Width = item.Width,
       ObjectType = item.ObjectType,
       BayConfiguration = item.BayConfiguration?.Mapping(),
-      Inspection = item.Inspection?.Mapping(),
     };
   }
 
@@ -42,7 +40,7 @@ public static partial class FloorPlanItemMapper
   {
     return new InspectionDto
     {
-      FloorPlanItemId = inspection.FloorPlanItemId,
+      FloorPlanId = inspection.FloorPlanId,
       AuthorisedPersonId = inspection.AuthorisePersonId,
       InspectionDate = inspection.InspectionDate,
       NextInspectionDate = inspection.NextInspectionDate,
