@@ -1,10 +1,8 @@
 ﻿using FastEndpoints;
 using MediatR;
-using RackLogic.UseCases.DefectLogs.List;
 using RackLogic.UseCases.DefectLogs;
-using RackLogic.Web.DefectLogs.List;
-using RackLogic.Web.Models;
 using RackLogic.UseCases.FloorPlanItems.ListDefect;
+using RackLogic.Web.Models;
 
 namespace RackLogic.Web.FloorPlanItems.ListDefect;
 
@@ -17,7 +15,7 @@ public class GetListDefectByFloorPlanItemId(IMediator _mediator) : Endpoint<GetL
 
   public override async Task HandleAsync(GetListDefectByFloorPlanItemIdRequest req, CancellationToken ct)
   {
-    var result = await _mediator.Send(new GetListDefectLogByFloorPlanItemIdQuery(req.FloorPlanItemId, req.PageNumber, req.PageSize), ct);
+    var result = await _mediator.Send(new GetListDefectLogByFloorPlanItemIdQuery(req.FloorPlanItemId, req.InspectionId, req.PageNumber, req.PageSize), ct);
 
     if (result.IsSuccess)
     {

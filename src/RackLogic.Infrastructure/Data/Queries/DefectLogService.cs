@@ -118,7 +118,7 @@ public class DefectLogService(
       .Include(x => x.Component!).ThenInclude(c => c.BayConfiguration!).ThenInclude(b => b.Manufacturer)
       .Include(x => x.RelatedComponent)
       .Include(x => x.FloorPlanItem!.FloorPlan)
-      .Where(x => x.FloorPlanItemId == request.floorPlanId);
+      .Where(x => x.FloorPlanItemId == request.floorPlanId && x.InspectionId == request.inspectionId);
 
     var result = await query.Skip((request.pageNumber - 1) * request.pageSize).Take(request.pageSize).ToListAsync();
 
