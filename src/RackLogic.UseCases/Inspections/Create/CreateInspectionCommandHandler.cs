@@ -15,12 +15,7 @@ public class CreateInspectionCommandHandler(
 {
   public async Task<Result<InspectionDto>> Handle(CreateInspectionCommand request, CancellationToken cancellationToken)
   {
-    if (!Guid.TryParse(request.ClientId, out var warehouseId))
-    {
-      return Result.Error("Invalid Warehouse ID");
-    }
-
-    var warehouse = await warehouseRepository.FirstOrDefaultAsync(w => w.Id == warehouseId, cancellationToken);
+    var warehouse = await warehouseRepository.FirstOrDefaultAsync(w => w.Id == request.WarehouseId, cancellationToken);
 
     if (warehouse == null)
     {

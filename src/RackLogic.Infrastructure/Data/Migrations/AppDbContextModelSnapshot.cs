@@ -827,17 +827,8 @@ namespace RackLogic.Infrastructure.Data.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<string>("Authorise")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<Guid?>("AuthorisePersonId")
                         .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("BayId")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("ClientId")
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("CreationTime")
                         .HasColumnType("datetime2");
@@ -871,6 +862,9 @@ namespace RackLogic.Infrastructure.Data.Migrations
 
                     b.Property<DateTime>("NextInspectionDate")
                         .HasColumnType("datetime2");
+
+                    b.Property<Guid?>("WarehouseId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.HasKey("Id");
 
