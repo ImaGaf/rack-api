@@ -1,9 +1,9 @@
 ﻿using RackLogic.Core.Common.Entity;
-using RackLogic.UseCases.FloorPlanItems.GetDetail;
 using RackLogic.UseCases.Inspections.Create;
 using Riok.Mapperly.Abstractions;
 
 namespace RackLogic.UseCases.Inspections;
+
 [Mapper(RequiredMappingStrategy = RequiredMappingStrategy.None)]
 public static partial class DefectLogMapper
 {

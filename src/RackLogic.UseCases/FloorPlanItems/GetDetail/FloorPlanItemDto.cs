@@ -1,5 +1,4 @@
-﻿using RackLogic.Core.Common.Enums;
-using RackLogic.UseCases.BayConfigurator;
+﻿using RackLogic.UseCases.BayConfigurator;
 
 namespace RackLogic.UseCases.FloorPlanItems.GetDetail;
 
@@ -18,15 +17,4 @@ public class FloorPlanItemDto
   public string? ObjectType { get; set; }
   public required double Rotation { get; set; }
   public BayConfigurationDTO? BayConfiguration { get; set; }
-}
-
-public class InspectionDto
-{
-  public Guid Id { get; set; }
-  public Guid FloorPlanId { get; set; }
-  public Guid? AuthorisedPersonId { get; set; }
-  public DateTime InspectionDate { get; set; }
-  public DateTime NextInspectionDate { get; set; }
-  public Guid? WarehouseId { get; set; }
-  public bool IsConfirmAuthorization { get; set; }
 }
