@@ -27,8 +27,6 @@ public class InspectionDto
   public Guid? AuthorisedPersonId { get; set; }
   public DateTime InspectionDate { get; set; }
   public DateTime NextInspectionDate { get; set; }
-  public string? BayId { get; set; }
-  public string? ClientId { get; set; }
-  public string? Authorise { get; set; }
+  public Guid? WarehouseId { get; set; }
   public bool IsConfirmAuthorization { get; set; }
 }

@@ -12,8 +12,8 @@ public class CreateInspectionValidator : Validator<CreateInspectionCommand>
       .NotNull()
       .WithMessage("FloorPlanId is required.");
 
-    RuleFor(x => x.ClientId)
+    RuleFor(x => x.WarehouseId)
       .NotNull()
-      .WithMessage("ClientId is required.");
+      .WithMessage("WarehouseId is required.");
   }
 }

@@ -44,9 +44,7 @@ public static partial class FloorPlanItemMapper
       AuthorisedPersonId = inspection.AuthorisePersonId,
       InspectionDate = inspection.InspectionDate,
       NextInspectionDate = inspection.NextInspectionDate,
-      BayId = inspection.BayId,
-      ClientId = inspection.ClientId,
-      Authorise = inspection.Authorise,
+      WarehouseId = inspection.WarehouseId,
       IsConfirmAuthorization = inspection.IsConfirmAuthorization,
     };
   }
