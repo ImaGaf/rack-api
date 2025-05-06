@@ -10,5 +10,4 @@ public class InspectionDto
   public DateTime NextInspectionDate { get; set; }
   public Guid? WarehouseId { get; set; }
   public bool IsConfirmAuthorization { get; set; }
-  public int? DefectCount { get; set; }
 }

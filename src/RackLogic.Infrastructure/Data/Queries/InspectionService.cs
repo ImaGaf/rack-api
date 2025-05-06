@@ -17,8 +17,7 @@ public class InspectionService(AppDbContext dbContext) : IInspectionService
         AuthorisedPersonId = d.AuthorisePersonId,
         InspectionDate = d.InspectionDate,
         NextInspectionDate = d.NextInspectionDate,
-        AuthorisedPersonName = d.AuthorisePerson!.FirstName + " " + d.AuthorisePerson.LastName,
-        DefectCount = d.DefectLogs!.Count
+        AuthorisedPersonName = d.AuthorisePerson!.FirstName + " " + d.AuthorisePerson.LastName
       })
       .FirstOrDefaultAsync(cancellationToken);
   }
