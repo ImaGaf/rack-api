@@ -3,7 +3,7 @@ using FastEndpoints;
 using MediatR;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
-using RackLogic.UseCases.FloorPlanItems.GetDetail;
+using RackLogic.UseCases.Inspections;
 using RackLogic.UseCases.Inspections.Create;
 using RackLogic.Web.Exceptions;
 using RackLogic.Web.Models;
