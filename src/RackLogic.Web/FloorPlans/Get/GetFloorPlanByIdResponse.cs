@@ -25,6 +25,7 @@ public class FloorPlanItemResponse
   public required double Rotation { get; set; }
   public string? BayConfigurationId { get; set; }
   public DateTime? DueDate { get; set; }
+  public int CountDefectLog { get; set; } = 0;
   public List<FloorPlanCommentResponse>? Comments { get; set; }
 }
 
