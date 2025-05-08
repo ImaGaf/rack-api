@@ -9,6 +9,7 @@ using RackLogic.Core.Common.Entity;
 using RackLogic.Core.Interfaces;
 using RackLogic.Core.UserAggregate;
 using RackLogic.UseCases.FloorPlans;
+using RackLogic.UseCases.Users;
 
 namespace RackLogic.UseCases.Warehouses.CreateWarehouse;
 public class CreateWarehouseHandler(
@@ -19,15 +20,18 @@ public class CreateWarehouseHandler(
   IFileService _fileService,
   UserManager<ApplicationUser> _userManager,
   IConfiguration _configuration,
-  IEmailSender _emailSender)
+  IEmailSender _emailSender,
+  IUser user
+  )
   : ICommandHandler<CreateWarehouseCommand, Result<WarehouseDto>>
 {
   public async Task<Result<WarehouseDto>> Handle(CreateWarehouseCommand request, CancellationToken cancellationToken)
   {
-    if (!request.User.Identity?.IsAuthenticated ?? false) return Result.Unauthorized();
-    var createIdString = request.User.Claims.First(x => x.Type == ClaimTypes.NameIdentifier).Value;
-    var creatorId = Guid.Parse(createIdString);
-    var creatorRole = request.User.Claims.First(x => x.Type == ClaimTypes.Role).Value;
+    if (user.Id is null) return Result.Unauthorized();
+
+    var creatorId = user.Id!.Value;
+
+    var creatorRole = user.Role!;
     var creatorRoleId = await _roleManager.FindByNameAsync(creatorRole);
     var inspectorRole = await _roleManager.FindByNameAsync(RoleConstant.Inspector);
 
@@ -45,7 +49,12 @@ public class CreateWarehouseHandler(
       CompanyName = request.CompanyName,
       OwnerId = creatorId,
       ABN = request.ABN,
-      SiteAddress = request.SiteAddress,
+      Address = request.Address,
+      AddressOptional = request.AddressOptional,
+      City = request.City,
+      PostCode = request.PostCode,
+      State = request.State,
+      IsGoogleApiAddress = request.IsGoogleApiAddress,
       ClientPhoneNumber = request.ClientPhoneNumber,
       OwnerFirstName = request.OwnerFirstName,
       OwnerLastName = request.OwnerLastName,
@@ -80,7 +89,7 @@ public class CreateWarehouseHandler(
     if (string.IsNullOrEmpty(request.InviteInspectorEmail)) return true;
 
     var invitedUser = await _userManager.FindByEmailAsync(request.InviteInspectorEmail!);
-    var userName = request.User.Claims.First(x => x.Type == ClaimTypes.Name).Value;
+    var userName = user.UserName!;
     var baseUrl = _configuration.GetSection("Dashboard:InviteUser").Value;
     var logo = $"{baseUrl}{_configuration.GetSection("Dashboard:LogoMarket").Value}";
 

@@ -5,10 +5,14 @@ using Microsoft.AspNetCore.Http;
 
 namespace RackLogic.UseCases.Warehouses.CreateWarehouse;
 public record CreateWarehouseCommand (
-  ClaimsPrincipal User,
   string CompanyName,
   string ABN,
-  string SiteAddress,
+  string Address,
+  string? AddressOptional,
+  string? City,
+  string? State,
+  string? PostCode,
+  bool? IsGoogleApiAddress,
   string ClientPhoneNumber,
   IFormFile FileImageLogo,
   string OwnerFirstName,

@@ -6,7 +6,12 @@ public record WarehouseProfileDTO
   public Guid OwnerId { get; set; }
   public string? CompanyName { get; set; }
   public string? ABN { get; set; }
-  public string? SiteAddress { get; set; }
+  public string? Address { get; set; }
+  public string? AddressOptional { get; set; }
+  public string? City { get; set; }
+  public string? State { get; set; }
+  public string? PostCode { get; set; }
+  public bool? IsGoogleApiAddress { get; set; }
   public string? ClientPhoneNumber { get; set; }
   public string? FileImageName { get; set; }
   public string? FileImageUrl { get; set; }

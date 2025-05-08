@@ -32,7 +32,6 @@ public class CreateWarehouseValidator : Validator<CreateWarehouseRequest>
            .Must(file => IsValidFileExtension(file.FileName))
            .WithMessage("ImageLogo must be of type PDF, PNG, JPEG, HEIC or HEIF.");
 
-
     RuleFor(r => r.OwnerEmailAddress)
           .EmailAddress()
           .WithMessage("Email is invalid.");
