@@ -6,4 +6,6 @@ public interface IUser
   public bool? IsAuthenticated { get; }
   public string? UserName { get; }
   public string? WarehouseRole { get; }
+  public string? Role { get; }
+
 }

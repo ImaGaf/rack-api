@@ -185,17 +185,20 @@ public class UserWarehouseService(
 
   public async Task<PagedDataDTO<WarehouseDto>> SearchWarehouseByUserIdAsync(SearchWarehouseQuery request, Guid? userId, CancellationToken cancellationToken)
   {
-    var query = from userWarehouseRole in _context.UserWarehouseRoles 
-      where userWarehouseRole.UserId == userId
-      join warehouse in _context.Warehouses
-        on userWarehouseRole.WarehouseId equals warehouse.Id
-      select warehouse;
+    var query = from userWarehouseRole in _context.UserWarehouseRoles
+                where userWarehouseRole.UserId == userId
+                join warehouse in _context.Warehouses
+                  on userWarehouseRole.WarehouseId equals warehouse.Id
+                select warehouse;
 
     if (request.Search != null)
     {
-      var search = request.Search.Trim().ToLower();
-      query = query.Where(w => w.CompanyName.ToLower().Contains(search) || 
-                               w.SiteAddress.ToLower().Contains(search));
+      var search = request.Search;
+      query = query.Where(w => w.CompanyName.Contains(search) ||
+                               w.City!.Contains(search) ||
+                               w.State!.Contains(search) ||
+                               w.ClientPhoneNumber.Contains(search) ||
+                               (w.OwnerFirstName + " " + w.OwnerLastName).Contains(search));
     }
 
     var totalItem = await query.CountAsync(cancellationToken);

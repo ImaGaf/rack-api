@@ -9,7 +9,15 @@ public class CreateWarehouseRequest
   [Required]
   public required string ABN { get; set; }
   [Required]
-  public required string SiteAddress { get; set; }
+  public required string Address { get; set; }
+  public string? AddressOptional { get; set; }
+  [Required]
+  public required string City { get; set; }
+  [Required]
+  public required string State { get; set; }
+  [Required]
+  public required string PostCode { get; set; }
+  public bool? IsGoogleApiAddress { get; set; }
   [Required]
   public required string ClientPhoneNumber { get; set; }
   [Required]

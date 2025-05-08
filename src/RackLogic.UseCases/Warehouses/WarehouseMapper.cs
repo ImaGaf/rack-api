@@ -7,5 +7,7 @@ namespace RackLogic.UseCases.Warehouses;
 public static partial class WarehouseMapper
 {
   public static partial WarehouseProfileDTO ToResponse(this Warehouse warehouse);
+
+  [MapProperty(nameof(Warehouse.Id), nameof(WarehouseDto.WarehouseId))]
   public static partial WarehouseDto ToDto(this Warehouse warehouse);
 }

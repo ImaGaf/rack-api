@@ -17,4 +17,5 @@ public class CurrentUser : IUser
   public bool? IsAuthenticated => _httpContextAccessor.HttpContext?.User?.Identity?.IsAuthenticated;
   public string? UserName => _httpContextAccessor.HttpContext?.User?.FindFirstValue(ClaimTypes.Name);
   public string? WarehouseRole => _httpContextAccessor.HttpContext?.User?.FindFirstValue(ClaimConstant.WarehouseRole);
+  public string? Role => _httpContextAccessor.HttpContext?.User?.FindFirstValue(ClaimTypes.Role);
 }

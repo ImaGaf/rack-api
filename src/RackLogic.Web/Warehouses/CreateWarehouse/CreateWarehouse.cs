@@ -30,7 +30,7 @@ public class CreateWarehouse(IMediator _mediator) : Endpoint<CreateWarehouseRequ
       throw new InvalidException(errors);
     }
 
-    var result = await _mediator.Send(req.ToCreateWarehouseCommand(User), ct);
+    var result = await _mediator.Send(req.ToCreateWarehouseCommand(), ct);
 
     if (result.IsSuccess)
     {
