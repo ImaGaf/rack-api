@@ -30,6 +30,7 @@ public class UpdateDefectLogCommandHandler(
 
       var newStatusDescription = ((DefectStatus)request.DefectStatus!).GetDescription();
       var historyDetails = $"{DefectHistoryType.StatusUpdate.GetDescription()} {newStatusDescription}";
+
       await defectLogHistoryService
         .CreateAsync(
           entity,
@@ -41,11 +42,12 @@ public class UpdateDefectLogCommandHandler(
     if (request.Comment != null && request.Comment != entity.Comment)
     {
       entity.Comment = request.Comment;
+
       await defectLogHistoryService
         .CreateAsync(
           entity,
           request.Comment,
-          (int)DefectHistoryType.StatusUpdate,
+          (int)DefectHistoryType.Note,
           cancellationToken);
     }
 
