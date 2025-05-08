@@ -17,4 +17,4 @@ public record CreateWarehouseCommand (
   string OwnerEmailAddress,
   bool IsNominatedInspector,
   string? InviteInspectorEmail)
-  : ICommand<Result<bool>>;
+  : ICommand<Result<WarehouseDto>>;

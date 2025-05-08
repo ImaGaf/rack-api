@@ -74,13 +74,17 @@ public class FloorPlanService : IFloorPlanService
         .SelectMany(fp => new[]
         {
                 new { Name = BayConfigurationCategory.SingleBin.ToString(), Value = fp.DefaultSettings.SingleBin },
+                new { Name = BayConfigurationCategory.SingleBinDoubleDeep.ToString(), Value = fp.DefaultSettings.SingleBinDoubleDeep },
                 new { Name = BayConfigurationCategory.PairSingleBin.ToString(), Value = fp.DefaultSettings.PairSingleBin },
+                new { Name = BayConfigurationCategory.PairSingleBinDoubleDeep.ToString(), Value = fp.DefaultSettings.PairSingleBinDoubleDeep },
                 new { Name = BayConfigurationCategory.DoubleBin.ToString(), Value = fp.DefaultSettings.DoubleBin },
+                new { Name = BayConfigurationCategory.DoubleBinDoubleDeep.ToString(), Value = fp.DefaultSettings.DoubleBinDoubleDeep },
                 new { Name = BayConfigurationCategory.PairDoubleBin.ToString(), Value = fp.DefaultSettings.PairDoubleBin },
+                new { Name = BayConfigurationCategory.PairDoubleBinDoubleDeep.ToString(), Value = fp.DefaultSettings.PairDoubleBinDoubleDeep },
                 new { Name = BayConfigurationCategory.TripleBin.ToString(), Value = fp.DefaultSettings.TripleBin },
+                new { Name = BayConfigurationCategory.TripleBinDoubleDeep.ToString(), Value = fp.DefaultSettings.TripleBinDoubleDeep },
                 new { Name = BayConfigurationCategory.PairTripleBin.ToString(), Value = fp.DefaultSettings.PairTripleBin },
-                new { Name = BayConfigurationCategory.QuadBin.ToString(), Value = fp.DefaultSettings.QuadBin },
-                new { Name = BayConfigurationCategory.PairQuadBin.ToString(), Value = fp.DefaultSettings.PairQuadBin }
+                new { Name = BayConfigurationCategory.PairTripleBinDoubleDeep.ToString(), Value = fp.DefaultSettings.PairTripleBinDoubleDeep },
         })
         .FirstOrDefault(ds => !string.IsNullOrEmpty(ds.Value) && !validBayConfigIdSet.Contains(ds.Value));
 

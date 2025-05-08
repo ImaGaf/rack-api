@@ -20,9 +20,9 @@ public class CreateWarehouseHandler(
   UserManager<ApplicationUser> _userManager,
   IConfiguration _configuration,
   IEmailSender _emailSender)
-  : ICommandHandler<CreateWarehouseCommand, Result<bool>>
+  : ICommandHandler<CreateWarehouseCommand, Result<WarehouseDto>>
 {
-  public async Task<Result<bool>> Handle(CreateWarehouseCommand request, CancellationToken cancellationToken)
+  public async Task<Result<WarehouseDto>> Handle(CreateWarehouseCommand request, CancellationToken cancellationToken)
   {
     if (!request.User.Identity?.IsAuthenticated ?? false) return Result.Unauthorized();
     var createIdString = request.User.Claims.First(x => x.Type == ClaimTypes.NameIdentifier).Value;
@@ -68,7 +68,8 @@ public class CreateWarehouseHandler(
 
     await _warehouseRepository.SaveEntityAsync(warehouse, cancellationToken);
     await _warehouseRepository.SaveContextAsync(cancellationToken);
-    return Result.Success(true);
+
+    return warehouse.ToDto();
   }
 
   //Funcition
