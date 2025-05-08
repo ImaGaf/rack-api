@@ -43,10 +43,14 @@ public record UpdateFloorPlanCommentCommand(
 
 public record UpdateDefaultSettingsCommand(
     string? SingleBin,
+    string? SingleBinDoubleDeep,
     string? PairSingleBin,
+    string? PairSingleBinDoubleDeep,
     string? DoubleBin,
+    string? DoubleBinDoubleDeep,
     string? PairDoubleBin,
+    string? PairDoubleBinDoubleDeep,
     string? TripleBin,
+    string? TripleBinDoubleDeep,
     string? PairTripleBin,
-    string? QuadBin,
-    string? PairQuadBin);
+    string? PairTripleBinDoubleDeep);

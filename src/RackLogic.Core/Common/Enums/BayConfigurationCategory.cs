@@ -2,11 +2,15 @@
 public enum BayConfigurationCategory
 {
   SingleBin,
+  SingleBinDoubleDeep,
   PairSingleBin,
+  PairSingleBinDoubleDeep,
   DoubleBin,
+  DoubleBinDoubleDeep,
   PairDoubleBin,
+  PairDoubleBinDoubleDeep,
   TripleBin,
+  TripleBinDoubleDeep,
   PairTripleBin,
-  QuadBin,
-  PairQuadBin
+  PairTripleBinDoubleDeep
 }

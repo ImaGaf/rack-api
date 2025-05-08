@@ -12,7 +12,7 @@ public class SearchWarehouse(IMediator mediator) : Endpoint<SearchWarehouseReque
 {
   public override void Configure()
   {
-    Get("/warehouses/search");
+    Get("/Inspections/search");
     DontThrowIfValidationFails();
   }
 

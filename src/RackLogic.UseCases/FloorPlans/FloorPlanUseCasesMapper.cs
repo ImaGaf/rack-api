@@ -163,13 +163,17 @@ public static partial class FloorPlanUseCasesMapper
   {
     return new DefaultSettingsCommand(
         SingleBin: request.SingleBin,
+        SingleBinDoubleDeep: request.SingleBinDoubleDeep,
         PairSingleBin: request.PairSingleBin,
+        PairSingleBinDoubleDeep: request.PairSingleBinDoubleDeep,
         DoubleBin: request.DoubleBin,
+        DoubleBinDoubleDeep: request.DoubleBinDoubleDeep,
         PairDoubleBin: request.PairDoubleBin,
+        PairDoubleBinDoubleDeep: request.PairDoubleBinDoubleDeep,
         TripleBin: request.TripleBin,
+        TripleBinDoubleDeep: request.TripleBinDoubleDeep,
         PairTripleBin: request.PairTripleBin,
-        QuadBin: request.QuadBin,
-        PairQuadBin: request.PairQuadBin
+        PairTripleBinDoubleDeep: request.PairTripleBinDoubleDeep
     );
   }
 
@@ -302,13 +306,17 @@ public static partial class FloorPlanUseCasesMapper
     return new Dictionary<BayConfigurationCategory, string?>
         {
             { BayConfigurationCategory.SingleBin, command.SingleBin },
+            { BayConfigurationCategory.SingleBinDoubleDeep, command.SingleBinDoubleDeep },
             { BayConfigurationCategory.PairSingleBin, command.PairSingleBin },
+            { BayConfigurationCategory.PairSingleBinDoubleDeep, command.PairSingleBinDoubleDeep },
             { BayConfigurationCategory.DoubleBin, command.DoubleBin },
+            { BayConfigurationCategory.DoubleBinDoubleDeep, command.DoubleBinDoubleDeep },
             { BayConfigurationCategory.PairDoubleBin, command.PairDoubleBin },
+            { BayConfigurationCategory.PairDoubleBinDoubleDeep, command.PairDoubleBinDoubleDeep },
             { BayConfigurationCategory.TripleBin, command.TripleBin },
+            { BayConfigurationCategory.TripleBinDoubleDeep, command.TripleBinDoubleDeep },
             { BayConfigurationCategory.PairTripleBin, command.PairTripleBin },
-            { BayConfigurationCategory.QuadBin, command.QuadBin },
-            { BayConfigurationCategory.PairQuadBin, command.PairQuadBin }
+            { BayConfigurationCategory.PairTripleBinDoubleDeep, command.PairTripleBinDoubleDeep }
         };
   }
 
@@ -335,16 +343,20 @@ public static partial class FloorPlanUseCasesMapper
   public static Dictionary<BayConfigurationCategory, string?> MapToEnumDictionary(this UpdateDefaultSettingsCommand command)
   {
     return new Dictionary<BayConfigurationCategory, string?>
-    {
-        { BayConfigurationCategory.SingleBin, command.SingleBin },
-        { BayConfigurationCategory.PairSingleBin, command.PairSingleBin },
-        { BayConfigurationCategory.DoubleBin, command.DoubleBin },
-        { BayConfigurationCategory.PairDoubleBin, command.PairDoubleBin },
-        { BayConfigurationCategory.TripleBin, command.TripleBin },
-        { BayConfigurationCategory.PairTripleBin, command.PairTripleBin },
-        { BayConfigurationCategory.QuadBin, command.QuadBin },
-        { BayConfigurationCategory.PairQuadBin, command.PairQuadBin }
-    };
+      {
+            { BayConfigurationCategory.SingleBin, command.SingleBin },
+            { BayConfigurationCategory.SingleBinDoubleDeep, command.SingleBinDoubleDeep },
+            { BayConfigurationCategory.PairSingleBin, command.PairSingleBin },
+            { BayConfigurationCategory.PairSingleBinDoubleDeep, command.PairSingleBinDoubleDeep },
+            { BayConfigurationCategory.DoubleBin, command.DoubleBin },
+            { BayConfigurationCategory.DoubleBinDoubleDeep, command.DoubleBinDoubleDeep },
+            { BayConfigurationCategory.PairDoubleBin, command.PairDoubleBin },
+            { BayConfigurationCategory.PairDoubleBinDoubleDeep, command.PairDoubleBinDoubleDeep },
+            { BayConfigurationCategory.TripleBin, command.TripleBin },
+            { BayConfigurationCategory.TripleBinDoubleDeep, command.TripleBinDoubleDeep },
+            { BayConfigurationCategory.PairTripleBin, command.PairTripleBin },
+            { BayConfigurationCategory.PairTripleBinDoubleDeep, command.PairTripleBinDoubleDeep }
+      };
   }
 
   public static List<FloorPlan> MapFloorPlanFilesToFloorPlan(this List<FloorPlan> floorPlans, List<FloorPlanFiles> floorPlanFiles)
@@ -383,13 +395,17 @@ public static partial class FloorPlanUseCasesMapper
     return new DefaultSettingsResponse
     {
       SingleBin = GetMappedValue(BayConfigurationCategory.SingleBin),
+      SingleBinDoubleDeep = GetMappedValue(BayConfigurationCategory.SingleBinDoubleDeep),
       PairSingleBin = GetMappedValue(BayConfigurationCategory.PairSingleBin),
+      PairSingleBinDoubleDeep = GetMappedValue(BayConfigurationCategory.PairSingleBinDoubleDeep),
       DoubleBin = GetMappedValue(BayConfigurationCategory.DoubleBin),
+      DoubleBinDoubleDeep = GetMappedValue(BayConfigurationCategory.DoubleBinDoubleDeep),
       PairDoubleBin = GetMappedValue(BayConfigurationCategory.PairDoubleBin),
+      PairDoubleBinDoubleDeep = GetMappedValue(BayConfigurationCategory.PairDoubleBinDoubleDeep),
       TripleBin = GetMappedValue(BayConfigurationCategory.TripleBin),
+      TripleBinDoubleDeep = GetMappedValue(BayConfigurationCategory.TripleBinDoubleDeep),
       PairTripleBin = GetMappedValue(BayConfigurationCategory.PairTripleBin),
-      QuadBin = GetMappedValue(BayConfigurationCategory.QuadBin),
-      PairQuadBin = GetMappedValue(BayConfigurationCategory.PairQuadBin),
+      PairTripleBinDoubleDeep = GetMappedValue(BayConfigurationCategory.PairTripleBinDoubleDeep)
     };
   }
 

@@ -41,11 +41,15 @@ public record FloorPlanCommentCommand(
 
 public record DefaultSettingsCommand(
     string? SingleBin,
+    string? SingleBinDoubleDeep,
     string? PairSingleBin,
+    string? PairSingleBinDoubleDeep,
     string? DoubleBin,
+    string? DoubleBinDoubleDeep,
     string? PairDoubleBin,
+    string? PairDoubleBinDoubleDeep,
     string? TripleBin,
+    string? TripleBinDoubleDeep,
     string? PairTripleBin,
-    string? QuadBin,
-    string? PairQuadBin);
+    string? PairTripleBinDoubleDeep);
 
