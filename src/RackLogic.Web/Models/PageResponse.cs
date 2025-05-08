@@ -10,6 +10,8 @@ public class PageResponse<T>
 
   private int CalulateTotalPage()
   {
+    if (PageSize < 1) return 0;
+
     return (TotalRecords + PageSize - 1) / PageSize;
   }
 }
