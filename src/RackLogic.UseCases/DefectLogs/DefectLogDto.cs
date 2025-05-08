@@ -1,7 +1,7 @@
 ﻿using RackLogic.Core.Common.Enums;
 using RackLogic.UseCases.BayConfigurator;
 using RackLogic.UseCases.Brands;
-using RackLogic.UseCases.FloorPlanItems.GetDetail;
+using RackLogic.UseCases.Inspections;
 
 namespace RackLogic.UseCases.DefectLogs;
 

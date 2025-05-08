@@ -432,8 +432,8 @@ public class FloorPlanService : IFloorPlanService
 
     var floorPlan = await _context.FloorPlans
         .Include(f => f.FloorPlanFiles)
-        .Include(f => f.FloorPlanItems)
-        .ThenInclude(i => i.Comments)
+        .Include(f => f.FloorPlanItems).ThenInclude(i => i.Comments)
+        .Include(f => f.FloorPlanItems).ThenInclude(i => i.DefectLogs)
         .Include(f => f.DefaultSettings)
         .FirstOrDefaultAsync(f => f.Id == floorPlanId);
 

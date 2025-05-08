@@ -1,6 +1,5 @@
 ﻿using Ardalis.Result;
 using Ardalis.SharedKernel;
-using RackLogic.UseCases.FloorPlanItems.GetDetail;
 using RackLogic.Core.Interfaces;
 using RackLogic.Core.Common.Entity;
 using RackLogic.UseCases.Users;

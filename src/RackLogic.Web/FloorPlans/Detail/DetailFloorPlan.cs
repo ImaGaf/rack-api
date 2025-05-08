@@ -10,7 +10,7 @@ public class DetailFloorPlan(IMediator _mediator) : Endpoint<DetailFloorPlanRequ
 {
   public override void Configure()
   {
-    Get("/floor-plan/detail");
+    Get("/floor-plan/asset/detail");
     DontThrowIfValidationFails();
   }
 

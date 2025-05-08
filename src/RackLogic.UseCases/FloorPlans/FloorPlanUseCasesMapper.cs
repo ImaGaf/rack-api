@@ -262,6 +262,7 @@ public static partial class FloorPlanUseCasesMapper
       ObjectType = item.ObjectType,
       Rotation = item.Rotation,
       DueDate = item.DueDate,
+      CountDefectLog = item.DefectLogs?.Count ?? 0,
       BayConfigurationId = item.BayConfigurationId.HasValue && bayConfigDict.TryGetValue(item.BayConfigurationId.Value, out var bayConfigId)
             ? bayConfigId
             : null,
