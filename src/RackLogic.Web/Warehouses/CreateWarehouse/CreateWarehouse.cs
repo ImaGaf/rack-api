@@ -3,14 +3,13 @@ using FastEndpoints;
 using MediatR;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
-using RackLogic.UseCases.Warehouses;
 using RackLogic.Web.Exceptions;
 using RackLogic.Web.Models;
 
 namespace RackLogic.Web.Warehouses.CreateWarehouse;
 
 [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-public class CreateWarehouse(IMediator _mediator) : Endpoint<CreateWarehouseRequest, ApiResponse<WarehouseDto>>
+public class CreateWarehouse(IMediator _mediator) : Endpoint<CreateWarehouseRequest, ApiResponse<CreateWarehouseResponse>>
 {
   public override void Configure()
   {
@@ -34,7 +33,7 @@ public class CreateWarehouse(IMediator _mediator) : Endpoint<CreateWarehouseRequ
 
     if (result.IsSuccess)
     {
-      Response = new ApiResponse<WarehouseDto>(result.Value);
+      Response = new ApiResponse<CreateWarehouseResponse>(result.Value.ToCreateResponse());
       return;
     }
 
