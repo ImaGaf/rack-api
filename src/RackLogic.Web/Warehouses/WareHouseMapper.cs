@@ -41,8 +41,4 @@ public static partial class WareHouseMapper
   public static partial GetWarehouseByIdQuery ToGetWarehouseByIdQuery(this GetWarehouseByIdRequest request);
 
   public static partial SearchWarehouseQuery ToQuery(this SearchWarehouseRequest request);
-
-  [MapProperty(nameof(WarehouseDto.CompanyName), nameof(CreateWarehouseResponse.Name))]
-  [MapProperty(nameof(WarehouseDto.FileImageUrl), nameof(CreateWarehouseResponse.FilePathImage))]
-  public static partial CreateWarehouseResponse ToCreateResponse(this WarehouseDto request);
 }

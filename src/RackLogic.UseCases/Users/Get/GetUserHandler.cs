@@ -18,13 +18,15 @@ public class GetUserHandler(
     if (user is null) return Result.Invalid();
 
     var isPaid = await _userService.IsPaid();
+    var isTransactionGenerated = await _userService.IsTransactionGenerated();
 
     return new UserDTO
       ( user.FirstName ?? string.Empty,
         user.LastName ?? string.Empty,
         user.Email, user.PhoneNumber,
         user.RegisteredRole ?? string.Empty,
-        isPaid
+        isPaid,
+        isTransactionGenerated
       );
   }
 }
