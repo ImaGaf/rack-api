@@ -5,6 +5,10 @@ public class WarehouseDto
   public Guid? WarehouseId { get; set; }
   public string? Name { get; set; }
   public Guid? OwnerId { get; set; }
+  public string? OwnerFirstName { get; set; }
+  public string? OwnerLastName { get; set; }
+  public string? OwnerEmailAddress { get; set; }
+  public string? OwnerPhoneNumber { get; set; }
   public string? ABN { get; set; }
   public string? Address { get; set; }
   public string? AddressOptional { get; set; }
