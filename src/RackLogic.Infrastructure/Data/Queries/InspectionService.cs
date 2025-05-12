@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using RackLogic.UseCases.Inspections;
 using RackLogic.UseCases.Inspections.SearchReport;
 using RackLogic.UseCases.Warehouses;
+using RackLogic.UseCases.Inspections.Update;
 
 namespace RackLogic.Infrastructure.Data.Queries;
 
@@ -57,5 +58,23 @@ public class InspectionService(AppDbContext dbContext) : IInspectionService
       PageSize = request.PageSize,
       DataDTO = result
     };
+  }
+
+  public async Task<InspectionDto?> UpdateAsync(UpdateInspectionCommand request, CancellationToken cancellationToken)
+  {
+    var inspection = await dbContext.Inspections
+      .FirstOrDefaultAsync(d => d.Id == request.InspectionId, cancellationToken);
+
+    if (inspection == null)
+      return null;
+
+    inspection.FloorPlanItemInspection += !string.IsNullOrEmpty(inspection.FloorPlanItemInspection)
+                                          ? $",{request.FloorPlanItemId.ToString()}"
+                                          : request.FloorPlanItemId.ToString();
+
+    dbContext.Inspections.Update(inspection);
+    await dbContext.SaveChangesAsync(cancellationToken);
+
+    return inspection.ToDto();
   }
 }

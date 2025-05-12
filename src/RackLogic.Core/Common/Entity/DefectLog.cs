@@ -20,6 +20,7 @@ public class DefectLog : BaseEntityCustom
   public CorrectiveAction? CorrectiveAction { get; set; }
   public DefectStatus? DefectStatus { get; set; }
   public string? Comment { get; set; }
+  public bool IsCompleted { get; set; }
   public virtual Component? Component { get; set; }
   public virtual FloorPlanItem? FloorPlanItem { get; set; }
   public virtual Component? RelatedComponent { get; set; }

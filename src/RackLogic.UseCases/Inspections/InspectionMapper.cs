@@ -28,5 +28,19 @@ public static partial class DefectLogMapper
   [MapperIgnoreTarget(nameof(Inspection.Warehouse))]
   public static partial Inspection ToEntity(this InspectionDto dto);
 
+  public static  InspectionDto ToDto(this Inspection entity)
+  {
+    var target = new InspectionDto();
+    target.Id = entity.Id;
+    target.FloorPlanId = entity.FloorPlanId;
+    target.AuthorisedPersonId = entity.AuthorisePersonId;
+    target.InspectionDate = entity.InspectionDate;
+    target.NextInspectionDate = entity.NextInspectionDate;
+    target.WarehouseId = entity.WarehouseId;
+    target.IsConfirmAuthorization = entity.IsConfirmAuthorization;
+    target.FloorPlanItemInspected = entity.FloorPlanItemInspection!.Split(",").ToList();
+    return target;
+  }
+
   public static partial Inspection ToEntity(this CreateInspectionCommand command);
 }
