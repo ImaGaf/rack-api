@@ -3,6 +3,7 @@ using RackLogic.UseCases.Warehouses;
 using RackLogic.UseCases.Warehouses.CreateWarehouse;
 using RackLogic.UseCases.Warehouses.Get;
 using RackLogic.UseCases.Warehouses.SearchWarehouse;
+using RackLogic.UseCases.Warehouses.SearchWarehouseCertificationInspection;
 using RackLogic.Web.Brands.GetAll;
 using RackLogic.Web.Brands.GetListProductsBrand;
 using RackLogic.Web.Brands.GetOEMBrand;
@@ -13,6 +14,7 @@ using RackLogic.Web.Warehouses.GetListManageUsers;
 using RackLogic.Web.Warehouses.GetListWarehouses;
 using RackLogic.Web.Warehouses.GetWarehouseFinalUse;
 using RackLogic.Web.Warehouses.SearchWarehouse;
+using RackLogic.Web.Warehouses.SearchWarehouseCertificationInspection;
 using Riok.Mapperly.Abstractions;
 
 namespace RackLogic.Web.Warehouses;
@@ -41,4 +43,7 @@ public static partial class WareHouseMapper
   public static partial GetWarehouseByIdQuery ToGetWarehouseByIdQuery(this GetWarehouseByIdRequest request);
 
   public static partial SearchWarehouseQuery ToQuery(this SearchWarehouseRequest request);
+
+  public static partial SearchWarehouseCertificationInspectionQuery ToQuery(this SearchWarehouseCertificationInspectionRequest request);
+
 }
