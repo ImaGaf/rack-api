@@ -1,10 +1,8 @@
 ﻿using RackLogic.UseCases.Users.Create;
-using RackLogic.UseCases.Users. UpdateInspectorProfile;
-using RackLogic.Web.Users.UpdateInspectorProfile;
+using RackLogic.UseCases.Users.UpdateInspectorProfile;
 using RackLogic.Web.Users.Register;
+using RackLogic.Web.Users.UpdateInspectorProfile;
 using Riok.Mapperly.Abstractions;
-using RackLogic.UseCases.Users;
-using RackLogic.Web.Users.GetInspectorProfile;
 
 namespace RackLogic.Web.Users;
 

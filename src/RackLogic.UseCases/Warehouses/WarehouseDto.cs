@@ -3,7 +3,7 @@
 public class WarehouseDto
 {
   public Guid? WarehouseId { get; set; }
-  public string? CompanyName { get; set; }
+  public string? Name { get; set; }
   public Guid? OwnerId { get; set; }
   public string? ABN { get; set; }
   public string? Address { get; set; }
@@ -14,6 +14,6 @@ public class WarehouseDto
   public bool? IsGoogleApiAddress { get; set; }
   public string? ClientPhoneNumber { get; set; }
   public string? FileImageName { get; set; }
-  public string? FileImageUrl { get; set; }
+  public string? FilePathImage { get; set; }
   public DateTime? InspectionDueDate { get; set; }
 }

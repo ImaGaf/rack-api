@@ -19,4 +19,16 @@ public class UserService(
 
     return expiryTime > DateTime.UtcNow;
   }
+
+  public async Task<bool> IsTransactionGenerated()
+  {
+    var user = await _context.Users.
+      Include(i => i.Parent!)
+        .ThenInclude(t => t.Purchase)
+      .Include(i => i.Purchase)
+      .FirstOrDefaultAsync(x => x.Id == _user.Id);
+
+    var purchase = user?.Parent != null ? user?.Parent?.Purchase : user?.Purchase;
+    return purchase != null;
+  }
 }

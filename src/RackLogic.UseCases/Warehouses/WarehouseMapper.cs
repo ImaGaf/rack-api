@@ -12,5 +12,7 @@ public static partial class WarehouseMapper
   public static partial WarehouseProfileDTO ToResponse(this Warehouse warehouse);
 
   [MapProperty(nameof(Warehouse.Id), nameof(WarehouseDto.WarehouseId))]
+  [MapProperty(nameof(Warehouse.CompanyName), nameof(WarehouseDto.Name))]
+  [MapProperty(nameof(Warehouse.FileImageUrl), nameof(WarehouseDto.FilePathImage))]
   public static partial WarehouseDto ToDto(this Warehouse warehouse);
 }
