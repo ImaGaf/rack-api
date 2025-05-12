@@ -4,6 +4,7 @@ using RackLogic.Core.Common.Constants;
 using RackLogic.UseCases.Brands;
 using RackLogic.UseCases.Warehouses;
 using RackLogic.UseCases.Warehouses.SearchWarehouse;
+using RackLogic.UseCases.Warehouses.SearchWarehouseCertificationInspection;
 
 namespace RackLogic.Infrastructure.Data.Queries;
 public class UserWarehouseService(
@@ -204,12 +205,52 @@ public class UserWarehouseService(
     var totalItem = await query.CountAsync(cancellationToken);
 
     var result = await query
+      .OrderBy(x => x.CompanyName)
       .Skip((request.PageNumber - 1) * request.PageSize)
       .Take(request.PageSize)
       .Select(x => x.ToDto())
       .ToListAsync(cancellationToken);
 
     return new PagedDataDTO<WarehouseDto>
+    {
+      TotalRecords = totalItem,
+      PageNumber = request.PageNumber,
+      PageSize = request.PageSize,
+      DataDTO = result
+    };
+  }
+
+  public async Task<PagedDataDTO<WarehouseCertificationInspectionDto>> SearchWarehouseCertificationInspectionAsync(
+    SearchWarehouseCertificationInspectionQuery request, 
+    Guid? userId, 
+    CancellationToken cancellationToken)
+  {
+    var query = from userWarehouseRole in _context.UserWarehouseRoles 
+      where userWarehouseRole.UserId == userId
+      join role in _context.Roles
+        on userWarehouseRole.RoleId equals role.Id
+      where role.Name == RoleConstant.Inspector
+      join warehouse in _context.Warehouses
+        on userWarehouseRole.WarehouseId equals warehouse.Id
+      select warehouse;
+
+    if (request.Search != null)
+    {
+      var search = request.Search;
+      query = query.Where(w => w.CompanyName.Contains(search) ||
+                               w.City!.Contains(search));
+    }
+
+    var totalItem = await query.CountAsync(cancellationToken);
+
+    var result = await query
+      .OrderBy(w => w.InspectionDueDate)
+      .Skip((request.PageNumber - 1) * request.PageSize)
+      .Take(request.PageSize)
+      .Select(w => w.ToWarehouseCertificationInspectionDto())
+      .ToListAsync(cancellationToken);
+
+    return new PagedDataDTO<WarehouseCertificationInspectionDto>
     {
       TotalRecords = totalItem,
       PageNumber = request.PageNumber,
