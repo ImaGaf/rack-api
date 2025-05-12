@@ -6,6 +6,9 @@ namespace RackLogic.UseCases.Warehouses;
 [Mapper(RequiredMappingStrategy = RequiredMappingStrategy.None)]
 public static partial class WarehouseMapper
 {
+  [MapProperty(nameof(Warehouse.Id), nameof(WarehouseProfileDTO.WarehouseId))]
+  [MapProperty(nameof(Warehouse.FileImageUrl), nameof(WarehouseProfileDTO.FilePathImage))]
+  [MapProperty(nameof(Warehouse.CompanyName), nameof(WarehouseProfileDTO.Name))]
   public static partial WarehouseProfileDTO ToResponse(this Warehouse warehouse);
 
   [MapProperty(nameof(Warehouse.Id), nameof(WarehouseDto.WarehouseId))]
