@@ -14,7 +14,7 @@ public class SearchWarehouseCertificationInspection(IMediator mediator) : Endpoi
 {
   public override void Configure()
   {
-    Get("/warehouses/search-certification-inspection");
+    Get("/inspections/search-certification-inspection");
     DontThrowIfValidationFails();
   }
 
