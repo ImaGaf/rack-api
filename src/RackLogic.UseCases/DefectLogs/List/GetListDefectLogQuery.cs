@@ -10,6 +10,7 @@ public record GetListDefectLogQuery(
     Guid? AssetId,
     int? Rack,
     int? Bay,
+    bool IsCompleted,
     SortBy? SortBy,
     int pageNumber = 1,
     int pageSize = 6

@@ -63,6 +63,7 @@ public class InspectionService(AppDbContext dbContext) : IInspectionService
   public async Task<InspectionDto?> UpdateAsync(UpdateInspectionCommand request, CancellationToken cancellationToken)
   {
     var inspection = await dbContext.Inspections
+      .Include(d => d.FloorPlan!.FloorPlanItems)
       .FirstOrDefaultAsync(d => d.Id == request.InspectionId, cancellationToken);
 
     if (inspection == null)
@@ -71,6 +72,11 @@ public class InspectionService(AppDbContext dbContext) : IInspectionService
     inspection.FloorPlanItemInspection += !string.IsNullOrEmpty(inspection.FloorPlanItemInspection)
                                           ? $",{request.FloorPlanItemId.ToString()}"
                                           : request.FloorPlanItemId.ToString();
+
+    var itemsConfirmed = inspection.FloorPlanItemInspection.Split(',').ToList();
+
+    if (request.IsConfirmAuthorization || itemsConfirmed.Count == inspection.FloorPlan?.FloorPlanItems.Count)
+      inspection.IsConfirmAuthorization = request.IsConfirmAuthorization;
 
     dbContext.Inspections.Update(inspection);
     await dbContext.SaveChangesAsync(cancellationToken);

@@ -38,7 +38,7 @@ public static partial class DefectLogMapper
     target.NextInspectionDate = entity.NextInspectionDate;
     target.WarehouseId = entity.WarehouseId;
     target.IsConfirmAuthorization = entity.IsConfirmAuthorization;
-    target.FloorPlanItemInspected = entity.FloorPlanItemInspection!.Split(",").ToList();
+    target.FloorPlanItemInspected = entity.FloorPlanItemInspection?.Split(",").ToList();
     return target;
   }
 

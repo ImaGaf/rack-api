@@ -7,6 +7,7 @@ public class GetListDefectLogRequest : PaginationRequest
 {
   public Guid WarehouseId { get; set; }
   public Guid? AssetId { get; set; }
+  public bool IsCompleted { get; set; }
   public int? Rack { get; set; }
   public int? Bay { get; set; }
   public SortBy SortBy { get; set; }
