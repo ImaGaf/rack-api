@@ -12,6 +12,7 @@ public class Inspection : BaseEntityCustom
   public bool IsConfirmAuthorization { get; set; }
   public virtual FloorPlan? FloorPlan { get; set; }
   public virtual ApplicationUser? AuthorisePerson { get; set; }
+  public virtual Warehouse? Warehouse { get; set; }
 
   public virtual ICollection<DefectLog>? DefectLogs { get; set; }
 }
