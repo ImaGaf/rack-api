@@ -14,7 +14,7 @@ public class DefectLogConfiguration : IEntityTypeConfiguration<DefectLog>
 
     builder.HasOne(d => d.FloorPlanItem).WithMany(f => f.DefectLogs).HasForeignKey(d => d.FloorPlanItemId).OnDelete(DeleteBehavior.Cascade);
 
-    builder.HasOne(d => d.Inspection).WithMany(f => f.DefectLogs).HasForeignKey(d => d.InspectionId).OnDelete(DeleteBehavior.Cascade);
+    builder.HasOne(d => d.Inspection).WithMany(f => f.DefectLogs).HasForeignKey(d => d.InspectionId).OnDelete(DeleteBehavior.NoAction);
 
     builder.Property(d => d.Comment).HasMaxLength(2000);
 

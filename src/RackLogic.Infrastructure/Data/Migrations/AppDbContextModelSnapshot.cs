@@ -471,6 +471,9 @@ namespace RackLogic.Infrastructure.Data.Migrations
                     b.Property<Guid?>("InspectionId")
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<bool>("IsCompleted")
+                        .HasColumnType("bit");
+
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
 
@@ -844,6 +847,9 @@ namespace RackLogic.Infrastructure.Data.Migrations
 
                     b.Property<Guid>("FloorPlanId")
                         .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("FloorPlanItemInspection")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("InspectionDate")
                         .HasColumnType("datetime2");
@@ -1738,7 +1744,7 @@ namespace RackLogic.Infrastructure.Data.Migrations
                     b.HasOne("RackLogic.Core.Common.Entity.Inspection", "Inspection")
                         .WithMany("DefectLogs")
                         .HasForeignKey("InspectionId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .OnDelete(DeleteBehavior.NoAction);
 
                     b.HasOne("RackLogic.Core.Common.Entity.Component", "RelatedComponent")
                         .WithMany()

@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using RackLogic.UseCases.Inspections;
 using RackLogic.UseCases.Inspections.SearchReport;
 using RackLogic.UseCases.Warehouses;
+using RackLogic.UseCases.Inspections.Update;
 
 namespace RackLogic.Infrastructure.Data.Queries;
 
@@ -57,5 +58,32 @@ public class InspectionService(AppDbContext dbContext) : IInspectionService
       PageSize = request.PageSize,
       DataDTO = result
     };
+  }
+
+  public async Task<InspectionDto?> UpdateAsync(UpdateInspectionCommand request, CancellationToken cancellationToken)
+  {
+    var inspection = await dbContext.Inspections
+      .Include(d => d.FloorPlan!.FloorPlanItems)
+      .FirstOrDefaultAsync(d => d.Id == request.InspectionId, cancellationToken);
+
+    if (inspection == null)
+      return null;
+
+    var itemsConfirmed = inspection.FloorPlanItemInspection?.Split(',').ToList();
+
+    if (!itemsConfirmed!.Contains(request.FloorPlanItemId.ToString()))
+      inspection.FloorPlanItemInspection += !string.IsNullOrEmpty(inspection.FloorPlanItemInspection)
+                                            ? $",{request.FloorPlanItemId.ToString()}"
+                                            : request.FloorPlanItemId.ToString();
+
+    itemsConfirmed = inspection.FloorPlanItemInspection?.Split(',').ToList();
+
+    if (request.IsConfirmAuthorization || itemsConfirmed?.Count == inspection.FloorPlan?.FloorPlanItems.Count)
+      inspection.IsConfirmAuthorization = request.IsConfirmAuthorization;
+
+    dbContext.Inspections.Update(inspection);
+    await dbContext.SaveChangesAsync(cancellationToken);
+
+    return inspection.ToDto();
   }
 }

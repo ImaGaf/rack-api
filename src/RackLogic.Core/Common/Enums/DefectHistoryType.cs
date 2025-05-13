@@ -8,5 +8,6 @@ public enum DefectHistoryType
   Created,
   Note,
   [Display(Description = "Updated to:")]
-  StatusUpdate
+  StatusUpdate,
+  Completed
 }

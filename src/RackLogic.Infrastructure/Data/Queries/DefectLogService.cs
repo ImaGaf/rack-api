@@ -18,6 +18,7 @@ public class DefectLogService(
   public async Task<CountDefectLogDto> CountAsync(CountDefectLogQuery request, CancellationToken cancellationToken)
   {
     var defectLogs = await dbContext.DefectLogs
+        .Where(x => !x.IsCompleted)
         .Where(x => x.FloorPlanItem!.FloorPlan!.WarehouseId == request.WareHouseId)
         .ToListAsync(cancellationToken);
 
@@ -53,6 +54,9 @@ public class DefectLogService(
       .Include(d => d.Component!.BayConfiguration!.Manufacturer)
       .FirstOrDefaultAsync(d => d.Id == id, cancellationToken);
 
+    if (defectLog is null)
+      return defectLog;
+
     var histories = await dbContext.DefectLogHistories
       .Where(h => h.DefectLogId == id)
       .OrderByDescending(h => h.CreationTime)
@@ -75,6 +79,7 @@ public class DefectLogService(
           .ThenInclude(b => b.Manufacturer)
       .Include(x => x.RelatedComponent)
       .Include(x => x.FloorPlanItem!.FloorPlan)
+      .Where(x => x.IsCompleted == request.IsCompleted)
       .Where(x => x.FloorPlanItem!.FloorPlan!.WarehouseId == request.WarehouseId)
       .Where(x => request.AssetId != null ? x.FloorPlanItem!.FloorPlanId == request.AssetId : true)
       .Where(x => request.Rack != null ? x.FloorPlanItem!.Rack == request.Rack : true)
@@ -120,6 +125,7 @@ public class DefectLogService(
       .Include(x => x.Component!).ThenInclude(c => c.BayConfiguration!).ThenInclude(b => b.Manufacturer)
       .Include(x => x.RelatedComponent)
       .Include(x => x.FloorPlanItem!.FloorPlan)
+      .Where(x => !x.IsCompleted)
       .Where(x => x.FloorPlanItemId == request.floorPlanId && (x.InspectionId == request.inspectionId || request.inspectionId == Guid.Empty));
 
     var result = await query.Skip((request.pageNumber - 1) * request.pageSize).Take(request.pageSize).ToListAsync();

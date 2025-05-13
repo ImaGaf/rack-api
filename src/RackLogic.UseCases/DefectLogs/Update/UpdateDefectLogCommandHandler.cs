@@ -24,6 +24,18 @@ public class UpdateDefectLogCommandHandler(
       return Result.NotFound("Defect Log not found.");
     }
 
+    if (request.IsCompleted)
+    {
+      entity.IsCompleted = request.IsCompleted;
+
+      await defectLogHistoryService
+       .CreateAsync(
+         entity,
+         request.Comment,
+         (int)DefectHistoryType.Completed,
+         cancellationToken);
+    }
+
     if (request.DefectStatus != null && entity.DefectStatus != (DefectStatus)request.DefectStatus)
     {
       entity.DefectStatus = (DefectStatus)request.DefectStatus;

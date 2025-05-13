@@ -13,6 +13,7 @@ public class InspectionDto
   public Guid? WarehouseId { get; set; }
   public WarehouseDto? Warehouse { get; set; }
   public bool IsConfirmAuthorization { get; set; }
+  public List<string>? FloorPlanItemInspected { get; set; }
 }
 
 public class InspectionReportDto

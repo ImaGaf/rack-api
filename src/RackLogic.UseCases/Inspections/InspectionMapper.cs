@@ -11,7 +11,13 @@ public static partial class DefectLogMapper
   [MapProperty(nameof(Inspection.Warehouse.Id), nameof(InspectionDto.Warehouse.WarehouseId))]
   [MapProperty(nameof(Inspection.Warehouse.CompanyName), nameof(InspectionDto.Warehouse.Name))]
   [MapProperty(nameof(Inspection.Warehouse), nameof(InspectionDto.Warehouse))]
-  public static partial InspectionDto ToDto(this Inspection entity);
+  public static partial InspectionDto Mapping(this Inspection entity);
+  public static InspectionDto ToDto(this Inspection entity)
+  {
+    var dto = entity.Mapping();
+    dto.FloorPlanItemInspected = entity.FloorPlanItemInspection?.Split(",").ToList();
+    return dto;
+  }
 
   [MapProperty(nameof(Inspection.AuthorisePersonId), nameof(InspectionReportDto.AuthorisedPersonId))]
   [MapProperty(nameof(Inspection.Warehouse.Id), nameof(InspectionReportDto.WarehouseId))]

@@ -10,6 +10,7 @@ public class Inspection : BaseEntityCustom
   public DateTime NextInspectionDate { get; set; }
   public Guid? WarehouseId { get; set; }
   public bool IsConfirmAuthorization { get; set; }
+  public string? FloorPlanItemInspection { get; set; }
   public virtual FloorPlan? FloorPlan { get; set; }
   public virtual ApplicationUser? AuthorisePerson { get; set; }
   public virtual Warehouse? Warehouse { get; set; }
