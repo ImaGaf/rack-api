@@ -3,6 +3,7 @@ using Ardalis.SharedKernel;
 using RackLogic.Core.Interfaces;
 using RackLogic.Core.Common.Entity;
 using RackLogic.UseCases.Users;
+using RackLogic.UseCases.Warehouses;
 
 namespace RackLogic.UseCases.Inspections.Create;
 
@@ -42,6 +43,8 @@ public class CreateInspectionCommandHandler(
     await warehouseRepository.UpdateAsync(warehouse, cancellationToken);
 
     var result = entity.ToDto();
+
+    result.Warehouse = warehouse.ToDto();
 
     return Result.Success(result);
   }
