@@ -69,13 +69,16 @@ public class InspectionService(AppDbContext dbContext) : IInspectionService
     if (inspection == null)
       return null;
 
-    inspection.FloorPlanItemInspection += !string.IsNullOrEmpty(inspection.FloorPlanItemInspection)
-                                          ? $",{request.FloorPlanItemId.ToString()}"
-                                          : request.FloorPlanItemId.ToString();
+    var itemsConfirmed = inspection.FloorPlanItemInspection?.Split(',').ToList();
 
-    var itemsConfirmed = inspection.FloorPlanItemInspection.Split(',').ToList();
+    if (!itemsConfirmed!.Contains(request.FloorPlanItemId.ToString()))
+      inspection.FloorPlanItemInspection += !string.IsNullOrEmpty(inspection.FloorPlanItemInspection)
+                                            ? $",{request.FloorPlanItemId.ToString()}"
+                                            : request.FloorPlanItemId.ToString();
 
-    if (request.IsConfirmAuthorization || itemsConfirmed.Count == inspection.FloorPlan?.FloorPlanItems.Count)
+    itemsConfirmed = inspection.FloorPlanItemInspection?.Split(',').ToList();
+
+    if (request.IsConfirmAuthorization || itemsConfirmed?.Count == inspection.FloorPlan?.FloorPlanItems.Count)
       inspection.IsConfirmAuthorization = request.IsConfirmAuthorization;
 
     dbContext.Inspections.Update(inspection);
