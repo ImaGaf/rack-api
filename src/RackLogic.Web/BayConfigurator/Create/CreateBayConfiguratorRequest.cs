@@ -56,7 +56,7 @@ public class Component
   public int? Height { get; set; }
   public int? Width { get; set; }
   public int? Length { get; set; }
-  public float? Code { get; set; }
+  public string? Code { get; set; }
   public required string Description { get; set; }
   public string? Orientation { get; set; }
   public double? DistanceCenterToCenter { get; set; }
@@ -66,7 +66,7 @@ public class Component
   public int? LowerHeight { get; set; }
   public int? UpperHeight { get; set; }
   public bool? IsXBrace { get; set; }
-  public int? Kit { get; set; }
+  public string? Kit { get; set; }
   public string? ComponentKit { get; set; }
   public string? BeamStyle { get; set; }
   public int? MaterialThickness { get; set; }

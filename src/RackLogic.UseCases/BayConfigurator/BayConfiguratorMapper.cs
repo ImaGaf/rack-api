@@ -1,6 +1,4 @@
-﻿using System.ComponentModel;
-using System.Text.RegularExpressions;
-using Ardalis.Specification;
+﻿using Ardalis.Specification;
 using RackLogic.Core.Common.Entity;
 using RackLogic.Core.Common.Enums;
 using RackLogic.UseCases.BayConfigurator.Create;
@@ -74,6 +72,8 @@ public static partial class BayConfiguratorMapper
       LowerHeight = component.LowerHeight,
       UpperHeight = component.UpperHeight,
       IsXBrace = component.IsXBrace,
+      Kit = component.Kit,
+      ComponentKit = component.ComponentKit,
       BeamStyle = component.BeamStyle,
       MaterialThickness = component.MaterialThickness,
       ClearEntryWidth = component.ClearEntryWidth,
