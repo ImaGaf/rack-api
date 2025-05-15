@@ -68,7 +68,7 @@ public record ComponentCommand(
     int? LowerHeight,
     int? UpperHeight,
     bool? IsXBrace,
-    int? Kit,
+    string? Kit,
     string? ComponentKit,
     string? BeamStyle,
     int? MaterialThickness,

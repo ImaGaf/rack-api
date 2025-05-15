@@ -358,8 +358,8 @@ namespace RackLogic.Infrastructure.Data.Migrations
                     b.Property<bool?>("IsXBrace")
                         .HasColumnType("bit");
 
-                    b.Property<int?>("Kit")
-                        .HasColumnType("int");
+                    b.Property<string>("Kit")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int?>("Length")
                         .HasColumnType("int");
@@ -877,6 +877,8 @@ namespace RackLogic.Infrastructure.Data.Migrations
                     b.HasIndex("AuthorisePersonId");
 
                     b.HasIndex("FloorPlanId");
+
+                    b.HasIndex("WarehouseId");
 
                     b.ToTable("Inspections", (string)null);
                 });
@@ -1851,9 +1853,15 @@ namespace RackLogic.Infrastructure.Data.Migrations
                         .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
+                    b.HasOne("RackLogic.Core.Common.Entity.Warehouse", "Warehouse")
+                        .WithMany()
+                        .HasForeignKey("WarehouseId");
+
                     b.Navigation("AuthorisePerson");
 
                     b.Navigation("FloorPlan");
+
+                    b.Navigation("Warehouse");
                 });
 
             modelBuilder.Entity("RackLogic.Core.Common.Entity.InspectorProfile", b =>
