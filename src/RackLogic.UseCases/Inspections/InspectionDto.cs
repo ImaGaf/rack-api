@@ -22,6 +22,7 @@ public class InspectionReportDto
   public Guid FloorPlanId { get; set; }
   public Guid? AuthorisedPersonId { get; set; }
   public string? AuthorisedPersonName { get; set; }
+  public string? AuthorisedPersonCompanyName { get; set; }
   public DateTime InspectionDate { get; set; }
   public Guid? WarehouseId { get; set; }
   public string? WarehouseName { get; set; }

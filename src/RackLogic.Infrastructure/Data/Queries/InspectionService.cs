@@ -33,7 +33,8 @@ public class InspectionService(AppDbContext dbContext) : IInspectionService
 
     var query = dbContext.Inspections
       .Include(i => i.Warehouse)
-      .Include(i => i.AuthorisePerson)
+      .Include(i => i.AuthorisePerson!)
+        .ThenInclude(i => i.InspectorProfile)
       .Where(i => i.IsConfirmAuthorization == true && userWarehouseIds.Contains(i.WarehouseId!.Value));
 
     if (request.Search != null)
