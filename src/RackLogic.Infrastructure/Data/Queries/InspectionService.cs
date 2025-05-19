@@ -4,11 +4,29 @@ using RackLogic.UseCases.Inspections;
 using RackLogic.UseCases.Inspections.SearchReport;
 using RackLogic.UseCases.Warehouses;
 using RackLogic.UseCases.Inspections.Update;
+using RackLogic.UseCases.Inspections.End;
+using Ardalis.Result;
 
 namespace RackLogic.Infrastructure.Data.Queries;
 
 public class InspectionService(AppDbContext dbContext) : IInspectionService
 {
+  public async Task<Result> EndAsync(EndInspectionCommand request, CancellationToken cancellationToken)
+  {
+    var inspection = await dbContext.Inspections.FirstOrDefaultAsync(x => x.Id == request.Id);
+
+    if (inspection is null)
+      return Result.NotFound();
+
+    inspection.IsEnd = request.IsEnd;
+
+    dbContext.Inspections.Update(inspection);
+
+    await dbContext.SaveChangesAsync(cancellationToken);
+
+    return Result.Success();
+  }
+
   public async Task<InspectionDto?> GetByIdAsync(Guid id, CancellationToken cancellationToken)
   {
     var inspection = Guard.Against.Null(await dbContext.Inspections
@@ -35,7 +53,7 @@ public class InspectionService(AppDbContext dbContext) : IInspectionService
       .Include(i => i.Warehouse)
       .Include(i => i.AuthorisePerson!)
         .ThenInclude(i => i.InspectorProfile)
-      .Where(i => i.IsConfirmAuthorization == true && userWarehouseIds.Contains(i.WarehouseId!.Value));
+      .Where(i => i.IsEnd == true && userWarehouseIds.Contains(i.WarehouseId!.Value));
 
     if (request.Search != null)
     {
@@ -72,15 +90,16 @@ public class InspectionService(AppDbContext dbContext) : IInspectionService
 
     var itemsConfirmed = inspection.FloorPlanItemInspection?.Split(',').ToList();
 
-    if (!itemsConfirmed!.Contains(request.FloorPlanItemId.ToString()))
+    if (request.IsConfirmAuthorization && !itemsConfirmed!.Contains(request.FloorPlanItemId.ToString()))
       inspection.FloorPlanItemInspection += !string.IsNullOrEmpty(inspection.FloorPlanItemInspection)
                                             ? $",{request.FloorPlanItemId.ToString()}"
                                             : request.FloorPlanItemId.ToString();
 
-    itemsConfirmed = inspection.FloorPlanItemInspection?.Split(',').ToList();
-
-    if (request.IsConfirmAuthorization || itemsConfirmed?.Count == inspection.FloorPlan?.FloorPlanItems.Count)
-      inspection.IsConfirmAuthorization = request.IsConfirmAuthorization;
+    else if (itemsConfirmed!.Contains(request.FloorPlanItemId.ToString()) && !request.IsConfirmAuthorization)
+    {
+      itemsConfirmed.Remove(request.FloorPlanItemId.ToString());
+      inspection.FloorPlanItemInspection = string.Join(",", itemsConfirmed);
+    }
 
     dbContext.Inspections.Update(inspection);
     await dbContext.SaveChangesAsync(cancellationToken);

@@ -12,7 +12,7 @@ public class InspectionDto
   public DateTime NextInspectionDate { get; set; }
   public Guid? WarehouseId { get; set; }
   public WarehouseDto? Warehouse { get; set; }
-  public bool IsConfirmAuthorization { get; set; }
+  public bool IsEnd { get; set; }
   public List<string>? FloorPlanItemInspected { get; set; }
 }
 

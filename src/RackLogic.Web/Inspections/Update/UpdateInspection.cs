@@ -13,7 +13,7 @@ public class UpdateInspection(IMediator _mediator) : Endpoint<UpdateInspectionCo
 {
   public override void Configure()
   {
-    Put("/inspections/update");
+    Put("/inspections/authorization");
   }
 
   public override async Task HandleAsync(UpdateInspectionCommand req, CancellationToken ct)
