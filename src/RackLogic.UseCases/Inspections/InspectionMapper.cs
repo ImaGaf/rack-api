@@ -28,6 +28,7 @@ public static partial class DefectLogMapper
   {
     var dto = entity.ToReportDto();
     dto.AuthorisedPersonName = entity.AuthorisePerson!.FirstName + " " + entity.AuthorisePerson.LastName;
+    dto.AuthorisedPersonCompanyName = entity.AuthorisePerson.InspectorProfile?.CompanyName;
     return dto;
   }
 
