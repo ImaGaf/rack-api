@@ -8,43 +8,54 @@ using RackLogic.UseCases.Warehouses;
 namespace RackLogic.UseCases.Inspections.Create;
 
 public class CreateInspectionCommandHandler(
-  IRepositoryWithExpression<Inspection> inspectionRepository,
-  IRepositoryWithExpression<Warehouse> warehouseRepository,
-  IUser user
-  ) : ICommandHandler<CreateInspectionCommand, Result<InspectionDto>>
+  IRepositoryWithExpression<Inspection> _inspectionRepository,
+  IRepositoryWithExpression<Warehouse> _warehouseRepository,
+  IRepositoryWithExpression<FloorPlan> _floorPlanRepository,
+  IUser _user
+  ) : ICommandHandler<CreateInspectionCommand, Result<CreateInspectionDto>>
 {
-  public async Task<Result<InspectionDto>> Handle(CreateInspectionCommand request, CancellationToken cancellationToken)
+  public async Task<Result<CreateInspectionDto>> Handle(CreateInspectionCommand request, CancellationToken cancellationToken)
   {
-    var warehouse = await warehouseRepository.FirstOrDefaultAsync(w => w.Id == request.WarehouseId, cancellationToken);
+    var warehouse = await _warehouseRepository.FirstOrDefaultAsync(w => w.Id == request.WarehouseId, cancellationToken);
 
     if (warehouse == null)
-    {
-      return Result.Error("Warehouse not found");
-    }
+      return Result.NotFound("WarehouseId is not found");
 
     var entity = request.ToEntity();
 
     entity.IsConfirmAuthorization = false;
     entity.InspectionDate = DateTime.UtcNow;
-    entity.AuthorisePersonId = user.Id;
+    entity.AuthorisePersonId = _user.Id;
 
-    if (request.NextInspectionDate == null)
+    var floorPlan = await _floorPlanRepository.FirstOrDefaultAsync(f => f.Id == request.FloorPlanId, cancellationToken, f => f.Inspections);
+
+    if (floorPlan is null)
+      return Result.NotFound("FloorPlanId is not found");
+
+    var continueInspection = floorPlan.Inspections?.FirstOrDefault(x => x.InspectionDate.Date <= DateTime.Now.Date && !x.IsConfirmAuthorization);
+
+    if (continueInspection is null)
     {
-      entity.NextInspectionDate = DateTime.UtcNow.AddYears(1);
-      warehouse.InspectionDueDate = entity.NextInspectionDate;
-    } 
-    else 
-    {
-      warehouse.InspectionDueDate = request.NextInspectionDate;
+      if (request.NextInspectionDate == null)
+      {
+        entity.NextInspectionDate = DateTime.UtcNow.AddYears(1);
+        warehouse.InspectionDueDate = entity.NextInspectionDate;
+      }
+      else
+      {
+        warehouse.InspectionDueDate = request.NextInspectionDate;
+      }
+
+      await _inspectionRepository.AddAsync(entity, cancellationToken);
+
+      await _warehouseRepository.UpdateAsync(warehouse, cancellationToken);
     }
 
-    await inspectionRepository.AddAsync(entity, cancellationToken);
-
-    await warehouseRepository.UpdateAsync(warehouse, cancellationToken);
-
-    var result = entity.ToDto();
-
-    result.Warehouse = warehouse.ToDto();
+    var result = new CreateInspectionDto
+    {
+      Id = continueInspection is null ? entity.Id : continueInspection.Id,
+      IsNewInspection = continueInspection is null
+    };
 
     return Result.Success(result);
   }
