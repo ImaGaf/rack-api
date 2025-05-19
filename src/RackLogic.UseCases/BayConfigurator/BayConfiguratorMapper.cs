@@ -140,8 +140,8 @@ public static partial class BayConfiguratorMapper
       XBraceLevel = bayConfiguration.XBraceLevel,
       Upright = bayConfiguration.Components.FirstOrDefault(c => c.ComponentType == ComponentType.Upright)?.Mapping(),
       Beam = bayConfiguration.Components.FirstOrDefault(c => c.ComponentType == ComponentType.Beam)?.Mapping(),
-      BracingHorizontal = bayConfiguration.Components.FirstOrDefault(c => c.ComponentType == ComponentType.BraceHorizontal)?.Mapping(),
-      BracingDiagonal = bayConfiguration.Components.FirstOrDefault(c => c.ComponentType == ComponentType.BraceDiagonal)?.Mapping(),
+      BracingHorizontal = bayConfiguration.Components.FirstOrDefault(c => c.ComponentType == ComponentType.BraceHorizontal)?.Mapping(true),
+      BracingDiagonal = bayConfiguration.Components.FirstOrDefault(c => c.ComponentType == ComponentType.BraceDiagonal)?.Mapping(true),
       RowSpacer = bayConfiguration.Components.FirstOrDefault(c => c.ComponentType == ComponentType.Backtie)?.Mapping(),
       SpliceKits = bayConfiguration.Components.FirstOrDefault(c => c.ComponentType == ComponentType.Splice)?.Mapping(),
       Accessories = bayConfiguration.Components
@@ -203,12 +203,12 @@ public static partial class BayConfiguratorMapper
     };
   }
 
-  public static ComponentDTO Mapping(this Component component)
+  public static ComponentDTO Mapping(this Component component, bool isBrace = false)
   {
     return new ComponentDTO()
     {
       Id = component.Id,
-      ComponentType = component.ComponentType.ToString(),
+      ComponentType = isBrace ? ComponentCategory.BRACE.ToString() : component.ComponentType.ToString(),
       Height = component.Height,
       Width = component.Width,
       Length = component.Length,
