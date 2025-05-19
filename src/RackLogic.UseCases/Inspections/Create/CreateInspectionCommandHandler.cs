@@ -23,7 +23,7 @@ public class CreateInspectionCommandHandler(
 
     var entity = request.ToEntity();
 
-    entity.IsConfirmAuthorization = false;
+    entity.IsEnd = false;
     entity.InspectionDate = DateTime.UtcNow;
     entity.AuthorisePersonId = _user.Id;
 
@@ -32,7 +32,7 @@ public class CreateInspectionCommandHandler(
     if (floorPlan is null)
       return Result.NotFound("FloorPlanId is not found");
 
-    var continueInspection = floorPlan.Inspections?.FirstOrDefault(x => x.InspectionDate.Date <= DateTime.Now.Date && !x.IsConfirmAuthorization);
+    var continueInspection = floorPlan.Inspections?.FirstOrDefault(x => x.InspectionDate.Date <= DateTime.Now.Date && !x.IsEnd);
 
     if (continueInspection is null)
     {

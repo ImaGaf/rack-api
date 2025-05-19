@@ -854,10 +854,10 @@ namespace RackLogic.Infrastructure.Data.Migrations
                     b.Property<DateTime>("InspectionDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<bool>("IsConfirmAuthorization")
+                    b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
 
-                    b.Property<bool>("IsDeleted")
+                    b.Property<bool>("IsEnd")
                         .HasColumnType("bit");
 
                     b.Property<DateTime?>("LastModificationTime")
