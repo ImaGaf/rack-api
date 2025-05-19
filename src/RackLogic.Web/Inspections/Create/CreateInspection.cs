@@ -11,11 +11,11 @@ using RackLogic.Web.Models;
 namespace RackLogic.Web.Inspections.Create;
 
 [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-public class CreateInspection(IMediator _mediator) : Endpoint<CreateInspectionCommand, ApiResponse<InspectionDto>>
+public class CreateInspection(IMediator _mediator) : Endpoint<CreateInspectionCommand, ApiResponse<CreateInspectionDto>>
 {
   public override void Configure()
   {
-    Post("/inspections");
+    Post("/inspections/start");
   }
 
   public override async Task HandleAsync(CreateInspectionCommand req, CancellationToken ct)
@@ -33,7 +33,7 @@ public class CreateInspection(IMediator _mediator) : Endpoint<CreateInspectionCo
 
     if (result.IsSuccess)
     {
-      Response = new ApiResponse<InspectionDto>(result.Value);
+      Response = new ApiResponse<CreateInspectionDto>(result.Value);
       return;
     }
 

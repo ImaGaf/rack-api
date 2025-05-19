@@ -2,7 +2,7 @@
 using Ardalis.SharedKernel;
 
 namespace RackLogic.UseCases.Inspections.Create;
-public record CreateInspectionCommand : ICommand<Result<InspectionDto>>
+public record CreateInspectionCommand : ICommand<Result<CreateInspectionDto>>
 {
   public required Guid FloorPlanId { get; init; }
   public DateTime? NextInspectionDate { get; init; }
