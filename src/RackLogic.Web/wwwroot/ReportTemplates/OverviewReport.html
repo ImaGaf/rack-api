@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Certification Inspection Report</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            color: #0c3b3b;
+        }
+
+        .header {
+            padding: 20px;
+        }
+
+            .header img {
+                height: 40px;
+            }
+
+        h1 {
+            color: #014A43;
+            font-size: 24px;
+            margin-top: 40px;
+            margin-bottom: 30px;
+        }
+
+        .details {
+            line-height: 1.8;
+        }
+
+            .details strong {
+                display: inline-block;
+                width: 160px;
+            }
+
+        .section-title {
+            margin: 20px 0 10px;
+            font-weight: bold;
+        }
+
+        .footer {
+            background-color: #01332e;
+            color: white;
+            text-align: right;
+            font-family: Arial, sans-serif;
+            font-size: 10px;
+            padding: 5px 20px;
+            width: 100%;
+        }
+
+        .logo {
+            max-width: 160px;
+            margin-bottom: 20px;
+        }
+
+        table.layout {
+            width: 100%;
+            border-spacing: 40px 0;
+        }
+
+        td {
+            vertical-align: top;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <img src="logo-racklogic.png" alt="Rack Logic Logo">
+    </div>
+
+    <table class="layout">
+        <tr>
+            <td style="width: 60%;">
+                <img src="logo-itw.png" alt="ITW Logo" class="logo">
+                <h1>Certification Inspection Report</h1>
+                <div class="details">
+                    <div><strong>Inspection for:</strong> {{Name}}</div>
+                    <div><strong>Site address:</strong> {{Address}}</div>
+                    <div><strong>Standard:</strong> AS4084:2023 Steel Storage Racking Standard</div>
+                    <div><strong>Inspection Company:</strong> {{InspectionCompany}}</div>
+                    <div><strong>Inspector:</strong> {{InspectorName}}</div>
+                    <div><strong>Inspection date:</strong> {{InspectionDate}}</div>
+                    <div><strong>Next Inspection Due:</strong> {{NextInspectionDate}}</div>
+                </div>
+            </td>
+            <td style="width: 40%;">
+                <div class="section-title">Inspected By</div>
+                <img src="logo-tss.png" alt="TSS Logo" class="logo">
+
+                <div class="section-title">Suppliers for</div>
+                <img src="logo-colby.png" alt="Colby Logo" class="logo">
+
+                <div class="section-title">Inspection Technology</div>
+                <img src="logo-racklogic.png" alt="Rack Logic Logo" class="logo">
+            </td>
+        </tr>
+    </table>
+
+<section class="defect-logs">
+    <h2>Defect Details</h2>
+    {{DefectLogsSection}}
+</section>
+</body>
+</html>

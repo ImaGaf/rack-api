@@ -19,6 +19,8 @@ using RackLogic.UseCases.FloorPlanItems;
 using RackLogic.UseCases.Users;
 using RackLogic.UseCases.DefectLogs;
 using RackLogic.UseCases.Inspections;
+using DinkToPdf.Contracts;
+using DinkToPdf;
 
 namespace RackLogic.Infrastructure;
 public static class InfrastructureServiceExtensions
@@ -30,6 +32,7 @@ public static class InfrastructureServiceExtensions
   {
     services.AddSingleton<AppStoreConfigService>();
     services.AddSingleton<GooglePlayConfigService>();
+    services.AddSingleton(typeof(IConverter), new SynchronizedConverter(new PdfTools()));
     string? connectionString = config.GetConnectionString("DefaultConnection");
     Guard.Against.Null(connectionString);
     services.AddDbContext<AppDbContext>(options =>

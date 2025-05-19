@@ -11,6 +11,8 @@
     <PackageVersion Include="Ardalis.Specification.EntityFrameworkCore" Version="8.0.0" />
     <PackageVersion Include="Azure.Identity" Version="1.12.1" />
     <PackageVersion Include="coverlet.collector" Version="6.0.2" />
+    <PackageVersion Include="DinkToPdf" Version="1.0.8" />
+    <PackageVersion Include="DinkToPdfCopyDependencies" Version="1.0.8" />
     <PackageVersion Include="FastEndpoints" Version="5.30.0" />
     <PackageVersion Include="FastEndpoints.ApiExplorer" Version="2.2.0" />
     <PackageVersion Include="FastEndpoints.Swagger" Version="5.30.0" />

@@ -2,6 +2,7 @@
 using RackLogic.UseCases.Warehouses;
 
 using RackLogic.UseCases.Inspections.Update;
+using RackLogic.UseCases.Inspections.ExportReport;
 using RackLogic.UseCases.Inspections.End;
 using Ardalis.Result;
 
@@ -13,4 +14,5 @@ public interface IInspectionService
   Task<PagedDataDTO<InspectionReportDto>> SearchReportAsync(SearchInspectionReportQuery request, Guid userId, CancellationToken cancellationToken);
   Task<InspectionDto?> UpdateAsync(UpdateInspectionCommand request, CancellationToken cancellationToken);
   Task<Result> EndAsync(EndInspectionCommand request, CancellationToken cancellationToken);
+  Task<byte[]> ExportReportPdfAsync(ExportReportCommand command, CancellationToken cancellationToken);
 }
