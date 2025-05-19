@@ -29,8 +29,10 @@ public class UpdateWarehouseValidator : Validator<UpdateWarehouseRequest>
     RuleFor(r => r.FileImageLogo)
            .Must(file => file!.Length <= 2 * 1024 * 1024)
            .WithMessage("The file size must be less than 2MB.")
+           .When(r => r.FileImageLogo != null)
            .Must(file => IsValidFileExtension(file?.FileName ?? string.Empty))
-           .WithMessage("ImageLogo must be of type PDF, PNG, JPEG, HEIC or HEIF.");
+           .WithMessage("ImageLogo must be of type PDF, PNG, JPEG, HEIC or HEIF.")
+           .When(r => r.FileImageLogo != null);
 
     RuleFor(r => r.OwnerEmailAddress)
           .EmailAddress()
