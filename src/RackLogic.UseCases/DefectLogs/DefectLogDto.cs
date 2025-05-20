@@ -28,6 +28,7 @@ public class DefectLogDto
   public DateTime CreationTime { get; set; }
   public Guid? CreatorId { get; set; }
   public string? Comment { get; set; }
+  public bool IsCompleted { get; set; }
   public OEMBrandDTO? OEMBrand { get; set; }
   public ComponentDTO? Component { get; set; }
   public InspectionDto? Inspection { get; set; }
