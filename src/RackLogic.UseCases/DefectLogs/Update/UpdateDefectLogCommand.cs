@@ -8,5 +8,5 @@ public record UpdateDefectLogCommand : ICommand<Result<DefectLogDto>>
   public required Guid Id { get; init; }
   public int? DefectStatus { get; init; }
   public string? Comment { get; init; }
-  public bool IsCompleted { get; init; }
+  public bool? IsCompleted { get; init; }
 }

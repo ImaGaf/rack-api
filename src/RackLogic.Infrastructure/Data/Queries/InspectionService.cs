@@ -90,7 +90,10 @@ public class InspectionService(AppDbContext dbContext) : IInspectionService
 
     var itemsConfirmed = inspection.FloorPlanItemInspection?.Split(',').ToList();
 
-    if (request.IsConfirmAuthorization && !itemsConfirmed!.Contains(request.FloorPlanItemId.ToString()))
+    if (itemsConfirmed is null)
+      itemsConfirmed = new List<string>();
+
+    if (request.IsConfirmAuthorization && !itemsConfirmed.Contains(request.FloorPlanItemId.ToString()))
       inspection.FloorPlanItemInspection += !string.IsNullOrEmpty(inspection.FloorPlanItemInspection)
                                             ? $",{request.FloorPlanItemId.ToString()}"
                                             : request.FloorPlanItemId.ToString();
