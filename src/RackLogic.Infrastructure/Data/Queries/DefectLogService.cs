@@ -7,12 +7,14 @@ using RackLogic.UseCases.DefectLogs;
 using RackLogic.UseCases.DefectLogs.Count;
 using RackLogic.UseCases.DefectLogs.List;
 using RackLogic.UseCases.FloorPlanItems.ListDefect;
+using RackLogic.UseCases.Users;
 using RackLogic.UseCases.Warehouses;
 
 namespace RackLogic.Infrastructure.Data.Queries;
 
 public class DefectLogService(
-  AppDbContext dbContext
+  AppDbContext dbContext,
+  IUser _user
 ) : IDefectLogService
 {
   public async Task<CountDefectLogDto> CountAsync(CountDefectLogQuery request, CancellationToken cancellationToken)
@@ -80,10 +82,17 @@ public class DefectLogService(
       .Include(x => x.RelatedComponent)
       .Include(x => x.FloorPlanItem!.FloorPlan)
       .Where(x => x.IsCompleted == request.IsCompleted)
-      .Where(x => x.FloorPlanItem!.FloorPlan!.WarehouseId == request.WarehouseId)
       .Where(x => request.AssetId != null ? x.FloorPlanItem!.FloorPlanId == request.AssetId : true)
       .Where(x => request.Rack != null ? x.FloorPlanItem!.Rack == request.Rack : true)
       .Where(x => request.Bay != null ? x.FloorPlanItem!.Bay == request.Bay : true);
+
+    if (request.IsCompleted)
+    {
+      var warehouses = await dbContext.UserWarehouseRoles.Where(x => x.UserId == _user.Id).Select(x => x.WarehouseId).ToListAsync();
+      query = query.Where(x => warehouses.Contains(x.FloorPlanItem!.FloorPlan!.WarehouseId));
+    }
+    else
+      query = query.Where(x => x.FloorPlanItem!.FloorPlan!.WarehouseId == request.WarehouseId);
 
     switch (request.SortBy)
     {
