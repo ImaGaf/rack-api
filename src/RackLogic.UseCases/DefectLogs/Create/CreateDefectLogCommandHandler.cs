@@ -31,7 +31,7 @@ public class CreateDefectLogCommandHandler(
       var savedFiles = await fileService.SaveFilesAsync(
         entity.Id,
         request.Files,
-        Path.Combine("wwwroot", "Warehouse/DefectLogs")
+        Path.Combine("wwwroot", "DefectLogs")
       );
 
       var fileEntities = savedFiles
@@ -46,6 +46,7 @@ public class CreateDefectLogCommandHandler(
 
       entity.DefectLogFiles = fileEntities;
     }
+
     await defectLogRepository.AddAsync(entity, cancellationToken: cancellationToken);
 
     var historyDetails = DefectHistoryType.Created.GetDescription();
