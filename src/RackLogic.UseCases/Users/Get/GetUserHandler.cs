@@ -21,7 +21,8 @@ public class GetUserHandler(
     var isTransactionGenerated = await _userService.IsTransactionGenerated();
 
     return new UserDTO
-      ( user.FirstName ?? string.Empty,
+      ( user.Id,
+        user.FirstName ?? string.Empty,
         user.LastName ?? string.Empty,
         user.Email, user.PhoneNumber,
         user.RegisteredRole ?? string.Empty,
