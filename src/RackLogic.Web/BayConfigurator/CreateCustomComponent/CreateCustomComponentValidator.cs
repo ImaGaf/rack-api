@@ -9,8 +9,8 @@ public class CreateCustomComponentValidator : Validator<CreateCustomComponentReq
   {
     RuleFor(x => x.Category)
             .NotEmpty().WithMessage("Category is required.")
-            .Must(category => new[] { "UPRIGHT", "BEAM", "BRACE", "ROWSPACER" }.Contains(category.ToUpper()))
-            .WithMessage("Invalid category. Must be UPRIGHT, BEAM, BRACE, or ROWSPACER.");
+            .Must(category => new[] { "UPRIGHT", "BEAM", "BRACE", "BACKTIE" }.Contains(category.ToUpper()))
+            .WithMessage("Invalid category. Must be UPRIGHT, BEAM, BRACE, or BACKTIE.");
 
     RuleFor(x => x.Code)
         .NotEmpty().WithMessage("Code is required.");
@@ -44,9 +44,10 @@ public class CreateCustomComponentValidator : Validator<CreateCustomComponentReq
       RuleFor(x => x.FinishType).NotEmpty().WithMessage("Finish Type is required for BRACE.");
     });
 
-    When(x => x.Category?.ToUpper() == "ROWSPACER", () =>
-    {
-      RuleFor(x => x.FinishType).NotEmpty().WithMessage("Finish Type is required for ROWSPACER.");
-    });
+    //Conflict between document and design
+    //When(x => x.Category?.ToUpper() == "BACKTIE", () =>
+    //{
+    //  RuleFor(x => x.FinishType).NotEmpty().WithMessage("Finish Type is required for BACKTIE.");
+    //});
   }
 }
