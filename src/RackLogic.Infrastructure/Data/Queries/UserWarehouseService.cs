@@ -43,7 +43,7 @@ public class UserWarehouseService(
     var baseQuery = _context.Products
         .Where(x =>
           (brandId == null || x.ManufacturerId == brandId) &&
-          (warehouseId == null || x.WarehouseId == warehouseId));
+          (x.WarehouseId == null || x.WarehouseId == warehouseId));
 
     int totalRecords = await baseQuery.CountAsync();
 
