@@ -5,12 +5,11 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using RackLogic.UseCases.Inspections.ExportReport;
 using RackLogic.Web.Exceptions;
-using RackLogic.Web.Models;
 
 namespace RackLogic.Web.Inspections.ExportReport;
 
 [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-public class ExportReport(IMediator _mediator) : Endpoint<ExportReportCommand, ApiResponse<bool>>
+public class ExportReport(IMediator _mediator) : Endpoint<ExportReportCommand>
 {
   public override void Configure()
   {
@@ -23,7 +22,15 @@ public class ExportReport(IMediator _mediator) : Endpoint<ExportReportCommand, A
 
     if (result.IsSuccess)
     {
-      Response = new ApiResponse<bool>(result.Value);
+      var fileName = $"InspectionReport_{req.InspectionId}.pdf";
+
+      await SendBytesAsync(
+        bytes: result.Value,
+        contentType: "application/pdf",
+        fileName: fileName,
+        cancellation: ct
+      );
+
       return;
     }
 

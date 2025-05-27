@@ -15,4 +15,5 @@ public interface IInspectionService
   Task<InspectionDto?> UpdateAsync(UpdateInspectionCommand request, CancellationToken cancellationToken);
   Task<Result> EndAsync(EndInspectionCommand request, CancellationToken cancellationToken);
   Task<byte[]> ExportReportPdfAsync(ExportReportCommand command, CancellationToken cancellationToken);
+  Task<string> GetReportHtmlAsync(Guid inspectionId, CancellationToken cancellationToken, bool hasDefectLog = false);
 }

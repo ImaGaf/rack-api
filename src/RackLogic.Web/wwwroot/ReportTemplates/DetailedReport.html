@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Certification Inspection Report</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            font-size: 22px;
+        }
+
+        .report {
+            margin: auto;
+        }
+
+        .report-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+            .report-header .logo-left img {
+                height: 200px;
+                margin-right: 20px;
+                margin-top: 20px;
+            }
+
+        .report-info-table {
+            width: 100%;
+            padding-bottom: 90px;
+            border-bottom: 1px solid #EFEFEF;
+        }
+
+            .report-info-table td {
+                vertical-align: top;
+                padding: 10px 0px;
+            }
+
+        .brands {
+            display: -webkit-box;
+            display: flex;
+            -webkit-box-pack: justify;
+            -webkit-box-orient: horizontal;
+            justify-content: space-between;
+            text-align: center;
+            page-break-after: always;
+            padding-top: 50px;
+        }
+
+            .brands div img {
+                height: auto;
+                width: 140px;
+                margin-bottom: 10px;
+                margin-top: 10px;
+            }
+
+        .report-section {
+            margin-top: 20px;
+            page-break-after: always;
+        }
+
+            .report-section h2 {
+                font-size: 24px;
+                margin-top: 20px;
+                padding-bottom: 5px;
+            }
+
+            .report-section h3 {
+                margin-top: 15px;
+                font-size: 22px;
+            }
+
+        .damage-categories {
+            margin-top: 30px;
+            page-break-after: always;
+        }
+
+        .damage {
+            padding: 10px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+
+            .damage.red {
+                background-color: #FBE5E5;
+                color: #DC2626;
+            }
+
+            .damage.amber {
+                background-color: #FCF1E0;
+                color: #E58A00;
+            }
+
+            .damage.green {
+                background-color: #E6F5F0;
+                color: #2CA87F;
+            }
+
+        .defect-logs table {
+            page-break-inside: auto;
+            border-collapse: separate;
+            border-spacing: 0;
+            width: 100%;
+            overflow: hidden;
+        }
+
+            .defect-logs table thead {
+                display: table-header-group;
+                background-color: #FAFAFA;
+                border: 1px solid #E8E8E8;
+            }
+
+            .defect-logs table tr {
+                page-break-inside: avoid;
+                page-break-after: auto;
+                padding: 10px;
+            }
+
+            .defect-logs table th {
+                text-align: left;
+                border-top: 2px solid #E8E8E8;
+                border-bottom: 2px solid #E8E8E8;
+                vertical-align: top;
+                font-size: 12px;
+                padding: 0;
+            }
+
+            .defect-logs table td {
+                text-align: left;
+                vertical-align: top;
+                font-size: 12px;
+                padding: 10px;
+                border-bottom: 2px solid #E8E8E8;
+            }
+
+            .defect-logs table th:first-child {
+                border-top-left-radius: 15px;
+                border-left: 2px solid #E8E8E8;
+            }
+
+            .defect-logs table th:last-child {
+                border-top-right-radius: 15px;
+                border-right: 2px solid #E8E8E8;
+            }
+
+            .defect-logs table td:first-child {
+                border-left: 2px solid #E8E8E8;
+            }
+
+            .defect-logs table td:last-child {
+                border-right: 2px solid #E8E8E8;
+            }
+
+            .defect-logs table th:first-child .cell-wrapper {
+                border-left: none;
+            }
+
+        .cell-wrapper {
+            padding: 0px 15px 12px 10px;
+            margin-top: 15px;
+            margin-bottom: 10px;
+            border-left: 1px solid #E8E8E8;
+            height: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="report">
+        <header class="report-header">
+            <div class="logo-left">
+                <img src="{{WarehouseLogo}}" alt="ITW Logo">
+            </div>
+            <h2>Certification Inspection Report</h2>
+        </header>
+
+        <table class="report-info-table">
+            <tr>
+                <td>Inspection for:</td>
+                <td><strong>{{Name}}</strong></td>
+            </tr>
+            <tr>
+                <td>Site address:</td>
+                <td><strong>{{Address}}</strong></td>
+            </tr>
+            <tr>
+                <td>Standard:</td>
+                <td><strong>AS4084:2023 Steel Storage Racking Standard</strong></td>
+            </tr>
+            <tr>
+                <td>Inspection Company:</td>
+                <td><strong>{{InspectionCompany}}</strong></td>
+            </tr>
+            <tr>
+                <td>Inspector:</td>
+                <td><strong>{{InspectorName}}</strong></td>
+            </tr>
+            <tr>
+                <td>Inspection date:</td>
+                <td><strong>{{InspectionDate}}</strong></td>
+            </tr>
+            <tr>
+                <td>Next Inspection Due:</td>
+                <td><strong>{{NextInspectionDate}}</strong></td>
+            </tr>
+        </table>
+
+        <div class="brands">
+            <div><p><strong>Inspected By</strong></p><img src="{{InspectorCompanyLogo}}" alt="Inspector"></div>
+            <div><p><strong>Suppliers for</strong></p><img src="{{InspectedCompanyLogo}}" alt="Inspected"></div>
+            <div><p><strong>Inspection Technology By</strong></p><img src="{{RackLogicLogo}}" alt="RackLogic"></div>
+        </div>
+
+        <section class="report-section">
+            <h2>Report Overview</h2>
+
+            <h3>Purpose of the Report</h3>
+            <ul>
+                <li>To inspect the condition of existing pallet storage racking systems and report on damages that affect the integrity of the rack in accordance with the Australian Standard</li>
+                <li>AS4084:2023 Steel Storage Racking Standard.</li>
+            </ul>
+
+            <h3>Inspection Method</h3>
+            <ul>
+                <li>A general inspection on ground level, in line‐of‐sight, is conducted where access is possible. In some cases rack cannot be seen where accessibility is inhibited by varying factors, including excess stock on floor, products stored to capacity and height of damage etc. If the inspector has concerns of damage, it may be necessary, where physically possible, to move and/or unload stock to view the area more thoroughly for the inspection to be accurately recorded.</li>
+                <li>The ground level inspection is in accordance with the above standard.</li>
+            </ul>
+
+            <h3>Risk Categories</h3>
+            <ul>
+                <li>All damage is recorded and reported with a risk indicator to assist the client to understand the level of risk within the work area. This is based on the damage and integrity of the rack and urgency in which repairs and replacements should be approached to remedy the situation and eliminate workplace risk.</li>
+            </ul>
+
+            <h3>Recommendation</h3>
+            <ul>
+                <li>We highly recommend encouraging staff to report all damages of the racking system as it occurs, especially to upright, beams and braces. The impact can result in unsafe working conditions affecting productivity.</li>
+            </ul>
+
+            <h3>All Defect Details</h3>
+            <ul>
+                <li>This document is a summary for the Certification Inspection, as required by Australian Standards 4084.</li>
+                <li>Full and comprehensive</li>
+            </ul>
+
+            <h3>Reference</h3>
+            <ul>
+                <li>AS4084.2:2023 Steel storage racking</li>
+                <li>Part 2: Operational and Maintenance</li>
+                <li>Section 5 Inspections and maintenance</li>
+                <li>5.5 Damage Classification</li>
+                <li>5.5.1 General</li>
+            </ul>
+        </section>
+
+        <section class="damage-categories">
+            <div class="damage red">
+                <p>5.5.4 – VERY SERIOUS DAMAGE – "Red" level</p>
+                <p>When the level of damage exceeds the permissible limits specified in Clauses 5.3.2 to 5.3.4 by more that a factor of 2, it is designated 'red' risk level. The damaged section and any relevant adjacent sections shall be:</p>
+                <ul>
+                    <li>clearly identified</li>
+                    <li>immediately unload</li>
+                    <li>isolate</li>
+                </ul>
+            </div>
+
+            <div class="damage amber">
+                <p>5.5.3 – HAZARDOUS DAMAGE – "Amber" level</p>
+                <p>When the level of damage exceeds the permissible limits specified in Clauses 5.3.2 to 5.3.4 by a factor between 1 and 2, it is designated "amber" risk level. The damaged section shall be ‐</p>
+                <ul>
+                    <li>clearly identified</li>
+                    <li>unloaded as soon as practicable</li>
+                    <li>isolated; and</li>
+                    <li>not reloaded until the necessary repairs have been carried out and the equipment assessed as safe for use.</li>
+                </ul>
+            </div>
+
+            <div class="damage green">
+                <p>5.5.2 – ACCEPTABLE DAMAGE – "Green" level</p>
+                <p>
+                    When the level of damage does not exceed the permissible limits specified in Clauses 5.3.2 to 5.3.4, the racking shall be deemed serviceable and will not require either unit load reduction or immediate unloading.
+                    Damage shall be recorded on the damaged components to indicate that these components have been inspected and the racking is suitable for services until the next inspection when the components will be re‐inspected and re‐assessed (Clause 5.2).
+                </p>
+            </div>
+        </section>
+
+        <section class="defect-logs">
+            <h2>Defect Details</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th><div class="cell-wrapper">Defect Grade</div></th>
+                        <th><div class="cell-wrapper">Defect ID</div></th>
+                        <th><div class="cell-wrapper">Bay ID</div></th>
+                        <th><div class="cell-wrapper">Component</div></th>
+                        <th><div class="cell-wrapper">OEM</div></th>
+                        <th><div class="cell-wrapper">Part Number</div></th>
+                        <th><div class="cell-wrapper">Defect Type</div></th>
+                        <th><div class="cell-wrapper">Corrective Action</div></th>
+                        <th><div class="cell-wrapper">Image(s)</div></th>
+                        <th><div class="cell-wrapper">Comments</div></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {{DefectLogRows}}
+                </tbody>
+            </table>
+        </section>
+    </div>
+</body>
+</html>
