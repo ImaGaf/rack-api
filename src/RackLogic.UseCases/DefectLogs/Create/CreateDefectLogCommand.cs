@@ -6,7 +6,7 @@ namespace RackLogic.UseCases.DefectLogs.Create;
 
 public record CreateDefectLogCommand : ICommand<Result<DefectLogDto>>
 {
-  public required Guid InspectionId { get; init; }
+  public Guid? InspectionId { get; init; }
   public required Guid ComponentId { get; init; }
   public required Guid FloorPlanItemId { get; init; }
   public bool? IsXBrace { get; set; }
