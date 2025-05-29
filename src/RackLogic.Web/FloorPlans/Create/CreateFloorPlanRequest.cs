@@ -41,7 +41,7 @@ public class FloorPlanRequest
   public required List<FloorPlanItem> Items { get; set; }
   public List<IFormFile>? Files { get; set; } = new();
   [Required]
-  public required DefaultSettings DefaultSettings { get; set; }
+  public required DefaultSettings? DefaultSettings { get; set; }
 }
 
 public class FloorPlanItem

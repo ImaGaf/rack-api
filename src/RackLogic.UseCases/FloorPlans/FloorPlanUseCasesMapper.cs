@@ -23,7 +23,7 @@ public static partial class FloorPlanUseCasesMapper
       TotalBay = request.TotalBay,
       FloorPlanFiles = new List<FloorPlanFiles>(),
       FloorPlanItems = request.Items.Select(i => i.ToFloorPlanItem(request.FloorPlanId, bayConfiguration)).ToList(),
-      DefaultSettings = request.DefaultSettings.ToDefaultSettings(bayConfiguration, request.FloorPlanId)
+      DefaultSettings = request.DefaultSettings?.ToDefaultSettings(bayConfiguration, request.FloorPlanId)
     };
   }
 
@@ -374,7 +374,7 @@ public static partial class FloorPlanUseCasesMapper
   public static DefaultSettingsResponse MapFloorPlanToDefaultSettingsResponse(FloorPlan floorPlan, List<BayConfiguration> bayConfigurations)
   {
     //Dictionary map BayConfigCategory -> BayConfigurationId
-    var defaultSettingsDict = floorPlan.DefaultSettings
+    var defaultSettingsDict = floorPlan.DefaultSettings?
         .ToDictionary(ds => ds.BayConfigCategory, ds => ds.BayConfigurationId);
 
     //Dictionary map Id( BayConfigurations) -> BayConfigId
@@ -384,6 +384,8 @@ public static partial class FloorPlanUseCasesMapper
     // Function to get BayConfigId value from defaultSettingsDict and bayConfigDict
     string? GetMappedValue(BayConfigurationCategory category)
     {
+      if (defaultSettingsDict is null) return null;
+
       if (!defaultSettingsDict.TryGetValue(category, out var bayConfigurationId) || bayConfigurationId == null)
         return null;
 

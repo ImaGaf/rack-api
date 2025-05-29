@@ -17,7 +17,7 @@ public record FloorPlanCommand(
     int TotalBay,
     List<FloorPlanItemCommand> Items,
     List<IFormFile> Files,
-    DefaultSettingsCommand DefaultSettings);
+    DefaultSettingsCommand? DefaultSettings);
 
 public record FloorPlanItemCommand(
     Guid Id,
