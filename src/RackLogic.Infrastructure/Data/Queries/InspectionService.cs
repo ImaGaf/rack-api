@@ -224,7 +224,7 @@ public class InspectionService(
 
     string rackLogicLogo = "file:///" + Path.Combine(baseImagePath, "rack_logo_alter.svg");
     string warehouseLogo = Path.Combine(baseUrl, inspection!.Warehouse!.FileImageUrl ?? "");
-    string inspectorCompanyLogo = Path.Combine(baseUrl, inspection.AuthorisePerson!.InspectorProfile!.FileImageUrl ?? "");
+    string inspectorCompanyLogo = Path.Combine(baseUrl, inspection.AuthorisePerson?.InspectorProfile?.FileImageUrl ?? "");
 
     html = html.Replace("{{Name}}", inspection.Warehouse!.CompanyName)
       .Replace("{{Address}}", inspection.Warehouse?.Address ?? "-")

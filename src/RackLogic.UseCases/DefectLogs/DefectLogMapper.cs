@@ -18,7 +18,7 @@ public static partial class DefectLogMapper
   {
     var dto = entity.ToDto();
     dto.OEMBrand = entity.Component!.BayConfiguration!.Manufacturer!.ToOEMBrandDTO();
-    dto.Inspection = entity.Inspection!.ToDto();
+    dto.Inspection = entity.Inspection?.ToDto();
     dto.Bay = entity.FloorPlanItem!.Bay;
     dto.Rack = entity.FloorPlanItem!.Rack;
     dto.WarehouseId = entity.FloorPlanItem.FloorPlan!.WarehouseId;
