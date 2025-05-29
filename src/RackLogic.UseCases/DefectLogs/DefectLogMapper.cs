@@ -40,4 +40,14 @@ public static partial class DefectLogMapper
 
     return dto;
   }
+
+  public static DefectLogDto ToReportDto(this DefectLog entity)
+  {
+    var dto = entity.ToDto();
+    dto.OEMBrand = entity.Component!.BayConfiguration!.Manufacturer!.ToOEMBrandDTO();
+    dto.Bay = entity.FloorPlanItem!.Bay;
+    dto.Rack = entity.FloorPlanItem!.Rack;
+
+    return dto;
+  }
 }
