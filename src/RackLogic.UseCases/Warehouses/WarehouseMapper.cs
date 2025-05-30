@@ -18,5 +18,6 @@ public static partial class WarehouseMapper
 
   [MapProperty(nameof(Warehouse.CompanyName), nameof(WarehouseCertificationInspectionDto.Name))]
   [MapProperty(nameof(Warehouse.Id), nameof(WarehouseDto.WarehouseId))]
+  [MapProperty(nameof(Warehouse.FileImageUrl), nameof(WarehouseDto.FilePathImage))]
   public static partial WarehouseCertificationInspectionDto ToWarehouseCertificationInspectionDto(this Warehouse warehouse);
 }
