@@ -60,9 +60,6 @@ public class FloorPlanService : IFloorPlanService
         .FindAsync(bc => bc.WarehouseId == warehouseId, cancellationToken);
     var validBayConfigIdSet = new HashSet<string>(validBayConfigIds.Select(bc => bc.BayConfigId));
 
-    if (!validBayConfigIdSet.Any())
-      return Result.Invalid(new ValidationError("No valid BayConfigId for this WarehouseId."));
-
     var invalidItems = floorPlans
         .SelectMany(fp => fp.Items)
         .Where(item => !string.IsNullOrEmpty(item.BayConfigurationId) && !validBayConfigIdSet.Contains(item.BayConfigurationId));
