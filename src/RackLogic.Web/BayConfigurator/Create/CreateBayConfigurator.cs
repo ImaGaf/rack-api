@@ -39,8 +39,7 @@ public class CreateBayConfigurator(IMediator _mediator) : Endpoint<CreateBayConf
 
     if (result.IsForbidden())
     {
-      await SendForbiddenAsync();
-      return;
+      throw new ForbiddenException(result?.Errors?.FirstOrDefault());
     }
 
     if (result.IsInvalid())

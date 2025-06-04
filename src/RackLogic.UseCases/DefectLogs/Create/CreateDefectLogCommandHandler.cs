@@ -1,8 +1,10 @@
 ﻿using Ardalis.Result;
 using Ardalis.SharedKernel;
+using RackLogic.Core.Common.Constants;
 using RackLogic.Core.Common.Entity;
 using RackLogic.Core.Common.Enums;
 using RackLogic.Core.Interfaces;
+using RackLogic.UseCases.Common.Constants;
 using RackLogic.UseCases.Common.Extensions;
 using RackLogic.UseCases.FloorPlans;
 using RackLogic.UseCases.Warehouses;
@@ -18,6 +20,11 @@ public class CreateDefectLogCommandHandler(
 {
   public async Task<Result<DefectLogDto>> Handle(CreateDefectLogCommand request, CancellationToken cancellationToken)
   {
+    if (!userWarehouseService.HasPermission(PermissionConstant.DefectLog.Code, PermissionConstant.DefectLog.Create))
+    {
+      return Result.Forbidden(ErrorMessages.DefectLog.ErrorMessageCreate);
+    }
+
     var entity = request.ToEntity();
 
     entity.Id = Guid.NewGuid();

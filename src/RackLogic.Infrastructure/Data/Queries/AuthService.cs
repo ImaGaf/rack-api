@@ -1,4 +1,5 @@
 ﻿using System.Security.Claims;
+using System.Text.Json;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using RackLogic.Core.Common.Constants;
@@ -40,11 +41,9 @@ public class AuthService(
         .Select(rp => rp.Code!)
         .ToListAsync();
 
-      foreach (var permission in permissions)
-      {
-        claims.Add(new Claim(ClaimConstant.Permissions, permission));
-      }
+      var accessRights = JsonSerializer.Serialize(permissions);
 
+      claims.Add(new Claim(ClaimConstant.Permissions, accessRights));
       claims.Add(new Claim(ClaimConstant.WarehouseId, userWarehouseRole.WarehouseId.ToString()));
     }
 

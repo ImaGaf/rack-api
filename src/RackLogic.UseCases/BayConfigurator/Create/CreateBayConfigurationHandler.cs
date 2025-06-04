@@ -1,8 +1,10 @@
 ﻿using Ardalis.Result;
 using Ardalis.SharedKernel;
+using RackLogic.Core.Common.Constants;
 using RackLogic.Core.Common.Entity;
 using RackLogic.Core.Common.Enums;
 using RackLogic.Core.Interfaces;
+using RackLogic.UseCases.Common.Constants;
 using RackLogic.UseCases.Warehouses;
 
 namespace RackLogic.UseCases.BayConfigurator.Create;
@@ -14,7 +16,10 @@ public class CreateBayConfigurationHandler(
 {
   public async Task<Result<bool>> Handle(CreateBayConfigurationCommand request, CancellationToken cancellationToken)
   {
-    if (!await _userWarehouseService.CheckPermissionUserRequestAsync(request.UserId, request.WarehouseId)) return Result.Forbidden();
+    if (!_userWarehouseService.HasPermission(PermissionConstant.BayConfiguration.Code, PermissionConstant.BayConfiguration.Create))
+    {
+      return Result.Forbidden(ErrorMessages.BayConfiguration.ErrorMessageCreate);
+    }
 
     if (await CheckUniqueForBayConfigIdAsync(request.BayConfiguration.BayConfigId, request.WarehouseId)) return Result.Invalid(new ValidationError("BayConfigId must be unique."));
 

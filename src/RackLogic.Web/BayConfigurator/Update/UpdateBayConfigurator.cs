@@ -36,8 +36,7 @@ public class UpdateBayConfigurator(IMediator _mediator) : Endpoint<UpdateBayConf
 
     if (result.IsForbidden())
     {
-      await SendForbiddenAsync();
-      return;
+      throw new ForbiddenException(result?.Errors?.FirstOrDefault());
     }
 
     if (result.IsInvalid())

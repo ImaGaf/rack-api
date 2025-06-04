@@ -14,12 +14,10 @@ public class AppDbContextSeed
             "inspector", new List<string>
             {
                 PermissionConstant.Account.FullThemselves,
-                PermissionConstant.DefectLog.Create,
-                PermissionConstant.DefectLog.View,
-                PermissionConstant.DefectLog.AuthoriseResolve,
+                PermissionConstant.DefectLog.Full,
                 PermissionConstant.Inspection.Full,
-                PermissionConstant.FloorPlan.ViewFloorplan,
-                PermissionConstant.BayConfiguration.ViewBayConfiguration
+                PermissionConstant.FloorPlan.Full,
+                PermissionConstant.BayConfiguration.Full
             }
         },
         {
@@ -27,61 +25,58 @@ public class AppDbContextSeed
             {
                 PermissionConstant.Account.FullThemselves,
                 PermissionConstant.UserRole.Full,
-                PermissionConstant.DefectLog.Create,
-                PermissionConstant.DefectLog.View,
-                PermissionConstant.DefectLog.AuthoriseResolve,
+                PermissionConstant.DefectLog.Full,
+                PermissionConstant.Inspection.ViewReport,
+                PermissionConstant.Inspection.ViewSchedule,
+                PermissionConstant.UserRole.Full,
                 PermissionConstant.FloorPlan.Full,
                 PermissionConstant.BayConfiguration.Full,
+                PermissionConstant.FloorPlan.View
             }
-        },
-        {
-          "client-admin", new List<string>
-          {
-                PermissionConstant.Account.FullThemselves,
-                PermissionConstant.DefectLog.Create,
-                PermissionConstant.DefectLog.View,
-                PermissionConstant.DefectLog.AuthoriseResolve,
-                PermissionConstant.FloorPlan.Full,
-                PermissionConstant.BayConfiguration.Full,
-          }
         },
         {
             "manager", new List<string>
             {
                 PermissionConstant.Account.FullThemselves,
                 PermissionConstant.UserRole.CreateEditor,
+                PermissionConstant.UserRole.CreateInspector,
                 PermissionConstant.UserRole.CreateRepairer,
-                PermissionConstant.UserRole.UpdateEditor,
+                PermissionConstant.UserRole.UpdateInspector,
                 PermissionConstant.UserRole.UpdateRepairer,
-                PermissionConstant.UserRole.DeleteEditor,
+                PermissionConstant.UserRole.UpdateEditor,
+                PermissionConstant.UserRole.DeleteInspector,
                 PermissionConstant.UserRole.DeleteRepairer,
-                PermissionConstant.DefectLog.Create,
-                PermissionConstant.DefectLog.View,
-                PermissionConstant.DefectLog.AuthoriseResolve,
-                PermissionConstant.FloorPlan.ViewFloorplan,
-                PermissionConstant.BayConfiguration.ViewBayConfiguration
+                PermissionConstant.UserRole.DeleteRepairer,
+                PermissionConstant.DefectLog.Full,
+                PermissionConstant.FloorPlan.View,
+                PermissionConstant.BayConfiguration.Full,
+                PermissionConstant.Inspection.ViewReport,
+                PermissionConstant.Inspection.ViewSchedule
             }
         },
         {
             "editor", new List<string>
             {
+                PermissionConstant.Account.FullThemselves,
                 PermissionConstant.DefectLog.Create,
                 PermissionConstant.DefectLog.View,
                 PermissionConstant.DefectLog.UpdateStatus,
-                PermissionConstant.FloorPlan.UpdateFloorplan,
-                PermissionConstant.FloorPlan.ViewFloorplan,
-                PermissionConstant.BayConfiguration.ViewBayConfiguration,
-                PermissionConstant.BayConfiguration.UpdateBayConfiguration
+                PermissionConstant.FloorPlan.View,
+                PermissionConstant.BayConfiguration.View,
+                PermissionConstant.Inspection.ViewReport,
+                PermissionConstant.Inspection.ViewSchedule
             }
         },
         {
             "repairer", new List<string>
             {
-                PermissionConstant.Account.ViewEveryone,
+                PermissionConstant.Account.FullThemselves,
                 PermissionConstant.DefectLog.View,
                 PermissionConstant.DefectLog.UpdateStatus,
-                PermissionConstant.FloorPlan.ViewFloorplan,
-                PermissionConstant.BayConfiguration.ViewBayConfiguration
+                PermissionConstant.FloorPlan.View,
+                PermissionConstant.BayConfiguration.View,
+                PermissionConstant.Inspection.ViewReport,
+                PermissionConstant.Inspection.ViewSchedule
             }
         }
     };

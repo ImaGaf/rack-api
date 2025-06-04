@@ -69,8 +69,7 @@ public class CreateFloorPlan(IMediator _mediator) : Endpoint<RequestCreateFloorP
 
     if (result.IsForbidden())
     {
-      await SendForbiddenAsync();
-      return;
+      throw new ForbiddenException(result?.Errors?.FirstOrDefault());
     }
 
     if (result.IsInvalid())
