@@ -1,6 +1,8 @@
-﻿using FastEndpoints;
+﻿using Ardalis.Result;
+using FastEndpoints;
 using MediatR;
 using RackLogic.UseCases.Inspections.End;
+using RackLogic.Web.Exceptions;
 using RackLogic.Web.Models;
 
 namespace RackLogic.Web.Inspections.End;
@@ -20,6 +22,11 @@ public class EndInspection(IMediator _mediator) : Endpoint<EndInspectionRequest,
     {
       Response = new ApiResponse<bool>(true);
       return;
+    }
+
+    if (result.IsForbidden())
+    {
+      throw new ForbiddenException(result?.Errors?.FirstOrDefault());
     }
 
     await SendErrorsAsync(statusCode: 500, ct);

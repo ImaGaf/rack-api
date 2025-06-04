@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using RackLogic.Core.Common.Constants;
 using RackLogic.UseCases.Brands;
+using RackLogic.UseCases.Users;
 using RackLogic.UseCases.Warehouses;
 using RackLogic.UseCases.Warehouses.SearchWarehouse;
 using RackLogic.UseCases.Warehouses.SearchWarehouseCertificationInspection;
@@ -9,7 +10,8 @@ using RackLogic.UseCases.Warehouses.SearchWarehouseCertificationInspection;
 namespace RackLogic.Infrastructure.Data.Queries;
 public class UserWarehouseService(
   AppDbContext _context,
-  RoleManager<IdentityRole<Guid>> _roleManager)
+  RoleManager<IdentityRole<Guid>> _roleManager,
+  IUser _user)
   : IUserWarehouseService
 {
 
@@ -257,5 +259,21 @@ public class UserWarehouseService(
       PageSize = request.PageSize,
       DataDTO = result
     };
+  }
+
+  public bool HasPermission(string entityCode, string privilegeCode)
+  {
+    if (_user.Permissions == null)
+      return false;
+
+    var requiredPermissions = new[]
+    {
+      $"{entityCode}.full",
+      $"{entityCode}.full-themselves",
+      $"{entityCode}.full-everyone",
+      $"{privilegeCode}"
+    };
+
+    return _user.Permissions.Any(p => requiredPermissions.Contains(p));
   }
 }

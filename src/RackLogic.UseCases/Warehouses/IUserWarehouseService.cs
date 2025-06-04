@@ -21,4 +21,6 @@ public interface IUserWarehouseService
     Guid? userId,
     CancellationToken cancellationToken
     );
+
+  bool HasPermission(string entityCode, string privilegeCode);
 }

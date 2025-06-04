@@ -1,7 +1,9 @@
 ﻿using Ardalis.Result;
 using Ardalis.SharedKernel;
-using RackLogic.Core.Interfaces;
+using RackLogic.Core.Common.Constants;
 using RackLogic.Core.Common.Entity;
+using RackLogic.Core.Interfaces;
+using RackLogic.UseCases.Common.Constants;
 using RackLogic.UseCases.Users;
 using RackLogic.UseCases.Warehouses;
 
@@ -11,11 +13,17 @@ public class CreateInspectionCommandHandler(
   IRepositoryWithExpression<Inspection> _inspectionRepository,
   IRepositoryWithExpression<Warehouse> _warehouseRepository,
   IRepositoryWithExpression<FloorPlan> _floorPlanRepository,
+  IUserWarehouseService userWarehouseService,
   IUser _user
   ) : ICommandHandler<CreateInspectionCommand, Result<CreateInspectionDto>>
 {
   public async Task<Result<CreateInspectionDto>> Handle(CreateInspectionCommand request, CancellationToken cancellationToken)
   {
+    if (!userWarehouseService.HasPermission(PermissionConstant.Inspection.Code, PermissionConstant.Inspection.Conduct))
+    {
+      return Result.Forbidden(ErrorMessages.Inspection.ErrorMessageConduct);
+    }
+
     var warehouse = await _warehouseRepository.FirstOrDefaultAsync(w => w.Id == request.WarehouseId, cancellationToken);
 
     if (warehouse == null)

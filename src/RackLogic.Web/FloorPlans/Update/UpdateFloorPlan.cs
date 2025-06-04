@@ -70,8 +70,7 @@ public class UpdateFloorPlan(IMediator _mediator) : Endpoint<RequestUpdateFloorP
 
     if (result.IsForbidden())
     {
-      await SendForbiddenAsync();
-      return;
+      throw new ForbiddenException(result?.Errors?.FirstOrDefault());
     }
 
     if (result.IsInvalid())

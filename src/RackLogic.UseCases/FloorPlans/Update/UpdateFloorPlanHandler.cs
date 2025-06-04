@@ -1,7 +1,9 @@
 ﻿using Ardalis.Result;
 using Ardalis.SharedKernel;
+using RackLogic.Core.Common.Constants;
 using RackLogic.Core.Common.Entity;
 using RackLogic.Core.Interfaces;
+using RackLogic.UseCases.Common.Constants;
 using RackLogic.UseCases.Warehouses;
 
 namespace RackLogic.UseCases.FloorPlans.Update;
@@ -13,6 +15,10 @@ public class UpdateFloorPlanHandler(
 {
   public async Task<Result<bool>> Handle(UpdateFloorPlanCommand request, CancellationToken cancellationToken)
   {
+    if (!_userWarehouseService.HasPermission(PermissionConstant.FloorPlan.Code, PermissionConstant.FloorPlan.Update))
+    {
+      return Result.Forbidden(ErrorMessages.FloorPlan.ErrorMessageUpdate);
+    }
     // Check if WarehouseId is valid
     if (await _warehouseRepository.FirstOrDefaultAsync(x => x.Id == request.WarehouseId) is null) return Result.Invalid(new ValidationError("WarehouseId invalid."));
 

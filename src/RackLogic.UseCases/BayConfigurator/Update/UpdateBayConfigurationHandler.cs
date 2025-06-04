@@ -1,5 +1,6 @@
 ﻿using Ardalis.Result;
 using Ardalis.SharedKernel;
+using RackLogic.Core.Common.Constants;
 using RackLogic.Core.Common.Entity;
 using RackLogic.Core.Common.Enums;
 using RackLogic.Core.Interfaces;
@@ -17,7 +18,10 @@ public class UpdateBayConfigurationHandler(
 {
   public async Task<Result<bool>> Handle(UpdateBayConfigurationCommand request, CancellationToken cancellationToken)
   {
-    if (!await _userWarehouseService.CheckPermissionUserRequestAsync(request.UserId, request.WarehouseId)) return Result.Forbidden();
+    if (!_userWarehouseService.HasPermission(PermissionConstant.BayConfiguration.Code, PermissionConstant.BayConfiguration.Update))
+    {
+      return Result.Forbidden(ErrorMessages.BayConfiguration.ErrorMessageUpdate);
+    }
 
     if (await CheckUniqueForBayConfigIdAsync(request.BayConfiguration.BayConfigId, request.WarehouseId, request.BayConfiguration.Id))
       return Result.Invalid(new ValidationError("BayConfigId must be unique."));

@@ -1,8 +1,10 @@
 ﻿using Ardalis.Result;
 using Ardalis.SharedKernel;
+using RackLogic.Core.Common.Constants;
 using RackLogic.Core.Common.Entity;
 using RackLogic.Core.Common.Enums;
 using RackLogic.Core.Interfaces;
+using RackLogic.UseCases.Common.Constants;
 using RackLogic.UseCases.Common.Extensions;
 using RackLogic.UseCases.Warehouses;
 
@@ -17,6 +19,10 @@ public class UpdateDefectLogCommandHandler(
 {
   public async Task<Result<DefectLogDto>> Handle(UpdateDefectLogCommand request, CancellationToken cancellationToken)
   {
+    if (!userWarehouseService.HasPermission(PermissionConstant.DefectLog.Code, PermissionConstant.DefectLog.UpdateStatus))
+    {
+      return Result.Forbidden(ErrorMessages.DefectLog.ErrorMessageUpdate);
+    }
     var entity = await defectLogService.GetByIdAsync(request.Id, cancellationToken);
 
     if (entity == null)
