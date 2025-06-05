@@ -4,16 +4,22 @@ using Microsoft.AspNetCore.Identity;
 using RackLogic.Core.Common.Constants;
 using RackLogic.Core.Common.Entity;
 using RackLogic.Core.Interfaces;
+using RackLogic.UseCases.Common.Constants;
+using RackLogic.UseCases.Users;
 
 namespace RackLogic.UseCases.Warehouses.DeleteUserWarehouse;
 public class DeleteUserWarehouseHandler(
   IRepositoryWithExpression<UserWarehouseRole> _userWarehouseRoleRepository,
   IRepositoryWithExpression<Warehouse> _warehouseRepository,
-  RoleManager<IdentityRole<Guid>> _roleManager)
+  RoleManager<IdentityRole<Guid>> _roleManager,
+  IUser _user)
   : ICommandHandler<DeleteUserWarehouseCommand, Result<bool>>
 {
   public async Task<Result<bool>> Handle(DeleteUserWarehouseCommand request, CancellationToken cancellationToken)
   {
+    if(request.UserId == _user.Id)
+      return Result.Forbidden(ErrorMessages.UserRole.ErrorMessageDeleteThemselves);
+
     // Check if WarehouseId is valid
     if (await _warehouseRepository.FirstOrDefaultAsync(x => x.Id == request.WarehouseId) is null) return Result.Invalid(new ValidationError("WarehouseId invalid."));
 

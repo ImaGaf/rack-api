@@ -46,5 +46,6 @@ public static class ErrorMessages
     public const string ErrorMessageCreate = "You do not have permission to assign user roles.";
     public const string ErrorMessageUpdate = "You do not have permission to update user roles.";
     public const string ErrorMessageDelete = "You do not have permission to remove user roles.";
+    public const string ErrorMessageDeleteThemselves = "You cannot remove yourself from this warehouse.";
   }
 }
