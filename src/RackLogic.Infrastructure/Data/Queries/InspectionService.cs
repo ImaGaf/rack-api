@@ -238,4 +238,13 @@ public class InspectionService(
 
     return html;
   }
+
+  public async Task<IEnumerable<InspectionDto>> GetAllAsync(Guid warehouseId, CancellationToken cancellationToken)
+  {
+    var inspections = await dbContext.Inspections.Include(x => x.Warehouse).Where(x => x.WarehouseId == warehouseId).ToListAsync();
+
+    var results = inspections.Select(x => x.ToDto()).ToList();
+
+    return results;
+  }
 }
