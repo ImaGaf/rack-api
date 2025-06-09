@@ -1,12 +1,16 @@
 ﻿using Ardalis.Result;
 using Ardalis.SharedKernel;
 using Microsoft.AspNetCore.Identity;
+using RackLogic.Core.Common.Constants;
+using RackLogic.Core.Common.Entity;
+using RackLogic.Core.Interfaces;
 using RackLogic.Core.UserAggregate;
 
 namespace RackLogic.UseCases.Auths.Login;
 public class LoginHandler(
   SignInManager<ApplicationUser> _signInManager,
   UserManager<ApplicationUser> _userManager,
+  IRepositoryWithExpression<UserWarehouseRole> _userWarehouseRoleRepository,
   IAuthService _userService)
   : ICommandHandler<LoginCommand, Result<LoginDTO>>
 {
@@ -30,20 +34,26 @@ public class LoginHandler(
     }
 
     var result = await _signInManager.CheckPasswordSignInAsync(user, request.Password, true);
-    if (result.Succeeded)
+
+    if (!result.Succeeded)
     {
-      var token = await _userService.GenerateUserTokenAsync(user);
-      return token;
+      var failedCount = await _userManager.GetAccessFailedCountAsync(user);
+      return failedCount switch
+      {
+        >= 20 => await LockAccountPermanently(user),
+        10 => await LockAccountTemporarily(user),
+        _ => Result.Invalid(new ValidationError("The email and/or password entered is incorrect. Please try again."))
+      };
     }
 
-    var failedCount = await _userManager.GetAccessFailedCountAsync(user);
-
-    return failedCount switch
+    if (user.RegisteredRole == RoleConstant.Repairer || user.RegisteredRole == RoleConstant.Inspector)
     {
-      >= 20 => await LockAccountPermanently(user),
-      10 => await LockAccountTemporarily(user),
-      _ => Result.Invalid(new ValidationError("The email and/or password entered is incorrect. Please try again."))
-    };
+      return await _userService.GenerateUserTokenAsync(user);
+    }
+
+    var userWarehouse = await _userWarehouseRoleRepository.FirstOrDefaultAsync(uwr => uwr.UserId == user.Id, cancellationToken);
+    var token = await _userService.GenerateUserTokenAsync(user, userWarehouse!.WarehouseId);
+    return token;
   }
 
   private async Task<Result<LoginDTO>> LockAccountTemporarily(ApplicationUser user)
