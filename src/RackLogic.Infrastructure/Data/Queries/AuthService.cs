@@ -31,7 +31,7 @@ public class AuthService(
       .Include(uwr => uwr.Role)
       .FirstOrDefaultAsync(uwr => uwr.UserId == user.Id && uwr.WarehouseId == warehouseId);
 
-    if (userWarehouseRole != null && warehouseId != null)
+    if (userWarehouseRole != null && warehouseId.HasValue && warehouseId.Value != Guid.Empty)
     {
       var roleName = userWarehouseRole.Role!.Name!;
       claims.Add(new Claim(ClaimConstant.WarehouseRole, roleName));
