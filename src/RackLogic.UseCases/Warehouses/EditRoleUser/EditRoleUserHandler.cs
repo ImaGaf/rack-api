@@ -64,7 +64,7 @@ public class EditRoleUserHandler(
     var role = await _roleManager.FindByIdAsync(result.RoleId.ToString());
     if (role == null) return false;
 
-    if (role.Name != RoleConstant.Premises && role.Name != RoleConstant.ClientManager) return false;
+    if (role.Name != RoleConstant.Premises && role.Name != RoleConstant.Manager) return false;
 
     return true;
   }

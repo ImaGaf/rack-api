@@ -2,11 +2,11 @@
 
 public static class ErrorMessages
 {
-  public static class Account
+  public static class ManageUser
   {
-    public const string ErrorMessageCreate = "You do not have permission to create accounts.";
-    public const string ErrorMessageUpdate = "You do not have permission to update accounts.";
-    public const string ErrorMessageDelete = "You do not have permission to delete accounts.";
+    public const string ErrorMessageCreate = "You do not have permission to invite accounts.";
+    public const string ErrorMessageUpdate = "You do not have permission to update others accounts.";
+    public const string ErrorMessageDelete = "You do not have permission to delete others accounts.";
   }
 
   public static class DefectLog

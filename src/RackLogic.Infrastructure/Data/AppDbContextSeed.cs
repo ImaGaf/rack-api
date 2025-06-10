@@ -13,7 +13,6 @@ public class AppDbContextSeed
         {
             "inspector", new List<string>
             {
-                PermissionConstant.Account.FullThemselves,
                 PermissionConstant.DefectLog.Full,
                 PermissionConstant.Inspection.Full,
                 PermissionConstant.FloorPlan.Full,
@@ -23,7 +22,7 @@ public class AppDbContextSeed
         {
             "premises", new List<string>
             {
-                PermissionConstant.Account.FullThemselves,
+                PermissionConstant.ManageUser.Full,
                 PermissionConstant.UserRole.Full,
                 PermissionConstant.DefectLog.Full,
                 PermissionConstant.Inspection.ViewReport,
@@ -37,7 +36,7 @@ public class AppDbContextSeed
         {
             "manager", new List<string>
             {
-                PermissionConstant.Account.FullThemselves,
+                PermissionConstant.ManageUser.Full,
                 PermissionConstant.UserRole.CreateEditor,
                 PermissionConstant.UserRole.CreateInspector,
                 PermissionConstant.UserRole.CreateRepairer,
@@ -57,7 +56,6 @@ public class AppDbContextSeed
         {
             "editor", new List<string>
             {
-                PermissionConstant.Account.FullThemselves,
                 PermissionConstant.DefectLog.Create,
                 PermissionConstant.DefectLog.View,
                 PermissionConstant.DefectLog.UpdateStatus,
@@ -70,7 +68,6 @@ public class AppDbContextSeed
         {
             "repairer", new List<string>
             {
-                PermissionConstant.Account.FullThemselves,
                 PermissionConstant.DefectLog.View,
                 PermissionConstant.DefectLog.UpdateStatus,
                 PermissionConstant.FloorPlan.View,

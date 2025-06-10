@@ -37,6 +37,11 @@ public class InviteUser(IMediator _mediator) : Endpoint<InviteUserRequest, ApiRe
       return;
     }
 
+    if (result.IsForbidden())
+    {
+      throw new ForbiddenException(result?.Errors?.FirstOrDefault());
+    }
+
     if (result.IsUnauthorized())
     {
       await SendUnauthorizedAsync();
