@@ -155,7 +155,7 @@ public class UserWarehouseService(
     if (role == null) return false;
 
     if (role.Name != RoleConstant.Premises &&
-      role.Name != RoleConstant.ClientManager &&
+      role.Name != RoleConstant.Manager &&
       role.Name != RoleConstant.Inspector) return false;
 
     return true;

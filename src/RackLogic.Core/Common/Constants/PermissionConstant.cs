@@ -2,20 +2,15 @@
 
 public static class PermissionConstant
 {
-  public static class Account
+  public static class ManageUser
   {
-    public const string Code = "account";
+    public const string Code = "manage-user";
 
-    public const string FullThemselves = "account.full-themselves";
-    public const string FullEveryone = "account.full-everyone";
+    public const string Full = "manage-user.full";
 
-    public const string CreateThemselves = "account.create-themselves";
-    public const string UpdateThemselves = "account.update-themselves";
-    public const string DeleteThemselves = "account.delete-themselves";
-
-    public const string CreateEveryone = "account.create-everyone";
-    public const string UpdateEveryone = "account.update-everyone";
-    public const string DeleteEveryone = "account.delete-everyone";
+    public const string Create = "manage-user.create";
+    public const string Update = "manage-user.update";
+    public const string Delete = "manage-user.delete";
   }
 
   public static class UserRole

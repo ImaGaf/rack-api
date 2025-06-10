@@ -104,9 +104,9 @@ public class DeleteUserJob : BackgroundService
       IRepositoryWithExpression<UserWarehouseRole> userWarehouseRoleRepository,
       CancellationToken cancellationToken)
   {
-    // Get ClientManager and ClientEditor role information
-    var clientManagerRole = await roleManager.FindByNameAsync(RoleConstant.ClientManager);
-    var clientEditorRole = await roleManager.FindByNameAsync(RoleConstant.ClientEditor);
+    // Get Manager and Editor role information
+    var clientManagerRole = await roleManager.FindByNameAsync(RoleConstant.Manager);
+    var clientEditorRole = await roleManager.FindByNameAsync(RoleConstant.Editor);
 
     //Get list of warehouses belonging to user Premises
     var userWarehouses = await warehouseRepository.GetListAsync(w => w.OwnerId == user.Id, cancellationToken);
@@ -166,7 +166,7 @@ public class DeleteUserJob : BackgroundService
   }
 
   /// <summary>
-  /// Delete other users (ClientManager, ClientEditor, Repairer).
+  /// Delete other users (Manager, Editor, Repairer).
   /// </summary>
   private async Task HandleGenericUserDeletionAsync(
       ApplicationUser user,

@@ -6,13 +6,16 @@ using RackLogic.Core.Common.Constants;
 using RackLogic.Core.Common.Entity;
 using RackLogic.Core.Interfaces;
 using RackLogic.Core.UserAggregate;
+using RackLogic.UseCases.Common.Constants;
 using RackLogic.UseCases.Users;
 
 namespace RackLogic.UseCases.Warehouses.InviteUser;
+
 public class InviteUserHandler(
   IRepositoryWithExpression<Warehouse> _warehouseRepository,
   IRepositoryWithExpression<Invitation> _invitationsRepository,
   IRepositoryWithExpression<UserWarehouseRole> _userWarehouseRoleRepository,
+  IUserWarehouseService _userWarehouseService,
   RoleManager<IdentityRole<Guid>> _roleManager,
   UserManager<ApplicationUser> _userManager,
   IConfiguration _configuration,
@@ -24,9 +27,10 @@ public class InviteUserHandler(
   {
     if (_user.Id is null) return Result.Unauthorized();
 
-    var inviterId = _user.Id!.Value;
+    if (!_userWarehouseService.HasPermission(PermissionConstant.ManageUser.Code, PermissionConstant.ManageUser.Create))
+      return Result.Forbidden(ErrorMessages.ManageUser.ErrorMessageCreate);
 
-    if (!await CheckPermissionUserRequestAsync(inviterId, request.WarehouseId)) return Result.Forbidden();
+    var inviterId = _user.Id!.Value;
 
     var role = await _roleManager.FindByNameAsync(request.Role);
     if (role is null) return Result.Invalid(new ValidationError("Role invalid."));
@@ -37,7 +41,7 @@ public class InviteUserHandler(
     var invitedUser = await _userManager.FindByEmailAsync(request.Email);
     var inviterName = _user.UserName ?? "Someone";
     var deepLink = _configuration.GetSection("Dashboard:InviteUser").Value;
-    var baseUrl = _configuration.GetSection("Dashboard:BaseUrl").Value;
+    var baseUrl = _configuration.GetSection("Client:BaseUrl").Value;
     var logo = $"{baseUrl}{_configuration.GetSection("Dashboard:LogoMarket").Value}";
 
     if (invitedUser is null)
@@ -65,8 +69,8 @@ public class InviteUserHandler(
   {
     var templatePath = Path.Combine("wwwroot", "EmailTemplates", "InviteUser.html");
     var emailContent = System.IO.File.ReadAllText(templatePath);
-    emailContent = emailContent.Replace("{link}", link);
-    emailContent = emailContent.Replace("{logo}", logo);
+    emailContent = emailContent.Replace("{{link}}", link);
+    emailContent = emailContent.Replace("{{logo}}", logo);
     emailContent = emailContent.Replace("{inviter_name}", inviterName);
     emailContent = emailContent.Replace("{location_name}", locationName);
     emailContent = emailContent.Replace("{role_name}", roleName);
@@ -80,26 +84,13 @@ public class InviteUserHandler(
     var templatePath = Path.Combine("wwwroot", "EmailTemplates", "InviteUserHasExisted.html");
     var emailContent = System.IO.File.ReadAllText(templatePath);
 
-    emailContent = emailContent.Replace("{logo}", logo);
+    emailContent = emailContent.Replace("{{logo}}", logo);
     emailContent = emailContent.Replace("{inviter_name}", inviterName);
     emailContent = emailContent.Replace("{location_name}", locationName);
     emailContent = emailContent.Replace("{role_name}", roleName);
     emailContent = emailContent.Replace("{currentYear}", DateTime.UtcNow.Year.ToString());
 
     return emailContent;
-  }
-
-  private async Task<bool> CheckPermissionUserRequestAsync(Guid? userId, Guid warehouseId)
-  {
-    var result = await _userWarehouseRoleRepository.FirstOrDefaultAsync(x => x.UserId == userId && x.WarehouseId == warehouseId);
-    if (result == null) return false;
-
-    var role = await _roleManager.FindByIdAsync(result.RoleId.ToString());
-    if (role == null) return false;
-
-    if (role.Name != RoleConstant.Premises && role.Name != RoleConstant.ClientManager) return false;
-
-    return true;
   }
 
   private async Task<bool> CheckExistingUserInWarehouseAsync(Guid? memberId, Guid warehouseId)
@@ -140,7 +131,6 @@ public class InviteUserHandler(
     return await _emailSender.SendAsync(request.Email, EmailConstants.InviteSubject, content);
   }
 
-
   private async Task<Result<bool>> HandlerUserExistsAsync(
     InviteUserCommand request,
     ApplicationUser invitedUser,
@@ -153,19 +143,27 @@ public class InviteUserHandler(
     if (await CheckExistingUserInWarehouseAsync(invitedUser.Id, request.WarehouseId))
       return Result.Invalid(new ValidationError("The user already exists in the warehouse."));
 
-    if (request.Role == RoleConstant.Inspector && invitedUser.RegisteredRole != RoleConstant.Inspector)
-      return Result.Invalid(new ValidationError("The user is not an inspector."));
+    var isRestrictedRole = invitedUser.RegisteredRole is RoleConstant.Premises or RoleConstant.Manager or RoleConstant.Editor;
 
-    if (request.Role == RoleConstant.Repairer && invitedUser.RegisteredRole != RoleConstant.Repairer)
-      return Result.Invalid(new ValidationError("The user is not an repairer."));
+    if (isRestrictedRole)
+      return Result.Invalid(new ValidationError("The user is a premise from another warehouse."));
+
+    var roleMismatch = (request.Role, invitedUser.RegisteredRole) switch
+    {
+      (RoleConstant.Inspector, not RoleConstant.Inspector) => "The user is not an inspector.",
+      (RoleConstant.Repairer, not RoleConstant.Repairer) => "The user is not a repairer.",
+      _ => null
+    };
+
+    if (roleMismatch != null)
+      return Result.Invalid(new ValidationError(roleMismatch));
 
     var existingUserRole = await _userWarehouseRoleRepository
-      .FirstOrDefaultAsync(uwr => uwr.UserId == invitedUser.Id &&
-                                  uwr.WarehouseId == request.WarehouseId,
-        cancellationToken
-    );
+      .FirstOrDefaultAsync(
+        uwr => uwr.UserId == invitedUser.Id && uwr.WarehouseId == request.WarehouseId,
+        cancellationToken);
 
-    if (existingUserRole == null)
+    if (existingUserRole is null)
     {
       await _userWarehouseRoleRepository.AddAsync(
         new UserWarehouseRole
@@ -174,8 +172,7 @@ public class InviteUserHandler(
           WarehouseId = request.WarehouseId,
           RoleId = role.Id,
         },
-        cancellationToken
-      );
+        cancellationToken);
     }
 
     var contentEmail = BuildEmailInviteExistedUserContent(logo, inviterName, companyName, role?.Name);
