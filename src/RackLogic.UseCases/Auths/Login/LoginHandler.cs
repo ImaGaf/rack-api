@@ -1,16 +1,14 @@
 ﻿using Ardalis.Result;
 using Ardalis.SharedKernel;
 using Microsoft.AspNetCore.Identity;
-using RackLogic.Core.Common.Constants;
-using RackLogic.Core.Common.Entity;
-using RackLogic.Core.Interfaces;
 using RackLogic.Core.UserAggregate;
+using RackLogic.UseCases.Warehouses;
 
 namespace RackLogic.UseCases.Auths.Login;
 public class LoginHandler(
   SignInManager<ApplicationUser> _signInManager,
   UserManager<ApplicationUser> _userManager,
-  IRepositoryWithExpression<UserWarehouseRole> _userWarehouseRoleRepository,
+  IUserWarehouseService _userWarehouseService,
   IAuthService _userService)
   : ICommandHandler<LoginCommand, Result<LoginDTO>>
 {
@@ -46,14 +44,8 @@ public class LoginHandler(
       };
     }
 
-    if (user.RegisteredRole == RoleConstant.Repairer || user.RegisteredRole == RoleConstant.Inspector)
-    {
-      return await _userService.GenerateUserTokenAsync(user);
-    }
-
-    var userWarehouse = await _userWarehouseRoleRepository.FirstOrDefaultAsync(uwr => uwr.UserId == user.Id, cancellationToken);
-    var token = await _userService.GenerateUserTokenAsync(user, userWarehouse?.WarehouseId);
-    return token;
+    var lastVisitedWarehouse = await _userWarehouseService.GetLastWarehouseForUserAsync(user.Id);
+    return await _userService.GenerateUserTokenAsync(user, lastVisitedWarehouse?.WarehouseId);
   }
 
   private async Task<Result<LoginDTO>> LockAccountTemporarily(ApplicationUser user)
