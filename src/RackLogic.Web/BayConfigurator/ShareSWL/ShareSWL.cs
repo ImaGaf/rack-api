@@ -15,7 +15,7 @@ public class ShareSWL(IMediator _mediator) : Endpoint<ShareSWLRequest, ApiRespon
 
   public override async Task HandleAsync(ShareSWLRequest req, CancellationToken ct)
   {
-    var result = await _mediator.Send(new ShareSWLCommand(req.Id, req.Message, req.AseetId, req.RackNumber, req.Email), ct);
+    var result = await _mediator.Send(new ShareSWLCommand(req.Id, req.Message, req.AssetId, req.RackNumber, req.Email), ct);
 
     if (result.IsSuccess)
     {

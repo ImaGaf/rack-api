@@ -41,8 +41,8 @@ public class BayConfigurationService : IBayConfigurationService
 
     if (bayConfiguration is null) Result.Invalid(new ValidationError("SWL Id not found."));
 
-    var html = await File.ReadAllTextAsync("../RackLogic.Web/wwwroot/SWLSignageTemplates/SWLSignagePDF.html", cancellationToken);
-
+    var htmlPath = Path.Combine("wwwroot", "SWLSignageTemplates", "SWLSignagePDF.html");
+    var html = await File.ReadAllTextAsync(htmlPath, cancellationToken);
     var subject = "SWL Signage details have been shared with you";
     var rawContent = (string.IsNullOrEmpty(request.Message) ? string.Empty : $"{request.Message} \r\n\r\n") +
       "Details for a pallet rack SWL Signage requirements have been shared with you.\r\n\r\n" +
@@ -51,7 +51,6 @@ public class BayConfigurationService : IBayConfigurationService
       "Rack Logic.";
 
     var content = "Hello,\r\n\r\n" + rawContent;
-
     string baseImagePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "ReportTemplates");
     string rackLogicLogo = "file:///" + Path.Combine(baseImagePath, "rack_logo_alter.svg");
 
@@ -60,7 +59,7 @@ public class BayConfigurationService : IBayConfigurationService
       .Replace("{{Client}}", bayConfiguration!.Warehouses!.CompanyName)
       .Replace("{{LocationAddress}}", bayConfiguration.Warehouses.Address)
       .Replace("{{Asset}}", asset is null ? string.Empty : asset.AssetName)
-      .Replace("{{RackNumber}}", request.RackNumber)
+      .Replace("{{RackNumber}}", request.RackNumber.ToString())
       .Replace("{{InstallationDate}}", bayConfiguration.InstallationDate?.ToString("dd MMMM yyyy"))
       .Replace("{{AustralianStandardsCompliance}}", bayConfiguration.ASComplianceVersion)
       .Replace("{{Manufacturer}}", bayConfiguration.Manufacturer!.Name)
