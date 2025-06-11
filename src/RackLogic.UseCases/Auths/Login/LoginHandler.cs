@@ -52,7 +52,7 @@ public class LoginHandler(
     }
 
     var userWarehouse = await _userWarehouseRoleRepository.FirstOrDefaultAsync(uwr => uwr.UserId == user.Id, cancellationToken);
-    var token = await _userService.GenerateUserTokenAsync(user, userWarehouse!.WarehouseId);
+    var token = await _userService.GenerateUserTokenAsync(user, userWarehouse?.WarehouseId);
     return token;
   }
 
