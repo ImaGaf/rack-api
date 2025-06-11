@@ -7,5 +7,7 @@ public record ListBayConfiguratorQuery(
   Guid WarehouseId,
   int PageNumber,
   int PageSize,
-  bool? IsGetAll)
-:IQuery<Result<PagedDataDTO<BayConfigurationDTO>>>;
+  bool? IsGetAll,
+  Guid? AssetId,
+  int? RackNumber)
+: IQuery<Result<PagedDataDTO<BayConfigurationDTO>>>;

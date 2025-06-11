@@ -1,0 +1,116 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>SWL Signage PDF</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            background-color: #f2f6f7;
+        }
+
+        .container {
+            display: flex;
+            gap: 20px;
+        }
+
+        .card {
+            background: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            flex: 1;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+
+        h3 {
+            margin-top: 0;
+        }
+
+        .section-title {
+            font-weight: bold;
+            font-size: 18px;
+            margin-bottom: 12px;
+        }
+
+        .row {
+            margin-bottom: 10px;
+        }
+
+        .label {
+            color: #888;
+        }
+
+        .bold {
+            font-weight: bold;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        td {
+            padding: 8px 5px;
+            border-bottom: 1px solid #eee;
+        }
+
+        tr:first-child {
+            font-weight: 700;
+            width: 50%;
+            color: #555;
+        }
+
+        .logo {
+            text-align: left;
+            margin-bottom: 30px;
+        }
+
+            .logo img {
+                height: 40px;
+            }
+
+    </style>
+</head>
+<body>
+
+    <div class="logo">
+        <img src="{{RackLogicLogo}}" alt="Rack Logic Logo" />
+    </div>
+
+    <div class="container">
+        <!-- Client Details -->
+        <div class="card">
+            <div class="section-title">Client Details</div>
+            <div class="row"><span class="label">Client</span><br><span class="bold">{{Client}}</span></div>
+            <div class="row"><span class="label">Location Address</span><br>{{LocationAddress}}</div>
+            <div class="row"><span class="label">Asset</span><br><span class="bold">{{Asset}}</span></div>
+            <div class="row"><span class="label">Rack Number</span><br><span class="bold">{{RackNumber}}</span></div>
+        </div>
+
+        <!-- SWL Signage -->
+        <div class="card">
+            <div class="section-title">SWL Signage</div>
+            <table>
+                <tr><td>Sign Requirement</td><td>Description</td></tr>
+                <tr><td>Installation Date</td><td>{{InstallationDate}}</td></tr>
+                <tr><td>Australian Standards Compliance</td><td>{{AustralianStandardsCompliance}}</td></tr>
+                <tr><td>Manufacturer</td><td>{{Manufacturer}}</td></tr>
+                <tr><td>Supplier / Installer</td><td>{{Installer}}</td></tr>
+                <tr><td>Structural Designer</td><td>{{StructuralDesigner}}</td></tr>
+                <tr><td>Project Reference</td><td>{{ProjectReference}}</td></tr>
+                <tr><td>Tolerance Grade</td><td>{{ToleranceGrade}}</td></tr>
+                <tr><td>Pallet Weight</td><td>{{PalletWeight}}</td></tr>
+                <tr><td>Bulk Pallets - Number of Levels</td><td>{{BulkPalletsNumberOfLevels}}</td></tr>
+                <tr><td>Bulk Pallets - Level Maximum Load</td><td>{{BulkPalletsLevelMaximumLoad}}</td></tr>
+                <tr><td>Shelving - Number of Levels</td><td>{{ShelvingNumberOfLevels}}</td></tr>
+                <tr><td>Shelving - Level Maximum Load</td><td>{{ShelvingLevelMaximumLoad}}</td></tr>
+                <tr><td>Total Bay Load</td><td>{{TotalBayLoad}}</td></tr>
+                <tr><td>1st Beam Level Measurement FGL</td><td>{{1stBeam}}</td></tr>
+                <tr><td>2nd Beam Level Measurement FGL</td><td>{{2ndBeam}}</td></tr>
+            </table>
+        </div>
+    </div>
+</body>
+</html>
