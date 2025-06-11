@@ -39,4 +39,26 @@ public class EmailService : IEmailSender
       throw;
     }
   }
+
+  public async Task SendSWLSignageAsync(string file, string? message, string? subject, string? email)
+  {
+    try
+    {
+      var client = GetClient();
+
+      var from = new EmailAddress(_configuration.GetSection("SendGrid:SenderEmail").Value);
+
+      var to = new EmailAddress(email);
+
+      var msg = MailHelper.CreateSingleEmail(from, to, "Send", message, "");
+
+      msg.AddAttachment("file.pdf", file);
+
+      var response = await client.SendEmailAsync(msg);
+    }
+    catch
+    {
+      throw;
+    }
+  }
 }

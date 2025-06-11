@@ -21,6 +21,7 @@ using RackLogic.UseCases.DefectLogs;
 using RackLogic.UseCases.Inspections;
 using DinkToPdf.Contracts;
 using DinkToPdf;
+using RackLogic.UseCases.BayConfigurator;
 
 namespace RackLogic.Infrastructure;
 public static class InfrastructureServiceExtensions
@@ -54,7 +55,8 @@ public static class InfrastructureServiceExtensions
            .AddScoped<IDefectLogHistoryService, DefectLogHistoryService>()
            .AddScoped<IUserService, UserService>()
            .AddScoped<IDefectLogService, DefectLogService>()
-           .AddScoped<IInspectionService, InspectionService>();
+           .AddScoped<IInspectionService, InspectionService>()
+           .AddScoped<IBayConfigurationService, BayConfigurationService>();
 
     logger.LogInformation("{Project} services registered", "Infrastructure");
 

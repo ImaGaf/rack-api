@@ -8,5 +8,9 @@ public class ListBayConfigurationRequest : PaginationRequest
   [FromRoute]
   public Guid WarehouseId { get; set; }
   [FromRoute]
-  public bool? IsGetAll{ get; set; }
+  public bool? IsGetAll { get; set; }
+  [FromRoute]
+  public Guid? AssetId { get; set; }
+  [FromRoute]
+  public int? RackNumber { get; set; }
 }
