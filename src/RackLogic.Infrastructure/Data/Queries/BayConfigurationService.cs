@@ -11,12 +11,18 @@ namespace RackLogic.Infrastructure.Data.Queries;
 public class BayConfigurationService : IBayConfigurationService
 {
   private readonly IRepositoryWithExpression<BayConfiguration> _bayconfigurationRepository;
+  private readonly IRepositoryWithExpression<FloorPlan> _floorPlanRepository;
   private readonly IConverter _converter;
   private readonly IEmailSender _emailSender;
 
-  public BayConfigurationService(IRepositoryWithExpression<BayConfiguration> bayconfigurationRepository, IConverter converter, IEmailSender emailSender)
+  public BayConfigurationService(
+    IRepositoryWithExpression<BayConfiguration> bayconfigurationRepository,
+    IRepositoryWithExpression<FloorPlan> floorPlanRepository,
+    IConverter converter,
+    IEmailSender emailSender)
   {
     _bayconfigurationRepository = bayconfigurationRepository;
+    _floorPlanRepository = floorPlanRepository;
     _converter = converter;
     _emailSender = emailSender;
   }
@@ -30,6 +36,8 @@ public class BayConfigurationService : IBayConfigurationService
                                  i => i.Manufacturer,
                                  i => i.Warehouses],
                               cancellationToken: cancellationToken);
+
+    var asset = await _floorPlanRepository.FirstOrDefaultAsync(x => x.Id == request.AssetId, cancellationToken: cancellationToken);
 
     if (bayConfiguration is null) Result.Invalid(new ValidationError("SWL Id not found."));
 
@@ -51,7 +59,7 @@ public class BayConfigurationService : IBayConfigurationService
       .Replace("{{RackLogicLogo}}", rackLogicLogo)
       .Replace("{{Client}}", bayConfiguration!.Warehouses!.CompanyName)
       .Replace("{{LocationAddress}}", bayConfiguration.Warehouses.Address)
-      .Replace("{{Asset}}", request.AssetName)
+      .Replace("{{Asset}}", asset is null ? string.Empty : asset.AssetName)
       .Replace("{{RackNumber}}", request.RackNumber)
       .Replace("{{InstallationDate}}", bayConfiguration.InstallationDate?.ToString("dd MMMM yyyy"))
       .Replace("{{AustralianStandardsCompliance}}", bayConfiguration.ASComplianceVersion)
