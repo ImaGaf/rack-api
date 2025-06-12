@@ -6,4 +6,5 @@ public class GetListDefectByFloorPlanItemIdRequest : PaginationRequest
 {
   public required Guid FloorPlanItemId { get; set; }
   public Guid? InspectionId { get; set; }
+  public bool IsGetAll { get; set; } = false;
 }

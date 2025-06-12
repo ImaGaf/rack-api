@@ -135,18 +135,31 @@ public class DefectLogService(
       .Include(x => x.RelatedComponent)
       .Include(x => x.FloorPlanItem!.FloorPlan)
       .Where(x => !x.IsCompleted)
-      .Where(x => x.FloorPlanItemId == request.floorPlanId && (x.InspectionId == request.inspectionId || request.inspectionId == Guid.Empty));
+      .Where(x => x.FloorPlanItemId == request.floorPlanId && (x.InspectionId == request.inspectionId || request.inspectionId == Guid.Empty || request.inspectionId == null));
 
-    var result = await query.Skip((request.pageNumber - 1) * request.pageSize).Take(request.pageSize).ToListAsync();
+    var defectlogs = new List<DefectLog>();
+
+    if (request.isGetAll)
+      defectlogs = await query.ToListAsync(cancellationToken);
+    else
+      defectlogs = await query.Skip((request.pageNumber - 1) * request.pageSize).Take(request.pageSize).ToListAsync();
 
     var totalItem = await query.CountAsync();
 
-    return new PagedDataDTO<DefectLogDto>
+    var result =  new PagedDataDTO<DefectLogDto>
     {
       TotalRecords = totalItem,
       PageNumber = request.pageNumber <= 0 ? PaginationDefaultValue.PageNumber : request.pageNumber,
       PageSize = request.pageSize <= 0 ? PaginationDefaultValue.PageSize : request.pageSize,
-      DataDTO = result.Select(x => x.ToDtoWithHistory()).ToList()
+      DataDTO = defectlogs.Select(x => x.ToDtoWithHistory()).ToList()
     };
+
+    if (request.isGetAll)
+    {
+      result.PageNumber = 1;
+      result.PageSize = totalItem;
+    }
+
+    return result;
   }
 }

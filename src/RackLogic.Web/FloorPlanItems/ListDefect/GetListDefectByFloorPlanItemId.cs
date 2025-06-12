@@ -15,7 +15,8 @@ public class GetListDefectByFloorPlanItemId(IMediator _mediator) : Endpoint<GetL
 
   public override async Task HandleAsync(GetListDefectByFloorPlanItemIdRequest req, CancellationToken ct)
   {
-    var result = await _mediator.Send(new GetListDefectLogByFloorPlanItemIdQuery(req.FloorPlanItemId, req.InspectionId, req.PageNumber, req.PageSize), ct);
+    var result = await _mediator.Send(
+      new GetListDefectLogByFloorPlanItemIdQuery(req.FloorPlanItemId, req.InspectionId, req.IsGetAll, req.PageNumber, req.PageSize), ct);
 
     if (result.IsSuccess)
     {
