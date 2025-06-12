@@ -29,7 +29,7 @@ public class ListBayConfiguratorQueryService(AppDbContext _context) : IListBayCo
       result = await bayConfigurations
          .Skip((request.PageNumber - 1) * request.PageSize)
          .Take(request.PageSize)
-         .ToListAsync();
+         .ToListAsync();  
     }
     else
     {
@@ -44,7 +44,6 @@ public class ListBayConfiguratorQueryService(AppDbContext _context) : IListBayCo
       DataDTO = result.Select(x => x.Mapping()).ToList()
     };
   }
-
 
   private async Task<PagedDataDTO<BayConfigurationDTO>> FilterByAssetId(ListBayConfiguratorQuery request)
   {
