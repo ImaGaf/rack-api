@@ -17,7 +17,7 @@ public class DefectLogService(
   IUser _user
 ) : IDefectLogService
 {
-  public async Task<CountDefectLogDto> CountAsync(CountDefectLogQuery request, CancellationToken cancellationToken)
+  public async Task<CountDefectLogDto> CountAsync(CountDefectLogQuery request, CancellationToken cancellationToken = default)
   {
     var defectLogs = await dbContext.DefectLogs
         .Where(x => !x.IsCompleted)
@@ -46,7 +46,7 @@ public class DefectLogService(
     };
   }
 
-  public async Task<DefectLog?> GetByIdAsync(Guid id, CancellationToken cancellationToken)
+  public async Task<DefectLog?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default)
   {
     var defectLog = await dbContext.DefectLogs
       .Include(d => d.Inspection)
@@ -71,7 +71,7 @@ public class DefectLogService(
     return defectLog;
   }
 
-  public async Task<PagedDataDTO<DefectLogDto>> GetListAsync(GetListDefectLogQuery request, CancellationToken cancellationToken)
+  public async Task<PagedDataDTO<DefectLogDto>> GetListAsync(GetListDefectLogQuery request, CancellationToken cancellationToken = default)
   {
     var query = dbContext.DefectLogs
       .Include(x => x.Inspection)
@@ -146,7 +146,7 @@ public class DefectLogService(
 
     var totalItem = await query.CountAsync();
 
-    var result =  new PagedDataDTO<DefectLogDto>
+    var result = new PagedDataDTO<DefectLogDto>
     {
       TotalRecords = totalItem,
       PageNumber = request.pageNumber <= 0 ? PaginationDefaultValue.PageNumber : request.pageNumber,
@@ -159,6 +159,22 @@ public class DefectLogService(
       result.PageNumber = 1;
       result.PageSize = totalItem;
     }
+
+    return result;
+  }
+
+  public async Task<IEnumerable<DefectLogDto>> GetAllByInspectionIdAsync(Guid inspectionId, CancellationToken cancellationToken = default)
+  {
+    var defectLogs = await dbContext.DefectLogs
+      .Include(x => x.Inspection)
+      .Include(x => x.DefectLogFiles)
+      .Include(x => x.Component!).ThenInclude(c => c.BayConfiguration!).ThenInclude(b => b.Manufacturer)
+      .Include(x => x.RelatedComponent)
+      .Include(x => x.FloorPlanItem!.FloorPlan)
+      .Where(x => x.InspectionId == inspectionId)
+      .ToListAsync();
+
+    var result = defectLogs.Select(x => x.ToDtoWithHistory()).ToList();
 
     return result;
   }

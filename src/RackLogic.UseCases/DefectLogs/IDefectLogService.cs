@@ -8,7 +8,8 @@ namespace RackLogic.UseCases.DefectLogs;
 
 public interface IDefectLogService
 {
-  Task<CountDefectLogDto> CountAsync(CountDefectLogQuery request, CancellationToken cancellationToken);
+  Task<CountDefectLogDto> CountAsync(CountDefectLogQuery request, CancellationToken cancellationToken = default);
+  Task<IEnumerable<DefectLogDto>> GetAllByInspectionIdAsync(Guid inspectionId, CancellationToken cancellationToken = default);
   Task<DefectLog?> GetByIdAsync(Guid id, CancellationToken cancellationToken);
   Task<PagedDataDTO<DefectLogDto>> GetListAsync(GetListDefectLogQuery request, CancellationToken cancellationToken = default);
   Task<PagedDataDTO<DefectLogDto>> GetListAsync(GetListDefectLogByFloorPlanItemIdQuery request, CancellationToken cancellationToken = default);
