@@ -1,0 +1,21 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <title>Redirecting...</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script>
+        window.onload = function () {
+            const urlParams = new URLSearchParams(window.location.search);
+            const deeplink = urlParams.get('deeplink');
+            if (deeplink) {
+                window.location.href = deeplink;
+            } else {
+                document.body.innerHTML = "Missing deeplink!";
+            }
+        };
+    </script>
+</head>
+<body>
+    <p></p>
+</body>
+</html>
