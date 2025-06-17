@@ -6,8 +6,10 @@
     <script>
         window.onload = function () {
             const urlParams = new URLSearchParams(window.location.search);
-            const deeplink = urlParams.get('deeplink');
-            if (deeplink) {
+            const deeplinkEncoded = urlParams.get('deeplink');
+
+            if (deeplinkEncoded) {
+                const deeplink = decodeURIComponent(deeplinkEncoded);
                 window.location.href = deeplink;
             } else {
                 document.body.innerHTML = "Missing deeplink!";
