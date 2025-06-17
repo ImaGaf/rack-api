@@ -103,7 +103,7 @@ public class InviteUserHandler(
   private async Task<bool> HandlerUserNotExistsAsync(
     InviteUserCommand request,
     Guid inviterId,
-    string? deepLink,
+    string? baseDeepLink,
     string logo,
     string inviterName,
     string companyName,
@@ -128,7 +128,9 @@ public class InviteUserHandler(
         }, ct);
     }
     var linkRedirect = $"{baseUrl}EmailTemplates/RedirectApp.html?deeplink=";
-    var linkUrl = $"{linkRedirect}{deepLink}email={request.Email},inviterole={request.Role},warehouseId={request.WarehouseId}";
+    var deepLink = $"{baseDeepLink}email={request.Email}&inviteRole={request.Role}&warehouseId={request.WarehouseId}" ;
+    var encodeUrl = Uri.EscapeDataString(deepLink);
+    var linkUrl = $"{linkRedirect}{encodeUrl}";
     var content = BuildEmailInviteContent(linkUrl, logo, inviterName, companyName, roleName);
     return await _emailSender.SendAsync(request.Email, EmailConstants.InviteSubject, content);
   }
