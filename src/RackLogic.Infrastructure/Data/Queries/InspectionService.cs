@@ -208,6 +208,7 @@ public class InspectionService(
       .Include(i => i.Warehouse)
       .Include(i => i.AuthorisePerson!)
       .ThenInclude(i => i.InspectorProfile)
+      .Include(i => i.FloorPlan)
       .FirstOrDefaultAsync(cancellationToken);
 
     var templatePath = Path.Combine("wwwroot", "ReportTemplates", "OverviewReport.html");
@@ -220,13 +221,17 @@ public class InspectionService(
     var html = await File.ReadAllTextAsync(templatePath, cancellationToken);
 
     string baseImagePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "ReportTemplates");
+
     var baseUrl = configuration.GetSection("Client:BaseUrl").Value!;
+    var standard = configuration.GetSection("Client:Standard").Value!;
 
     string rackLogicLogo = "file:///" + Path.Combine(baseImagePath, "rack_logo_alter.svg");
     string warehouseLogo = Path.Combine(baseUrl, inspection!.Warehouse!.FileImageUrl ?? "");
     string inspectorCompanyLogo = Path.Combine(baseUrl, inspection.AuthorisePerson?.InspectorProfile?.FileImageUrl ?? "");
 
     html = html.Replace("{{Name}}", inspection.Warehouse!.CompanyName)
+      .Replace("{{AssetName}}", inspection.FloorPlan!.AssetName)
+      .Replace("{{Standard}}", standard)
       .Replace("{{Address}}", inspection.Warehouse?.Address ?? "-")
       .Replace("{{InspectionCompany}}", inspection.AuthorisePerson?.InspectorProfile?.CompanyName ?? "-")
       .Replace("{{InspectorName}}", inspection.AuthorisePerson?.FirstName + " " + inspection.AuthorisePerson?.LastName)

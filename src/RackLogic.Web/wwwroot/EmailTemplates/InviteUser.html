@@ -1,103 +1,115 @@
 ﻿<html>
-
 <head>
-    <meta charset="UTF-8">
+    <meta charset="UTF-8" />
     <style>
         @font-face {
             font-family: 'Inter';
             src: url('./fonts/static/inter-regular.ttf') format('truetype');
-            /* Update the path */
-            font-weight: normal;
-            font-style: normal;
+        }
+
+        body {
+            background-color: #f5f5f5;
+            font-family: 'Inter', sans-serif;
+            margin: 0;
+            padding: 0;
         }
 
         .container {
-            background-color: #F5F5F5;
+            max-width: 600px;
+            margin: 40px auto;
+            background-color: #ffffff;
+            padding: 40px 30px;
+            border: 1px solid #ddd;
         }
 
         .logo-container {
-            text-align: center;
+            text-align: left;
             margin-bottom: 20px;
         }
 
-        .sub_container {
-            margin: 0 auto;
-            padding: 40px 20px 20px;
-            border: 1px solid #ccc;
-            background-color: #FFFFFF;
-            font-family: 'Inter', sans-serif;
-            font-size: 14px;
-            font-style: normal;
+        .greeting {
+            font-size: 18px;
             font-weight: 500;
-            color: #000000;
+            margin-bottom: 20px;
         }
 
-        .title {
-            margin-bottom: 10px;
+        .message {
+            font-size: 16px;
+            line-height: 1.6;
+            color: #4a5568;
+            margin-bottom: 30px;
         }
+
+        .button {
+            display: inline-block;
+            padding: 14px 28px;
+            background-color: #004041;
+            color: #EDEE86;
+            border-radius: 4px;
+            font-weight: bold;
+            font-size: 14px;
+        }
+
+        .support-text {
+            font-size: 14px;
+            color: #6b7280;
+            margin-top: 30px;
+        }
+
+            .support-text a {
+                color: #007BFF !important;
+                text-decoration: none;
+            }
 
         .footer {
-            text-align: center;
-            margin-top: 20px;
-            font-family: 'Inter', sans-serif;
             font-size: 12px;
-            font-style: normal;
-            font-weight: 400;
-            line-height: 20px;
-            color: #000000;
+            color: #6b7280;
+            text-align: center;
+            margin-top: 40px;
         }
 
-        a {
-            color: #007BFF;
-            text-decoration: none;
-            color: orange !important;
-        }
+            .footer a {
+                color: #007BFF !important;
+                text-decoration: none;
+            }
     </style>
 </head>
 
 <body>
     <div class="container">
-        <table align="center" style="max-width: 600px; width: 100%; margin-top: 2px;">
-            <tbody>
-                <tr>
-                    <td>
-                        <div class='logo-container'>
-                            <img height="40" src="{{logo}}" alt="logo">
-                        </div>
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        <div class='sub_container'>
-                            <p>
-                                Hello,<br><br> {inviter_name} has invited you to {location_name}.
-                                <br> You have been assigned the role- {role_name}.
-                                <br> You will require a Rack Logic account to be able to access this data.
-                                <br> For the role you have been assigned, Rack Logic is free to use.
-                                <br><br> Click the link below to sign up.
-                                <br><br><a href="{{link}}">RackPro</a><br><br>
-                            </p>
-                            <p>
-                                <!--You can access-->
-                                <!--<a href="https://brisbanemarketspricereport.com.au/brisbane-markets-price-report-user-guides/">user guides for the Brisbane Markets Price Report</a> or view the
-                                <a href="https://brisbanemarketspricereport.com.au/terms-of-service/">Brisbane Markets Price Report Terms of Service</a> at <a href="{link}">brisbanemarketspricereport.com.au</a>-->
-                            </p>
-                            <p>
-                                Thank you,<br><br> Rack Logic<br>
-                            </p>
-                        </div>
+        <div class="logo-container">
+            <img height="40" src="{{logo}}" alt="Rack Logic logo" />
+        </div>
 
-                    </td>
-                </tr>
+        <div class="greeting">Hi</div>
 
-                <tr>
-                    <td>
-                        <div class='footer'>Copyright &copy;{currentYear} Rack Logic, All rights reserved</div>
-                    </td>
-                </tr>
-            </tbody>
-        </table>
+        <div class="message">
+            You’ve been invited by <strong>{{inviter_name}}</strong> to join <strong>{{location_name}}</strong> on Rack Logic.<br />
+            You have been assigned the role: <strong>{{role_name}}</strong>.<br /><br />
+            To get started, please click the button below to register your account.
+        </div>
+
+        <a href="{{link}}" class="button">Click Here</a>
+
+        <div class="message" style="margin-top: 30px;">
+            Thank you,<br><br>
+            Rack Logic Support Team
+        </div>
+
+        <div class="support-text">
+            <p>
+                If you did not expect this invitation, please contact us immediately at
+                <a href="mailto:support@rackpro.com.au">support@rackpro.com.au</a>.
+            </p>
+        </div>
+
+        <div class="footer">
+            This email was sent to you as part of an invitation to Rack Logic.<br />
+            Use of the service is subject to our
+            <a href="#">Terms of Use</a> and
+            <a href="#">Privacy Policy</a>.<br />
+            &copy; {{currentYear}} Rack Logic. All rights reserved.
+        </div>
     </div>
 </body>
-
 </html>

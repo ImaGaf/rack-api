@@ -42,7 +42,7 @@ public class InviteUserHandler(
     var inviterName = _user.UserName ?? "Someone";
     var deepLink = _configuration.GetSection("Dashboard:InviteUser").Value;
     var baseUrl = _configuration.GetSection("Client:BaseUrl").Value;
-    var logo = $"{baseUrl}{_configuration.GetSection("Dashboard:LogoMarket").Value}";
+    var logo = $"{baseUrl}{_configuration.GetSection("Client:LogoMarket").Value}";
 
     if (invitedUser is null)
       return await HandlerUserNotExistsAsync(
@@ -72,24 +72,25 @@ public class InviteUserHandler(
     var emailContent = System.IO.File.ReadAllText(templatePath);
     emailContent = emailContent.Replace("{{link}}", link);
     emailContent = emailContent.Replace("{{logo}}", logo);
-    emailContent = emailContent.Replace("{inviter_name}", inviterName);
-    emailContent = emailContent.Replace("{location_name}", locationName);
-    emailContent = emailContent.Replace("{role_name}", roleName);
-    emailContent = emailContent.Replace("{currentYear}", DateTime.UtcNow.Year.ToString());
+    emailContent = emailContent.Replace("{{inviter_name}}", inviterName);
+    emailContent = emailContent.Replace("{{location_name}}", locationName);
+    emailContent = emailContent.Replace("{{role_name}}", roleName);
+    emailContent = emailContent.Replace("{{currentYear}}", DateTime.UtcNow.Year.ToString());
 
     return emailContent;
   }
 
-  private string BuildEmailInviteExistedUserContent(string logo, string inviterName, string locationName, string? roleName)
+  private string BuildEmailInviteExistedUserContent(string logo, string inviterName, string invitedName, string locationName, string? roleName)
   {
     var templatePath = Path.Combine("wwwroot", "EmailTemplates", "InviteUserHasExisted.html");
     var emailContent = System.IO.File.ReadAllText(templatePath);
 
     emailContent = emailContent.Replace("{{logo}}", logo);
-    emailContent = emailContent.Replace("{inviter_name}", inviterName);
-    emailContent = emailContent.Replace("{location_name}", locationName);
-    emailContent = emailContent.Replace("{role_name}", roleName);
-    emailContent = emailContent.Replace("{currentYear}", DateTime.UtcNow.Year.ToString());
+    emailContent = emailContent.Replace("{{inviter_name}}", inviterName);
+    emailContent = emailContent.Replace("{{invited_name}}", invitedName);
+    emailContent = emailContent.Replace("{{location_name}}", locationName);
+    emailContent = emailContent.Replace("{{role_name}}", roleName);
+    emailContent = emailContent.Replace("{{currentYear}}", DateTime.UtcNow.Year.ToString());
 
     return emailContent;
   }
@@ -179,7 +180,9 @@ public class InviteUserHandler(
         cancellationToken);
     }
 
-    var contentEmail = BuildEmailInviteExistedUserContent(logo, inviterName, companyName, role?.Name);
+    string invitedName = $"{invitedUser.FirstName} {invitedUser.LastName}";
+
+    var contentEmail = BuildEmailInviteExistedUserContent(logo, inviterName, invitedName, companyName, role?.Name);
     return await _emailSender.SendAsync(request.Email, EmailConstants.InviteExistedUserSubject, contentEmail);
   }
 }
