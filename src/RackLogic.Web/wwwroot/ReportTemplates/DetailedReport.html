@@ -41,7 +41,9 @@
             display: flex;
             -webkit-box-pack: justify;
             -webkit-box-orient: horizontal;
-            justify-content: space-between;
+            justify-content: center;
+            margin-left: 100px;
+            margin-right: 100px;
             text-align: center;
             page-break-after: always;
             padding-top: 50px;
@@ -179,12 +181,16 @@
                 <td><strong>{{Name}}</strong></td>
             </tr>
             <tr>
+                <td>Asset name:</td>
+                <td><strong>{{AssetName}}</strong></td>
+            </tr>
+            <tr>
                 <td>Site address:</td>
                 <td><strong>{{Address}}</strong></td>
             </tr>
             <tr>
                 <td>Standard:</td>
-                <td><strong>AS4084:2023 Steel Storage Racking Standard</strong></td>
+                <td><strong>{{Standard}}</strong></td>
             </tr>
             <tr>
                 <td>Inspection Company:</td>
@@ -206,7 +212,6 @@
 
         <div class="brands">
             <div><p><strong>Inspected By</strong></p><img src="{{InspectorCompanyLogo}}" alt="Inspector"></div>
-            <div><p><strong>Suppliers for</strong></p><img src="{{InspectedCompanyLogo}}" alt="Inspected"></div>
             <div><p><strong>Inspection Technology By</strong></p><img src="{{RackLogicLogo}}" alt="RackLogic"></div>
         </div>
 
