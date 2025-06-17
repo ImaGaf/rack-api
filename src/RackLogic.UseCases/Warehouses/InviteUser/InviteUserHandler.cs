@@ -53,6 +53,7 @@ public class InviteUserHandler(
         inviterName,
         result.CompanyName,
         role?.Name,
+        baseUrl,
         cancellationToken);
 
     return await HandlerUserExistsAsync(
@@ -107,6 +108,7 @@ public class InviteUserHandler(
     string inviterName,
     string companyName,
     string? roleName,
+    string? baseUrl,
     CancellationToken ct)
   {
     var existingInvitation = await _invitationsRepository
@@ -125,8 +127,8 @@ public class InviteUserHandler(
           WarehouseId = request.WarehouseId,
         }, ct);
     }
-
-    var linkUrl = $"{deepLink}email={request.Email},inviterole={request.Role},warehouseId={request.WarehouseId}";
+    var linkRedirect = $"{baseUrl}EmailTemplates/RedirectApp.html?deeplink=";
+    var linkUrl = $"{linkRedirect}{deepLink}email={request.Email},inviterole={request.Role},warehouseId={request.WarehouseId}";
     var content = BuildEmailInviteContent(linkUrl, logo, inviterName, companyName, roleName);
     return await _emailSender.SendAsync(request.Email, EmailConstants.InviteSubject, content);
   }
