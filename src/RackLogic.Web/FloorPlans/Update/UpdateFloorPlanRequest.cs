@@ -6,7 +6,7 @@ namespace RackLogic.Web.FloorPlans.Update;
 public class RequestUpdateFloorPlan
 {
   [FromForm]
-  public required string UpdateFloorPlanData { get; set; }
+  public required string RequestFloorPlanData { get; set; }
 
   [FromForm]
   public List<IFormFile> Files { get; set; } = new();
