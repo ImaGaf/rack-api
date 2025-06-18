@@ -27,7 +27,7 @@ public class UpdateFloorPlan(IMediator _mediator) : Endpoint<RequestUpdateFloorP
     var form = await HttpContext.Request.ReadFormAsync();
 
     var files = form.Files.ToList();
-    var floorPlanData = ConvertStringDataToModel(req.UpdateFloorPlanData);
+    var floorPlanData = ConvertStringDataToModel(req.RequestFloorPlanData);
 
     if (floorPlanData == null)
     {
