@@ -225,7 +225,7 @@ public class InspectionService(
     var baseUrl = configuration.GetSection("Client:BaseUrl").Value!;
     var standard = configuration.GetSection("Client:Standard").Value!;
 
-    string rackLogicLogo = "file:///" + Path.Combine(baseImagePath, "rack_logo_alter.svg");
+    var rackLogicLogo = $"{baseUrl}{configuration.GetSection("Client:LogoReport").Value}";
     string warehouseLogo = Path.Combine(baseUrl, inspection!.Warehouse!.FileImageUrl ?? "");
     string inspectorCompanyLogo = Path.Combine(baseUrl, inspection.AuthorisePerson?.InspectorProfile?.FileImageUrl ?? "");
 
