@@ -23,7 +23,7 @@ public class InspectionService(
 {
   public async Task<Result> EndAsync(EndInspectionCommand request, CancellationToken cancellationToken)
   {
-    var inspection = await dbContext.Inspections.FirstOrDefaultAsync(x => x.Id == request.Id);
+    var inspection = await dbContext.Inspections.FirstOrDefaultAsync(x => x.Id == request.Id, cancellationToken: cancellationToken);
 
     if (inspection is null)
       return Result.NotFound();
