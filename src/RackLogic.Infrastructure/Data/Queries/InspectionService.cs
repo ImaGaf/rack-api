@@ -220,12 +220,10 @@ public class InspectionService(
 
     var html = await File.ReadAllTextAsync(templatePath, cancellationToken);
 
-    string baseImagePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "ReportTemplates");
-
     var baseUrl = configuration.GetSection("Client:BaseUrl").Value!;
     var standard = configuration.GetSection("Client:Standard").Value!;
 
-    string rackLogicLogo = "file:///" + Path.Combine(baseImagePath, "rack_logo_alter.svg");
+    string rackLogicLogo = $"{baseUrl}{configuration.GetSection("Client:LogoReport").Value}";
     string warehouseLogo = Path.Combine(baseUrl, inspection!.Warehouse!.FileImageUrl ?? "");
     string inspectorCompanyLogo = Path.Combine(baseUrl, inspection.AuthorisePerson?.InspectorProfile?.FileImageUrl ?? "");
 
