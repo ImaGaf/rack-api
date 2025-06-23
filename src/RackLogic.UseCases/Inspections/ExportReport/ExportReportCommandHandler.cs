@@ -15,7 +15,7 @@ public class ExportReportCommandHandler(
   {
     if (userWarehouseService.HasPermission(PermissionConstant.Inspection.ViewReport, PermissionConstant.Inspection.ViewReport))
     {
-      return Result.Error(ErrorMessages.Inspection.ErrorMessageViewReport);
+      return Result.Forbidden(ErrorMessages.Inspection.ErrorMessageViewReport);
     }
     var pdfBytes = await inspectionService.ExportReportPdfAsync(command, cancellationToken);
 
