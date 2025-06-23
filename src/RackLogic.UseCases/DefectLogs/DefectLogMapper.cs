@@ -22,6 +22,7 @@ public static partial class DefectLogMapper
     dto.Bay = entity.FloorPlanItem!.Bay;
     dto.Rack = entity.FloorPlanItem!.Rack;
     dto.WarehouseId = entity.FloorPlanItem.FloorPlan!.WarehouseId;
+    dto.BayConfigId = entity.FloorPlanItem.BayConfiguration!.BayConfigId;
 
     if (includeHistories && entity.DefectLogHistories != null)
     {
@@ -45,6 +46,7 @@ public static partial class DefectLogMapper
   {
     var dto = entity.ToDto();
     dto.OEMBrand = entity.Component!.BayConfiguration!.Manufacturer!.ToOEMBrandDTO();
+    dto.BayConfigId = entity.FloorPlanItem!.BayConfiguration!.BayConfigId;
     dto.Bay = entity.FloorPlanItem!.Bay;
     dto.Rack = entity.FloorPlanItem!.Rack;
 
