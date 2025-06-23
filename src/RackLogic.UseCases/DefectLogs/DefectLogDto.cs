@@ -29,6 +29,7 @@ public class DefectLogDto
   public Guid? CreatorId { get; set; }
   public string? Comment { get; set; }
   public bool IsCompleted { get; set; }
+  public string? BayConfigId { get; set; }
   public OEMBrandDTO? OEMBrand { get; set; }
   public ComponentDTO? Component { get; set; }
   public InspectionDto? Inspection { get; set; }
