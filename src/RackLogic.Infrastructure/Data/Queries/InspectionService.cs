@@ -107,7 +107,6 @@ public class InspectionService(
       inspection.FloorPlanItemInspection += !string.IsNullOrEmpty(inspection.FloorPlanItemInspection)
                                             ? $",{request.FloorPlanItemId.ToString()}"
                                             : request.FloorPlanItemId.ToString();
-
     else if (itemsConfirmed!.Contains(request.FloorPlanItemId.ToString()) && !request.IsConfirmAuthorization)
     {
       itemsConfirmed.Remove(request.FloorPlanItemId.ToString());
@@ -123,51 +122,6 @@ public class InspectionService(
   public async Task<byte[]> ExportReportPdfAsync(ExportReportCommand command, CancellationToken cancellationToken)
   {
     var html = await GetReportHtmlAsync(command.InspectionId, cancellationToken, true);
-
-    var defectLogs = await dbContext.DefectLogs
-      .Where(d => d.InspectionId == command.InspectionId)
-      .Include(d => d.FloorPlanItem)
-      .Include(d => d.Component!)
-        .ThenInclude(c => c.BayConfiguration!)
-          .ThenInclude(b => b.Manufacturer)
-      .Include(d => d.DefectLogFiles)
-      .AsSplitQuery()
-      .ToListAsync(cancellationToken);
-
-    var reportDefects = defectLogs.Select(d => d.ToReportDto()).ToList();
-
-    var defectLogRows = new StringBuilder();
-
-    foreach (var defect in reportDefects)
-    {
-      var hasImages = (defect.DefectLogFiles != null && defect.DefectLogFiles.Any()) ? "Yes" : "No";
-      var grade = defect.DefectGrade?.ToString();
-
-      var color = grade switch
-      {
-        "Severe" => "#E14747",
-        "Moderate" => "#E58A00",
-        "Slight" => "#2CA87F",
-        _ => "#4F4F4F"
-      };
-
-      var gradeDot = $"<span style='display:inline-block; width:14px; height:14px; border-radius:50%; background-color:{color};'></span>";
-
-      defectLogRows.AppendLine("<tr>");
-      defectLogRows.AppendLine($"<td>{gradeDot}</td>");
-      defectLogRows.AppendLine($"<td>{defect.TicketId ?? "-"}</td>");
-      defectLogRows.AppendLine($"<td>{defect.Rack}.{defect.Bay}</td>");
-      defectLogRows.AppendLine($"<td>{defect.Component?.ComponentType ?? "-"}</td>");
-      defectLogRows.AppendLine($"<td>{defect.OEMBrand?.Name ?? "-"}</td>");
-      defectLogRows.AppendLine($"<td>{defect.Component?.Code ?? "-"}</td>");
-      defectLogRows.AppendLine($"<td>{defect.DefectType?.GetDisplayName() ?? "-"}</td>");
-      defectLogRows.AppendLine($"<td>{defect.CorrectiveAction?.ToString() ?? "-"}</td>");
-      defectLogRows.AppendLine($"<td>{hasImages}</td>");
-      defectLogRows.AppendLine($"<td>{defect.Comment ?? "-"}</td>");
-      defectLogRows.AppendLine("</tr>");
-    }
-
-    html = html.Replace("{{DefectLogRows}}", defectLogRows.ToString());
 
     var doc = new HtmlToPdfDocument()
     {
@@ -220,13 +174,11 @@ public class InspectionService(
 
     var html = await File.ReadAllTextAsync(templatePath, cancellationToken);
 
-    string baseImagePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "ReportTemplates");
-
     var baseUrl = configuration.GetSection("Client:BaseUrl").Value!;
     var standard = configuration.GetSection("Client:Standard").Value!;
 
     var rackLogicLogo = $"{baseUrl}{configuration.GetSection("Client:LogoReport").Value}";
-    string warehouseLogo = Path.Combine(baseUrl, inspection!.Warehouse!.FileImageUrl ?? "");
+    string warehouseLogo = Path.Combine(baseUrl, inspection!.Warehouse?.FileImageUrl ?? "");
     string inspectorCompanyLogo = Path.Combine(baseUrl, inspection.AuthorisePerson?.InspectorProfile?.FileImageUrl ?? "");
 
     html = html.Replace("{{Name}}", inspection.Warehouse!.CompanyName)
@@ -240,6 +192,51 @@ public class InspectionService(
       .Replace("{{WarehouseLogo}}", warehouseLogo)
       .Replace("{{InspectorCompanyLogo}}", inspectorCompanyLogo)
       .Replace("{{RackLogicLogo}}", rackLogicLogo);
+
+    var defectLogs = await dbContext.DefectLogs
+      .Where(d => d.InspectionId == inspectionId)
+      .Include(d => d.FloorPlanItem)
+      .Include(d => d.Component!)
+        .ThenInclude(c => c.BayConfiguration!)
+          .ThenInclude(b => b.Manufacturer)
+      .Include(d => d.DefectLogFiles)
+      .AsSplitQuery()
+      .ToListAsync(cancellationToken);
+
+    var reportDefects = defectLogs.Select(d => d.ToReportDto()).ToList();
+
+    var defectLogRows = new StringBuilder();
+
+    foreach (var defect in reportDefects)
+    {
+      var hasImages = (defect.DefectLogFiles != null && defect.DefectLogFiles.Any()) ? "Yes" : "No";
+      var grade = defect.DefectGrade?.ToString();
+
+      var color = grade switch
+      {
+        "Severe" => "#E14747",
+        "Moderate" => "#E58A00",
+        "Slight" => "#2CA87F",
+        _ => "#4F4F4F"
+      };
+
+      var gradeDot = $"<span style='display:inline-block; width:14px; height:14px; border-radius:50%; background-color:{color};'></span>";
+
+      defectLogRows.AppendLine("<tr>");
+      defectLogRows.AppendLine($"<td>{gradeDot}</td>");
+      defectLogRows.AppendLine($"<td>{defect.TicketId ?? "-"}</td>");
+      defectLogRows.AppendLine($"<td>{defect.Rack}.{defect.Bay}</td>");
+      defectLogRows.AppendLine($"<td>{defect.Component?.ComponentType ?? "-"}</td>");
+      defectLogRows.AppendLine($"<td>{defect.OEMBrand?.Name ?? "-"}</td>");
+      defectLogRows.AppendLine($"<td>{defect.Component?.Code ?? "-"}</td>");
+      defectLogRows.AppendLine($"<td>{defect.DefectType?.GetDisplayName() ?? "-"}</td>");
+      defectLogRows.AppendLine($"<td>{defect.CorrectiveAction?.ToString() ?? "-"}</td>");
+      defectLogRows.AppendLine($"<td>{hasImages}</td>");
+      defectLogRows.AppendLine($"<td>{defect.Comment ?? "-"}</td>");
+      defectLogRows.AppendLine("</tr>");
+    }
+
+    html = html.Replace("{{DefectLogRows}}", defectLogRows.ToString());
 
     return html;
   }
