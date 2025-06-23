@@ -61,7 +61,7 @@ public class CreateDefectLogCommandHandler(
 
     var brand = await userWarehouseService.GetBrandByComponentAsync(request.ComponentId);
 
-    var result = entity.ToDto();
+    var result = entity.ToDtoWithHistory();
     result.OEMBrand = brand;
 
     return Result.Success(result);
