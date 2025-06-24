@@ -1,11 +1,13 @@
 ﻿using Ardalis.Result;
 using Ardalis.SharedKernel;
+using RackLogic.Core.Common.Entity;
 using RackLogic.Core.Interfaces;
 using RackLogic.Core.UserAggregate;
 
 namespace RackLogic.UseCases.Users.Get;
 public class GetUserHandler(
   IRepositoryWithExpression<ApplicationUser> _userManager,
+  IRepositoryWithExpression<PurchaseRecord> _purchaseRecordRepository,
   IUser _user,
   IUserService _userService)
   : IQueryHandler<GetUserQuery, Result<UserDTO>>
@@ -19,7 +21,7 @@ public class GetUserHandler(
 
     var isPaid = await _userService.IsPaid();
     var isTransactionGenerated = await _userService.IsTransactionGenerated();
-
+    var purchaseRecord = await _purchaseRecordRepository.FirstOrDefaultAsync(x => x.UserId == _user.Id);
     return new UserDTO
       ( user.Id,
         user.FirstName ?? string.Empty,
@@ -27,7 +29,9 @@ public class GetUserHandler(
         user.Email, user.PhoneNumber,
         user.RegisteredRole ?? string.Empty,
         isPaid,
-        isTransactionGenerated
+        isTransactionGenerated,
+        purchaseRecord?.ProductId,
+        purchaseRecord?.ExpiryTime
       );
   }
 }
