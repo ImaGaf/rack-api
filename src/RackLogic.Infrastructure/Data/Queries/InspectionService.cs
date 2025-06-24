@@ -225,7 +225,7 @@ public class InspectionService(
       defectLogRows.AppendLine("<tr>");
       defectLogRows.AppendLine($"<td>{gradeDot}</td>");
       defectLogRows.AppendLine($"<td>{defect.TicketId ?? "-"}</td>");
-      defectLogRows.AppendLine($"<td>{defect.Rack}.{defect.Bay}</td>");
+      defectLogRows.AppendLine($"<td>{defect.Bay}.{defect.Rack}</td>");
       defectLogRows.AppendLine($"<td>{defect.Component?.ComponentType ?? "-"}</td>");
       defectLogRows.AppendLine($"<td>{defect.OEMBrand?.Name ?? "-"}</td>");
       defectLogRows.AppendLine($"<td>{defect.Component?.Code ?? "-"}</td>");
