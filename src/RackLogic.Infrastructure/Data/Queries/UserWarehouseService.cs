@@ -40,14 +40,16 @@ public class UserWarehouseService(
     return brands.Select(brand => brand.ToOEMBrandDTO()).ToList();
   }
 
-  public async Task<(List<ProductDTO> Products, int TotalRecords)> GetProductsByBrandAsync(Guid? brandId, Guid? warehouseId, int pageNumber, int pageSize, bool isGetAll)
+  public async Task<(List<ProductDTO> Products, int TotalRecords)> GetProductsByBrandAsync(Guid? brandId, Guid? warehouseId, int pageNumber, int pageSize, bool isGetAll, string? search)
   {
     var baseQuery = _context.Products
         .Where(x =>
           (brandId == null || x.ManufacturerId == brandId) &&
           (x.WarehouseId == null || x.WarehouseId == warehouseId));
 
-    int totalRecords = await baseQuery.CountAsync();
+    if (!string.IsNullOrEmpty(search))
+      baseQuery = baseQuery
+        .Where(x => x.Code!.Contains(search) || x.Description!.Contains(search) || x.Category!.Contains(search));
 
     if (!isGetAll)
     {
@@ -56,6 +58,8 @@ public class UserWarehouseService(
         .Skip((pageNumber - 1) * pageSize)
         .Take(pageSize);
     }
+
+    int totalRecords = await baseQuery.CountAsync();
 
     var products = await baseQuery
         .Select(x => x.ToProductDto())
@@ -223,18 +227,18 @@ public class UserWarehouseService(
   }
 
   public async Task<PagedDataDTO<WarehouseCertificationInspectionDto>> SearchWarehouseCertificationInspectionAsync(
-    SearchWarehouseCertificationInspectionQuery request, 
-    Guid? userId, 
+    SearchWarehouseCertificationInspectionQuery request,
+    Guid? userId,
     CancellationToken cancellationToken)
   {
-    var query = from userWarehouseRole in _context.UserWarehouseRoles 
-      where userWarehouseRole.UserId == userId
-      join role in _context.Roles
-        on userWarehouseRole.RoleId equals role.Id
-      where role.Name == RoleConstant.Inspector
-      join warehouse in _context.Warehouses
-        on userWarehouseRole.WarehouseId equals warehouse.Id
-      select warehouse;
+    var query = from userWarehouseRole in _context.UserWarehouseRoles
+                where userWarehouseRole.UserId == userId
+                join role in _context.Roles
+                  on userWarehouseRole.RoleId equals role.Id
+                where role.Name == RoleConstant.Inspector
+                join warehouse in _context.Warehouses
+                  on userWarehouseRole.WarehouseId equals warehouse.Id
+                select warehouse;
 
     if (request.Search != null)
     {

@@ -31,7 +31,7 @@ public class GetListProductsBrand(IMediator _mediator) : Endpoint<GetListProduct
       throw new InvalidException(errors);
     }
 
-    var result = await _mediator.Send(new GetProductsByBrandQuery(req.BrandId, req.WarehouseId, req.IsGetAll, req.PageNumber, req.PageSize), ct);
+    var result = await _mediator.Send(new GetProductsByBrandQuery(req.BrandId, req.WarehouseId, req.IsGetAll, req.Search, req.PageNumber, req.PageSize), ct);
 
     if (result.IsSuccess)
     {
