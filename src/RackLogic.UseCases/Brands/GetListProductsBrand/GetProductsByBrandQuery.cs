@@ -7,5 +7,6 @@ public record GetProductsByBrandQuery(
   Guid? BrandId,
   Guid? WarehouseId,
   bool? IsGetAll,
+  string? Search,
   int PageNumber,
   int PageSize) : IQuery<Result<PagedDataDTO<ProductDTO>>>;

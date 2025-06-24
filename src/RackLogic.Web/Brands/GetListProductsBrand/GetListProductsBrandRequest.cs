@@ -9,4 +9,5 @@ public class GetListProductsBrandRequest : PaginationRequest
   public Guid? BrandId { get; set; }
   public Guid? WarehouseId { get; set; }
   public bool? IsGetAll { get; set; }
+  public string? Search { get; set; }
 }

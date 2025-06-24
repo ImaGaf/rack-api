@@ -13,6 +13,7 @@ namespace RackLogic.UseCases.DefectLogs.Create;
 
 public class CreateDefectLogCommandHandler(
   IRepositoryWithExpression<DefectLog> defectLogRepository,
+  IRepositoryWithExpression<FloorPlanItem> floorPlanItemRepository,
   IUserWarehouseService userWarehouseService,
   IDefectLogHistoryService defectLogHistoryService,
   IFileService fileService)
@@ -61,7 +62,12 @@ public class CreateDefectLogCommandHandler(
 
     var brand = await userWarehouseService.GetBrandByComponentAsync(request.ComponentId);
 
-    var result = entity.ToDtoWithHistory();
+    var floorPlanItem = await floorPlanItemRepository.FirstOrDefaultAsync(x => x.Id == request.FloorPlanItemId, cancellationToken, x => x.BayConfiguration);
+
+    var result = entity.ToDto();
+
+    result.BayConfigId = floorPlanItem?.BayConfiguration?.BayConfigId;
+
     result.OEMBrand = brand;
 
     return Result.Success(result);

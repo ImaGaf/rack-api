@@ -7,7 +7,7 @@ public class GetProductsByBrandHandler(IUserWarehouseService _userWarehouse) : I
 {
   public async Task<Result<PagedDataDTO<ProductDTO>>> Handle(GetProductsByBrandQuery request, CancellationToken cancellationToken)
   {
-    var (products, totalRecords) = await _userWarehouse.GetProductsByBrandAsync(request.BrandId,request.WarehouseId, request.PageNumber, request.PageSize, request.IsGetAll ?? false);
+    var (products, totalRecords) = await _userWarehouse.GetProductsByBrandAsync(request.BrandId,request.WarehouseId, request.PageNumber, request.PageSize, request.IsGetAll ?? false, request.Search);
 
     var pagedData = request.ToPagedDataDTO(products, totalRecords);
 
