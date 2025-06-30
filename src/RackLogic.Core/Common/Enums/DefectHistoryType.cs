@@ -6,6 +6,7 @@ public enum DefectHistoryType
 {
   [Display(Description = "Defect recorded")]
   Created,
+  [Display(Description = "Defect recorded")]
   Note,
   [Display(Description = "Updated to:")]
   StatusUpdate,
