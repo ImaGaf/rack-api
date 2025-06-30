@@ -51,6 +51,8 @@ public class UserWarehouseService(
       baseQuery = baseQuery
         .Where(x => x.Code!.Contains(search) || x.Description!.Contains(search) || x.Category!.Contains(search));
 
+    int totalRecords = await baseQuery.CountAsync();
+
     if (!isGetAll)
     {
       baseQuery = baseQuery
@@ -58,8 +60,6 @@ public class UserWarehouseService(
         .Skip((pageNumber - 1) * pageSize)
         .Take(pageSize);
     }
-
-    int totalRecords = await baseQuery.CountAsync();
 
     var products = await baseQuery
         .Select(x => x.ToProductDto())
