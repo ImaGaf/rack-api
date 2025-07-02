@@ -14,6 +14,7 @@ public class RegisterUserHandler(
   RoleManager<IdentityRole<Guid>> _roleManager,
   IUserStore<ApplicationUser> _userStore,
   IRepositoryWithExpression<Invitation> _invitationsRepository,
+  IRepositoryWithExpression<WarehouseFinalUses> _warehouseFinalUseRepository,
   IRepositoryWithExpression<UserWarehouseRole> _userWarehouseRoleRepository)
   : ICommandHandler<RegisterUserCommand, Result<Guid>>
 {
@@ -87,6 +88,14 @@ public class RegisterUserHandler(
         }, cancellationToken);
 
         await _invitationsRepository.DeleteAsync(invitation, cancellationToken);
+
+        await _warehouseFinalUseRepository.AddAsync(
+          new WarehouseFinalUses()
+          {
+            UserId = user.Id,
+            WarehouseId = invitation.WarehouseId,
+          },
+          cancellationToken);
       }
     }
     else
@@ -111,6 +120,14 @@ public class RegisterUserHandler(
       await _userManager.UpdateAsync(user);
 
       await _invitationsRepository.DeleteAsync(invitation, cancellationToken);
+
+      await _warehouseFinalUseRepository.AddAsync(
+        new WarehouseFinalUses()
+        {
+          UserId = user.Id,
+          WarehouseId = invitation.WarehouseId,
+        },
+        cancellationToken);
     }
   }
 }
