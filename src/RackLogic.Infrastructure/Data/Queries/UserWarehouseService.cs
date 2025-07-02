@@ -235,7 +235,7 @@ public class UserWarehouseService(
                 where userWarehouseRole.UserId == userId
                 join role in _context.Roles
                   on userWarehouseRole.RoleId equals role.Id
-                where role.Name == RoleConstant.Inspector
+                where role.Name == RoleConstant.Inspector || role.Name == RoleConstant.Repairer
                 join warehouse in _context.Warehouses
                   on userWarehouseRole.WarehouseId equals warehouse.Id
                 select warehouse;
