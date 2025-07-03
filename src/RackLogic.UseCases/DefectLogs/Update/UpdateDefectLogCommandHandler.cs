@@ -31,16 +31,7 @@ public class UpdateDefectLogCommandHandler(
     }
 
     if (request.IsCompleted != null)
-    {
       entity.IsCompleted = request.IsCompleted.Value;
-
-      await defectLogHistoryService
-       .CreateAsync(
-         entity,
-         request.Comment,
-         (int)DefectHistoryType.Completed,
-         cancellationToken);
-    }
 
     if (request.DefectStatus != null && entity.DefectStatus != (DefectStatus)request.DefectStatus)
     {
