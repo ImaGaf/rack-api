@@ -62,7 +62,6 @@ public class DefectLogService(
     var histories = await dbContext.DefectLogHistories
       .Where(h => h.DefectLogId == id)
       .OrderByDescending(h => h.CreationTime)
-      .Take(4)
       .Include(h => h.User)
       .ToListAsync(cancellationToken);
 
