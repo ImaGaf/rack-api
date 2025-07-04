@@ -12,6 +12,8 @@ public record GetListDefectLogQuery(
     int? Bay,
     bool IsCompleted,
     SortBy? SortBy,
+    DefectGrade? DefectGrade,
+    DefectPriority? DefectPriority,
     int pageNumber = 1,
     int pageSize = 6
 ) : IQuery<Result<PagedDataDTO<DefectLogDto>>>;
