@@ -33,6 +33,7 @@ public static partial class FloorPlanItemMapper
       Size = item.Size,
       Width = item.Width,
       ObjectType = item.ObjectType,
+      Side = item.Side,
       BayConfiguration = item.BayConfiguration?.Mapping(),
     };
   }

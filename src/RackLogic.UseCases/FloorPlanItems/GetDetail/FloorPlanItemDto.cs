@@ -15,6 +15,7 @@ public class FloorPlanItemDto
   public double? Width { get; set; }
   public double? Height { get; set; }
   public string? ObjectType { get; set; }
+  public string? Side { get; set; }
   public required double Rotation { get; set; }
   public BayConfigurationDTO? BayConfiguration { get; set; }
 }
