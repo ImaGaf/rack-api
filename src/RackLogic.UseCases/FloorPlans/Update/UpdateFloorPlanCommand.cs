@@ -29,6 +29,8 @@ public record UpdateFloorPlanItemInformationCommand(
   double? Width,
   double? Height,
   string? ObjectType,
+  int? AssetOrdinal,
+  string? Side,
   double Rotation,
   string? BayConfigurationId,
   bool? IsRequiredBayConfig,

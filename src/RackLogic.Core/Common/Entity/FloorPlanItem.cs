@@ -3,6 +3,7 @@ public class FloorPlanItem : BaseEntityCustom
 {
   public required int Rack { get; set; }
   public required int Bay { get; set; }
+  public int? AssetOrdinal { get; set; }
   public required Guid FloorPlanId { get; set; }
   public Guid? BayConfigurationId { get; set; }
   public DateTime? DueDate { get; set; }

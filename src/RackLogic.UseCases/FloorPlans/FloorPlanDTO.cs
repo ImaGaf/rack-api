@@ -22,6 +22,8 @@ public class FloorPlanItemResponse
   public double? Width { get; set; }
   public double? Height { get; set; }
   public string? ObjectType { get; set; }
+  public int? AssetOrdinal { get; set; }
+  public string? Side { get; set; } 
   public required double Rotation { get; set; }
   public string? BayConfigurationId { get; set; }
   public DateTime? DueDate { get; set; }

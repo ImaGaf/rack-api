@@ -25,6 +25,7 @@ public static partial class FloorPlanItemMapper
       BayConfigurationId = item.BayConfigurationId,
       DueDate = item.DueDate,
       Bay = item.Bay,
+      AssetOrdinal = item.AssetOrdinal,
       FloorPlanId = item.FloorPlanId,
       Offset = item.Offset,
       Rack = item.Rack,

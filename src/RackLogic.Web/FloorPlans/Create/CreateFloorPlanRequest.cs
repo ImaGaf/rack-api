@@ -62,6 +62,8 @@ public class FloorPlanItem
   public double? Width { get; set; }
   public double? Height { get; set; }
   public string? ObjectType { get; set; }
+  public int? AssetOrdinal { get; set; }
+  public string? Side { get; set; }
   [Required]
   public required double Rotation { get; set; }
   public string? BayConfigurationId { get; set; }
@@ -74,7 +76,7 @@ public class Comment
   public Guid? Id { get; set; }
   public Comment(Guid? id = null)
   {
-    Id = id ?? Guid.NewGuid(); 
+    Id = id ?? Guid.NewGuid();
   }
   [Required]
   public required string userName { get; set; }

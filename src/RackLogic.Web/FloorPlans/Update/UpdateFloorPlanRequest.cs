@@ -60,6 +60,8 @@ public class UpdateFloorPlanItemInformation
   public double? Width { get; set; }
   public double? Height { get; set; }
   public string? ObjectType { get; set; }
+  public int? AssetOrdinal { get; set; }
+  public string? Side { get; set; }
   [Required]
   public required double Rotation { get; set; }
   [Required]
