@@ -219,6 +219,7 @@ public static partial class FloorPlanUseCasesMapper
     floorPlanItem.Width = item.Width;
     floorPlanItem.Height = item.Height;
     floorPlanItem.ObjectType = item.ObjectType;
+    floorPlanItem.AssetOrdinal = item.AssetOrdinal;
     floorPlanItem.Side = item.Side;
     floorPlanItem.Rotation = item.Rotation;
     floorPlanItem.DueDate = item.DueDate;
