@@ -809,6 +809,9 @@ namespace RackLogic.Infrastructure.Data.Migrations
                     b.Property<double>("Rotation")
                         .HasColumnType("float");
 
+                    b.Property<string>("Side")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<int?>("Size")
                         .HasColumnType("int");
 
