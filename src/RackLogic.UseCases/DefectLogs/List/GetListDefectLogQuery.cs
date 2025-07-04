@@ -12,7 +12,7 @@ public record GetListDefectLogQuery(
     int? Bay,
     bool IsCompleted,
     SortBy? SortBy,
-    DefectGrade? DefectGrade,
+    DefectStatus? DefectStatus,
     DefectPriority? DefectPriority,
     int pageNumber = 1,
     int pageSize = 6

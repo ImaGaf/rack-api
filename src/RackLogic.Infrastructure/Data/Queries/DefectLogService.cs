@@ -84,7 +84,7 @@ public class DefectLogService(
       .Where(x => request.AssetId != null ? x.FloorPlanItem!.FloorPlanId == request.AssetId : true)
       .Where(x => request.Rack != null ? x.FloorPlanItem!.Rack == request.Rack : true)
       .Where(x => request.Bay != null ? x.FloorPlanItem!.Bay == request.Bay : true)
-      .Where(x => request.DefectGrade != null ? x.DefectGrade == request.DefectGrade : true)
+      .Where(x => request.DefectStatus != null ? x.DefectStatus == request.DefectStatus : true)
       .Where(x => request.DefectPriority != null ? x.DefectPriority == request.DefectPriority : true);
 
     if (request.IsCompleted)
