@@ -760,6 +760,9 @@ namespace RackLogic.Infrastructure.Data.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<int?>("AssetOrdinal")
+                        .HasColumnType("int");
+
                     b.Property<int>("Bay")
                         .HasColumnType("int");
 

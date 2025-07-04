@@ -42,6 +42,7 @@ public static partial class FloorPlanUseCasesMapper
       Width = item.Width,
       Height = item.Height,
       ObjectType = item.ObjectType,
+      Side = item.Side,
       Rotation = item.Rotation,
       DueDate = bayConfig?.CreatedDate.AddDays(bayConfig.InterimInterval),
       BayConfigurationId = GetBayConfigurationIdFromBayConfigId(item.BayConfigurationId, bayConfigurations),
@@ -188,6 +189,8 @@ public static partial class FloorPlanUseCasesMapper
         Width: item.Width,
         Height: item.Height,
         ObjectType: item.ObjectType,
+        AssetOrdinal: item.AssetOrdinal,
+        Side: item.Side,
         Rotation: item.Rotation,
         DueDate: item.DueDate,
         BayConfigurationId: item.BayConfigurationId,
@@ -216,6 +219,7 @@ public static partial class FloorPlanUseCasesMapper
     floorPlanItem.Width = item.Width;
     floorPlanItem.Height = item.Height;
     floorPlanItem.ObjectType = item.ObjectType;
+    floorPlanItem.Side = item.Side;
     floorPlanItem.Rotation = item.Rotation;
     floorPlanItem.DueDate = item.DueDate;
     floorPlanItem.BayConfigurationId = GetBayConfigurationIdFromBayConfigId(item.BayConfigurationId, bayConfiguration);
@@ -260,6 +264,7 @@ public static partial class FloorPlanUseCasesMapper
       Width = item.Width,
       Height = item.Height,
       ObjectType = item.ObjectType,
+      Side = item.Side,
       Rotation = item.Rotation,
       DueDate = item.DueDate,
       CountDefectLog = item.DefectLogs?.Count ?? 0,

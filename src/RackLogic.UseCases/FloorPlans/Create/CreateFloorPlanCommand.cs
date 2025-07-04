@@ -29,6 +29,8 @@ public record FloorPlanItemCommand(
     double? Width,
     double? Height,
     string? ObjectType,
+    int? AssetOrdinal,
+    string? Side,
     string? BayConfigurationId,
     bool? IsRequiredBayConfig,
     double Rotation,
