@@ -165,33 +165,42 @@ public class InspectionService(
       .Include(i => i.FloorPlan)
       .FirstOrDefaultAsync(cancellationToken);
 
-    var templatePath = Path.Combine("wwwroot", "ReportTemplates", "OverviewReport.html");
-
-    if (hasDefectLog)
-    {
-      templatePath = Path.Combine("wwwroot", "ReportTemplates", "DetailedReport.html");
-    }
+    var templatePath = hasDefectLog
+      ? Path.Combine("wwwroot", "ReportTemplates", "DetailedReport.html")
+      : Path.Combine("wwwroot", "ReportTemplates", "OverviewReport.html");
 
     var html = await File.ReadAllTextAsync(templatePath, cancellationToken);
 
     var baseUrl = configuration.GetSection("Client:BaseUrl").Value!;
-    var standard = configuration.GetSection("Client:Standard").Value!;
 
-    var rackLogicLogo = $"{baseUrl}{configuration.GetSection("Client:LogoReport").Value}";
-    string warehouseLogo = Path.Combine(baseUrl, inspection!.Warehouse?.FileImageUrl ?? "");
-    string inspectorCompanyLogo = Path.Combine(baseUrl, inspection.AuthorisePerson?.InspectorProfile?.FileImageUrl ?? "");
+    var imageLoadTasks = new[]
+    {
+      GetBase64Image($"{baseUrl}{configuration.GetSection("Client:LogoReport").Value}"),
+      GetBase64Image(Path.Combine(baseUrl, inspection!.Warehouse?.FileImageUrl ?? "")),
+      GetBase64Image(Path.Combine(baseUrl, inspection.AuthorisePerson?.InspectorProfile?.FileImageUrl ?? ""))
+    };
 
-    html = html.Replace("{{Name}}", inspection.Warehouse!.CompanyName)
-      .Replace("{{AssetName}}", inspection.FloorPlan!.AssetName)
-      .Replace("{{Standard}}", standard)
-      .Replace("{{Address}}", inspection.Warehouse?.Address ?? "-")
-      .Replace("{{InspectionCompany}}", inspection.AuthorisePerson?.InspectorProfile?.CompanyName ?? "-")
-      .Replace("{{InspectorName}}", inspection.AuthorisePerson?.FirstName + " " + inspection.AuthorisePerson?.LastName)
-      .Replace("{{InspectionDate}}", inspection.InspectionDate.ToString("yyyy-MM-dd"))
-      .Replace("{{NextInspectionDate}}", inspection.NextInspectionDate.ToString("yyyy-MM-dd"))
-      .Replace("{{WarehouseLogo}}", warehouseLogo)
-      .Replace("{{InspectorCompanyLogo}}", inspectorCompanyLogo)
-      .Replace("{{RackLogicLogo}}", rackLogicLogo);
+    var images = await Task.WhenAll(imageLoadTasks);
+
+    var replacements = new Dictionary<string, string>
+    {
+      {"{{Name}}", inspection.Warehouse!.CompanyName},
+      {"{{AssetName}}", inspection.FloorPlan!.AssetName},
+      {"{{Standard}}", configuration.GetSection("Client:Standard").Value!},
+      {"{{Address}}", inspection.Warehouse?.Address ?? "-"},
+      {"{{InspectionCompany}}", inspection.AuthorisePerson?.InspectorProfile?.CompanyName ?? "-"},
+      {"{{InspectorName}}", $"{inspection.AuthorisePerson?.FirstName} {inspection.AuthorisePerson?.LastName}"},
+      {"{{InspectionDate}}", inspection.InspectionDate.ToString("yyyy-MM-dd")},
+      {"{{NextInspectionDate}}", inspection.NextInspectionDate.ToString("yyyy-MM-dd")},
+      {"{{RackLogicLogo}}", images[0]},
+      {"{{WarehouseLogo}}", images[1]},
+      {"{{InspectorCompanyLogo}}", images[2]}
+    };
+
+    foreach (var replacement in replacements)
+    {
+      html = html.Replace(replacement.Key, replacement.Value);
+    }
 
     var defectLogs = await dbContext.DefectLogs
       .Where(d => d.InspectionId == inspectionId)
@@ -239,6 +248,31 @@ public class InspectionService(
     html = html.Replace("{{DefectLogRows}}", defectLogRows.ToString());
 
     return html;
+  }
+
+  private static async Task<string> GetBase64Image(string imageUrl)
+  {
+    using var httpClient = new HttpClient();
+    try
+    {
+      var imageBytes = await httpClient.GetByteArrayAsync(imageUrl);
+      var ext = Path.GetExtension(imageUrl).ToLowerInvariant();
+      var contentType = ext switch
+      {
+        ".jpg" or ".jpeg" => "image/jpeg",
+        ".png" => "image/png",
+        ".gif" => "image/gif",
+        ".svg" => "image/svg+xml",
+        _ => "application/octet-stream"
+      };
+
+      var base64 = Convert.ToBase64String(imageBytes);
+      return $"data:{contentType};base64,{base64}";
+    }
+    catch
+    {
+      return "";
+    }
   }
 
   public async Task<IEnumerable<InspectionDto>> GetAllAsync(Guid warehouseId, CancellationToken cancellationToken)
