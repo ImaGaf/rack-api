@@ -11,4 +11,6 @@ public class GetListDefectLogRequest : PaginationRequest
   public int? Rack { get; set; }
   public int? Bay { get; set; }
   public SortBy SortBy { get; set; }
+  public DefectGrade? DefectGrade { get; set; }
+  public DefectPriority? DefectPriority { get; set; }
 }

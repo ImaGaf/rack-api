@@ -16,7 +16,7 @@ public class GetListDefectLog(IMediator _mediator) : Endpoint<GetListDefectLogRe
   public override async Task HandleAsync(GetListDefectLogRequest req, CancellationToken ct)
   {
     var result = await _mediator.Send(new GetListDefectLogQuery(
-      req.WarehouseId, req.AssetId, req.Rack, req.Bay, req.IsCompleted, req.SortBy, req.PageNumber, req.PageSize), ct);
+      req.WarehouseId, req.AssetId, req.Rack, req.Bay, req.IsCompleted, req.SortBy, req.DefectGrade, req.DefectPriority, req.PageNumber, req.PageSize), ct);
 
     if (result.IsSuccess)
     {
