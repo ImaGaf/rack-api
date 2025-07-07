@@ -11,7 +11,7 @@ public record CreateDefectLogCommand : ICommand<Result<DefectLogDto>>
   public required Guid FloorPlanItemId { get; init; }
   public bool? IsXBrace { get; set; }
   public string? ComponentType { get; set; }
-  public Guid? RelatedComponentId { get; init; }
+  public string? RelatedComponent { get; init; }
   public required int DefectType { get; init; }
   public required int DefectGrade { get; init; }
   public int? CorrectiveAction { get; init; }
