@@ -133,7 +133,8 @@ public class DefectLogService(
       .Include(x => x.Component!).ThenInclude(c => c.BayConfiguration!).ThenInclude(b => b.Manufacturer)
       .Include(x => x.FloorPlanItem!.FloorPlan)
       .Where(x => !x.IsCompleted)
-      .Where(x => x.FloorPlanItemId == request.floorPlanId && (x.InspectionId == request.inspectionId || request.inspectionId == Guid.Empty || request.inspectionId == null));
+      .Where(x => x.FloorPlanItemId == request.floorPlanId && (x.InspectionId == request.inspectionId || request.inspectionId == Guid.Empty || request.inspectionId == null))
+      .OrderByDescending(x => x.CreationTime);
 
     var defectlogs = new List<DefectLog>();
 
