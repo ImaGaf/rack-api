@@ -1,6 +1,7 @@
 ﻿using RackLogic.Core.Common.Entity;
 using RackLogic.UseCases.Brands;
 using RackLogic.UseCases.DefectLogs.Create;
+using RackLogic.UseCases.FloorPlanItems.Inspection;
 using RackLogic.UseCases.Inspections;
 using Riok.Mapperly.Abstractions;
 
@@ -12,6 +13,10 @@ public static partial class DefectLogMapper
   public static partial DefectLog ToEntity(this CreateDefectLogCommand command);
 
   [MapperIgnoreSource(nameof(DefectLog.DefectLogHistories))]
+  [MapProperty(nameof(DefectLog.FloorPlanItem.Bay), nameof(DefectLogDto.Bay))]
+  [MapProperty(nameof(DefectLog.FloorPlanItem.Rack), nameof(DefectLogDto.Rack))]
+  [MapProperty(nameof(DefectLog.FloorPlanItem.Side), nameof(DefectLogDto.Side))]
+  [MapProperty(nameof(DefectLog.FloorPlanItem.AssetOrdinal), nameof(DefectLogDto.AssetOrdinal))]
   public static partial DefectLogDto ToDto(this DefectLog entity);
 
   public static DefectLogDto ToDtoWithHistory(this DefectLog entity, bool includeHistories = true)
@@ -19,9 +24,8 @@ public static partial class DefectLogMapper
     var dto = entity.ToDto();
     dto.OEMBrand = entity.Component!.BayConfiguration!.Manufacturer!.ToOEMBrandDTO();
     dto.Inspection = entity.Inspection?.ToDto();
-    dto.Bay = entity.FloorPlanItem!.Bay;
-    dto.Rack = entity.FloorPlanItem!.Rack;
-    dto.WarehouseId = entity.FloorPlanItem.FloorPlan!.WarehouseId;
+
+    dto.WarehouseId = entity.FloorPlanItem!.FloorPlan!.WarehouseId;
     dto.BayConfigId = entity.FloorPlanItem.BayConfiguration?.BayConfigId;
 
     if (includeHistories && entity.DefectLogHistories != null)
