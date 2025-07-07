@@ -8,7 +8,7 @@ public class DefectLog : BaseEntityCustom
   public Guid ComponentId { get; set; }
   public Guid FloorPlanItemId { get; set; }
   public Guid? InspectionId { get; set; }
-  public Guid? RelatedComponentId { get; set; }
+  public string? RelatedComponent { get; set; }
   public string? DrawPosition { get; set; }
   public int ComponentIndex { get; set; }
   public bool? IsRear { get; set; }
@@ -23,7 +23,6 @@ public class DefectLog : BaseEntityCustom
   public bool IsCompleted { get; set; }
   public virtual Component? Component { get; set; }
   public virtual FloorPlanItem? FloorPlanItem { get; set; }
-  public virtual Component? RelatedComponent { get; set; }
   public virtual Inspection? Inspection { get; set; }
 
   public virtual ICollection<DefectLogFile>? DefectLogFiles { get; set; }

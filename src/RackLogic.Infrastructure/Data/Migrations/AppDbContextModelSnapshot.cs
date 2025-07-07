@@ -489,8 +489,8 @@ namespace RackLogic.Infrastructure.Data.Migrations
                     b.Property<Guid?>("LastModifierId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid?>("RelatedComponentId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<string>("RelatedComponent")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("TicketId")
                         .HasMaxLength(12)
@@ -503,8 +503,6 @@ namespace RackLogic.Infrastructure.Data.Migrations
                     b.HasIndex("FloorPlanItemId");
 
                     b.HasIndex("InspectionId");
-
-                    b.HasIndex("RelatedComponentId");
 
                     b.ToTable("DefectLogs", (string)null);
                 });
@@ -1754,17 +1752,11 @@ namespace RackLogic.Infrastructure.Data.Migrations
                         .HasForeignKey("InspectionId")
                         .OnDelete(DeleteBehavior.NoAction);
 
-                    b.HasOne("RackLogic.Core.Common.Entity.Component", "RelatedComponent")
-                        .WithMany()
-                        .HasForeignKey("RelatedComponentId");
-
                     b.Navigation("Component");
 
                     b.Navigation("FloorPlanItem");
 
                     b.Navigation("Inspection");
-
-                    b.Navigation("RelatedComponent");
                 });
 
             modelBuilder.Entity("RackLogic.Core.Common.Entity.DefectLogFile", b =>

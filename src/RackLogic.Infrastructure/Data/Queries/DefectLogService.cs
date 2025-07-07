@@ -52,7 +52,6 @@ public class DefectLogService(
       .Include(d => d.Inspection)
       .Include(d => d.FloorPlanItem!.FloorPlan)
       .Include(d => d.DefectLogFiles)
-      .Include(d => d.RelatedComponent)
       .Include(d => d.Component!.BayConfiguration!.Manufacturer)
       .FirstOrDefaultAsync(d => d.Id == id, cancellationToken);
 
@@ -78,7 +77,6 @@ public class DefectLogService(
       .Include(x => x.Component!)
         .ThenInclude(c => c.BayConfiguration!)
           .ThenInclude(b => b.Manufacturer)
-      .Include(x => x.RelatedComponent)
       .Include(x => x.FloorPlanItem!.FloorPlan)
       .Where(x => x.IsCompleted == request.IsCompleted)
       .Where(x => request.AssetId != null ? x.FloorPlanItem!.FloorPlanId == request.AssetId : true)
@@ -133,7 +131,6 @@ public class DefectLogService(
       .Include(x => x.Inspection)
       .Include(x => x.DefectLogFiles)
       .Include(x => x.Component!).ThenInclude(c => c.BayConfiguration!).ThenInclude(b => b.Manufacturer)
-      .Include(x => x.RelatedComponent)
       .Include(x => x.FloorPlanItem!.FloorPlan)
       .Where(x => !x.IsCompleted)
       .Where(x => x.FloorPlanItemId == request.floorPlanId && (x.InspectionId == request.inspectionId || request.inspectionId == Guid.Empty || request.inspectionId == null));
@@ -170,7 +167,6 @@ public class DefectLogService(
       .Include(x => x.Inspection)
       .Include(x => x.DefectLogFiles)
       .Include(x => x.Component!).ThenInclude(c => c.BayConfiguration!).ThenInclude(b => b.Manufacturer)
-      .Include(x => x.RelatedComponent)
       .Include(x => x.FloorPlanItem!.FloorPlan)
       .Where(x => x.InspectionId == inspectionId)
       .ToListAsync();
