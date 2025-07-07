@@ -62,6 +62,8 @@ public class CreateDefectLogCommandHandler(
 
     var floorPlanItem = await floorPlanItemRepository.FirstOrDefaultAsync(x => x.Id == request.FloorPlanItemId, cancellationToken, x => x.BayConfiguration);
 
+    entity.FloorPlanItem = floorPlanItem;
+
     var result = entity.ToDto();
 
     result.BayConfigId = floorPlanItem?.BayConfiguration?.BayConfigId;
