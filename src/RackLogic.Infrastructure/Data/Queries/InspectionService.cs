@@ -79,8 +79,8 @@ public class InspectionService(
     var result = await query
       .Skip((request.PageNumber - 1) * request.PageSize)
       .Take(request.PageSize)
-      .Select(i => i.ToReportDtoWithFullName())
       .OrderByDescending(i => i.InspectionDate)
+      .Select(i => i.ToReportDtoWithFullName())
       .ToListAsync(cancellationToken);
 
     return new PagedDataDTO<InspectionReportDto>
