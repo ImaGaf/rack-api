@@ -12,6 +12,10 @@
             font-size: 16px;
         }
 
+        .report {
+            margin: auto;
+        }
+
         .report-header {
             display: flex;
             align-items: flex-start;
@@ -127,15 +131,15 @@
                 border-top: 2px solid #E8E8E8;
                 border-bottom: 2px solid #E8E8E8;
                 vertical-align: top;
-                font-size: 12px;
+                font-size: 10px;
                 padding: 0;
             }
 
             .defect-logs table td {
                 text-align: left;
                 vertical-align: top;
-                font-size: 12px;
-                padding: 10px;
+                font-size: 10px;
+                padding: 8px;
                 border-bottom: 2px solid #E8E8E8;
             }
 
@@ -161,9 +165,21 @@
                 border-left: none;
             }
 
+            .defect-logs table td,
+            .defect-logs table th {
+                word-wrap: break-word;
+                word-break: break-word;
+                white-space: normal;
+            }
+
+        .comments-column {
+            width: 100px;
+            max-width: 100px;
+        }
+
         .cell-wrapper {
-            padding: 0px 15px 12px 10px;
-            margin-top: 15px;
+            padding: 0px 12px 10px 10px;
+            margin-top: 10px;
             margin-bottom: 10px;
             border-left: 1px solid #E8E8E8;
             height: 20px;
@@ -298,16 +314,16 @@
             <table>
                 <thead>
                     <tr>
-                        <th><div class="cell-wrapper">Defect Grade</div></th>
+                        <th style="width: 60px;"><div class="cell-wrapper">Defect Grade</div></th>
                         <th><div class="cell-wrapper">Defect ID</div></th>
                         <th><div class="cell-wrapper">Bay ID</div></th>
-                        <th><div class="cell-wrapper">Component</div></th>
+                        <th style="width: 80px;"><div class="cell-wrapper">Component</div></th>
                         <th><div class="cell-wrapper">OEM</div></th>
                         <th><div class="cell-wrapper">Part Number</div></th>
-                        <th><div class="cell-wrapper">Defect Type</div></th>
-                        <th><div class="cell-wrapper">Corrective Action</div></th>
+                        <th style="width: 80px;"><div class="cell-wrapper">Defect Type</div></th>
+                        <th style="width: 80px;"><div class="cell-wrapper">Corrective Action</div>
                         <th><div class="cell-wrapper">Image(s)</div></th>
-                        <th><div class="cell-wrapper">Comments</div></th>
+                        <th style="width: 120px;"><div class="cell-wrapper">Comments</div></th>
                     </tr>
                 </thead>
                 <tbody>

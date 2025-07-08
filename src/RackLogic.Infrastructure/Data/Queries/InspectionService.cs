@@ -1,10 +1,12 @@
 ﻿using System.Text;
+using System.Text.RegularExpressions;
 using Ardalis.GuardClauses;
 using Ardalis.Result;
 using DinkToPdf;
 using DinkToPdf.Contracts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
+using RackLogic.Core.Common.Enums;
 using RackLogic.UseCases.Common.Extensions;
 using RackLogic.UseCases.DefectLogs;
 using RackLogic.UseCases.Inspections;
@@ -78,6 +80,7 @@ public class InspectionService(
       .Skip((request.PageNumber - 1) * request.PageSize)
       .Take(request.PageSize)
       .Select(i => i.ToReportDtoWithFullName())
+      .OrderByDescending(i => i.InspectionDate)
       .ToListAsync(cancellationToken);
 
     return new PagedDataDTO<InspectionReportDto>
@@ -163,44 +166,37 @@ public class InspectionService(
       .Include(i => i.AuthorisePerson!)
       .ThenInclude(i => i.InspectorProfile)
       .Include(i => i.FloorPlan)
+      .AsSplitQuery()
+      .AsNoTracking()
       .FirstOrDefaultAsync(cancellationToken);
 
-    var templatePath = hasDefectLog
-      ? Path.Combine("wwwroot", "ReportTemplates", "DetailedReport.html")
-      : Path.Combine("wwwroot", "ReportTemplates", "OverviewReport.html");
+    var templatePath = Path.Combine("wwwroot", "ReportTemplates", "OverviewReport.html");
+
+    if (hasDefectLog)
+    {
+      templatePath = Path.Combine("wwwroot", "ReportTemplates", "DetailedReport.html");
+    }
 
     var html = await File.ReadAllTextAsync(templatePath, cancellationToken);
 
     var baseUrl = configuration.GetSection("Client:BaseUrl").Value!;
+    var standard = configuration.GetSection("Client:Standard").Value!;
 
-    var imageLoadTasks = new[]
-    {
-      GetBase64Image($"{baseUrl}{configuration.GetSection("Client:LogoReport").Value}"),
-      GetBase64Image(Path.Combine(baseUrl, inspection!.Warehouse?.FileImageUrl ?? "")),
-      GetBase64Image(Path.Combine(baseUrl, inspection.AuthorisePerson?.InspectorProfile?.FileImageUrl ?? ""))
-    };
+    var rackLogicLogo = $"{baseUrl}{configuration.GetSection("Client:LogoReport").Value}";
+    string warehouseLogo = Path.Combine(baseUrl, inspection!.Warehouse?.FileImageUrl ?? "");
+    string inspectorCompanyLogo = Path.Combine(baseUrl, inspection.AuthorisePerson?.InspectorProfile?.FileImageUrl ?? "");
 
-    var images = await Task.WhenAll(imageLoadTasks);
-
-    var replacements = new Dictionary<string, string>
-    {
-      {"{{Name}}", inspection.Warehouse!.CompanyName},
-      {"{{AssetName}}", inspection.FloorPlan!.AssetName},
-      {"{{Standard}}", configuration.GetSection("Client:Standard").Value!},
-      {"{{Address}}", inspection.Warehouse?.Address ?? "-"},
-      {"{{InspectionCompany}}", inspection.AuthorisePerson?.InspectorProfile?.CompanyName ?? "-"},
-      {"{{InspectorName}}", $"{inspection.AuthorisePerson?.FirstName} {inspection.AuthorisePerson?.LastName}"},
-      {"{{InspectionDate}}", inspection.InspectionDate.ToString("yyyy-MM-dd")},
-      {"{{NextInspectionDate}}", inspection.NextInspectionDate.ToString("yyyy-MM-dd")},
-      {"{{RackLogicLogo}}", images[0]},
-      {"{{WarehouseLogo}}", images[1]},
-      {"{{InspectorCompanyLogo}}", images[2]}
-    };
-
-    foreach (var replacement in replacements)
-    {
-      html = html.Replace(replacement.Key, replacement.Value);
-    }
+    html = html.Replace("{{Name}}", inspection.Warehouse!.CompanyName)
+      .Replace("{{AssetName}}", inspection.FloorPlan!.AssetName)
+      .Replace("{{Standard}}", standard)
+      .Replace("{{Address}}", inspection.Warehouse?.Address ?? "-")
+      .Replace("{{InspectionCompany}}", inspection.AuthorisePerson?.InspectorProfile?.CompanyName ?? "-")
+      .Replace("{{InspectorName}}", inspection.AuthorisePerson?.FirstName + " " + inspection.AuthorisePerson?.LastName)
+      .Replace("{{InspectionDate}}", inspection.InspectionDate.ToString("yyyy-MM-dd"))
+      .Replace("{{NextInspectionDate}}", inspection.NextInspectionDate.ToString("yyyy-MM-dd"))
+      .Replace("{{WarehouseLogo}}", warehouseLogo)
+      .Replace("{{InspectorCompanyLogo}}", inspectorCompanyLogo)
+      .Replace("{{RackLogicLogo}}", rackLogicLogo);
 
     var defectLogs = await dbContext.DefectLogs
       .Where(d => d.InspectionId == inspectionId)
@@ -234,8 +230,8 @@ public class InspectionService(
       defectLogRows.AppendLine("<tr>");
       defectLogRows.AppendLine($"<td>{gradeDot}</td>");
       defectLogRows.AppendLine($"<td>{defect.TicketId ?? "-"}</td>");
-      defectLogRows.AppendLine($"<td>{defect.Bay}.{defect.Rack}</td>");
-      defectLogRows.AppendLine($"<td>{defect.Component?.ComponentType ?? "-"}</td>");
+      defectLogRows.AppendLine($"<td>{inspection.FloorPlan.FloorNumber}.{defect.Rack}.{defect.Side}.{defect.Bay}</td>");
+      defectLogRows.AppendLine($"<td>{Regex.Replace(defect.Component?.ComponentType ?? "-", "(?<!^)([A-Z])", " $1") }</td>");
       defectLogRows.AppendLine($"<td>{defect.OEMBrand?.Name ?? "-"}</td>");
       defectLogRows.AppendLine($"<td>{defect.Component?.Code ?? "-"}</td>");
       defectLogRows.AppendLine($"<td>{defect.DefectType?.GetDisplayName() ?? "-"}</td>");
@@ -248,31 +244,6 @@ public class InspectionService(
     html = html.Replace("{{DefectLogRows}}", defectLogRows.ToString());
 
     return html;
-  }
-
-  private static async Task<string> GetBase64Image(string imageUrl)
-  {
-    using var httpClient = new HttpClient();
-    try
-    {
-      var imageBytes = await httpClient.GetByteArrayAsync(imageUrl);
-      var ext = Path.GetExtension(imageUrl).ToLowerInvariant();
-      var contentType = ext switch
-      {
-        ".jpg" or ".jpeg" => "image/jpeg",
-        ".png" => "image/png",
-        ".gif" => "image/gif",
-        ".svg" => "image/svg+xml",
-        _ => "application/octet-stream"
-      };
-
-      var base64 = Convert.ToBase64String(imageBytes);
-      return $"data:{contentType};base64,{base64}";
-    }
-    catch
-    {
-      return "";
-    }
   }
 
   public async Task<IEnumerable<InspectionDto>> GetAllAsync(Guid warehouseId, CancellationToken cancellationToken)
