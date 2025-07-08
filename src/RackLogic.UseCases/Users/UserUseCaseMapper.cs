@@ -1,4 +1,6 @@
 ﻿using RackLogic.Core.Common.Entity;
+using RackLogic.Core.UserAggregate;
+using RackLogic.UseCases.Inspections;
 using RackLogic.UseCases.Users.UpdateInspectorProfile;
 using Riok.Mapperly.Abstractions;
 
@@ -31,6 +33,20 @@ public static partial class UserUseCaseMapper
   [MapperIgnoreTarget(nameof(InspectorProfile.CreatorId))]
   [MapperIgnoreTarget(nameof(InspectorProfile.Id))]
   public static partial InspectorProfile ToInspectorProfile(this UpdateInspectorProfileCommand request, Guid userId);
+
+
+
+  [MapperIgnoreTarget(nameof(InspectorProfileDTO.CompanyName))]
+  [MapperIgnoreTarget(nameof(InspectorProfileDTO.ABN))]
+  [MapperIgnoreTarget(nameof(InspectorProfileDTO.CompanyAddress))]
+  [MapperIgnoreTarget(nameof(InspectorProfileDTO.CompanyMainPhone))]
+  [MapperIgnoreTarget(nameof(InspectorProfileDTO.FileImagePath))]
+  [MapProperty(nameof(ApplicationUser.Id), nameof(InspectorProfileDTO.UserId))]
+  [MapProperty(nameof(ApplicationUser.FirstName), nameof(InspectorProfileDTO.InspectorFirstName))]
+  [MapProperty(nameof(ApplicationUser.LastName), nameof(InspectorProfileDTO.InspectorLastName))]
+  [MapProperty(nameof(ApplicationUser.PhoneNumber), nameof(InspectorProfileDTO.InspectorPhoneNumber))]
+  [MapProperty(nameof(ApplicationUser.Email), nameof(InspectorProfileDTO.InspectorEmailAddress))]
+  public static partial InspectorProfileDTO UserToInspectorDTO(this ApplicationUser user);
 
   public static InspectorProfileDTO ToInspectorProfileDTO(this InspectorProfile profile)
   {
