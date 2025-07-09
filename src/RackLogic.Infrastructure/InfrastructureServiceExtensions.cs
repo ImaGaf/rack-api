@@ -56,7 +56,8 @@ public static class InfrastructureServiceExtensions
            .AddScoped<IUserService, UserService>()
            .AddScoped<IDefectLogService, DefectLogService>()
            .AddScoped<IInspectionService, InspectionService>()
-           .AddScoped<IBayConfigurationService, BayConfigurationService>();
+           .AddScoped<IBayConfigurationService, BayConfigurationService>()
+           .AddScoped<IInvitationService, InvitationService>();
 
     logger.LogInformation("{Project} services registered", "Infrastructure");
 

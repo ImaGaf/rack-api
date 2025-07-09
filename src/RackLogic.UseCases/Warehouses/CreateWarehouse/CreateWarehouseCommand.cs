@@ -14,7 +14,7 @@ public record CreateWarehouseCommand (
   string? PostCode,
   bool? IsGoogleApiAddress,
   string ClientPhoneNumber,
-  IFormFile FileImageLogo,
+  IFormFile? FileImageLogo,
   string OwnerFirstName,
   string OwnerLastName,
   string OwnerPhoneNumber,
