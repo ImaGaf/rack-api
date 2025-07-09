@@ -46,13 +46,17 @@ public class CreateWarehouse(IMediator _mediator) : Endpoint<CreateWarehouseRequ
 
     if (result.IsForbidden())
     {
-      await SendForbiddenAsync();
-      return;
+      throw new ForbiddenException(result?.Errors?.FirstOrDefault());
     }
 
     if (result.IsInvalid())
     {
       throw new InvalidException(result?.ValidationErrors?.Select(x => x.ErrorMessage).ToList());
+    }
+
+    if (result.IsError())
+    {
+      throw new ArgumentException(result?.Errors?.FirstOrDefault());
     }
 
     await SendErrorsAsync(statusCode: 500, ct);
