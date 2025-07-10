@@ -31,7 +31,18 @@ public class UpdateDefectLogCommandHandler(
     }
 
     if (request.IsCompleted != null)
+    {
       entity.IsCompleted = request.IsCompleted.Value;
+
+      var detail = request.IsCompleted is true ? "Resolve" : "UnResolve";
+
+      await defectLogHistoryService
+        .CreateAsync(
+          entity,
+          detail,
+          (int)DefectHistoryType.Completed,
+          cancellationToken);
+    }
 
     if (request.DefectStatus != null && entity.DefectStatus != (DefectStatus)request.DefectStatus)
     {
