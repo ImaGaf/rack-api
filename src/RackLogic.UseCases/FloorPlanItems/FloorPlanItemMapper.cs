@@ -28,7 +28,7 @@ public static partial class FloorPlanItemMapper
       AssetOrdinal = item.AssetOrdinal,
       FloorPlanId = item.FloorPlanId,
       Offset = item.Offset,
-      Rack = item.Rack,
+      Rack = item.Rack, 
       Rotation = item.Rotation,
       Height = item.Height,
       Size = item.Size,
