@@ -41,7 +41,7 @@ public class ListBayConfiguratorQueryService(AppDbContext _context) : IListBayCo
       TotalRecords = totalRecord,
       PageNumber = request.PageNumber,
       PageSize = !isAll ? request.PageSize : totalRecord,
-      DataDTO = result.Select(x => x.Mapping()).ToList()
+      DataDTO = result.OrderByDescending(i => i.CreatedDate).Select(x => x.Mapping()).ToList()
     };
   }
 
@@ -68,7 +68,8 @@ public class ListBayConfiguratorQueryService(AppDbContext _context) : IListBayCo
     var result = bayConfigurations
         .Where(x => x != null)
         .Skip((request.PageNumber - 1) * request.PageSize)
-        .Take(request.PageSize);
+        .Take(request.PageSize)
+        .OrderByDescending(i => i!.CreatedDate);
 
     return new PagedDataDTO<BayConfigurationDTO>()
     {
