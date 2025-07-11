@@ -1,6 +1,8 @@
-﻿using FastEndpoints;
+﻿using Ardalis.Result;
+using FastEndpoints;
 using MediatR;
 using RackLogic.UseCases.FloorPlanItems.GetDetail;
+using RackLogic.Web.Exceptions;
 using RackLogic.Web.Models;
 
 namespace RackLogic.Web.FloorPlanItems.GetDetail;
@@ -21,6 +23,11 @@ public class GetDetailFloorPlanItem(IMediator _mediator) : Endpoint<GetDetailFlo
       Response = new ApiResponse<FloorPlanItemDto>(result);
 
       return;
+    }
+
+    if (result.IsInvalid())
+    {
+      throw new InvalidException(result?.ValidationErrors?.Select(x => x.ErrorMessage).ToList());
     }
 
     await SendErrorsAsync(statusCode: 500, ct);
