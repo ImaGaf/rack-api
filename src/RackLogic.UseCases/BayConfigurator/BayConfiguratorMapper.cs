@@ -48,7 +48,9 @@ public static partial class BayConfiguratorMapper
       BracingDiagonalLevel = bay.BracingDiagonalLevel,
       BracingLevel = bay.BracingLevel,
       BeamLevel = bay.BeamLevels.Count,
-      XBraceLevel = bay.XBraceLevel
+      XBraceLevel = bay.XBraceLevel,
+      IsAlternativeFrontBeam = bay.IsAlternativeFrontBeam,
+      LimitedFrontBeam = bay.LimitedFrontBeam ?? bay.BeamLevels.Count
     };
   }
 
@@ -138,12 +140,15 @@ public static partial class BayConfiguratorMapper
       BracingDiagonalLevel = bayConfiguration.BracingDiagonalLevel,
       BracingLevel = bayConfiguration.BracingLevel,
       XBraceLevel = bayConfiguration.XBraceLevel,
+      IsAlternativeFrontBeam = bayConfiguration.IsAlternativeFrontBeam,
+      LimitedFrontBeam = bayConfiguration.LimitedFrontBeam,
       Upright = bayConfiguration.Components.FirstOrDefault(c => c.ComponentType == ComponentType.Upright)?.Mapping(),
       Beam = bayConfiguration.Components.FirstOrDefault(c => c.ComponentType == ComponentType.Beam)?.Mapping(),
       BracingHorizontal = bayConfiguration.Components.FirstOrDefault(c => c.ComponentType == ComponentType.BraceHorizontal)?.Mapping(true),
       BracingDiagonal = bayConfiguration.Components.FirstOrDefault(c => c.ComponentType == ComponentType.BraceDiagonal)?.Mapping(true),
       RowSpacer = bayConfiguration.Components.FirstOrDefault(c => c.ComponentType == ComponentType.Backtie)?.Mapping(),
       SpliceKits = bayConfiguration.Components.FirstOrDefault(c => c.ComponentType == ComponentType.Splice)?.Mapping(),
+      AlternativeFrontBeam = bayConfiguration.Components.FirstOrDefault(c => c.ComponentType == ComponentType.Alternative)?.Mapping(),
       Accessories = bayConfiguration.Components
                 .Where(c => c.Category == ComponentCategory.ACCESSORIES)
                 .Select(c => c.Mapping())

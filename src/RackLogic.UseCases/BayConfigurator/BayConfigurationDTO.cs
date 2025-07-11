@@ -46,6 +46,9 @@ public class BayConfigurationDTO
   public bool? IsCustomRowSpacer { get; set; }
   public List<ComponentDTO>? Accessories { get; set; }
   public bool? IsCustomAccessories { get; set; }
+  public bool? IsAlternativeFrontBeam { get; set; }
+  public int LimitedFrontBeam { get; set; }
+  public ComponentDTO? AlternativeFrontBeam { get; set; }
 
   public float? PalletWeight { get; set; }
   public int? BulkPalletsNumberOfLevels { get; set; }

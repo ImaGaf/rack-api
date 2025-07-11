@@ -195,6 +195,9 @@ namespace RackLogic.Infrastructure.Data.Migrations
                     b.Property<int>("InterimInterval")
                         .HasColumnType("int");
 
+                    b.Property<bool?>("IsAlternativeFrontBeam")
+                        .HasColumnType("bit");
+
                     b.Property<bool?>("IsCustomAccessories")
                         .HasColumnType("bit");
 
@@ -223,6 +226,9 @@ namespace RackLogic.Infrastructure.Data.Migrations
                         .HasColumnType("bit");
 
                     b.Property<int>("Level")
+                        .HasColumnType("int");
+
+                    b.Property<int>("LimitedFrontBeam")
                         .HasColumnType("int");
 
                     b.Property<Guid?>("ManufacturerId")
