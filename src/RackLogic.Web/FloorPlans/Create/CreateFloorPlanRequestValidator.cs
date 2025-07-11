@@ -33,12 +33,6 @@ public class CreateFloorAssetRequestValidator : Validator<CreateFloorAssetReques
 
       floorPlan.RuleForEach(fp => fp.Items).ChildRules(item =>
       {
-        item.RuleFor(i => i.Rack)
-            .NotNull().WithMessage("Rack is required and must be correctly formatted.");
-
-        item.RuleFor(i => i.Bay)
-            .NotNull().WithMessage("Bay is required and must be correctly formatted.");
-
         item.RuleFor(i => i.Offset)
             .NotEmpty().WithMessage("Offset is required and must be correctly formatted.");
 

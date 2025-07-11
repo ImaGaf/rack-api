@@ -40,12 +40,6 @@ public class UpdateFloorPlanRequestValidator : Validator<UpdateFloorPlanRequest>
         item.RuleFor(i => i.Id)
             .NotEmpty().WithMessage("Item Id is required and must be correctly formatted.");
 
-        item.RuleFor(i => i.Rack)
-            .NotNull().WithMessage("Rack is required and must be correctly formatted.");
-
-        item.RuleFor(i => i.Bay)
-            .NotNull().WithMessage("Bay is required and must be correctly formatted.");
-
         item.RuleFor(i => i.Offset)
             .NotEmpty().WithMessage("Offset is required and must be correctly formatted.");
 
