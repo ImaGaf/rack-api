@@ -1,5 +1,4 @@
-﻿using RackLogic.UseCases.BayConfigurator.GetSWL;
-using RackLogic.Web.BayConfigurator.Create;
+﻿using RackLogic.Web.BayConfigurator.Create;
 
 namespace RackLogic.Web.BayConfigurator.List;
 
@@ -47,6 +46,10 @@ public class ListBayConfigurationResponse
   public bool? IsCustomRowSpacer { get; set; }
   public List<ComponentResponse>? Accessories { get; set; }
   public bool? IsCustomAccessories { get; set; }
+  public bool? IsAlternativeFrontBeam { get; set; }
+  public int LimitedFrontBeam { get; set; }
+  public ComponentResponse? AlternativeFrontBeam { get; set; }
+
   public float? PalletWeight { get; set; }
   public int? BulkPalletsNumberOfLevels { get; set; }
   public float? BulkPalletsLevelMaximumLoad { get; set; }

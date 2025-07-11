@@ -2,6 +2,7 @@
 using RackLogic.Infrastructure.Data;
 using FastEndpoints;
 using FastEndpoints.Swagger;
+using Microsoft.EntityFrameworkCore;
 
 namespace RackLogic.Web.Configurations;
 
@@ -38,7 +39,7 @@ public static class WebApplicationConfigs
     try
     {
       var context = services.GetRequiredService<AppDbContext>();
-      //          context.Database.Migrate();
+      context.Database.Migrate();
       context.Database.EnsureCreated();
       await SeedData.InitializeAsync(context);
     }

@@ -54,6 +54,8 @@ public class BayConfiguration : EntityBase<Guid>, IAggregateRoot
   public int BracingLevel { get; set; }
   public int BeamLevel { get; set; }
   public int? XBraceLevel { get; set; }
+  public bool? IsAlternativeFrontBeam { get; set; }
+  public int LimitedFrontBeam { get; set;}
   public virtual OEMBrand? Manufacturer { get; set; }
   public virtual Warehouse? Warehouses { get; set; }
   public virtual SWLSignage? SWLSignage { get; set; }

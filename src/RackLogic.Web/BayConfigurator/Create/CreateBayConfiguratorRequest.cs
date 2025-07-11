@@ -48,6 +48,9 @@ public class BayConfigurator
   public bool? IsCustomRowSpacer { get; set; }
   public required List<Component>? Accessories { get; set; }
   public bool? IsCustomAccessories { get; set; }
+  public bool? IsAlternativeFrontBeam { get; set; }
+  public int? LimitedFrontBeam { get; set; }
+  public Component? AlternativeFrontBeam { get; set; }
 }
 
 public class Component

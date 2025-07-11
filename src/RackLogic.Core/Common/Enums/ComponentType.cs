@@ -14,5 +14,6 @@ public enum ComponentType
   Shims,
   Signs,
   Tie,
-  CartonLiveStorage
+  CartonLiveStorage,
+  Alternative
 }

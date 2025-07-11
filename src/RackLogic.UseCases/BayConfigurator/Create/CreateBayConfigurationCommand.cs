@@ -32,7 +32,7 @@ public record BayConfigurationCommand(
     bool HasProtector,
     ComponentCommand? SpliceKits,
     bool? IsCustomUpRight,
-    ComponentCommand Beam,
+    ComponentCommand? Beam,
     List<int> BeamLevels,
     bool? IsCustomBeam,
     ComponentCommand BracingHorizontal,
@@ -50,7 +50,10 @@ public record BayConfigurationCommand(
     bool? IsCustomRowSpacer,
     List<ComponentCommand>? Accessories,
     bool? IsCustomAccessories,
-    int? InterimInterval
+    int? InterimInterval,
+    bool? IsAlternativeFrontBeam,
+    int? LimitedFrontBeam,
+    ComponentCommand? AlternativeFrontBeam
   );
 
 public record ComponentCommand(
