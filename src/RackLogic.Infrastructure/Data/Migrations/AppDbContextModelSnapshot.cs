@@ -767,7 +767,7 @@ namespace RackLogic.Infrastructure.Data.Migrations
                     b.Property<int?>("AssetOrdinal")
                         .HasColumnType("int");
 
-                    b.Property<int>("Bay")
+                    b.Property<int?>("Bay")
                         .HasColumnType("int");
 
                     b.Property<Guid?>("BayConfigurationId")
@@ -810,7 +810,7 @@ namespace RackLogic.Infrastructure.Data.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("Rack")
+                    b.Property<int?>("Rack")
                         .HasColumnType("int");
 
                     b.Property<double>("Rotation")

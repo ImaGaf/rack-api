@@ -15,8 +15,8 @@ public class DefectLogDto
   public Guid WarehouseId { get; set; }
   public string? DrawPosition { get; set; }
   public int ComponentIndex { get; set; }
-  public int Bay { get; set; }
-  public int Rack { get; set; }
+  public int? Bay { get; set; }
+  public int? Rack { get; set; }
   public int? AssetOrdinal { get; set; }
   public string? Side { get; set; }
   public bool? IsRear { get; set; }
