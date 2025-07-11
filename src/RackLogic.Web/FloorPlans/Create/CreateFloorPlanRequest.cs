@@ -51,10 +51,10 @@ public class FloorPlanItem
   {
     Id = id ?? Guid.NewGuid();
   }
-  [Required]
-  public required int Rack { get; set; }
-  [Required]
-  public required int Bay { get; set; }
+
+  public int? Rack { get; set; }
+
+  public int? Bay { get; set; }
   public List<Comment>? Comments { get; set; }
   [Required]
   public required string Offset { get; set; }
