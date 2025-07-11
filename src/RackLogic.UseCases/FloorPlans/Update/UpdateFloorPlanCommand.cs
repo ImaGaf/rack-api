@@ -22,8 +22,8 @@ public record UpdateFloorPlanInformationCommand(
 
 public record UpdateFloorPlanItemInformationCommand(
   Guid Id,
-  int Rack,
-  int Bay,
+  int? Rack,
+  int? Bay,
   string Offset,
   int? Size,
   double? Width,
