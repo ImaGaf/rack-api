@@ -50,7 +50,7 @@ public class EmailService : IEmailSender
 
       var to = new EmailAddress(email);
 
-      var msg = MailHelper.CreateSingleEmail(from, to, "Send", message, "");
+      var msg = MailHelper.CreateSingleEmail(from, to, "Send", "", message);
 
       msg.AddAttachment("file.pdf", file);
 

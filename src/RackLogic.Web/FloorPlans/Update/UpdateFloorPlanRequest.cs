@@ -29,18 +29,12 @@ public class UpdateFloorPlanInformation
   }
   public List<string>? FileUrlsToDelete { get; set; } = new();
   public List<IFormFile>? Files { get; set; } = new();
-  [Required]
   public required string Title { get; set; }
-  [Required]
   public required int Floor { get; set; }
   public required string? Description { get; set; }
-  [Required]
   public required int TotalRack { get; set; }
-  [Required]
   public required int TotalBay { get; set; }
-  [Required]
-  public required UpdateDefaultSetting DefaultSettings { get; set; }
-  [Required]
+  public required UpdateDefaultSetting? DefaultSettings { get; set; }
   public required List<UpdateFloorPlanItemInformation> Items { get; set; } = new();
 }
 public class UpdateFloorPlanItemInformation
@@ -52,7 +46,6 @@ public class UpdateFloorPlanItemInformation
   }
   public int? Rack { get; set; }
   public int? Bay { get; set; }
-  [Required]
   public required string Offset { get; set; }
   public int? Size { get; set; }
   public double? Width { get; set; }
@@ -60,9 +53,7 @@ public class UpdateFloorPlanItemInformation
   public string? ObjectType { get; set; }
   public int? AssetOrdinal { get; set; }
   public string? Side { get; set; }
-  [Required]
   public required double Rotation { get; set; }
-  [Required]
   public string? BayConfigurationId { get; set; }
   public bool? IsRequiredBayConfig { get; set; }
   public DateTime? DueDate { get; set; }
@@ -75,11 +66,8 @@ public class UpdateFloorPlanComment
   {
     Id = id ?? Guid.NewGuid();
   }
-  [Required]
   public required string UserName { get; set; }
-  [Required]
   public required string Comment { get; set; }
-  [Required]
   public required DateTime Date { get; set; }
 }
 public class UpdateDefaultSetting

@@ -36,6 +36,7 @@ public static partial class FloorPlanItemMapper
       ObjectType = item.ObjectType,
       Side = item.Side,
       BayConfiguration = item.BayConfiguration?.Mapping(),
+      
     };
   }
 

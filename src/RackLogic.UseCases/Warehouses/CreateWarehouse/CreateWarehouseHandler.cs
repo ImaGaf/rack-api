@@ -64,12 +64,13 @@ public class CreateWarehouseHandler(
       FloorPlans = new List<FloorPlan>()
     };
 
-    await _warehouseRepository.AddToContextAsync(warehouse, cancellationToken: cancellationToken);
 
     if (request.FileImageLogo != null && !await AddFileAsync(warehouse, request.FileImageLogo, cancellationToken))
     {
       return Result.Error("Failed to save logo file.");
     }
+
+    await _warehouseRepository.AddToContextAsync(warehouse, cancellationToken: cancellationToken);
 
     // await _warehouseRepository.SaveEntityAsync(warehouse, cancellationToken);
     await _warehouseRepository.SaveContextAsync(cancellationToken);
@@ -108,7 +109,6 @@ public class CreateWarehouseHandler(
 
     warehouse.FileImageUrl = savedFile.FilePath;
     warehouse.FileImageName = savedFile.FileName;
-    await _warehouseRepository.UpdateToContextAsync(warehouse, cancellationToken: cancellationToken);
 
     return true;
   }

@@ -19,7 +19,8 @@ public class ListBayConfiguratorQueryService(AppDbContext _context) : IListBayCo
           .Include(b => b.Components)
           .Include(b => b.BayConfigurationLevels)
           .Include(b => b.Manufacturer)
-          .Include(b => b.SWLSignage);
+          .Include(b => b.SWLSignage)
+          .OrderByDescending(i => i.CreatedDate);
 
     var totalRecord = await bayConfigurations.CountAsync();
     var result = new List<BayConfiguration>();
@@ -41,7 +42,7 @@ public class ListBayConfiguratorQueryService(AppDbContext _context) : IListBayCo
       TotalRecords = totalRecord,
       PageNumber = request.PageNumber,
       PageSize = !isAll ? request.PageSize : totalRecord,
-      DataDTO = result.OrderByDescending(i => i.CreatedDate).Select(x => x.Mapping()).ToList()
+      DataDTO = result.Select(x => x.Mapping()).ToList()
     };
   }
 
@@ -61,6 +62,7 @@ public class ListBayConfiguratorQueryService(AppDbContext _context) : IListBayCo
           .ThenInclude(b => b.SWLSignage)
       .Select(x => x.BayConfiguration)
       .Distinct()
+      .OrderByDescending(i => i!.CreatedDate)
       .ToListAsync();
 
     var totalRecord = bayConfigurations.Where(x => x != null).Count();
@@ -68,8 +70,7 @@ public class ListBayConfiguratorQueryService(AppDbContext _context) : IListBayCo
     var result = bayConfigurations
         .Where(x => x != null)
         .Skip((request.PageNumber - 1) * request.PageSize)
-        .Take(request.PageSize)
-        .OrderByDescending(i => i!.CreatedDate);
+        .Take(request.PageSize);
 
     return new PagedDataDTO<BayConfigurationDTO>()
     {
