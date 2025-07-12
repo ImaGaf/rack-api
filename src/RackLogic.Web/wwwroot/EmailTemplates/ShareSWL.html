@@ -1,0 +1,108 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Password Reset - Rack Logic</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 20px;
+            background-color: #f4f4f4;
+            font-family: Arial, sans-serif;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: #ffffff;
+            border-radius: 8px;
+            padding: 30px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.05);
+        }
+
+        .logo {
+            height: 100px;
+            margin-bottom: 20px;
+        }
+
+        .paragraph {
+            font-size: 16px;
+            color: #333;
+            margin-bottom: 16px;
+        }
+
+        .code {
+            font-size: 36px;
+            font-weight: bold;
+            letter-spacing: 10px;
+            text-align: center;
+            color: #000;
+            margin: 40px 0;
+        }
+
+        .small-text {
+            font-size: 14px;
+            color: #333;
+            margin-bottom: 24px;
+        }
+
+        .footer {
+            font-size: 11px;
+            color: #999;
+            line-height: 1.6;
+        }
+
+            .footer a {
+                color: #007BFF;
+                text-decoration: none;
+            }
+
+        .divider {
+            margin: 30px 0;
+            border: none;
+            border-top: 1px solid #e0e0e0;
+        }
+
+        a {
+            color: #007BFF;
+            text-decoration: none;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <!-- Logo -->
+        <img src="{logo}" alt="Rack Logic Logo" class="logo">
+
+        <!-- Content -->
+        <p class="paragraph">Hello,</p>
+
+        <p class="paragraph">{message}</p>
+
+        <p class="paragraph">Details for a pallet rack SWL Signage requirements have been shared with you.</p>
+        <p class="paragraph">Click the file below to see the the signage details.</p>
+
+        <!-- Sign off -->
+        <p class="small-text">
+            Thank you,<br><br>
+            Customer Support.
+        </p>
+
+        <hr class="divider">
+
+        <!-- Footer -->
+        <p class="footer">
+            This email was sent to you as a registered member of
+            <a href="http://craftingemails.com">craftingemails.com</a>.
+            To update your emails preferences
+            <a href="#">click here</a>.
+            Use of the service and website is subject to our
+            <a href="#">Terms of Use</a> and
+            <a href="#">Privacy Statement</a>.<br><br>
+            &copy; {currentYear} Craftingemails. All rights reserved.
+        </p>
+    </div>
+
+</body>
+</html>

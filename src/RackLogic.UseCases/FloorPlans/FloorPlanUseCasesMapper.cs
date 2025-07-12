@@ -75,7 +75,7 @@ public static partial class FloorPlanUseCasesMapper
       TotalBay = request.TotalBay,
       FloorPlanFiles = new List<FloorPlanFiles>(),
       FloorPlanItems = request.Items.Select(i => i.ToUpdateFloorPlanItem(request.FloorPlanId, bayConfiguration)).ToList(),
-      DefaultSettings = request.DefaultSettings.ToDefaultSettings(bayConfiguration, request.FloorPlanId)
+      DefaultSettings = request.DefaultSettings?.ToDefaultSettings(bayConfiguration, request.FloorPlanId)
     };
   }
 
@@ -128,7 +128,9 @@ public static partial class FloorPlanUseCasesMapper
       Rotation = item.Rotation,
       DueDate = item.DueDate,
       BayConfigurationId = GetBayConfigurationIdFromBayConfigId(item.BayConfigurationId, bayConfigurations),
-      Comments = comments
+      Comments = comments,
+      Side = item.Side,
+      AssetOrdinal = item.AssetOrdinal
     };
   }
 
@@ -156,7 +158,7 @@ public static partial class FloorPlanUseCasesMapper
         TotalBay: request.TotalBay,
         Items: request.Items.Select(i => i.ToFloorPlanItemCommand()).ToList() ?? new List<FloorPlanItemCommand>(),
         Files: request.Files ?? new List<IFormFile>(),
-        DefaultSettings: request.DefaultSettings.ToDefaultSettingsCommand()
+        DefaultSettings: request.DefaultSettings?.ToDefaultSettingsCommand()
     );
   }
 
@@ -207,7 +209,7 @@ public static partial class FloorPlanUseCasesMapper
     floorPlan.Description = request.Description;
     floorPlan.TotalRack = request.TotalRack;
     floorPlan.TotalBay = request.TotalBay;
-    floorPlan.DefaultSettings = request.DefaultSettings.ToDefaultSettings(bayConfiguration, request.FloorPlanId);
+    floorPlan.DefaultSettings = request.DefaultSettings?.ToDefaultSettings(bayConfiguration, request.FloorPlanId);
   }
 
   public static void UpdateFloorPlanItem(this UpdateFloorPlanItemInformationCommand item, FloorPlanItem floorPlanItem, IEnumerable<BayConfiguration> bayConfiguration)
@@ -224,6 +226,8 @@ public static partial class FloorPlanUseCasesMapper
     floorPlanItem.Rotation = item.Rotation;
     floorPlanItem.DueDate = item.DueDate;
     floorPlanItem.BayConfigurationId = GetBayConfigurationIdFromBayConfigId(item.BayConfigurationId, bayConfiguration);
+    floorPlanItem.AssetOrdinal = item.AssetOrdinal;
+    floorPlanItem.Side = item.Side;
   }
 
   public static void UpdateFloorPlanComment(this UpdateFloorPlanCommentCommand comment, FloorPlanComments floorPlanComment)
@@ -272,7 +276,8 @@ public static partial class FloorPlanUseCasesMapper
       BayConfigurationId = item.BayConfigurationId.HasValue && bayConfigDict.TryGetValue(item.BayConfigurationId.Value, out var bayConfigId)
             ? bayConfigId
             : null,
-      Comments = item.Comments?.Select(c => c.ToFloorPlanCommentResponse()).ToList() ?? new List<FloorPlanCommentResponse>()
+      Comments = item.Comments?.Select(c => c.ToFloorPlanCommentResponse()).ToList() ?? new List<FloorPlanCommentResponse>(),
+      AssetOrdinal = item.AssetOrdinal
     };
   }
 

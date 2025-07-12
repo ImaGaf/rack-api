@@ -13,7 +13,8 @@ public class CreateBayConfiguratorRequestValidator : Validator<CreateBayConfigur
     RuleFor(x => x.BayConfigurator).NotNull().WithMessage("BayConfigurator is required.");
 
     RuleFor(x => x.BayConfigurator.BayConfigId)
-        .NotEmpty().WithMessage("BayConfigId is required.");
+        .NotEmpty().WithMessage("BayConfigId is required.")
+        .MaximumLength(30);
 
     RuleFor(x => x.BayConfigurator.RackingType)
         .NotEmpty().WithMessage("RackingType is required.");

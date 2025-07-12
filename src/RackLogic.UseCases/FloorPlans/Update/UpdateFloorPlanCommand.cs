@@ -17,7 +17,7 @@ public record UpdateFloorPlanInformationCommand(
   int TotalBay,
   List<string> FileUrlsToDelete,
   List<IFormFile> Files,
-  UpdateDefaultSettingsCommand DefaultSettings,
+  UpdateDefaultSettingsCommand? DefaultSettings,
   List<UpdateFloorPlanItemInformationCommand> Items);
 
 public record UpdateFloorPlanItemInformationCommand(

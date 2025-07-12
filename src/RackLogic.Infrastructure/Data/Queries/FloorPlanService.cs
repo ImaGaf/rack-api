@@ -1,4 +1,6 @@
-﻿using System.Text.RegularExpressions;
+﻿using System.Linq;
+using System.Text.RegularExpressions;
+using System.Threading;
 using Ardalis.Result;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
@@ -172,6 +174,17 @@ public class FloorPlanService : IFloorPlanService
     // Delete FloorPlans that are not in the client
     if (floorPlansToDelete.Any())
     {
+      var inspections = await _context.Inspections
+          .Where(i => floorPlansToDelete.Select(fp => fp.Id).Contains(i.FloorPlanId))
+          .ToListAsync();
+
+      var inspectionIds = inspections.Select(s => s.Id).ToList();
+      var defectLogs = await _context.DefectLogs
+          .Where(d => inspectionIds.Contains(d.InspectionId ?? Guid.Empty))
+          .ToListAsync();
+
+      _context.DefectLogs.RemoveRange(defectLogs);
+      _context.Inspections.RemoveRange(inspections);
       _context.FloorPlans.RemoveRange(floorPlansToDelete);
     }
 
