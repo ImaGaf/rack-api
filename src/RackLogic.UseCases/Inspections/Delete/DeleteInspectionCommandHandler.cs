@@ -8,6 +8,7 @@ namespace RackLogic.UseCases.Inspections.Delete;
 
 public class DeleteInspectionCommandHandler(
   IRepositoryWithExpression<Inspection> _inspectionRepository,
+  IRepositoryWithExpression<DefectLog> _defectLogRepository,
   IUser _user)
   : ICommandHandler<DeleteInspectionCommand, Result>
 {
@@ -20,6 +21,10 @@ public class DeleteInspectionCommandHandler(
 
     inspection.IsDeleted = true;
     inspection.DeleterId = _user.Id;
+
+    await _defectLogRepository.DeleteAsync(
+      x => x.InspectionId == inspection.Id,
+      cancellationToken: cancellationToken);
 
     await _inspectionRepository.UpdateAsync(inspection, cancellationToken);
 
