@@ -40,7 +40,7 @@ public class CreateInspectionCommandHandler(
     if (floorPlan is null)
       return Result.NotFound("FloorPlanId is not found");
 
-    var continueInspection = floorPlan.Inspections?.FirstOrDefault(x => x.InspectionDate.Date <= DateTime.Now.Date && !x.IsEnd);
+    var continueInspection = floorPlan.Inspections?.FirstOrDefault(x => x.InspectionDate.Date <= DateTime.Now.Date && !x.IsEnd && !x.IsDeleted);
 
     if (continueInspection is null)
     {

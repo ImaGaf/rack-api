@@ -15,6 +15,7 @@ public class DeleteInspectionCommandHandler(
   public async Task<Result> Handle(DeleteInspectionCommand request, CancellationToken cancellationToken)
   {
     var inspection = await _inspectionRepository.GetByIdAsync(request.id, cancellationToken);
+    var defectLogs = await _defectLogRepository.GetListAsync(x => x.InspectionId == request.id, cancellationToken);
 
     if (inspection is null)
       return Result.NotFound();
@@ -22,11 +23,10 @@ public class DeleteInspectionCommandHandler(
     inspection.IsDeleted = true;
     inspection.DeleterId = _user.Id;
 
-    await _defectLogRepository.DeleteAsync(
-      x => x.InspectionId == inspection.Id,
-      cancellationToken: cancellationToken);
+    defectLogs.ForEach(x => x.IsDeleted = true);
 
     await _inspectionRepository.UpdateAsync(inspection, cancellationToken);
+    await _defectLogRepository.UpdateRangeAsync(defectLogs, cancellationToken);
 
     return Result.Success();
   }
