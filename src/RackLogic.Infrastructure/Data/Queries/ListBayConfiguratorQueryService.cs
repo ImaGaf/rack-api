@@ -51,7 +51,7 @@ public class ListBayConfiguratorQueryService(AppDbContext _context) : IListBayCo
     var bayConfigurations = await _context.FloorPlanItems
       .Where(x => x.FloorPlan!.WarehouseId == request.WarehouseId)
       .Where(x => x.FloorPlanId == request.AssetId || request.AssetId == null)
-      .Where(x => x.Rack == request.RackNumber || request.RackNumber == 0 || request.RackNumber == null)
+      .Where(x => x.Rack == request.RackNumber || request.RackNumber == null)
       .Include(x => x.BayConfiguration!)
            .ThenInclude(b => b.Components)
       .Include(x => x.BayConfiguration!)

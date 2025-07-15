@@ -53,6 +53,11 @@ public class UpdateDefectLog(IMediator _mediator) : Endpoint<UpdateDefectLogRequ
       throw new InvalidException(result?.ValidationErrors?.Select(x => x.ErrorMessage).ToList());
     }
 
+    if (result.IsError())
+    {
+      throw new InvalidException(result?.Errors?.ToList());
+    }
+
     await SendErrorsAsync(statusCode: 500, ct);
   }
 }
