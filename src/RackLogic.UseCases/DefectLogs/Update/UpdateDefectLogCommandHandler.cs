@@ -26,20 +26,19 @@ public class UpdateDefectLogCommandHandler(
     var entity = await defectLogService.GetByIdAsync(request.Id, cancellationToken);
 
     if (entity == null)
-    {
       return Result.NotFound("Defect Log not found.");
-    }
+
+    if (entity.IsCompleted)
+      return Result.Error("This defect have already completed.");
 
     if (request.IsCompleted != null)
     {
       entity.IsCompleted = request.IsCompleted.Value;
 
-      var detail = request.IsCompleted is true ? "Resolve" : "UnResolve";
-
       await defectLogHistoryService
         .CreateAsync(
           entity,
-          detail,
+          "Resolve",
           (int)DefectHistoryType.Completed,
           cancellationToken);
     }
