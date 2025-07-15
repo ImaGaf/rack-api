@@ -23,15 +23,26 @@ public class UpdateDefectLogCommandHandler(
     {
       return Result.Forbidden(ErrorMessages.DefectLog.ErrorMessageUpdate);
     }
+
     var entity = await defectLogService.GetByIdAsync(request.Id, cancellationToken);
 
     if (entity == null)
       return Result.NotFound("Defect Log not found.");
 
-    if (entity.IsCompleted)
+    if (!request.IsCompleted ?? false)
       return Result.Error("This defect have already completed.");
 
-    if (request.IsCompleted != null)
+    if (!string.IsNullOrEmpty(request.Comment) && request.Comment != entity.Comment)
+    {
+      await defectLogHistoryService
+        .CreateAsync(
+          entity,
+          request.Comment,
+          (int)DefectHistoryType.Note,
+          cancellationToken);
+    }
+
+    if (request.IsCompleted != null && request.IsCompleted.Value)
     {
       entity.IsCompleted = request.IsCompleted.Value;
 
@@ -55,18 +66,6 @@ public class UpdateDefectLogCommandHandler(
           entity,
           historyDetails,
           (int)DefectHistoryType.StatusUpdate,
-          cancellationToken);
-    }
-
-    if (request.Comment != null && request.Comment != entity.Comment)
-    {
-      entity.Comment = request.Comment;
-
-      await defectLogHistoryService
-        .CreateAsync(
-          entity,
-          request.Comment,
-          (int)DefectHistoryType.Note,
           cancellationToken);
     }
 
