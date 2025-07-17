@@ -29,32 +29,8 @@ public class UpdateDefectLogCommandHandler(
     if (entity == null)
       return Result.NotFound("Defect Log not found.");
 
-    if (!request.IsCompleted ?? false)
-      return Result.Error("This defect have already completed.");
-
-    if (!string.IsNullOrEmpty(request.Comment) && request.Comment != entity.Comment)
-    {
-      await defectLogHistoryService
-        .CreateAsync(
-          entity,
-          request.Comment,
-          (int)DefectHistoryType.Note,
-          cancellationToken);
-    }
-
-    if (request.IsCompleted != null && request.IsCompleted.Value)
-    {
-      entity.IsCompleted = request.IsCompleted.Value;
-
-      await defectLogHistoryService
-        .CreateAsync(
-          entity,
-          "Resolve",
-          (int)DefectHistoryType.Completed,
-          cancellationToken);
-    }
-
-    if (request.DefectStatus != null && entity.DefectStatus != (DefectStatus)request.DefectStatus)
+    // Update Status
+    if (request.DefectStatus != null && entity.DefectStatus != (DefectStatus)request.DefectStatus && !entity.IsCompleted)
     {
       entity.DefectStatus = (DefectStatus)request.DefectStatus;
 
@@ -66,6 +42,34 @@ public class UpdateDefectLogCommandHandler(
           entity,
           historyDetails,
           (int)DefectHistoryType.StatusUpdate,
+          cancellationToken);
+    }
+
+    // Update Note
+    if (!string.IsNullOrEmpty(request.Comment) && request.Comment != entity.Comment)
+    {
+      await defectLogHistoryService
+        .CreateAsync(
+          entity,
+          request.Comment,
+          (int)DefectHistoryType.Note,
+          cancellationToken);
+    }
+
+    // Return if the defect log is already completed
+    if (!request.IsCompleted ?? false)
+      return Result.Error("This defect have already completed.");
+
+    // Resolve Defect Log
+    if (request.IsCompleted != null && request.IsCompleted.Value)
+    {
+      entity.IsCompleted = request.IsCompleted.Value;
+
+      await defectLogHistoryService
+        .CreateAsync(
+          entity,
+          "Resolved",
+          (int)DefectHistoryType.Completed,
           cancellationToken);
     }
 

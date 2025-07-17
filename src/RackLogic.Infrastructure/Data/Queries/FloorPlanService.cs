@@ -1,6 +1,4 @@
-﻿using System.Linq;
-using System.Text.RegularExpressions;
-using System.Threading;
+﻿using System.Text.RegularExpressions;
 using Ardalis.Result;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
@@ -77,10 +75,12 @@ public class FloorPlanService : IFloorPlanService
                 new { Name = BayConfigurationCategory.PairSingleBin.ToString(), Value = fp.DefaultSettings?.PairSingleBin },
                 new { Name = BayConfigurationCategory.PairSingleBinDoubleDeep.ToString(), Value = fp.DefaultSettings?.PairSingleBinDoubleDeep },
                 new { Name = BayConfigurationCategory.DoubleBin.ToString(), Value = fp.DefaultSettings?.DoubleBin },
+                new { Name = BayConfigurationCategory.DoubleBinDT.ToString(), Value = fp.DefaultSettings?.DoubleBinDT },
                 new { Name = BayConfigurationCategory.DoubleBinDoubleDeep.ToString(), Value = fp.DefaultSettings?.DoubleBinDoubleDeep },
                 new { Name = BayConfigurationCategory.PairDoubleBin.ToString(), Value = fp.DefaultSettings?.PairDoubleBin },
                 new { Name = BayConfigurationCategory.PairDoubleBinDoubleDeep.ToString(), Value = fp.DefaultSettings?.PairDoubleBinDoubleDeep },
                 new { Name = BayConfigurationCategory.TripleBin.ToString(), Value = fp.DefaultSettings?.TripleBin },
+                new { Name = BayConfigurationCategory.TripleBinDT.ToString(), Value = fp.DefaultSettings?.TripleBinDT },
                 new { Name = BayConfigurationCategory.TripleBinDoubleDeep.ToString(), Value = fp.DefaultSettings?.TripleBinDoubleDeep },
                 new { Name = BayConfigurationCategory.PairTripleBin.ToString(), Value = fp.DefaultSettings?.PairTripleBin },
                 new { Name = BayConfigurationCategory.PairTripleBinDoubleDeep.ToString(), Value = fp.DefaultSettings?.PairTripleBinDoubleDeep },
