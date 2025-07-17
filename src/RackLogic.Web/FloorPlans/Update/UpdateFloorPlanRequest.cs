@@ -77,10 +77,12 @@ public class UpdateDefaultSetting
   public string? PairSingleBin { get; set; }
   public string? PairSingleBinDoubleDeep { get; set; }
   public string? DoubleBin { get; set; }
+  public string? DoubleBinDT { get; set; }
   public string? DoubleBinDoubleDeep { get; set; }
   public string? PairDoubleBin { get; set; }
   public string? PairDoubleBinDoubleDeep { get; set; }
   public string? TripleBin { get; set; }
+  public string? TripleBinDT { get; set; }
   public string? TripleBinDoubleDeep { get; set; }
   public string? PairTripleBin { get; set; }
   public string? PairTripleBinDoubleDeep { get; set; }

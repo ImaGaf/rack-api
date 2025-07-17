@@ -49,10 +49,12 @@ public record UpdateDefaultSettingsCommand(
     string? PairSingleBin,
     string? PairSingleBinDoubleDeep,
     string? DoubleBin,
+    string? DoubleBinDT,
     string? DoubleBinDoubleDeep,
     string? PairDoubleBin,
     string? PairDoubleBinDoubleDeep,
     string? TripleBin,
+    string? TripleBinDT,
     string? TripleBinDoubleDeep,
     string? PairTripleBin,
     string? PairTripleBinDoubleDeep);

@@ -12,5 +12,7 @@ public enum BayConfigurationCategory
   TripleBin,
   TripleBinDoubleDeep,
   PairTripleBin,
-  PairTripleBinDoubleDeep
+  PairTripleBinDoubleDeep,
+  DoubleBinDT,
+  TripleBinDT,
 }
