@@ -61,7 +61,7 @@ public class FloorPlanService : IFloorPlanService
     var validBayConfigIdSet = new HashSet<string>(validBayConfigIds.Select(bc => bc.BayConfigId));
 
     var invalidItems = floorPlans
-        .SelectMany(fp => fp.Items)
+        .SelectMany(fp => fp.Items ?? Enumerable.Empty<FloorPlanItemCommand>())
         .Where(item => !string.IsNullOrEmpty(item.BayConfigurationId) && !validBayConfigIdSet.Contains(item.BayConfigurationId));
 
     if (invalidItems.Any())
@@ -106,6 +106,7 @@ public class FloorPlanService : IFloorPlanService
         .ThenInclude(i => i.Comments)
         .Include(f => f.DefaultSettings)
         .Where(f => f.WarehouseId == warehouseId)
+        .OrderBy(f => f.FloorNumber)
         .ToListAsync();
 
     return floorPlans.Select(floorPlan => floorPlan.ToFloorPlanDTO(bayConfigurations)).ToList();

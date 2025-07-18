@@ -28,8 +28,6 @@ public class CreateFloorAssetRequestValidator : Validator<CreateFloorAssetReques
       floorPlan.RuleFor(fp => fp.TotalBay)
           .NotEmpty().WithMessage("TotalBay is required and must be correctly formatted.");
 
-      floorPlan.RuleFor(fp => fp.Items)
-          .NotEmpty().WithMessage("Items list cannot be empty.");
 
       floorPlan.RuleForEach(fp => fp.Items).ChildRules(item =>
       {
