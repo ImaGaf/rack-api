@@ -15,8 +15,8 @@ public record FloorPlanCommand(
     string? Description,
     int TotalRack,
     int TotalBay,
-    List<FloorPlanItemCommand> Items,
-    List<IFormFile> Files,
+    List<FloorPlanItemCommand>? Items,
+    List<IFormFile>? Files,
     DefaultSettingsCommand? DefaultSettings);
 
 public record FloorPlanItemCommand(

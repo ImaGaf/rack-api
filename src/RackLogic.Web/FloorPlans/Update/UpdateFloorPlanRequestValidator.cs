@@ -31,9 +31,6 @@ public class UpdateFloorPlanRequestValidator : Validator<UpdateFloorPlanRequest>
       floorPlan.RuleFor(fp => fp.TotalBay)
           .NotNull().WithMessage("TotalBay is required and must be correctly formatted.");
 
-      floorPlan.RuleFor(fp => fp.Items)
-          .NotEmpty().WithMessage("Items list cannot be empty.");
-
       // Check each element in Items
       floorPlan.RuleForEach(fp => fp.Items).ChildRules(item =>
       {

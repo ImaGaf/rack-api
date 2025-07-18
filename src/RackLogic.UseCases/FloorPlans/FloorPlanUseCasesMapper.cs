@@ -22,7 +22,7 @@ public static partial class FloorPlanUseCasesMapper
       TotalRack = request.TotalRack,
       TotalBay = request.TotalBay,
       FloorPlanFiles = new List<FloorPlanFiles>(),
-      FloorPlanItems = request.Items.Select(i => i.ToFloorPlanItem(request.FloorPlanId, bayConfiguration)).ToList(),
+      FloorPlanItems = request.Items?.Select(i => i.ToFloorPlanItem(request.FloorPlanId, bayConfiguration)).ToList() ?? new List<FloorPlanItem>(),
       DefaultSettings = request.DefaultSettings?.ToDefaultSettings(bayConfiguration, request.FloorPlanId)
     };
   }
