@@ -35,6 +35,7 @@ public static partial class FloorPlanUseCasesMapper
     {
       Id = item.Id,
       FloorPlanId = floorPlanId,
+      BayId = item.BayId,
       Rack = item.Rack,
       Bay = item.Bay,
       Offset = item.Offset,
@@ -85,6 +86,7 @@ public static partial class FloorPlanUseCasesMapper
     {
       Id = item.Id,
       FloorPlanId = floorPlanId,
+      BayId = item.BayId,
       Rack = item.Rack,
       Bay = item.Bay,
       Offset = item.Offset,
@@ -118,6 +120,7 @@ public static partial class FloorPlanUseCasesMapper
     {
       Id = item.Id,
       FloorPlanId = floorPlanId,
+      BayId = item.BayId,
       Rack = item.Rack,
       Bay = item.Bay,
       Offset = item.Offset,
@@ -186,6 +189,7 @@ public static partial class FloorPlanUseCasesMapper
   {
     return new FloorPlanItemCommand(
         Id: item.Id,
+        BayId: item.BayId,
         Rack: item.Rack,
         Bay: item.Bay,
         Offset: item.Offset,
@@ -216,6 +220,7 @@ public static partial class FloorPlanUseCasesMapper
 
   public static void UpdateFloorPlanItem(this UpdateFloorPlanItemInformationCommand item, FloorPlanItem floorPlanItem, IEnumerable<BayConfiguration> bayConfiguration)
   {
+    floorPlanItem.BayId = item.BayId;
     floorPlanItem.Rack = item.Rack;
     floorPlanItem.Bay = item.Bay;
     floorPlanItem.Offset = item.Offset;
@@ -264,6 +269,7 @@ public static partial class FloorPlanUseCasesMapper
     return new FloorPlanItemResponse
     {
       Id = item.Id,
+      BayId = item.BayId,
       Rack = item.Rack,
       Bay = item.Bay,
       Offset = item.Offset,

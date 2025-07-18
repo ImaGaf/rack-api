@@ -14,7 +14,7 @@ public static partial class FloorPlanItemMapper
   [MapProperty(nameof(FloorPlanItem.Id), nameof(InspectionFloorPlanItemDto.FloorPlanItemId))]
   [MapProperty(nameof(FloorPlanItem.BayConfiguration.InterimInterval), nameof(InspectionFloorPlanItemDto.Interval))]
   [MapProperty(nameof(FloorPlanItem.DueDate), nameof(InspectionFloorPlanItemDto.InspectionDueDate))]
-  [MapProperty(nameof(FloorPlanItem.BayConfiguration.BayConfigId), nameof(InspectionFloorPlanItemDto.ConfigId))]
+  [MapProperty(nameof(FloorPlanItem.BayConfiguration.BayConfigId), nameof(InspectionFloorPlanItemDto.BayConfigId))]
   public static partial InspectionFloorPlanItemDto ToInspectionFloorPlanItemDto(this FloorPlanItem item);
 
   public static FloorPlanItemDto Mapping(this FloorPlanItem item)
@@ -24,11 +24,12 @@ public static partial class FloorPlanItemMapper
       Id = item.Id,
       BayConfigurationId = item.BayConfigurationId,
       DueDate = item.DueDate,
+      BayId = item.BayId,
       Bay = item.Bay,
       AssetOrdinal = item.AssetOrdinal,
       FloorPlanId = item.FloorPlanId,
       Offset = item.Offset,
-      Rack = item.Rack, 
+      Rack = item.Rack,
       Rotation = item.Rotation,
       Height = item.Height,
       Size = item.Size,
@@ -36,7 +37,6 @@ public static partial class FloorPlanItemMapper
       ObjectType = item.ObjectType,
       Side = item.Side,
       BayConfiguration = item.BayConfiguration?.Mapping(),
-      
     };
   }
 

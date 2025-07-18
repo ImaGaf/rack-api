@@ -1,6 +1,7 @@
 ﻿namespace RackLogic.Core.Common.Entity;
 public class FloorPlanItem : BaseEntityCustom
 {
+  public required string BayId { get; set; } = string.Empty;
   public int? Rack { get; set; }
   public int? Bay { get; set; }
   public int? AssetOrdinal { get; set; }

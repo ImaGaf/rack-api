@@ -5,6 +5,7 @@ namespace RackLogic.UseCases.FloorPlanItems.GetDetail;
 public class FloorPlanItemDto
 {
   public Guid Id { get; set; }
+  public required string BayId { get; set; }
   public int? Rack { get; set; }
   public int? Bay { get; set; }
   public int? AssetOrdinal { get; set; }
