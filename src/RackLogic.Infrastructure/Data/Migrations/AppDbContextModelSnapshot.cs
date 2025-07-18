@@ -773,6 +773,10 @@ namespace RackLogic.Infrastructure.Data.Migrations
                     b.Property<Guid?>("BayConfigurationId")
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<string>("BayId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<DateTime>("CreationTime")
                         .HasColumnType("datetime2");
 

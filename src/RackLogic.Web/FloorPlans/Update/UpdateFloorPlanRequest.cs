@@ -44,6 +44,7 @@ public class UpdateFloorPlanItemInformation
   {
     Id = id ?? Guid.NewGuid();
   }
+  public required string BayId { get; set; }
   public int? Rack { get; set; }
   public int? Bay { get; set; }
   public required string Offset { get; set; }

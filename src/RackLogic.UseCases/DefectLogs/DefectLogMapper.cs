@@ -16,6 +16,7 @@ public static partial class DefectLogMapper
   [MapProperty(nameof(DefectLog.FloorPlanItem.Bay), nameof(DefectLogDto.Bay))]
   [MapProperty(nameof(DefectLog.FloorPlanItem.Rack), nameof(DefectLogDto.Rack))]
   [MapProperty(nameof(DefectLog.FloorPlanItem.Side), nameof(DefectLogDto.Side))]
+  [MapProperty(nameof(DefectLog.FloorPlanItem.BayId), nameof(DefectLogDto.BayId))]
   [MapProperty(nameof(DefectLog.FloorPlanItem.AssetOrdinal), nameof(DefectLogDto.AssetOrdinal))]
   public static partial DefectLogDto ToDto(this DefectLog entity);
 
@@ -53,6 +54,7 @@ public static partial class DefectLogMapper
     dto.BayConfigId = entity.FloorPlanItem!.BayConfiguration!.BayConfigId;
     dto.Bay = entity.FloorPlanItem.Bay;
     dto.Rack = entity.FloorPlanItem.Rack;
+    dto.BayId = entity.FloorPlanItem.BayId;
 
     return dto;
   }

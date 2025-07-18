@@ -15,6 +15,7 @@ public class GetFloorPlanByIdResponse
 public class FloorPlanItemResponse
 {
   public Guid? Id { get; set; }
+  public required string BayId { get; set; }
   public int? Rack { get; set; }
   public int? Bay { get; set; }
   public required string Offset { get; set; }

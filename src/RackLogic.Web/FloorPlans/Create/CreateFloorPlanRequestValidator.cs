@@ -33,6 +33,10 @@ public class CreateFloorAssetRequestValidator : Validator<CreateFloorAssetReques
 
       floorPlan.RuleForEach(fp => fp.Items).ChildRules(item =>
       {
+        item.RuleFor(i => i.BayId)
+            .NotEmpty().WithMessage("BayId is required and must be correctly formatted.")
+            .MaximumLength(30).WithMessage("BayId's maximum length is 30 characters");
+
         item.RuleFor(i => i.Offset)
             .NotEmpty().WithMessage("Offset is required and must be correctly formatted.");
 
@@ -57,8 +61,8 @@ public class CreateFloorAssetRequestValidator : Validator<CreateFloorAssetReques
               .LessThanOrEqualTo(10 * 1024 * 1024) // 10MB
               .WithMessage("File size must not exceed 10MB.");
           });
-      });
-    }
+    });
+  }
 
   private bool BeValidGuid(Guid guid)
   {
