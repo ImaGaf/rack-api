@@ -270,6 +270,7 @@ public static partial class FloorPlanUseCasesMapper
     {
       Id = item.Id,
       BayId = item.BayId,
+      BayConfigId = item.BayConfiguration is not null ? item.BayConfiguration.BayConfigId : string.Empty,
       Rack = item.Rack,
       Bay = item.Bay,
       Offset = item.Offset,
