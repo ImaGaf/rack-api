@@ -12,5 +12,5 @@ public class ListBayConfigurationRequest : PaginationRequest
   [FromRoute]
   public Guid? AssetId { get; set; }
   [FromRoute]
-  public int? RackNumber { get; set; }
+  public string? BayConfigId { get; set; }
 }

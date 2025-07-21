@@ -63,7 +63,6 @@ public class BayConfigurationService : IBayConfigurationService
       .Replace("{{Client}}", bayConfiguration!.Warehouses!.CompanyName)
       .Replace("{{LocationAddress}}", bayConfiguration.Warehouses.Address)
       .Replace("{{Asset}}", asset is null ? string.Empty : asset.AssetName)
-      .Replace("{{RackNumber}}", request.RackNumber.ToString())
       .Replace("{{InstallationDate}}", bayConfiguration.InstallationDate?.ToString("dd MMMM yyyy"))
       .Replace("{{AustralianStandardsCompliance}}", bayConfiguration.ASComplianceVersion)
       .Replace("{{Manufacturer}}", bayConfiguration.Manufacturer!.Name)

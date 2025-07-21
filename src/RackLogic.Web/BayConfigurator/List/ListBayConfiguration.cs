@@ -21,7 +21,7 @@ public class ListBayConfiguration(IMediator _mediator) : Endpoint<ListBayConfigu
         req.PageSize,
         req.IsGetAll,
         req.AssetId,
-        req.RackNumber),
+        req.BayConfigId),
       ct);
 
     if (result.IsSuccess)
