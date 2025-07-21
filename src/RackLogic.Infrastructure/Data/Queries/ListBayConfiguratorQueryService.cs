@@ -9,36 +9,38 @@ public class ListBayConfiguratorQueryService(AppDbContext _context) : IListBayCo
 {
   public async Task<PagedDataDTO<BayConfigurationDTO>> ListAsync(ListBayConfiguratorQuery request)
   {
-    var bayConfigurations = _context.BayConfigurations
-          .Where(x => x.WarehouseId == request.WarehouseId)
-          .Where(x => x.BayConfigId == request.BayConfigId || string.IsNullOrEmpty(request.BayConfigId))
-          .Include(b => b.Components)
-          .Include(b => b.BayConfigurationLevels)
-          .Include(b => b.Manufacturer)
-          .Include(b => b.SWLSignage)
-          .OrderByDescending(i => i.CreatedDate);
+    var query = _context.FloorPlanItems
+      .Where(x => x.FloorPlan!.WarehouseId == request.WarehouseId)
+      .Where(x => request.AssetId == null || x.FloorPlanId == request.AssetId)
+      .Include(x => x.BayConfiguration!)
+           .ThenInclude(b => b.Components)
+      .Include(x => x.BayConfiguration!)
+          .ThenInclude(b => b.BayConfigurationLevels)
+      .Include(x => x.BayConfiguration!)
+          .ThenInclude(b => b.Manufacturer)
+      .Include(x => x.BayConfiguration!)
+          .ThenInclude(b => b.SWLSignage)
+      .Select(x => x.BayConfiguration)
+      .Distinct()
+      .OrderByDescending(i => i!.CreatedDate) as IQueryable<BayConfiguration>;
 
-    var totalRecord = await bayConfigurations.CountAsync();
-    var result = new List<BayConfiguration>();
-    var isAll = request.IsGetAll ?? false;
-    if (!isAll)
-    {
-      result = await bayConfigurations
-         .Skip((request.PageNumber - 1) * request.PageSize)
-         .Take(request.PageSize)
-         .ToListAsync();
-    }
-    else
-    {
-      result = await bayConfigurations.ToListAsync();
-    }
+    query = query.Where(x => x!.BayConfigId == request.BayConfigId || string.IsNullOrEmpty(request.BayConfigId));
+
+    var bayConfigurations = await query.ToListAsync();
+
+    var totalRecord = bayConfigurations.Where(x => x != null).Count();
+
+    var result = bayConfigurations
+        .Where(x => x != null)
+        .Skip((request.PageNumber - 1) * request.PageSize)
+        .Take(request.PageSize);
 
     return new PagedDataDTO<BayConfigurationDTO>()
     {
       TotalRecords = totalRecord,
       PageNumber = request.PageNumber,
-      PageSize = !isAll ? request.PageSize : totalRecord,
-      DataDTO = result.Select(x => x.Mapping()).ToList()
+      PageSize = request.PageSize,
+      DataDTO = result.Select(x => x!.Mapping()).ToList()
     };
   }
 }

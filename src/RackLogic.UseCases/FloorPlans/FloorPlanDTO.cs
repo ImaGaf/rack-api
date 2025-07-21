@@ -16,6 +16,7 @@ public class FloorPlanItemResponse
 {
   public Guid? Id { get; set; }
   public required string BayId { get; set; }
+  public required string BayConfigId { get; set; }
   public int? Rack { get; set; }
   public int? Bay { get; set; }
   public required string Offset { get; set; }
@@ -24,7 +25,7 @@ public class FloorPlanItemResponse
   public double? Height { get; set; }
   public string? ObjectType { get; set; }
   public int? AssetOrdinal { get; set; }
-  public string? Side { get; set; } 
+  public string? Side { get; set; }
   public required double Rotation { get; set; }
   public string? BayConfigurationId { get; set; }
   public DateTime? DueDate { get; set; }
