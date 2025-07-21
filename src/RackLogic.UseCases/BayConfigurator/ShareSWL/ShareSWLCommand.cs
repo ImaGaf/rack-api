@@ -7,7 +7,6 @@ public record ShareSWLCommand(
   Guid BayConfigurationId,
   string? Message,
   Guid AssetId,
-  int? RackNumber,
   string Email
   ) : ICommand<Result>
 {

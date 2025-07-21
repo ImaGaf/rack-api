@@ -9,5 +9,5 @@ public record ListBayConfiguratorQuery(
   int PageSize,
   bool? IsGetAll,
   Guid? AssetId,
-  int? RackNumber)
+  string? BayConfigId)
 : IQuery<Result<PagedDataDTO<BayConfigurationDTO>>>;
