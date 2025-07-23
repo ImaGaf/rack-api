@@ -24,7 +24,6 @@ public class CreateFloorPlan(IMediator _mediator) : Endpoint<RequestCreateFloorP
 
   public override async Task HandleAsync(RequestCreateFloorPlan req, CancellationToken ct)
   {
-
     var form = await HttpContext.Request.ReadFormAsync();
 
     var files = form.Files.ToList();

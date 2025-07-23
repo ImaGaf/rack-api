@@ -65,7 +65,7 @@ public class FloorPlanItem
   public string? Side { get; set; }
   [Required]
   public required double Rotation { get; set; }
-  public string? BayConfigurationId { get; set; }
+  public string? BayConfigId { get; set; }
   public bool? IsRequiredBayConfig { get; set; }
   public DateTime? DueDate { get; set; }
 }

@@ -58,14 +58,15 @@ public class FloorPlanService : IFloorPlanService
   {
     var validBayConfigIds = await _bayConfigurationRepository
         .FindAsync(bc => bc.WarehouseId == warehouseId, cancellationToken);
+
     var validBayConfigIdSet = new HashSet<string>(validBayConfigIds.Select(bc => bc.BayConfigId));
 
     var invalidItems = floorPlans
         .SelectMany(fp => fp.Items ?? Enumerable.Empty<FloorPlanItemCommand>())
-        .Where(item => !string.IsNullOrEmpty(item.BayConfigurationId) && !validBayConfigIdSet.Contains(item.BayConfigurationId));
+        .Where(item => !string.IsNullOrEmpty(item.BayConfigId) && !validBayConfigIdSet.Contains(item.BayConfigId));
 
     if (invalidItems.Any())
-      return Result.Invalid(new ValidationError($"Invalid BayConfigId(s): {string.Join(", ", invalidItems.Select(i => i.BayConfigurationId))} in FloorPlanItems."));
+      return Result.Invalid(new ValidationError($"Invalid BayConfigId(s): {string.Join(", ", invalidItems.Select(i => i.BayConfigId))} in FloorPlanItems."));
 
     var invalidSetting = floorPlans
         .SelectMany(fp => new[]

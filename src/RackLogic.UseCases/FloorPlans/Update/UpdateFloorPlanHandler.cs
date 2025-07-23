@@ -31,6 +31,7 @@ public class UpdateFloorPlanHandler(
         request.WarehouseId,
         cancellationToken
     );
+
     if (!validationResult.IsSuccess) return validationResult;
 
     // Use CreateOrUpdateAsync to process both existing and non-existing floor plans

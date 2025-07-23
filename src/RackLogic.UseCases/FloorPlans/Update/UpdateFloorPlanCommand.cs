@@ -33,7 +33,7 @@ public record UpdateFloorPlanItemInformationCommand(
   int? AssetOrdinal,
   string? Side,
   double Rotation,
-  string? BayConfigurationId,
+  string? BayConfigId,
   bool? IsRequiredBayConfig,
   DateTime? DueDate,
   List<UpdateFloorPlanCommentCommand>? Comments);

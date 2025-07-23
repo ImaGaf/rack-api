@@ -47,9 +47,9 @@ public class UpdateFloorPlanRequestValidator : Validator<UpdateFloorPlanRequest>
         item.RuleFor(i => i.Rotation)
             .NotNull().WithMessage("Rotation is required and must be correctly formatted.");
 
-        item.RuleFor(i => i.BayConfigurationId)
+        item.RuleFor(i => i.BayConfigId)
             .NotEmpty().When(i => i.IsRequiredBayConfig == true)
-            .WithMessage("BayConfigurationId for FloorPlanItems is required.");
+            .WithMessage("BayConfigId for FloorPlanItems is required.");
 
         // Check list Comments
         item.RuleForEach(i => i.Comments).ChildRules(comment =>
