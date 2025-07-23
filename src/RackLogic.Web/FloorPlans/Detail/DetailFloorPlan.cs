@@ -16,7 +16,7 @@ public class DetailFloorPlan(IMediator _mediator) : Endpoint<DetailFloorPlanRequ
 
   public override async Task HandleAsync(DetailFloorPlanRequest req, CancellationToken ct)
   {
-    var result = await _mediator.Send(new GetDetailFloorPlanQuery(req.wareHouserId, req.floorPlanId), ct);
+    var result = await _mediator.Send(new GetDetailFloorPlanQuery(req.wareHouseId, req.floorPlanId), ct);
     if (result.IsSuccess)
     {
       Response = new ApiResponse<FloorPlanDTO>(result.Value);

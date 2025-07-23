@@ -9,6 +9,45 @@ public class ListBayConfiguratorQueryService(AppDbContext _context) : IListBayCo
 {
   public async Task<PagedDataDTO<BayConfigurationDTO>> ListAsync(ListBayConfiguratorQuery request)
   {
+    if (request.AssetId != null)
+    {
+      return await FilterByAssetId(request);
+    }
+
+    var bayConfigurations = _context.BayConfigurations
+          .Where(x => x.WarehouseId == request.WarehouseId)
+          .Include(b => b.Components)
+          .Include(b => b.BayConfigurationLevels)
+          .Include(b => b.Manufacturer)
+          .Include(b => b.SWLSignage)
+          .OrderByDescending(i => i.CreatedDate);
+
+    var totalRecord = await bayConfigurations.CountAsync();
+    var result = new List<BayConfiguration>();
+    var isAll = request.IsGetAll ?? false;
+    if (!isAll)
+    {
+      result = await bayConfigurations
+         .Skip((request.PageNumber - 1) * request.PageSize)
+         .Take(request.PageSize)
+         .ToListAsync();
+    }
+    else
+    {
+      result = await bayConfigurations.ToListAsync();
+    }
+
+    return new PagedDataDTO<BayConfigurationDTO>()
+    {
+      TotalRecords = totalRecord,
+      PageNumber = request.PageNumber,
+      PageSize = !isAll ? request.PageSize : totalRecord,
+      DataDTO = result.Select(x => x.Mapping()).ToList()
+    };
+  }
+
+  public async Task<PagedDataDTO<BayConfigurationDTO>> FilterByAssetId(ListBayConfiguratorQuery request)
+  {
     var query = _context.FloorPlanItems
       .Where(x => x.FloorPlan!.WarehouseId == request.WarehouseId)
       .Where(x => request.AssetId == null || x.FloorPlanId == request.AssetId)

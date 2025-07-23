@@ -45,7 +45,6 @@ public class CreateFloorPlanHandler(
 
   private async Task<Result<bool>> AddFloorPlanAsync(CreateFloorPlanCommand request, Guid warehouseId, CancellationToken cancellationToken)
   {
-
     try
     {
       var bayConfigurations = await _bayConfigurationRepository.FindAsync(f => f.WarehouseId == warehouseId);
@@ -55,6 +54,9 @@ public class CreateFloorPlanHandler(
       var floorPlanFiles = await _floorPlanService.SaveFloorPlanFilesAsync(request.FloorPlans, warehouseId);
       floorPlans = floorPlans.ToList().MapFloorPlanFilesToFloorPlan(floorPlanFiles);
       var results = await _floorPlanRepository.AddRangeAsync(floorPlans, cancellationToken);
+
+      await _floorPlanRepository.SaveChangesAsync();
+
       return results.Any();
     }
     catch (DbUpdateException ex)
