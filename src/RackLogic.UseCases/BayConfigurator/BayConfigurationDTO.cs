@@ -79,7 +79,7 @@ public class ComponentDTO
   public string? Kit { get; set; }
   public string? ComponentKit { get; set; }
   public string? BeamStyle { get; set; }
-  public int? MaterialThickness { get; set; }
+  public float? MaterialThickness { get; set; }
   public string? ClearEntryWidth { get; set; }
   public string? ConnectorType { get; set; }
 }

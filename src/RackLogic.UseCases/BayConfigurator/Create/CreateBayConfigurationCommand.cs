@@ -74,7 +74,7 @@ public record ComponentCommand(
     string? Kit,
     string? ComponentKit,
     string? BeamStyle,
-    int? MaterialThickness,
+    float? MaterialThickness,
     string? ClearEntryWidth,
     int? ClearanceBetweenFrames,
     string? ConnectorType

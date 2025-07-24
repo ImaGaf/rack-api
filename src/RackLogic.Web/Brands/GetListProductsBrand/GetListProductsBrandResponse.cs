@@ -8,7 +8,7 @@ public class GetListProductsBrandResponse
   public int? Height { get; set; }
   public int? Width { get; set; }
   public int? Length { get; set; }
-  public int? MaterialThickness { get; set; }
+  public float? MaterialThickness { get; set; }
   public int? DistanceCenterToCenter { get; set; }
   public string? ClearEntryWidth { get; set; }
   public string? Orientation { get; set; }

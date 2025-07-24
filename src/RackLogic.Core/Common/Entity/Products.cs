@@ -10,7 +10,7 @@ public class Products : EntityBase<Guid>, IAggregateRoot
   public int? Height { get; set; }
   public int? Width { get; set; }
   public int? Length { get; set; } // Not explicitly listed, but may be useful
-  public int? MaterialThickness { get; set; } // For Upright
+  public float? MaterialThickness { get; set; } // For Upright
   public int? DistanceCenterToCenter { get; set; } // For Brace (horizontal & diagonal)
   public string? ClearEntryWidth { get; set; } // For Beam
 

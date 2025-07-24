@@ -373,8 +373,8 @@ namespace RackLogic.Infrastructure.Data.Migrations
                     b.Property<int?>("LowerHeight")
                         .HasColumnType("int");
 
-                    b.Property<int?>("MaterialThickness")
-                        .HasColumnType("int");
+                    b.Property<float?>("MaterialThickness")
+                        .HasColumnType("real");
 
                     b.Property<string>("Notes")
                         .HasColumnType("nvarchar(max)");
@@ -1090,8 +1090,8 @@ namespace RackLogic.Infrastructure.Data.Migrations
                     b.Property<Guid?>("ManufacturerId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<int?>("MaterialThickness")
-                        .HasColumnType("int");
+                    b.Property<float?>("MaterialThickness")
+                        .HasColumnType("real");
 
                     b.Property<string>("Orientation")
                         .HasColumnType("nvarchar(max)");
