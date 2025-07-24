@@ -10,5 +10,5 @@ public enum DefectHistoryType
   Note,
   [Display(Description = "Updated to:")]
   StatusUpdate,
-  Completed
+  Resolved,
 }

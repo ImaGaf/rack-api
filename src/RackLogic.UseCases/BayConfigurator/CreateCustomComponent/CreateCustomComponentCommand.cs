@@ -8,7 +8,7 @@ public record CreateCustomComponentCommand(
   int? Height,
   int? Width,
   int? Length,
-  int? MaterialThickness,
+  float? MaterialThickness,
   int? DistanceCenterToCenter,
   string? ClearEntryWidth,
   string? Orientation,
