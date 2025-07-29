@@ -11,17 +11,18 @@ public class CreateWarehouseValidator : Validator<CreateWarehouseRequest>
            .NotEmpty()
            .Matches(@"^[a-zA-Z0-9 ]+$")
            .WithMessage("Company Name can only contain alphanumeric characters.");
+
     RuleFor(r => r.ABN)
-            .NotEmpty()
             .Length(11)
             .Matches(@"^\d{11}$")
             .WithMessage("ABN must be exactly 11 numeric characters.");
+
     RuleFor(r => r.ClientPhoneNumber)
            .NotEmpty()
            .Matches(@"^0[45]\d{8}$")
            .WithMessage("Invalid phone number format.");
+
     RuleFor(r => r.OwnerPhoneNumber)
-           .NotEmpty()
            .Matches(@"^0[45]\d{8}$")
            .WithMessage("Invalid phone number format.");
 

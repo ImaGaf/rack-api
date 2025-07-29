@@ -5,7 +5,7 @@ public class Warehouse : BaseEntityCustom
 {
   public required string CompanyName { get; set; }
   public required Guid OwnerId { get; set; }
-  public required string ABN { get; set; }
+  public string? ABN { get; set; }
   public required string Address { get; set; }
   public string? AddressOptional { get; set; }
   public string? City { get; set; }
@@ -17,8 +17,8 @@ public class Warehouse : BaseEntityCustom
   public string? FileImageUrl { get; set; }
   public required string OwnerFirstName { get; set; }
   public required string OwnerLastName { get; set; }
-  public required string OwnerEmailAddress { get; set; }
-  public required string OwnerPhoneNumber { get; set; }
+  public string? OwnerEmailAddress { get; set; }
+  public string? OwnerPhoneNumber { get; set; }
   public DateTime? InspectionDueDate { get; set; }
   public virtual ApplicationUser? User { get; set; }
   public virtual required ICollection<FloorPlan> FloorPlans { get; set; }
