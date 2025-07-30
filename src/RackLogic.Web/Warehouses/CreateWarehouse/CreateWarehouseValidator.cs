@@ -19,11 +19,11 @@ public class CreateWarehouseValidator : Validator<CreateWarehouseRequest>
 
     RuleFor(r => r.ClientPhoneNumber)
            .NotEmpty()
-           .Matches(@"^0[45]\d{8}$")
+           .Matches(@"^\d{10}$")
            .WithMessage("Invalid phone number format.");
 
     RuleFor(r => r.OwnerPhoneNumber)
-           .Matches(@"^0[45]\d{8}$")
+           .Matches(@"^\d{10}$")
            .WithMessage("Invalid phone number format.");
 
     RuleFor(r => r.OwnerEmailAddress)

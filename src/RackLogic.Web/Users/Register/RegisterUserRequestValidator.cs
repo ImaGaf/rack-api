@@ -21,7 +21,7 @@ public class RegisterUserRequestValidator : Validator<RegisterUserRequest>
 
     RuleFor(r => r.PhoneNumber)
       .NotEmpty()
-      .Matches(@"^0[45]\d{8}$")
+      .Matches(@"^\d{10}$")
       .WithMessage("Invalid phone number format.");
 
     RuleFor(r => r.FirstName)
