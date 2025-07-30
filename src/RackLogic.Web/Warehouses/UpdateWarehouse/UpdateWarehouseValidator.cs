@@ -20,11 +20,11 @@ public class UpdateWarehouseValidator : Validator<UpdateWarehouseRequest>
             .WithMessage("ABN must be exactly 11 numeric characters.");
     RuleFor(r => r.ClientPhoneNumber)
            .NotEmpty()
-           .Matches(@"^0[45]\d{8}$")
+           .Matches(@"^\d{10}$")
            .WithMessage("Invalid phone number format.");
     RuleFor(r => r.OwnerPhoneNumber)
            .NotEmpty()
-           .Matches(@"^0[45]\d{8}$")
+           .Matches(@"^\d{10}$")
            .WithMessage("Invalid phone number format.");
     RuleFor(r => r.FileImageLogo)
            .Must(file => file!.Length <= 2 * 1024 * 1024)
