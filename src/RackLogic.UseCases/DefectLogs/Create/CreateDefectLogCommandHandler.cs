@@ -37,7 +37,7 @@ public class CreateDefectLogCommandHandler(
       var savedFiles = await fileService.SaveFilesAsync(
         entity.Id,
         request.Files,
-        Path.Combine("wwwroot", "DefectLogs")
+        "DefectLogs"
       );
 
       var fileEntities = savedFiles

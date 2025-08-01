@@ -32,7 +32,7 @@ public class UpdateInspectorProfileHandler(
     var existingInspectorProfile = await _inspectorProfileRepository.FirstOrDefaultAsync(i => i.UserId == userId, cancellationToken);
 
     // Path folder
-    var rootPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "InspectorProfileImage");
+    var rootPath = "InspectorProfileImage";
 
     if (existingInspectorProfile != null)
     {

@@ -1,24 +1,26 @@
-﻿namespace RackLogic.Infrastructure.Configuration;
+﻿using RackLogic.Core.Common.Constants;
+
+namespace RackLogic.Infrastructure.Configuration;
 public class AppStoreConfigService
 {
   public AppStoreConfig GetConfig()
   {
     return new AppStoreConfig
     {
-      Audience = Environment.GetEnvironmentVariable("AUDIENCE", EnvironmentVariableTarget.User)
-        ?? Environment.GetEnvironmentVariable("AUDIENCE", EnvironmentVariableTarget.Machine)
+      Audience = Environment.GetEnvironmentVariable(EnvironmentConstant.Audience, EnvironmentVariableTarget.User)
+        ?? Environment.GetEnvironmentVariable(EnvironmentConstant.Audience, EnvironmentVariableTarget.Machine)
         ?? string.Empty,
-      BundleId = Environment.GetEnvironmentVariable("BUNDLE_ID", EnvironmentVariableTarget.User)
-        ?? Environment.GetEnvironmentVariable("BUNDLE_ID", EnvironmentVariableTarget.Machine)
+      BundleId = Environment.GetEnvironmentVariable(EnvironmentConstant.BundleId, EnvironmentVariableTarget.User)
+        ?? Environment.GetEnvironmentVariable(EnvironmentConstant.BundleId, EnvironmentVariableTarget.Machine)
         ?? string.Empty,
-      IssuerId = Environment.GetEnvironmentVariable("ISSUER_ID", EnvironmentVariableTarget.User)
-        ?? Environment.GetEnvironmentVariable("ISSUER_ID", EnvironmentVariableTarget.Machine)
+      IssuerId = Environment.GetEnvironmentVariable(EnvironmentConstant.IssuerId, EnvironmentVariableTarget.User)
+        ?? Environment.GetEnvironmentVariable(EnvironmentConstant.IssuerId, EnvironmentVariableTarget.Machine)
         ?? string.Empty,
-      KeyId = Environment.GetEnvironmentVariable("KEY_ID", EnvironmentVariableTarget.User)
-        ?? Environment.GetEnvironmentVariable("KEY_ID", EnvironmentVariableTarget.Machine)
+      KeyId = Environment.GetEnvironmentVariable(EnvironmentConstant.KeyId, EnvironmentVariableTarget.User)
+        ?? Environment.GetEnvironmentVariable(EnvironmentConstant.KeyId, EnvironmentVariableTarget.Machine)
         ?? string.Empty,
-      PrivateKey = Environment.GetEnvironmentVariable("PRIVATE_KEY_APPSTORE", EnvironmentVariableTarget.User)
-        ?? Environment.GetEnvironmentVariable("PRIVATE_KEY_APPSTORE", EnvironmentVariableTarget.Machine)
+      PrivateKey = Environment.GetEnvironmentVariable(EnvironmentConstant.PrivateKey, EnvironmentVariableTarget.User)
+        ?? Environment.GetEnvironmentVariable(EnvironmentConstant.PrivateKey, EnvironmentVariableTarget.Machine)
         ?? string.Empty
     };
   }
