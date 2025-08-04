@@ -38,7 +38,8 @@ public class AzureBlobService(AppConfigService _appConfigService) : IAzureBlobSe
 
     await blobContainer.CreateIfNotExistsAsync();
 
-    var blobName = Path.Combine(path,file.Name);
+    var blobName = Path.Combine(path,file.FileName);
+
     var blobClient = blobContainer.GetBlobClient(blobName);
 
     using (var stream = file.OpenReadStream())
