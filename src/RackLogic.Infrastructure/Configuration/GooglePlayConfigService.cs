@@ -7,15 +7,34 @@ public class GooglePlayConfigService
 {
   public GooglePlayConfig GetConfig()
   {
-    var path = Environment.GetEnvironmentVariable(EnvironmentConstant.GGKeyPath, EnvironmentVariableTarget.User)
+    var path = Environment.GetEnvironmentVariable(EnvironmentConstant.GGKeyPath)
+        ?? Environment.GetEnvironmentVariable(EnvironmentConstant.GGKeyPath, EnvironmentVariableTarget.User)
         ?? Environment.GetEnvironmentVariable(EnvironmentConstant.GGKeyPath, EnvironmentVariableTarget.Machine);
 
     if (string.IsNullOrEmpty(path)) return new GooglePlayConfig();
 
-    var credentials = JsonConvert.DeserializeObject<GooglePlayConfig>(File.ReadAllText(path) ?? string.Empty);
+    string jsonContent = string.Empty;
 
-    if (credentials == null) return new GooglePlayConfig();
+    try
+    {
+      if (Uri.IsWellFormedUriString(path, UriKind.Absolute))
+      {
+        using (var httpClient = new HttpClient())
+        {
+          jsonContent = httpClient.GetStringAsync(path).Result;
+        }
+      }
+      else
+      {
+        jsonContent = File.ReadAllText(path);
+      }
 
-    return credentials;
+      var credentials = JsonConvert.DeserializeObject<GooglePlayConfig>(jsonContent);
+      return credentials ?? new GooglePlayConfig();
+    }
+    catch
+    {
+      return new GooglePlayConfig();
+    }
   }
 }
