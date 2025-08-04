@@ -1,5 +1,6 @@
 ﻿using RackLogic.Core.Interfaces;
 using RackLogic.Infrastructure;
+using RackLogic.Infrastructure.AzureBlobFile;
 using RackLogic.Infrastructure.Data.Repositories;
 using RackLogic.Infrastructure.Email;
 using RackLogic.UseCases.Users;
@@ -14,25 +15,10 @@ public static class ServiceConfigs
     services.AddInfrastructureServices(builder.Configuration, logger)
             .AddMediatrConfigs();
 
+    services.AddScoped<IAzureBlobService, AzureBlobService>();
     services.AddScoped<IUser, CurrentUser>();
-
-    if (builder.Environment.IsDevelopment())
-    {
-      // Use a local test email server
-      // See: https://ardalis.com/configuring-a-local-test-email-server/
-      services.AddScoped<IEmailSender, EmailService>();
-      services.AddScoped(typeof(IRepositoryWithExpression<>), typeof(EfRepositoryWithExpression<>));
-
-      // Otherwise use this:
-      //builder.Services.AddScoped<IEmailSender, FakeEmailSender>();
-
-    }
-    else
-    {
-      services.AddScoped<IEmailSender, EmailService>();
-      services.AddScoped(typeof(IRepositoryWithExpression<>), typeof(EfRepositoryWithExpression<>));
-    }
-
+    services.AddScoped<IEmailSender, EmailService>();
+    services.AddScoped(typeof(IRepositoryWithExpression<>), typeof(EfRepositoryWithExpression<>));
     logger.LogInformation("{Project} services registered", "Mediatr and Email Sender");
 
     return services;

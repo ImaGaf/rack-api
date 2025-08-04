@@ -1,143 +1,54 @@
 ﻿using Microsoft.AspNetCore.Http;
+using RackLogic.Core.Interfaces;
 using RackLogic.UseCases.FloorPlans;
 
 namespace RackLogic.Infrastructure.Data.Queries;
-public class FileService : IFileService
+public class FileService(IAzureBlobService _azureBlobService) : IFileService
 {
-  private readonly AppDbContext _context;
-
-  public FileService(AppDbContext context)
+  public async Task DeleteFilesAsync(List<string> fileUrlsToDelete)
   {
-    _context = context;
-  }
-  public Task<List<string>> DeleteFilesAsync(List<string> fileUrlsToDelete)
-  {
-    string rootPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot");
-    var nonExistentFiles = new List<string>();
-
-    foreach (var fileUrl in fileUrlsToDelete)
-    {
-      string fullFilePath = Path.Combine(rootPath, fileUrl);
-
-      if (File.Exists(fullFilePath))
-      {
-        File.Delete(fullFilePath);
-      }
-
-      else
-      {
-        nonExistentFiles.Add(fullFilePath);
-      }
-    }
-    return Task.FromResult(nonExistentFiles);
+    var deletTasks = fileUrlsToDelete.Select(_azureBlobService.DelteFileToBlobAsync);
+    await Task.WhenAll(deletTasks);
   }
 
   public async Task<List<SavedFileInfo>> SaveFilesAsync(Guid warehouseId, Guid? floorPlanId, List<IFormFile> files)
   {
-    var rootPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "Warehouse");
-    string folderPath;
-    if (floorPlanId.HasValue)
-    {
-      // Case when floorPlanId is not null
-      folderPath = Path.Combine(rootPath, warehouseId.ToString(), "FloorPlan", floorPlanId.Value.ToString());
-    }
-    else
-    {
-      // Case when floorPlanId is null
-      folderPath = Path.Combine(rootPath, warehouseId.ToString(), "Logo");
-    }
+    var rootPath = "Warehouse";
+    string folderPath = floorPlanId.HasValue ?
+                        CombineBlobPath(rootPath, warehouseId.ToString(), "FloorPlan", floorPlanId.Value.ToString()) :
+                        CombineBlobPath(rootPath, warehouseId.ToString(), "Logo");
 
-    if (!Directory.Exists(folderPath))
-    {
-      Directory.CreateDirectory(folderPath);
-    }
+    var tasks = files.Select(s => _azureBlobService.UploadFileToBlobAsync(folderPath, s));
+    var taskResults = await Task.WhenAll(tasks);
 
-    var fileInfoList = new List<SavedFileInfo>();
-
-    foreach (var file in files)
-    {
-      var fileName = Path.GetFileName(file.FileName);
-      var filePath = Path.Combine(folderPath, fileName);
-
-      if (File.Exists(filePath))
-      {
-        continue;
-      }
-      // Save file to folder
-      using (var stream = new FileStream(filePath, FileMode.Create))
-      {
-        await file.CopyToAsync(stream);
-      }
-
-      // Save info file to list
-      fileInfoList.Add(new SavedFileInfo
-      {
-        FilePath = floorPlanId.HasValue
-              ? $"Warehouse/{warehouseId}/FloorPlan/{floorPlanId}/{fileName}"
-              : $"Warehouse/{warehouseId}/Logo/{fileName}",
-        FileName = fileName,
-        ContentType = file.ContentType
-      });
-    }
-
-    return fileInfoList;
+    return taskResults.Select(s => new SavedFileInfo() 
+      { 
+        FilePath = s.Url,
+        ContentType = s.ContentType,
+        FileName = s.FileName
+      }).ToList();
   }
 
-  public Task<List<string>> DeleteFilesByUserIdAsync(Guid userId, string rootPath)
+  public async Task DeleteFilesByUserIdAsync(Guid userId, string rootPath)
   {
-    string folderPath = Path.Combine(rootPath, userId.ToString());
-    var nonExistentFiles = new List<string>();
-
-    if (Directory.Exists(folderPath))
-    {
-      var files = Directory.GetFiles(folderPath);
-      foreach (var file in files)
-      {
-        File.Delete(file);
-      }
-    }
-    else
-    {
-      nonExistentFiles.Add(folderPath);
-    }
-    return Task.FromResult(nonExistentFiles);
+    string folderPath = CombineBlobPath(rootPath, userId.ToString());
+    await _azureBlobService.DelteFileToBlobAsync(folderPath);
   }
 
   public async Task<List<SavedFileInfo>> SaveFilesAsync(Guid id, List<IFormFile> files, string rootPath)
   {
-    string folderName = Path.GetFileName(rootPath);
-    string folderPath = Path.Combine(rootPath, id.ToString());
+    string folderPath = CombineBlobPath(rootPath, id.ToString());
+    var tasks = files.Select(s => _azureBlobService.UploadFileToBlobAsync(folderPath, s));
+    var taskResults = await Task.WhenAll(tasks);
 
-    if (!Directory.Exists(folderPath))
+    return taskResults.Select(s => new SavedFileInfo()
     {
-      Directory.CreateDirectory(folderPath);
-    }
-
-    var fileInfoList = new List<SavedFileInfo>();
-
-    foreach (var file in files)
-    {
-      var fileName = Path.GetFileName(file.FileName);
-      var filePath = Path.Combine(folderPath, fileName);
-
-      if (File.Exists(filePath))
-      {
-        continue;
-      }
-
-      using (var stream = new FileStream(filePath, FileMode.Create))
-      {
-        await file.CopyToAsync(stream);
-      }
-
-      fileInfoList.Add(new SavedFileInfo
-      {
-        FilePath = $"{folderName}/{id}/{fileName}",
-        FileName = fileName,
-        ContentType = file.ContentType
-      });
-    }
-
-    return fileInfoList;
+      FilePath = s.Url,
+      ContentType = s.ContentType,
+      FileName = s.FileName
+    }).ToList();
   }
+
+  private string CombineBlobPath(params string[] parts)
+    => string.Join("/", parts.Select(p => p.Trim('/')));
 }

@@ -33,6 +33,7 @@ public static class InfrastructureServiceExtensions
   {
     services.AddSingleton<AppStoreConfigService>();
     services.AddSingleton<GooglePlayConfigService>();
+    services.AddSingleton<AppConfigService>();
     services.AddSingleton(typeof(IConverter), new SynchronizedConverter(new PdfTools()));
     string? connectionString = config.GetConnectionString("DefaultConnection");
     Guard.Against.Null(connectionString);
