@@ -14,6 +14,7 @@ using RackLogic.UseCases.Inspections.ExportReport;
 using RackLogic.UseCases.Inspections.SearchReport;
 using RackLogic.UseCases.Inspections.Update;
 using RackLogic.UseCases.Warehouses;
+using SendGrid.Helpers.Mail.Model;
 
 namespace RackLogic.Infrastructure.Data.Queries;
 
@@ -125,6 +126,9 @@ public class InspectionService(
   {
     var html = await GetReportHtmlAsync(command.InspectionId, cancellationToken, true);
 
+    //TESTING BUG
+    File.WriteAllText(Path.Combine("wwwroot", "ReportTemplates", $"{DateTime.Now.ToString("yyyyMMddhhmm")}.html"), html);
+    
     var doc = new HtmlToPdfDocument()
     {
       GlobalSettings = new GlobalSettings
@@ -154,6 +158,11 @@ public class InspectionService(
     };
 
     var pdfBytes = converter.Convert(doc);
+
+    // TESTING BUG =====
+    File.WriteAllBytes(Path.Combine("wwwroot", "ReportTemplates", $"{DateTime.Now.ToString("yyyyMMddhhmm")}.pdf"), pdfBytes);
+    //======
+
     return pdfBytes;
   }
 
