@@ -14,7 +14,6 @@ using RackLogic.UseCases.Inspections.ExportReport;
 using RackLogic.UseCases.Inspections.SearchReport;
 using RackLogic.UseCases.Inspections.Update;
 using RackLogic.UseCases.Warehouses;
-using SendGrid.Helpers.Mail.Model;
 
 namespace RackLogic.Infrastructure.Data.Queries;
 
@@ -182,8 +181,9 @@ public class InspectionService(
 
     var baseUrl = configuration.GetSection("Client:BaseUrl").Value!;
     var standard = configuration.GetSection("Client:Standard").Value!;
+    var rackLogicLogoUrl = $"{baseUrl}{configuration.GetSection("Client:LogoReport").Value}";
 
-    var rackLogicLogo = $"{baseUrl}{configuration.GetSection("Client:LogoReport").Value}";
+    string rackLogicLogo = await Base64Extension.ConvertImageUrlToBase64(rackLogicLogoUrl);
     string warehouseLogo = await Base64Extension.ConvertImageUrlToBase64(inspection!.Warehouse?.FileImageUrl ?? "");
     string inspectorCompanyLogo = await Base64Extension.ConvertImageUrlToBase64(inspection.AuthorisePerson?.InspectorProfile?.FileImageUrl ?? "");
 
