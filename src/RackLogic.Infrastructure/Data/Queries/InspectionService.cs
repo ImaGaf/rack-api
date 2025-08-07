@@ -126,9 +126,6 @@ public class InspectionService(
   {
     var html = await GetReportHtmlAsync(command.InspectionId, cancellationToken, true);
 
-    //TESTING BUG
-    File.WriteAllText(Path.Combine("wwwroot", "ReportTemplates", $"{DateTime.Now.ToString("yyyyMMddhhmm")}.html"), html);
-    
     var doc = new HtmlToPdfDocument()
     {
       GlobalSettings = new GlobalSettings
@@ -159,10 +156,6 @@ public class InspectionService(
 
     var pdfBytes = converter.Convert(doc);
 
-    // TESTING BUG =====
-    File.WriteAllBytes(Path.Combine("wwwroot", "ReportTemplates", $"{DateTime.Now.ToString("yyyyMMddhhmm")}.pdf"), pdfBytes);
-    //======
-
     return pdfBytes;
   }
 
@@ -191,8 +184,8 @@ public class InspectionService(
     var standard = configuration.GetSection("Client:Standard").Value!;
 
     var rackLogicLogo = $"{baseUrl}{configuration.GetSection("Client:LogoReport").Value}";
-    string warehouseLogo = inspection!.Warehouse?.FileImageUrl ?? "";
-    string inspectorCompanyLogo = inspection.AuthorisePerson?.InspectorProfile?.FileImageUrl ?? "";
+    string warehouseLogo = await Base64Extension.ConvertImageUrlToBase64(inspection!.Warehouse?.FileImageUrl ?? "");
+    string inspectorCompanyLogo = await Base64Extension.ConvertImageUrlToBase64(inspection.AuthorisePerson?.InspectorProfile?.FileImageUrl ?? "");
 
     html = html.Replace("{{Name}}", inspection.Warehouse!.CompanyName)
       .Replace("{{AssetName}}", inspection.FloorPlan!.AssetName)
@@ -239,7 +232,7 @@ public class InspectionService(
       defectLogRows.AppendLine($"<td>{gradeDot}</td>");
       defectLogRows.AppendLine($"<td>{defect.TicketId ?? "-"}</td>");
       defectLogRows.AppendLine($"<td>{inspection.FloorPlan.FloorNumber + 1}.{defect.Rack}.{defect.Side}.{defect.Bay}</td>");
-      defectLogRows.AppendLine($"<td>{Regex.Replace(defect.Component?.ComponentType ?? "-", "(?<!^)([A-Z])", " $1") }</td>");
+      defectLogRows.AppendLine($"<td>{Regex.Replace(defect.Component?.ComponentType ?? "-", "(?<!^)([A-Z])", " $1")}</td>");
       defectLogRows.AppendLine($"<td>{defect.OEMBrand?.Name ?? "-"}</td>");
       defectLogRows.AppendLine($"<td>{defect.Component?.Code ?? "-"}</td>");
       defectLogRows.AppendLine($"<td>{defect.DefectType?.GetDisplayName() ?? "-"}</td>");
