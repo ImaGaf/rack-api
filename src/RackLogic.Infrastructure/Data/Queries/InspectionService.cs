@@ -6,7 +6,6 @@ using DinkToPdf;
 using DinkToPdf.Contracts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
-using RackLogic.Core.Common.Enums;
 using RackLogic.UseCases.Common.Extensions;
 using RackLogic.UseCases.DefectLogs;
 using RackLogic.UseCases.Inspections;
@@ -183,8 +182,8 @@ public class InspectionService(
     var standard = configuration.GetSection("Client:Standard").Value!;
 
     var rackLogicLogo = $"{baseUrl}{configuration.GetSection("Client:LogoReport").Value}";
-    string warehouseLogo = Path.Combine(baseUrl, inspection!.Warehouse?.FileImageUrl ?? "");
-    string inspectorCompanyLogo = Path.Combine(baseUrl, inspection.AuthorisePerson?.InspectorProfile?.FileImageUrl ?? "");
+    string warehouseLogo = inspection!.Warehouse?.FileImageUrl ?? "";
+    string inspectorCompanyLogo = inspection.AuthorisePerson?.InspectorProfile?.FileImageUrl ?? "";
 
     html = html.Replace("{{Name}}", inspection.Warehouse!.CompanyName)
       .Replace("{{AssetName}}", inspection.FloorPlan!.AssetName)

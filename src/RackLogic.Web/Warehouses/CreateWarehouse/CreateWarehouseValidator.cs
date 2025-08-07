@@ -15,6 +15,7 @@ public class CreateWarehouseValidator : Validator<CreateWarehouseRequest>
     RuleFor(r => r.ABN)
             .Length(11)
             .Matches(@"^\d{11}$")
+            .When(r => !string.IsNullOrEmpty(r.ABN))
             .WithMessage("ABN must be exactly 11 numeric characters.");
 
     RuleFor(r => r.ClientPhoneNumber)
@@ -24,10 +25,12 @@ public class CreateWarehouseValidator : Validator<CreateWarehouseRequest>
 
     RuleFor(r => r.OwnerPhoneNumber)
            .Matches(@"^\d{10}$")
+           .When(r => !string.IsNullOrEmpty(r.OwnerPhoneNumber))
            .WithMessage("Invalid phone number format.");
 
     RuleFor(r => r.OwnerEmailAddress)
           .EmailAddress()
+          .When(r => !string.IsNullOrEmpty(r.OwnerEmailAddress))
           .WithMessage("Email is invalid.");
   }
 }
