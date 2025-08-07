@@ -154,6 +154,7 @@ public class InspectionService(
     };
 
     var pdfBytes = converter.Convert(doc);
+
     return pdfBytes;
   }
 
@@ -180,10 +181,11 @@ public class InspectionService(
 
     var baseUrl = configuration.GetSection("Client:BaseUrl").Value!;
     var standard = configuration.GetSection("Client:Standard").Value!;
+    var rackLogicLogoUrl = $"{baseUrl}{configuration.GetSection("Client:LogoReport").Value}";
 
-    var rackLogicLogo = $"{baseUrl}{configuration.GetSection("Client:LogoReport").Value}";
-    string warehouseLogo = inspection!.Warehouse?.FileImageUrl ?? "";
-    string inspectorCompanyLogo = inspection.AuthorisePerson?.InspectorProfile?.FileImageUrl ?? "";
+    string rackLogicLogo = await Base64Extension.ConvertImageUrlToBase64(rackLogicLogoUrl);
+    string warehouseLogo = await Base64Extension.ConvertImageUrlToBase64(inspection!.Warehouse?.FileImageUrl ?? "");
+    string inspectorCompanyLogo = await Base64Extension.ConvertImageUrlToBase64(inspection.AuthorisePerson?.InspectorProfile?.FileImageUrl ?? "");
 
     html = html.Replace("{{Name}}", inspection.Warehouse!.CompanyName)
       .Replace("{{AssetName}}", inspection.FloorPlan!.AssetName)
@@ -230,7 +232,7 @@ public class InspectionService(
       defectLogRows.AppendLine($"<td>{gradeDot}</td>");
       defectLogRows.AppendLine($"<td>{defect.TicketId ?? "-"}</td>");
       defectLogRows.AppendLine($"<td>{inspection.FloorPlan.FloorNumber + 1}.{defect.Rack}.{defect.Side}.{defect.Bay}</td>");
-      defectLogRows.AppendLine($"<td>{Regex.Replace(defect.Component?.ComponentType ?? "-", "(?<!^)([A-Z])", " $1") }</td>");
+      defectLogRows.AppendLine($"<td>{Regex.Replace(defect.Component?.ComponentType ?? "-", "(?<!^)([A-Z])", " $1")}</td>");
       defectLogRows.AppendLine($"<td>{defect.OEMBrand?.Name ?? "-"}</td>");
       defectLogRows.AppendLine($"<td>{defect.Component?.Code ?? "-"}</td>");
       defectLogRows.AppendLine($"<td>{defect.DefectType?.GetDisplayName() ?? "-"}</td>");
