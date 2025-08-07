@@ -68,8 +68,8 @@ public class UpdateDefectLogCommandHandler(
       await defectLogHistoryService
         .CreateAsync(
           entity,
-          "Defect item inspected, issue resolved",
-          (int)DefectHistoryType.Resolved,
+          "Resolved",
+          (int)DefectHistoryType.Completed,
           cancellationToken);
     }
 
