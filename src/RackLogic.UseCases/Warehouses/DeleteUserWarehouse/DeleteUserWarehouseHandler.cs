@@ -10,6 +10,7 @@ using RackLogic.UseCases.Users;
 namespace RackLogic.UseCases.Warehouses.DeleteUserWarehouse;
 public class DeleteUserWarehouseHandler(
   IRepositoryWithExpression<UserWarehouseRole> _userWarehouseRoleRepository,
+  IRepositoryWithExpression<WarehouseFinalUses> _warehouseFinalUsesRepository,
   IRepositoryWithExpression<Warehouse> _warehouseRepository,
   RoleManager<IdentityRole<Guid>> _roleManager,
   IUser _user)
@@ -28,10 +29,14 @@ public class DeleteUserWarehouseHandler(
 
     // Check if the selected user exists in the Warehouse
     var userWarehouseDelete = await _userWarehouseRoleRepository.FirstOrDefaultAsync(x => x.WarehouseId == request.WarehouseId && x.UserId == request.UserId);
+    var warehouseFinalUses = await _warehouseFinalUsesRepository.FirstOrDefaultAsync(x => x.WarehouseId == request.WarehouseId && x.UserId == request.UserId);
+
+    if (warehouseFinalUses != null) await _warehouseFinalUsesRepository.DeleteAsync(warehouseFinalUses);
     if (userWarehouseDelete == null) return Result.Invalid(new ValidationError("The selected user does not exist in this Warehouse."));
 
     // Delete user from Warehouse
     await _userWarehouseRoleRepository.DeleteAsync(userWarehouseDelete);
+   
 
     //TODO delete account user from system( CLIENT-MANAGER, CLIENT-EDITOR)
     return Result.Success(true);
