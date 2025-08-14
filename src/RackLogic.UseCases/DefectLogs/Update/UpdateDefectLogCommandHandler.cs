@@ -24,6 +24,11 @@ public class UpdateDefectLogCommandHandler(
       return Result.Forbidden(ErrorMessages.DefectLog.ErrorMessageUpdate);
     }
 
+    if (!userWarehouseService.HasPermission(PermissionConstant.DefectLog.Code, PermissionConstant.DefectLog.Resolve))
+    {
+      return Result.Forbidden(ErrorMessages.DefectLog.ErrorMessageResolve);
+    }
+
     var entity = await defectLogService.GetByIdAsync(request.Id, cancellationToken);
 
     if (entity == null)

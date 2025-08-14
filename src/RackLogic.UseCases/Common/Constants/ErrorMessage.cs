@@ -15,6 +15,7 @@ public static class ErrorMessages
     public const string ErrorMessageView = "You do not have permission to view defect logs.";
     public const string ErrorMessageUpdate = "You do not have permission to update defect logs.";
     public const string ErrorMessageDelete = "You do not have permission to delete defect logs.";
+    public const string ErrorMessageResolve = "You do not have permission to resolve defect logs.";
   }
 
   public static class BayConfiguration
