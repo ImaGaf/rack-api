@@ -3,5 +3,6 @@
 public enum CorrectiveAction
 {
   Replace,
-  Repair
+  Repair,
+  Monitor
 }
