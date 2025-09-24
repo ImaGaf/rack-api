@@ -55,16 +55,11 @@ public class InspectionService(
 
   public async Task<PagedDataDTO<InspectionReportDto>> SearchReportAsync(SearchInspectionReportQuery request, Guid userId, CancellationToken cancellationToken)
   {
-    var userWarehouseIds = await dbContext.UserWarehouseRoles
-      .Where(uwr => uwr.UserId == userId)
-      .Select(uwr => uwr.WarehouseId)
-      .ToListAsync(cancellationToken);
-
     var query = dbContext.Inspections
       .Include(i => i.Warehouse)
       .Include(i => i.AuthorisePerson!)
         .ThenInclude(i => i.InspectorProfile)
-      .Where(i => i.IsEnd == true && userWarehouseIds.Contains(i.WarehouseId!.Value));
+      .Where(i => i.IsEnd == true && request.WarehouseId == i.WarehouseId!.Value);
 
     if (request.Search != null)
     {
