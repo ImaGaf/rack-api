@@ -4,4 +4,4 @@ using RackLogic.UseCases.Warehouses;
 
 namespace RackLogic.UseCases.Inspections.SearchReport;
 
-public record SearchInspectionReportQuery(string? Search, int PageNumber, int PageSize) : IQuery<Result<PagedDataDTO<InspectionReportDto>>>;
+public record SearchInspectionReportQuery(string? Search,Guid WarehouseId, int PageNumber, int PageSize) : IQuery<Result<PagedDataDTO<InspectionReportDto>>>;
