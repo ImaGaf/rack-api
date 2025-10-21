@@ -10,7 +10,7 @@ public enum DefectStatus
   [Display(Description = "In Progress")]
   InProgress = 1,
 
-  [Display(Description = "Remediate Repair")]
+  [Display(Description = "No Action Required")]
   RemediateRepair = 2,
 
   [Display(Description = "Awaiting Component")]
