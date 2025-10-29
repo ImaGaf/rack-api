@@ -1,5 +1,8 @@
-﻿using Ardalis.Result;
+﻿using System.Threading;
+using Ardalis.GuardClauses;
+using Ardalis.Result;
 using Ardalis.SharedKernel;
+using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using RackLogic.Core.Common.Constants;
@@ -25,29 +28,39 @@ public class CreateWarehouseHandler(
 {
   public async Task<Result<WarehouseDto>> Handle(CreateWarehouseCommand request, CancellationToken cancellationToken)
   {
-    if (user.Id is null)
-      return Result.Unauthorized();
-
-    if (user.Role != RoleConstant.Premises && user.Role != RoleConstant.Inspector)
-      return Result.Forbidden("You are not a premises or an inspector");
-
-    if (user.Role == RoleConstant.Premises)
+    Guard.Against.Null(user.Id);
+    if (user.Role == RoleConstant.Premises
+      && await ExistsWarehouse(user.Id.Value, cancellationToken))
     {
-      var hasWarehouse = await _userWarehouseRoleRepository
-        .AnyAsync(new UserWarehouseRoleByUserSpec(user.Id.Value), cancellationToken);
-
-      if (hasWarehouse)
-        return Result.Error("You already have a warehouse.");
+      return Result.Error("You already have a warehouse.");
     }
 
-    var creatorRoleId = await _roleManager.FindByNameAsync(user.Role);
-    if (creatorRoleId == null) return Result.Error("Creator role is invalid");
+    // Invite Premises from Inspector Account
+    if (IsInvite(request.OwnerEmailAddress))
+    {
+      var dbUser = await _userManager.FindByEmailAsync(request.OwnerEmailAddress ?? string.Empty);
+      if (dbUser != null
+        && dbUser.RegisteredRole == RoleConstant.Premises
+        && await ExistsWarehouse(dbUser.Id, cancellationToken))
+      {
+        return Result.Invalid(new ValidationError("The invited user is not an Premises."));
+      }
+    }
 
+    var creatorRoleId = await _roleManager.FindByNameAsync(user.Role ?? string.Empty);
+
+    ///
+    /// warning: should generate UUID v7 using Guid.CreateVersion7() which was introduced in .NET 9
+    /// 
+    var warehouseId = Guid.NewGuid();
     var warehouse = new Warehouse
     {
-      Id = Guid.NewGuid(),
+      Id = warehouseId,
       CompanyName = request.CompanyName,
-      OwnerId = user.Id.Value,
+      OwnerId = user.Role == RoleConstant.Inspector
+        && IsInvite(request.OwnerEmailAddress)
+        ? null
+        : user.Id,
       ABN = request.ABN,
       Address = request.Address,
       AddressOptional = request.AddressOptional,
@@ -60,39 +73,37 @@ public class CreateWarehouseHandler(
       OwnerLastName = request.OwnerLastName,
       OwnerPhoneNumber = request.OwnerPhoneNumber,
       OwnerEmailAddress = request.OwnerEmailAddress,
-      UserWarehouseRoles = new List<UserWarehouseRole>(),
+      UserWarehouseRoles = new List<UserWarehouseRole>()
+      {
+        new UserWarehouseRole
+        {
+          UserId = user.Id.Value,
+          RoleId = creatorRoleId!.Id,
+          WarehouseId = warehouseId,
+        },
+      },
       FloorPlans = new List<FloorPlan>()
     };
 
 
-    if (request.FileImageLogo != null && !await AddFileAsync(warehouse, request.FileImageLogo, cancellationToken))
+    if (request.FileImageLogo != null)
     {
-      return Result.Error("Failed to save logo file.");
+      var savedFiles = await _fileService.SaveFilesAsync(warehouse.Id, null, [request.FileImageLogo]);
+      warehouse.FileImageUrl = savedFiles.FirstOrDefault()?.FilePath;
+      warehouse.FileImageName = savedFiles.FirstOrDefault()?.FileName;
     }
 
-    await _warehouseRepository.AddToContextAsync(warehouse, cancellationToken: cancellationToken);
+    await _warehouseRepository.AddToContextAsync(
+      warehouse,
+      autoSave: true,
+      cancellationToken);
 
-    // await _warehouseRepository.SaveEntityAsync(warehouse, cancellationToken);
-    await _warehouseRepository.SaveContextAsync(cancellationToken);
-
-    await _userWarehouseRoleRepository.AddAsync(new UserWarehouseRole
+    if (IsInvite(request.OwnerEmailAddress))
     {
-      UserId = user.Id.Value,
-      RoleId = creatorRoleId.Id,
-      WarehouseId = warehouse.Id
-    }, cancellationToken);
-
-    if (request.IsNominatedInspector && !string.IsNullOrWhiteSpace(request.InviteInspectorEmail))
-    {
-      var inspector = await _userManager.FindByEmailAsync(request.InviteInspectorEmail);
-
-      if (inspector != null && inspector.RegisteredRole != RoleConstant.Inspector)
-        return Result.Invalid(new ValidationError("The invited user is not an Inspector."));
-
       await _invitationService.ProcessInvitationAsync(
-        request.InviteInspectorEmail,
-        warehouse.Id,
-        RoleConstant.Inspector,
+        request.OwnerEmailAddress ?? string.Empty,
+        warehouseId,
+        RoleConstant.Premises,
         cancellationToken
       );
     }
@@ -100,16 +111,11 @@ public class CreateWarehouseHandler(
     return warehouse.ToDto();
   }
 
-  private async Task<bool> AddFileAsync(Warehouse warehouse, IFormFile file, CancellationToken cancellationToken)
-  {
-    var savedFiles = await _fileService.SaveFilesAsync(warehouse.Id, null, [file]);
-    var savedFile = savedFiles.FirstOrDefault();
+  private async Task<bool> ExistsWarehouse(Guid userId, CancellationToken cancellationToken)
+    => await _userWarehouseRoleRepository
+    .AnyAsync(new UserWarehouseRoleByUserSpec(userId), cancellationToken);
 
-    if (savedFile == null) return false;
-
-    warehouse.FileImageUrl = savedFile.FilePath;
-    warehouse.FileImageName = savedFile.FileName;
-
-    return true;
-  }
+  private bool IsInvite(string? ownerEmailAddress)
+    => user.Role == RoleConstant.Inspector
+      && !string.IsNullOrWhiteSpace(ownerEmailAddress);
 }

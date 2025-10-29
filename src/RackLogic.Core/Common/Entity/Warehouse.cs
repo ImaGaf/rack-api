@@ -4,7 +4,6 @@ namespace RackLogic.Core.Common.Entity;
 public class Warehouse : BaseEntityCustom
 {
   public required string CompanyName { get; set; }
-  public required Guid OwnerId { get; set; }
   public string? ABN { get; set; }
   public required string Address { get; set; }
   public string? AddressOptional { get; set; }
@@ -20,6 +19,7 @@ public class Warehouse : BaseEntityCustom
   public string? OwnerEmailAddress { get; set; }
   public string? OwnerPhoneNumber { get; set; }
   public DateTime? InspectionDueDate { get; set; }
+  public Guid? OwnerId { get; set; }
   public virtual ApplicationUser? User { get; set; }
   public virtual required ICollection<FloorPlan> FloorPlans { get; set; }
   public virtual required ICollection<UserWarehouseRole> UserWarehouseRoles { get; set; }

@@ -7,6 +7,8 @@ public class UserWarehouseRoleByUserSpec : Specification<UserWarehouseRole>
 {
   public UserWarehouseRoleByUserSpec(Guid userId)
   {
-    Query.Where(x => x.UserId == userId);
+    Query
+      .Where(x => x.UserId == userId)
+      .AsNoTracking();
   }
 }

@@ -2,19 +2,20 @@
 using FastEndpoints;
 using MediatR;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Authorization;
+using RackLogic.Core.Common.Constants;
 using RackLogic.UseCases.Warehouses;
 using RackLogic.Web.Exceptions;
 using RackLogic.Web.Models;
 
 namespace RackLogic.Web.Warehouses.CreateWarehouse;
 
-[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
 public class CreateWarehouse(IMediator _mediator) : Endpoint<CreateWarehouseRequest, ApiResponse<WarehouseDto>>
 {
   public override void Configure()
   {
     Post("/manager-warehouse/createWarehouse");
+    AuthSchemes(JwtBearerDefaults.AuthenticationScheme);
+    Roles(RoleConstant.Inspector, RoleConstant.Premises);
     DontThrowIfValidationFails();
     AllowFileUploads();
   }

@@ -63,66 +63,52 @@ public class InvitationService(
 
   public async Task AcceptInvitationAsync(string emailInvited, Guid warehouseId, ApplicationUser user, CancellationToken cancellationToken)
   {
-    if (user.RegisteredRole == RoleConstant.Repairer || user.RegisteredRole == RoleConstant.Inspector)
+    var isRepairerOrInspector = user.RegisteredRole == RoleConstant.Repairer
+      || user.RegisteredRole == RoleConstant.Inspector;
+
+      var invitations = isRepairerOrInspector
+      ? await _invitationsRepository
+        .FindAsync(x => x.Email == emailInvited, cancellationToken)
+      : await _invitationsRepository
+        .FindAsync(x => x.Email == emailInvited && x.WarehouseId == warehouseId);
+
+    foreach (var item in invitations)
     {
-      var invitations = await _invitationsRepository
-        .FindAsync(x => x.Email == emailInvited, cancellationToken);
+      var role = await _roleManager.FindByNameAsync(item.Role);
+      if (role == null) continue;
 
-      if (invitations is null) return;
-
-      foreach (var invitation in invitations)
+      await _userWarehouseRoleRepository.AddAsync(new UserWarehouseRole
       {
-        var role = await _roleManager.FindByNameAsync(invitation.Role);
-        if (role == null) continue;
+        UserId = user.Id,
+        RoleId = role.Id,
+        WarehouseId = item.WarehouseId
+      }, cancellationToken);
 
-        await _userWarehouseRoleRepository.AddAsync(new UserWarehouseRole
-        {
-          UserId = user.Id,
-          RoleId = role.Id,
-          WarehouseId = invitation.WarehouseId
-        }, cancellationToken);
-
-        await _invitationsRepository.DeleteAsync(invitation, cancellationToken);
-
-        await _warehouseFinalUseRepository.AddAsync(
-          new WarehouseFinalUses()
-          {
-            UserId = user.Id,
-            WarehouseId = invitation.WarehouseId,
-          },
-          cancellationToken);
+      if (!isRepairerOrInspector)
+      {
+        user.ParentId = item.InviteById;
+        await _userManager.UpdateAsync(user);
       }
-    }
-    else
-    {
-      var invitation = await _invitationsRepository
-        .FirstOrDefaultAsync(x => x.Email == emailInvited && x.WarehouseId == warehouseId);
 
-      if (invitation is null) return;
-
-      var roleId = await _roleManager.FindByNameAsync(invitation.Role);
-      if (roleId is null) return;
-
-      await _userWarehouseRoleRepository.AddAsync(
-        new UserWarehouseRole()
-        {
-          UserId = user.Id,
-          RoleId = roleId.Id,
-          WarehouseId = invitation.WarehouseId,
-        }, cancellationToken);
-
-      user.ParentId = invitation.InviteById;
-      await _userManager.UpdateAsync(user);
-
-      await _invitationsRepository.DeleteAsync(invitation, cancellationToken);
-
+      await _invitationsRepository.DeleteAsync(item, cancellationToken);
       await _warehouseFinalUseRepository.AddAsync(
         new WarehouseFinalUses()
         {
           UserId = user.Id,
-          WarehouseId = invitation.WarehouseId,
+          WarehouseId = item.WarehouseId,
         },
         cancellationToken);
+
+      // update ownerId for warehourse
+      if (user.RegisteredRole == RoleConstant.Premises)
+      {
+        var warehouse = await _context.Warehouses.FindAsync(warehouseId);
+        if (warehouse != null && warehouse.OwnerId == null)
+        {
+          warehouse.OwnerId = user.Id;
+          await _context.SaveChangesAsync();
+        }
+      }
     }
   }
 

@@ -1397,7 +1397,7 @@ namespace RackLogic.Infrastructure.Data.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<Guid>("OwnerId")
+                    b.Property<Guid?>("OwnerId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("OwnerLastName")
@@ -1991,8 +1991,7 @@ namespace RackLogic.Infrastructure.Data.Migrations
                     b.HasOne("RackLogic.Core.UserAggregate.ApplicationUser", "User")
                         .WithMany("OwnedWarehouses")
                         .HasForeignKey("OwnerId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.Navigation("User");
                 });
