@@ -8,6 +8,14 @@ public class WarehouseConfiguration : IEntityTypeConfiguration<Warehouse>
 {
   public void Configure(EntityTypeBuilder<Warehouse> builder)
   {
-    builder.HasOne(w => w.User).WithMany(u => u.OwnedWarehouses).HasForeignKey(w => w.OwnerId).OnDelete(DeleteBehavior.Restrict);
+    builder
+      .Property(p => p.OwnerId)
+      .IsRequired(false);
+
+    builder
+      .HasOne(w => w.User)
+      .WithMany(u => u.OwnedWarehouses)
+      .HasForeignKey(w => w.OwnerId)
+      .OnDelete(DeleteBehavior.Restrict);
   }
 }

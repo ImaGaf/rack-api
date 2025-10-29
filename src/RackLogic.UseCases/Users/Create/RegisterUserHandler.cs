@@ -10,7 +10,6 @@ namespace RackLogic.UseCases.Users.Create;
 public class RegisterUserHandler(
   UserManager<ApplicationUser> _userManager,
   RoleManager<IdentityRole<Guid>> _roleManager,
-  IUserStore<ApplicationUser> _userStore,
   IInvitationService _invitationService)
   : ICommandHandler<RegisterUserCommand, Result<Guid>>
 {
@@ -18,7 +17,6 @@ public class RegisterUserHandler(
 
   public async Task<Result<Guid>> Handle(RegisterUserCommand request, CancellationToken cancellationToken)
   {
-    var emailStore = (IUserEmailStore<ApplicationUser>)_userStore;
     var email = request.EmailAddress.Trim();
 
     if (string.IsNullOrEmpty(email) || !_emailAddressAttribute.IsValid(email))

@@ -14,7 +14,9 @@ public class CurrentUser : IUser
     _httpContextAccessor = httpContextAccessor;
   }
 
-  public Guid? Id => Guid.TryParse(_httpContextAccessor.HttpContext?.User?.FindFirstValue(ClaimTypes.NameIdentifier), out var guid) ? guid : Guid.Empty;
+  public Guid? Id => Guid.TryParse(_httpContextAccessor.HttpContext?.User?.FindFirstValue(ClaimTypes.NameIdentifier), out var guid)
+    ? guid
+    : throw new UnauthorizedAccessException("User ID claim is missing or invalid.");
   public bool? IsAuthenticated => _httpContextAccessor.HttpContext?.User?.Identity?.IsAuthenticated;
   public string? UserName => _httpContextAccessor.HttpContext?.User?.FindFirstValue(ClaimTypes.Name);
   public string? WarehouseRole => _httpContextAccessor.HttpContext?.User?.FindFirstValue(ClaimConstant.WarehouseRole);
