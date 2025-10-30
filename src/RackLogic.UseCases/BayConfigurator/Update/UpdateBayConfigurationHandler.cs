@@ -82,18 +82,22 @@ public class UpdateBayConfigurationHandler(
     bayConfig.IsCustomAccessories = request.IsCustomAccessories;
     bayConfig.XBraceLevel = request.XBraceLevel;
     bayConfig.InterimInterval = request.InterimInterval ?? BayConfigurationDefaultValue.InterimInterval;
-    bayConfig.IsAlternativeFrontBeam = request.IsAlternativeFrontBeam;
+    bayConfig.EnableModeAlternativeBeam = request.EnableModeAlternativeBeam;
+    bayConfig.EnableModeLevelSpecificBeam = request.EnableModeLevelSpecificBeam;
+    bayConfig.BeamWidth = request.BeamWidth;
     bayConfig.LimitedFrontBeam = request.LimitedFrontBeam ?? request.BeamLevels.Count;
+
     await _bayConfigurationLevelsRepository.DeleteAsync(x => x.BayId == request.Id);
+
     bayConfig.Components.Clear();
     bayConfig.Components.Add(request.UpRight.Mapping(bayConfig.Id));
     bayConfig.Components.Add(request.BracingHorizontal.Mapping(bayConfig.Id));
     bayConfig.Components.Add(request.BracingDiagonal.Mapping(bayConfig.Id));
     bayConfig.Components.Add(request.RowSpacer.Mapping(bayConfig.Id));
 
-    if (request.Beam != null)
+    if (request.Beams != null && request.Beams.Any())
     {
-      bayConfig.Components.Add(request.Beam.Mapping(bayConfig.Id));
+      bayConfig.Components.AddRange(request.Beams.Select(x => x.Mapping(bayConfig.Id)));
     }
 
     if (request.Accessories != null)
@@ -104,11 +108,6 @@ public class UpdateBayConfigurationHandler(
     if (request.SpliceKits != null)
     {
       bayConfig.Components.Add(request.SpliceKits.Mapping(bayConfig.Id));
-    }
-
-    if (request.AlternativeFrontBeam != null)
-    {
-      bayConfig.Components.Add(request.AlternativeFrontBeam.Mapping(bayConfig.Id));
     }
 
     await _componentRepository.DeleteAsync(x => x.BayId == request.Id);

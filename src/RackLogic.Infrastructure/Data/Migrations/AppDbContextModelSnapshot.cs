@@ -171,6 +171,9 @@ namespace RackLogic.Infrastructure.Data.Migrations
                     b.Property<int>("BeamLevel")
                         .HasColumnType("int");
 
+                    b.Property<int?>("BeamWidth")
+                        .HasColumnType("int");
+
                     b.Property<int>("BracingDiagonalLevel")
                         .HasColumnType("int");
 
@@ -183,6 +186,13 @@ namespace RackLogic.Infrastructure.Data.Migrations
                     b.Property<DateTime>("CreatedDate")
                         .HasColumnType("datetime2");
 
+                    b.Property<bool?>("EnableModeAlternativeBeam")
+                        .HasColumnType("bit")
+                        .HasColumnName("IsAlternativeFrontBeam");
+
+                    b.Property<bool?>("EnableModeLevelSpecificBeam")
+                        .HasColumnType("bit");
+
                     b.Property<bool>("HasProtector")
                         .HasColumnType("bit");
 
@@ -194,9 +204,6 @@ namespace RackLogic.Infrastructure.Data.Migrations
 
                     b.Property<int>("InterimInterval")
                         .HasColumnType("int");
-
-                    b.Property<bool?>("IsAlternativeFrontBeam")
-                        .HasColumnType("bit");
 
                     b.Property<bool?>("IsCustomAccessories")
                         .HasColumnType("bit");

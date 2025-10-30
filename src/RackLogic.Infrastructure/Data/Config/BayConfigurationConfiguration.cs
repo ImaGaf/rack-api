@@ -8,8 +8,17 @@ public class BayConfigurationConfiguration : IEntityTypeConfiguration<BayConfigu
 {
   public void Configure(EntityTypeBuilder<BayConfiguration> builder)
   {
-    builder.HasOne(p => p.Warehouses).WithMany(u => u.Configurations).HasForeignKey(p => p.WarehouseId).OnDelete(DeleteBehavior.Cascade);
+    builder.Property(p => p.EnableModeAlternativeBeam)
+      .HasColumnName("IsAlternativeFrontBeam");
 
-    builder.HasOne(p => p.Manufacturer).WithMany(u => u.BayConfigurations).HasForeignKey(p => p.ManufacturerId).OnDelete(DeleteBehavior.Cascade);
+    builder.HasOne(p => p.Warehouses)
+      .WithMany(u => u.Configurations)
+      .HasForeignKey(p => p.WarehouseId)
+      .OnDelete(DeleteBehavior.Cascade);
+
+    builder.HasOne(p => p.Manufacturer)
+      .WithMany(u => u.BayConfigurations)
+      .HasForeignKey(p => p.ManufacturerId)
+      .OnDelete(DeleteBehavior.Cascade);
   }
 }

@@ -1,5 +1,4 @@
 ﻿using Ardalis.Result;
-using RackLogic.UseCases.Common.Constants;
 
 namespace RackLogic.UseCases.BayConfigurator.Create;
 
@@ -32,7 +31,10 @@ public record BayConfigurationCommand(
     bool HasProtector,
     ComponentCommand? SpliceKits,
     bool? IsCustomUpRight,
-    ComponentCommand? Beam,
+    IEnumerable<ComponentCommand> Beams,
+    int? BeamWidth,
+    bool? EnableModeAlternativeBeam,
+    bool? EnableModeLevelSpecificBeam,
     List<int> BeamLevels,
     bool? IsCustomBeam,
     ComponentCommand BracingHorizontal,
@@ -51,9 +53,7 @@ public record BayConfigurationCommand(
     List<ComponentCommand>? Accessories,
     bool? IsCustomAccessories,
     int? InterimInterval,
-    bool? IsAlternativeFrontBeam,
-    int? LimitedFrontBeam,
-    ComponentCommand? AlternativeFrontBeam
+    int? LimitedFrontBeam
   );
 
 public record ComponentCommand(

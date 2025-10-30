@@ -45,8 +45,8 @@ public class UpdateBayconfiguratorRequestValidator : Validator<UpdateBayConfigur
     RuleFor(x => x.BayConfigurator.UpRight)
         .NotNull().WithMessage("UpRight is required.");
 
-    RuleFor(x => x.BayConfigurator.Beam)
-        .NotNull().WithMessage("Beam is required.");
+    RuleFor(x => x.BayConfigurator.Beams)
+        .NotNull().WithMessage("Beams is required.");
 
     RuleFor(x => x.BayConfigurator.BeamLevels)
         .NotEmpty().WithMessage("BeamLevels must not be empty.");
