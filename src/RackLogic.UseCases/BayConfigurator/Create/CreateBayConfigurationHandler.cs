@@ -52,11 +52,7 @@ public class CreateBayConfigurationHandler(
     bayConfiguration.Components.Add(request.BayConfiguration.BracingHorizontal.Mapping(bayConfiguration.Id));
     bayConfiguration.Components.Add(request.BayConfiguration.BracingDiagonal.Mapping(bayConfiguration.Id));
     bayConfiguration.Components.Add(request.BayConfiguration.RowSpacer.Mapping(bayConfiguration.Id));
-
-    if (request.BayConfiguration.Beam != null)
-    {
-      bayConfiguration.Components.Add(request.BayConfiguration.Beam.Mapping(bayConfiguration.Id));
-    }
+    bayConfiguration.Components.AddRange(request.BayConfiguration.Beams.Select(x => x.Mapping(bayConfiguration.Id)));
 
     if (request.BayConfiguration.Accessories != null)
     {
@@ -66,11 +62,6 @@ public class CreateBayConfigurationHandler(
     if (request.BayConfiguration.SpliceKits != null)
     {
       bayConfiguration.Components.Add(request.BayConfiguration.SpliceKits.Mapping(bayConfiguration.Id));
-    }
-
-    if (request.BayConfiguration.AlternativeFrontBeam != null)
-    {
-      bayConfiguration.Components.Add(request.BayConfiguration.AlternativeFrontBeam.Mapping(bayConfiguration.Id));
     }
 
     // Add Levels to BayConfiguration

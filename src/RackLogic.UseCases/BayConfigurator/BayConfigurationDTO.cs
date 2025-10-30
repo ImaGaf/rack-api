@@ -1,6 +1,4 @@
-﻿using RackLogic.UseCases.BayConfigurator.GetSWL;
-
-namespace RackLogic.UseCases.BayConfigurator;
+﻿namespace RackLogic.UseCases.BayConfigurator;
 
 public class BayConfigurationDTO
 {
@@ -28,7 +26,10 @@ public class BayConfigurationDTO
   public bool HasProtector { get; set; }
   public ComponentDTO? SpliceKits { get; set; }
   public bool? IsCustomUpRight { get; set; }
-  public ComponentDTO? Beam { get; set; }
+  public IEnumerable<ComponentDTO>? Beams { get; set; }
+  public bool? EnableModeAlternativeBeam { get; set; }
+  public bool? EnableModeLevelSpecificBeam { get; set; }
+  public int? BeamWidth { get; set; }
   public List<int?>? BeamLevels { get; set; }
   public bool? IsCustomBeam { get; set; }
   public ComponentDTO? BracingHorizontal { get; set; }
@@ -46,10 +47,7 @@ public class BayConfigurationDTO
   public bool? IsCustomRowSpacer { get; set; }
   public List<ComponentDTO>? Accessories { get; set; }
   public bool? IsCustomAccessories { get; set; }
-  public bool? IsAlternativeFrontBeam { get; set; }
   public int LimitedFrontBeam { get; set; }
-  public ComponentDTO? AlternativeFrontBeam { get; set; }
-
   public float? PalletWeight { get; set; }
   public int? BulkPalletsNumberOfLevels { get; set; }
   public float? BulkPalletsLevelMaximumLoad { get; set; }

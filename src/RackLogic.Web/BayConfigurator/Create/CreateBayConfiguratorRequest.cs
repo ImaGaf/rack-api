@@ -30,7 +30,10 @@ public class BayConfigurator
   public bool HasProtector { get; set; }
   public Component? SpliceKits { get; set; }
   public bool? IsCustomUpRight { get; set; }
-  public required Component Beam { get; set; }
+  public required IEnumerable<Component> Beams { get; set; }
+  public int? BeamWidth { get; set; }
+  public bool? EnableModeAlternativeBeam { get; set; }
+  public bool? EnableModeLevelSpecificBeam { get; set; }
   public required List<int> BeamLevels { get; set; }
   public bool? IsCustomBeam { get; set; }
   public required Component BracingHorizontal { get; set; }
@@ -48,9 +51,7 @@ public class BayConfigurator
   public bool? IsCustomRowSpacer { get; set; }
   public required List<Component>? Accessories { get; set; }
   public bool? IsCustomAccessories { get; set; }
-  public bool? IsAlternativeFrontBeam { get; set; }
   public int? LimitedFrontBeam { get; set; }
-  public Component? AlternativeFrontBeam { get; set; }
 }
 
 public class Component

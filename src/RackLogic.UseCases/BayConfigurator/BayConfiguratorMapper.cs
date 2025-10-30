@@ -49,7 +49,9 @@ public static partial class BayConfiguratorMapper
       BracingLevel = bay.BracingLevel,
       BeamLevel = bay.BeamLevels.Count,
       XBraceLevel = bay.XBraceLevel,
-      IsAlternativeFrontBeam = bay.IsAlternativeFrontBeam,
+      EnableModeAlternativeBeam = bay.EnableModeAlternativeBeam,
+      EnableModeLevelSpecificBeam = bay.EnableModeLevelSpecificBeam,
+      BeamWidth = bay.BeamWidth,
       LimitedFrontBeam = bay.LimitedFrontBeam ?? bay.BeamLevels.Count
     };
   }
@@ -140,15 +142,20 @@ public static partial class BayConfiguratorMapper
       BracingDiagonalLevel = bayConfiguration.BracingDiagonalLevel,
       BracingLevel = bayConfiguration.BracingLevel,
       XBraceLevel = bayConfiguration.XBraceLevel,
-      IsAlternativeFrontBeam = bayConfiguration.IsAlternativeFrontBeam,
+      EnableModeAlternativeBeam = bayConfiguration.EnableModeAlternativeBeam,
+      EnableModeLevelSpecificBeam = bayConfiguration.EnableModeLevelSpecificBeam,
+      BeamWidth = bayConfiguration.BeamWidth,
       LimitedFrontBeam = bayConfiguration.LimitedFrontBeam,
-      Upright = bayConfiguration.Components.FirstOrDefault(c => c.ComponentType == ComponentType.Upright)?.Mapping(),
-      Beam = bayConfiguration.Components.FirstOrDefault(c => c.ComponentType == ComponentType.Beam)?.Mapping(),
+      Upright = bayConfiguration.Components
+        .FirstOrDefault(c => c.ComponentType == ComponentType.Upright)
+        ?.Mapping(),
+      Beams = bayConfiguration.Components
+        .Where(c => c.ComponentType == ComponentType.Beam || c.ComponentType == ComponentType.Alternative)
+        .Select(x => x.Mapping()),
       BracingHorizontal = bayConfiguration.Components.FirstOrDefault(c => c.ComponentType == ComponentType.BraceHorizontal)?.Mapping(true),
       BracingDiagonal = bayConfiguration.Components.FirstOrDefault(c => c.ComponentType == ComponentType.BraceDiagonal)?.Mapping(true),
       RowSpacer = bayConfiguration.Components.FirstOrDefault(c => c.ComponentType == ComponentType.Backtie)?.Mapping(),
       SpliceKits = bayConfiguration.Components.FirstOrDefault(c => c.ComponentType == ComponentType.Splice)?.Mapping(),
-      AlternativeFrontBeam = bayConfiguration.Components.FirstOrDefault(c => c.ComponentType == ComponentType.Alternative)?.Mapping(),
       Accessories = bayConfiguration.Components
                 .Where(c => c.Category == ComponentCategory.ACCESSORIES)
                 .Select(c => c.Mapping())

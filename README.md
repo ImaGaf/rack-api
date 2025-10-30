@@ -71,3 +71,9 @@ Use the following command and run it via Command Prompt (CMD): **setx {ENV key} 
 
 - ENV values are sensitive and should be kept confidential. When running the project, please request them from the project manager.
 - **master** is the main branch of the project.
+
+### How to add migration
+
+- cd src\RackLogic.Web
+- dotnet ef migrations add Initial -c AppDbContext -p ../RackLogic.Infrastructure/RackLogic.Infrastructure.csproj -s RackLogic.Web.csproj -o Data/Migrations
+- dotnet ef database update -c AppDbContext -p ../RackLogic.Infrastructure/RackLogic.Infrastructure.csproj -s RackLogic.Web.csproj
