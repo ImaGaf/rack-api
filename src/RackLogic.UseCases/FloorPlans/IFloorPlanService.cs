@@ -1,6 +1,6 @@
 ﻿using Ardalis.Result;
 using RackLogic.Core.Common.Entity;
-using RackLogic.UseCases.FloorPlanItems.GetDetail;
+using RackLogic.UseCases.FloorPlanItems;
 using RackLogic.UseCases.FloorPlans.Create;
 using RackLogic.UseCases.FloorPlans.List;
 using RackLogic.UseCases.FloorPlans.Update;

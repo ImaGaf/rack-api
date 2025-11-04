@@ -31,10 +31,6 @@ public class CreateFloorAssetRequestValidator : Validator<CreateFloorAssetReques
 
       floorPlan.RuleForEach(fp => fp.Items).ChildRules(item =>
       {
-        item.RuleFor(i => i.BayId)
-            .NotEmpty().WithMessage("BayId is required and must be correctly formatted.")
-            .MaximumLength(30).WithMessage("BayId's maximum length is 30 characters");
-
         item.RuleFor(i => i.Offset)
             .NotEmpty().WithMessage("Offset is required and must be correctly formatted.");
 

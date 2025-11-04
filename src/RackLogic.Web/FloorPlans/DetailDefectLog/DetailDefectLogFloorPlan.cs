@@ -1,7 +1,7 @@
 ﻿using Ardalis.Result;
 using FastEndpoints;
 using MediatR;
-using RackLogic.UseCases.FloorPlanItems.GetDetail;
+using RackLogic.UseCases.FloorPlanItems;
 using RackLogic.UseCases.FloorPlans.DetailDefectLog;
 using RackLogic.Web.Models;
 

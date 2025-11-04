@@ -3,7 +3,6 @@ using Ardalis.Result;
 using FastEndpoints;
 using MediatR;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Authorization;
 using Newtonsoft.Json;
 using RackLogic.UseCases.FloorPlans.Update;
 using RackLogic.Web.Exceptions;
@@ -12,12 +11,14 @@ using RackLogic.Web.Services;
 
 namespace RackLogic.Web.FloorPlans.Update;
 
-[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-public class UpdateFloorPlan(IMediator _mediator) : Endpoint<RequestUpdateFloorPlan, ApiResponse<bool>>
+public class UpdateFloorPlan(
+  IMediator mediator)
+  : Endpoint<RequestUpdateFloorPlan, ApiResponse<bool>>
 {
   public override void Configure()
   {
     Put("/floor-plan/update");
+    AuthSchemes(JwtBearerDefaults.AuthenticationScheme);
     DontThrowIfValidationFails();
     AllowFileUploads();
   }
@@ -37,22 +38,20 @@ public class UpdateFloorPlan(IMediator _mediator) : Endpoint<RequestUpdateFloorP
     // Mapping files to FloorAsset
     MapFilesToFloorAssets(floorPlanData.FloorAssets, files);
 
-    var validator = new UpdateFloorPlanRequestValidator();
-    var validationResult = validator.Validate(floorPlanData);
-
+    var validationResult = await new UpdateFloorPlanRequestValidator().ValidateAsync(floorPlanData);
     if (!validationResult.IsValid)
     {
       var errors = validationResult.Errors.Select(e => e.ErrorMessage).ToList();
       throw new InvalidException(errors);
     }
 
-    var userCreatedId = User.GetUserId();
-
-    var result = await _mediator.Send(
+    var result = await mediator.Send(
         new UpdateFloorPlanCommand(
-            userCreatedId,
+            User.GetUserId(),
             floorPlanData.WarehouseId,
-            floorPlanData.FloorAssets.Select(FloorPlanMapper.ToUpdateFloorPlanCommand).ToList()
+            floorPlanData.FloorAssets
+              .Select(FloorPlanMapper.ToUpdateFloorPlanCommand)
+              .ToList()
         ),
         ct);
 

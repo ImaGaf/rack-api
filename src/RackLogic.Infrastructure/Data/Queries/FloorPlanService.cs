@@ -6,7 +6,6 @@ using RackLogic.Core.Common.Entity;
 using RackLogic.Core.Common.Enums;
 using RackLogic.Core.Interfaces;
 using RackLogic.UseCases.FloorPlanItems;
-using RackLogic.UseCases.FloorPlanItems.GetDetail;
 using RackLogic.UseCases.FloorPlans;
 using RackLogic.UseCases.FloorPlans.Create;
 using RackLogic.UseCases.FloorPlans.List;

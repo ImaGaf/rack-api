@@ -1,6 +1,7 @@
 ﻿using Ardalis.Result;
 using FastEndpoints;
 using MediatR;
+using RackLogic.UseCases.FloorPlanItems;
 using RackLogic.UseCases.FloorPlanItems.GetDetail;
 using RackLogic.Web.Exceptions;
 using RackLogic.Web.Models;
