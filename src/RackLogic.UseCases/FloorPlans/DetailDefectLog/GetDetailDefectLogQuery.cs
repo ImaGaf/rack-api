@@ -1,6 +1,6 @@
 ﻿using Ardalis.Result;
 using Ardalis.SharedKernel;
-using RackLogic.UseCases.FloorPlanItems.GetDetail;
+using RackLogic.UseCases.FloorPlanItems;
 
 namespace RackLogic.UseCases.FloorPlans.DetailDefectLog;
 

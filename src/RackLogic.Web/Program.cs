@@ -1,6 +1,7 @@
 ﻿using System.Text;
 using FastEndpoints;
 using FastEndpoints.Swagger;
+using FluentValidation;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.StaticFiles;
@@ -33,59 +34,63 @@ builder.AddLoggerConfigs();
 var appLogger = new SerilogLoggerFactory(logger)
     .CreateLogger<Program>();
 
-builder.Services.AddOptionConfigs(builder.Configuration, appLogger, builder);
-builder.Services.AddServiceConfigs(appLogger, builder);
-
-builder.Services.AddFastEndpoints()
-                .SwaggerDocument(o =>
-                {
-                  o.ShortSchemaNames = true;
-                });
-
-builder.Services.AddIdentity<ApplicationUser, IdentityRole<Guid>>(op =>
-{
-  op.Password.RequireNonAlphanumeric = false;
-  op.Lockout.MaxFailedAccessAttempts = 30;
-  op.Tokens.AuthenticatorTokenProvider = "REFRESHTOKENPROVIDER";
-  op.Tokens.PasswordResetTokenProvider = "RESETPASSWORDTOKENPROVIDER";
-  op.Tokens.EmailConfirmationTokenProvider = "DELETEPASSWORDTOKENPROVIDER";
-})
-    .AddSignInManager()
-    .AddEntityFrameworkStores<AppDbContext>()
-    .AddTokenProvider<PasswordResetTokenProvider<ApplicationUser>>("RESETPASSWORDTOKENPROVIDER")
-    .AddTokenProvider<RefreshTokenProvider<ApplicationUser>>("REFRESHTOKENPROVIDER")
-    .AddTokenProvider<PasswordResetTokenProvider<ApplicationUser>>("DELETEPASSWORDTOKENPROVIDER");
-
-builder.Services.Configure<RefreshTokenDataProtectionTokenProviderOptions>(options =>
-{
-  options.TokenLifespan = TimeSpan.FromSeconds(appSettings.RefreshTokenExpireSeconds);
-});
-
-builder.Services.Configure<PasswordResetTokenDataProtectionTokenProviderOptions>(options =>
-{
-  options.TokenLifespan = TimeSpan.FromSeconds(appSettings.PasswordRefreshTokenExpireSeconds);
-});
-
-builder.Services.AddAuthentication(options =>
-{
-  options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-  options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-}).AddJwtBearer(options =>
-{
-  options.RequireHttpsMetadata = false;
-  options.TokenValidationParameters = new TokenValidationParameters
+builder.Services
+  .AddOptionConfigs(builder.Configuration, appLogger, builder)
+  .AddServiceConfigs(appLogger, builder)
+  .AddFastEndpoints()
+  .SwaggerDocument(o =>
   {
-    ValidateIssuer = true,
-    ValidateAudience = true,
-    ValidateLifetime = true,
-    ValidateIssuerSigningKey = true,
-    RequireExpirationTime = true,
-    ValidIssuer = appSettings.Issuer,
-    ValidAudience = appSettings.Audience,
-    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(appSettings.SecretKey)),
-    ClockSkew = TimeSpan.FromSeconds(0)
-  };
-});
+    o.ShortSchemaNames = true;
+  });
+
+builder.Services
+  .AddIdentity<ApplicationUser, IdentityRole<Guid>>(op =>
+  {
+    op.Password.RequireNonAlphanumeric = false;
+    op.Lockout.MaxFailedAccessAttempts = 30;
+    op.Tokens.AuthenticatorTokenProvider = "REFRESHTOKENPROVIDER";
+    op.Tokens.PasswordResetTokenProvider = "RESETPASSWORDTOKENPROVIDER";
+    op.Tokens.EmailConfirmationTokenProvider = "DELETEPASSWORDTOKENPROVIDER";
+  })
+  .AddSignInManager()
+  .AddEntityFrameworkStores<AppDbContext>()
+  .AddTokenProvider<PasswordResetTokenProvider<ApplicationUser>>("RESETPASSWORDTOKENPROVIDER")
+  .AddTokenProvider<RefreshTokenProvider<ApplicationUser>>("REFRESHTOKENPROVIDER")
+  .AddTokenProvider<PasswordResetTokenProvider<ApplicationUser>>("DELETEPASSWORDTOKENPROVIDER");
+
+
+builder.Services
+  .Configure<RefreshTokenDataProtectionTokenProviderOptions>(options =>
+  {
+    options.TokenLifespan = TimeSpan.FromSeconds(appSettings.RefreshTokenExpireSeconds);
+  })
+  .Configure<PasswordResetTokenDataProtectionTokenProviderOptions>(options =>
+  {
+    options.TokenLifespan = TimeSpan.FromSeconds(appSettings.PasswordRefreshTokenExpireSeconds);
+  });
+
+builder.Services
+  .AddAuthentication(options =>
+  {
+    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+  })
+  .AddJwtBearer(options =>
+  {
+    options.RequireHttpsMetadata = false;
+    options.TokenValidationParameters = new TokenValidationParameters
+    {
+      ValidateIssuer = true,
+      ValidateAudience = true,
+      ValidateLifetime = true,
+      ValidateIssuerSigningKey = true,
+      RequireExpirationTime = true,
+      ValidIssuer = appSettings.Issuer,
+      ValidAudience = appSettings.Audience,
+      IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(appSettings.SecretKey)),
+      ClockSkew = TimeSpan.FromSeconds(0)
+    };
+  });
 
 builder.Services.AddAuthorization();
 builder.Services.AddCors(options =>
@@ -127,9 +132,9 @@ builder.Services.AddSwaggerGen(config =>
       });
 });
 
-builder.Services.AddHostedService<ResetCountService>();
+//builder.Services.AddHostedService<ResetCountService>();
 
-builder.Services.AddHostedService<DeleteUserJob>();
+//builder.Services.AddHostedService<DeleteUserJob>();
 
 var app = builder.Build();
 //if (app.Environment.IsDevelopment() || app.Environment.IsEnvironment("Test"))

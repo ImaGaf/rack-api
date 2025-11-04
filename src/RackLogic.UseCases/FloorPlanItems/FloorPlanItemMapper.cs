@@ -1,6 +1,6 @@
 ﻿using RackLogic.Core.Common.Entity;
 using RackLogic.UseCases.BayConfigurator;
-using RackLogic.UseCases.FloorPlanItems.GetDetail;
+using RackLogic.UseCases.FloorPlanItems;
 using RackLogic.UseCases.FloorPlanItems.Inspection;
 using RackLogic.UseCases.Inspections;
 using Riok.Mapperly.Abstractions;

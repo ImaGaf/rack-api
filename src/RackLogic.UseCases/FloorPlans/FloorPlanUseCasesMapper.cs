@@ -35,7 +35,7 @@ public static partial class FloorPlanUseCasesMapper
     {
       Id = item.Id,
       FloorPlanId = floorPlanId,
-      BayId = item.BayId,
+      BayId = string.IsNullOrWhiteSpace(item.BayId) ? string.Empty : item.BayId,
       Rack = item.Rack,
       Bay = item.Bay,
       Offset = item.Offset,
@@ -86,7 +86,7 @@ public static partial class FloorPlanUseCasesMapper
     {
       Id = item.Id,
       FloorPlanId = floorPlanId,
-      BayId = item.BayId,
+      BayId = string.IsNullOrWhiteSpace(item.BayId) ? string.Empty : item.BayId,
       Rack = item.Rack,
       Bay = item.Bay,
       Offset = item.Offset,
@@ -120,7 +120,7 @@ public static partial class FloorPlanUseCasesMapper
     {
       Id = item.Id,
       FloorPlanId = floorPlanId,
-      BayId = item.BayId,
+      BayId = string.IsNullOrWhiteSpace(item.BayId) ? string.Empty : item.BayId,
       Rack = item.Rack,
       Bay = item.Bay,
       Offset = item.Offset,
@@ -220,7 +220,7 @@ public static partial class FloorPlanUseCasesMapper
 
   public static void UpdateFloorPlanItem(this UpdateFloorPlanItemInformationCommand item, FloorPlanItem floorPlanItem, IEnumerable<BayConfiguration> bayConfiguration)
   {
-    floorPlanItem.BayId = item.BayId;
+    floorPlanItem.BayId = string.IsNullOrWhiteSpace(item.BayId) ? string.Empty : item.BayId;
     floorPlanItem.Rack = item.Rack;
     floorPlanItem.Bay = item.Bay;
     floorPlanItem.Offset = item.Offset;

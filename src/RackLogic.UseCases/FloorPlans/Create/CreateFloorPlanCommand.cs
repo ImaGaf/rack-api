@@ -21,7 +21,7 @@ public record FloorPlanCommand(
 
 public record FloorPlanItemCommand(
     Guid Id,
-    string BayId,
+    string? BayId,
     int? Rack,
     int? Bay,
     List<FloorPlanCommentCommand>? Comments,

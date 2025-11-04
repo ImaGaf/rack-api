@@ -1,6 +1,6 @@
 ﻿using RackLogic.UseCases.BayConfigurator;
 
-namespace RackLogic.UseCases.FloorPlanItems.GetDetail;
+namespace RackLogic.UseCases.FloorPlanItems;
 
 public class FloorPlanItemDto
 {

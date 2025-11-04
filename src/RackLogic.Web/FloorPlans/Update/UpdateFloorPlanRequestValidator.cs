@@ -34,10 +34,6 @@ public class UpdateFloorPlanRequestValidator : Validator<UpdateFloorPlanRequest>
       // Check each element in Items
       floorPlan.RuleForEach(fp => fp.Items).ChildRules(item =>
       {
-        item.RuleFor(i => i.BayId)
-            .NotEmpty().WithMessage("BayId is required and must be correctly formatted.")
-            .MaximumLength(30).WithMessage("BayId's maximum length is 30 characters");
-
         item.RuleFor(i => i.Id)
             .NotEmpty().WithMessage("Item Id is required and must be correctly formatted.");
 

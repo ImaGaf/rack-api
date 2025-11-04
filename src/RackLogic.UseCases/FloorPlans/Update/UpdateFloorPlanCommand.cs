@@ -22,7 +22,7 @@ public record UpdateFloorPlanInformationCommand(
 
 public record UpdateFloorPlanItemInformationCommand(
   Guid Id,
-  string BayId,
+  string? BayId,
   int? Rack,
   int? Bay,
   string Offset,

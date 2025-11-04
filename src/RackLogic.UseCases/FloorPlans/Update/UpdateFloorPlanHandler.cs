@@ -15,15 +15,17 @@ public class UpdateFloorPlanHandler(
 {
   public async Task<Result<bool>> Handle(UpdateFloorPlanCommand request, CancellationToken cancellationToken)
   {
-    if (!_userWarehouseService.HasPermission(PermissionConstant.FloorPlan.Code, PermissionConstant.FloorPlan.Update))
+    if (!_userWarehouseService.HasPermission(PermissionConstant.FloorPlan.Code, PermissionConstant.FloorPlan.Update)
+      || !await _userWarehouseService.CheckPermissionUserRequestAsync(request.UserCreatedId, request.WarehouseId))
     {
       return Result.Forbidden(ErrorMessages.FloorPlan.ErrorMessageUpdate);
     }
-    // Check if WarehouseId is valid
-    if (await _warehouseRepository.FirstOrDefaultAsync(x => x.Id == request.WarehouseId) is null) return Result.Invalid(new ValidationError("WarehouseId invalid."));
 
-    // Check user role
-    if (!await _userWarehouseService.CheckPermissionUserRequestAsync(request.UserCreatedId, request.WarehouseId)) return Result.Forbidden();
+    // Check if WarehouseId is valid
+    if (await _warehouseRepository.FirstOrDefaultAsync(x => x.Id == request.WarehouseId) is null)
+    {
+      return Result.Invalid(new ValidationError("WarehouseId invalid."));
+    }
 
     // Validate BayConfigurationId and DefaultSettings
     var validationResult = await _floorPlanService.ValidateBayConfigurationIdAndDefaultSettingsAsync(
