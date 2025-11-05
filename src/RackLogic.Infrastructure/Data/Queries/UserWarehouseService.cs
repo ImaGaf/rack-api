@@ -212,7 +212,7 @@ public class UserWarehouseService(
     var totalItem = await query.CountAsync(cancellationToken);
 
     var result = await query
-      .OrderBy(x => x.CompanyName)
+      .OrderByDescending(x => x.CreationTime)
       .Skip((request.PageNumber - 1) * request.PageSize)
       .Take(request.PageSize)
       .Select(x => x.ToDto())

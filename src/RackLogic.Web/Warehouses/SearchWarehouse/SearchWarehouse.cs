@@ -1,18 +1,17 @@
 ﻿using FastEndpoints;
 using MediatR;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Authorization;
 using RackLogic.UseCases.Warehouses;
 using RackLogic.Web.Models;
 
 namespace RackLogic.Web.Warehouses.SearchWarehouse;
 
-[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
 public class SearchWarehouse(IMediator mediator) : Endpoint<SearchWarehouseRequest, PageResponse<WarehouseDto>>
 {
   public override void Configure()
   {
     Get("/inspections/search");
+    AuthSchemes(JwtBearerDefaults.AuthenticationScheme);
     DontThrowIfValidationFails();
   }
 
