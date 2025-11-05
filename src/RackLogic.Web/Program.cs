@@ -132,9 +132,9 @@ builder.Services.AddSwaggerGen(config =>
       });
 });
 
-//builder.Services.AddHostedService<ResetCountService>();
+builder.Services.AddHostedService<ResetCountService>();
 
-//builder.Services.AddHostedService<DeleteUserJob>();
+builder.Services.AddHostedService<DeleteUserJob>();
 
 var app = builder.Build();
 //if (app.Environment.IsDevelopment() || app.Environment.IsEnvironment("Test"))

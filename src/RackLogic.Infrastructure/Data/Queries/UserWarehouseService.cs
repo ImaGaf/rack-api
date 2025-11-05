@@ -145,7 +145,8 @@ public class UserWarehouseService(
                 {
                   WarehouseId = warehouse.Id,
                   Name = warehouse.CompanyName,
-                  FilePathImage = warehouse.FileImageUrl
+                  FilePathImage = warehouse.FileImageUrl,
+                  IsOwner = warehouse.OwnerId == userId,
                 };
     return await query.ToListAsync();
   }
@@ -211,7 +212,7 @@ public class UserWarehouseService(
     var totalItem = await query.CountAsync(cancellationToken);
 
     var result = await query
-      .OrderBy(x => x.CompanyName)
+      .OrderByDescending(x => x.CreationTime)
       .Skip((request.PageNumber - 1) * request.PageSize)
       .Take(request.PageSize)
       .Select(x => x.ToDto())
