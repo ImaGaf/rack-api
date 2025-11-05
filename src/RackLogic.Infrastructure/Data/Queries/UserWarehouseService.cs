@@ -145,7 +145,8 @@ public class UserWarehouseService(
                 {
                   WarehouseId = warehouse.Id,
                   Name = warehouse.CompanyName,
-                  FilePathImage = warehouse.FileImageUrl
+                  FilePathImage = warehouse.FileImageUrl,
+                  IsOwner = warehouse.OwnerId == userId,
                 };
     return await query.ToListAsync();
   }
