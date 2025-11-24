@@ -28,5 +28,7 @@ public class Component : EntityBase<Guid>, IAggregateRoot
   public float? MaterialThickness { get; set; }
   public string? ClearEntryWidth { get; set; }
   public string? ConnectorType { get; set; }
+  public bool? UsingFront { get; set; }
+  public int? Level { get; set; }
   public virtual BayConfiguration? BayConfiguration { get; set; }
 }

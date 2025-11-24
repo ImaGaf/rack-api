@@ -82,4 +82,6 @@ public class ComponentResponse
   public float? MaterialThickness { get; set; }
   public string? ClearEntryWidth { get; set; }
   public string? ConnectorType { get; set; }
+  public bool? UsingFront { get; set; }
+  public int? Level { get; set; }
 }

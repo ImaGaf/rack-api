@@ -81,7 +81,9 @@ public static partial class BayConfiguratorMapper
       BeamStyle = component.BeamStyle,
       MaterialThickness = component.MaterialThickness,
       ClearEntryWidth = component.ClearEntryWidth,
-      ConnectorType = component.ConnectorType
+      ConnectorType = component.ConnectorType,
+      UsingFront = component.UsingFront,
+      Level = component.Level,
     };
   }
 
@@ -233,7 +235,9 @@ public static partial class BayConfiguratorMapper
       Notes = component.Notes,
       LowerHeight = component.LowerHeight,
       UpperHeight = component.UpperHeight,
-      IsXBrace = component.IsXBrace
+      IsXBrace = component.IsXBrace,
+      UsingFront = component.UsingFront,
+      Level = component.Level,
     };
   }
 

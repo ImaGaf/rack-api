@@ -377,6 +377,9 @@ namespace RackLogic.Infrastructure.Data.Migrations
                     b.Property<int?>("Length")
                         .HasColumnType("int");
 
+                    b.Property<int?>("Level")
+                        .HasColumnType("int");
+
                     b.Property<int?>("LowerHeight")
                         .HasColumnType("int");
 
@@ -394,6 +397,9 @@ namespace RackLogic.Infrastructure.Data.Migrations
 
                     b.Property<int?>("UpperHeight")
                         .HasColumnType("int");
+
+                    b.Property<bool?>("UsingFront")
+                        .HasColumnType("bit");
 
                     b.Property<int?>("Width")
                         .HasColumnType("int");
