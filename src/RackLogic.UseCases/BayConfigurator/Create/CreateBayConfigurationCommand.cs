@@ -77,7 +77,9 @@ public record ComponentCommand(
     float? MaterialThickness,
     string? ClearEntryWidth,
     int? ClearanceBetweenFrames,
-    string? ConnectorType
+    string? ConnectorType,
+    bool? UsingFront,
+    int? Level
 );
 
 public record ManufacturerCommand(
