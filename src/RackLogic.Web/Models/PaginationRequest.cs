@@ -16,4 +16,10 @@ public class PaginationRequest
 
   [FromQuery]
   public bool OrderByDesc { get; set; } = true;
+
+  [FromQuery]
+  public string? ThenBy { get; set; }
+
+  [FromQuery]
+  public bool ThenByDesc { get; set; } = true;
 }

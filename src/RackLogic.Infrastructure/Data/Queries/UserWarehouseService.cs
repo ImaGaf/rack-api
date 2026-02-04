@@ -252,6 +252,7 @@ public class UserWarehouseService(
 
     var result = await query
       .OrderBy(request.OrderBy, request.OrderByDesc)
+      .ThenBy(request.ThenBy, request.ThenByDesc)
       .Skip((request.PageNumber - 1) * request.PageSize)
       .Take(request.PageSize)
       .Select(w => w.ToWarehouseCertificationInspectionDto())
