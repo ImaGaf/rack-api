@@ -10,4 +10,10 @@ public class PaginationRequest
 
   [FromQuery]
   public int PageSize { get; set; } = PaginationDefaultValue.PageSize;
+
+  [FromQuery]
+  public string? OrderBy { get; set; }
+
+  [FromQuery]
+  public bool OrderByDesc { get; set; } = true;
 }

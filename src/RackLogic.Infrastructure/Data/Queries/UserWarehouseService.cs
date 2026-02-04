@@ -251,7 +251,7 @@ public class UserWarehouseService(
     var totalItem = await query.CountAsync(cancellationToken);
 
     var result = await query
-      .OrderByDescending(w => w.InspectionDueDate)
+      .OrderBy(request.OrderBy, request.OrderByDesc)
       .Skip((request.PageNumber - 1) * request.PageSize)
       .Take(request.PageSize)
       .Select(w => w.ToWarehouseCertificationInspectionDto())
