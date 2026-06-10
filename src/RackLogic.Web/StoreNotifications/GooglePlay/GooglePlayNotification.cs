@@ -4,11 +4,12 @@ using RackLogic.UseCases.StoreNotifications.GooglePlay;
 
 namespace RackLogic.Web.StoreNotifications.GooglePlay;
 
-public class GooglePlayNotification(IMediator _mediator) : Endpoint<GooglePlayNotificationRequest>
+public class GooglePlayNotification(IMediator _mediator, IConfiguration configuration)
+  : Endpoint<GooglePlayNotificationRequest>
 {
   public override void Configure()
   {
-    Post("/projects/original-frame-450802-v9/topics/play-subscription-notifications");
+    Post(configuration["Endpoints:GooglePlayNotificationPath"] ?? string.Empty);
     AllowAnonymous();
   }
 
