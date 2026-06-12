@@ -5,7 +5,8 @@ using Ardalis.Result;
 using DinkToPdf;
 using DinkToPdf.Contracts;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Options;
+using RackLogic.UseCases;
 using RackLogic.UseCases.Common.Extensions;
 using RackLogic.UseCases.DefectLogs;
 using RackLogic.UseCases.Inspections;
@@ -19,8 +20,9 @@ namespace RackLogic.Infrastructure.Data.Queries;
 
 public class InspectionService(
   AppDbContext dbContext,
-  IConfiguration configuration,
-  IConverter converter) : IInspectionService
+  IConverter converter,
+  IOptions<ClientOption> clientOption)
+  : IInspectionService
 {
   public async Task<Result> EndAsync(EndInspectionCommand request, CancellationToken cancellationToken)
   {
@@ -174,17 +176,13 @@ public class InspectionService(
 
     var html = await File.ReadAllTextAsync(templatePath, cancellationToken);
 
-    var baseUrl = configuration.GetSection("Client:BaseUrl").Value!;
-    var standard = configuration.GetSection("Client:Standard").Value!;
-    var rackLogicLogoUrl = $"{baseUrl}{configuration.GetSection("Client:LogoReport").Value}";
-
-    string rackLogicLogo = await Base64Extension.ConvertImageUrlToBase64(rackLogicLogoUrl);
+    string rackLogicLogo = await Base64Extension.ConvertImageUrlToBase64(clientOption.Value.LogoReportWithUrl);
     string warehouseLogo = await Base64Extension.ConvertImageUrlToBase64(inspection!.Warehouse?.FileImageUrl ?? "");
     string inspectorCompanyLogo = await Base64Extension.ConvertImageUrlToBase64(inspection.AuthorisePerson?.InspectorProfile?.FileImageUrl ?? "");
 
     html = html.Replace("{{Name}}", inspection.Warehouse!.CompanyName)
       .Replace("{{AssetName}}", inspection.FloorPlan!.AssetName)
-      .Replace("{{Standard}}", standard)
+      .Replace("{{Standard}}", clientOption.Value.Standard)
       .Replace("{{Address}}", inspection.Warehouse?.Address ?? "-")
       .Replace("{{InspectionCompany}}", inspection.AuthorisePerson?.InspectorProfile?.CompanyName ?? "-")
       .Replace("{{InspectorName}}", inspection.AuthorisePerson?.FirstName + " " + inspection.AuthorisePerson?.LastName)

@@ -1,10 +1,12 @@
 ﻿using Ardalis.Result;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Options;
 using RackLogic.Core.Common.Constants;
 using RackLogic.Core.Common.Entity;
 using RackLogic.Core.Interfaces;
 using RackLogic.Core.UserAggregate;
+using RackLogic.UseCases;
 using RackLogic.UseCases.Users;
 using RackLogic.UseCases.Warehouses;
 
@@ -19,7 +21,8 @@ public class InvitationService(
   UserManager<ApplicationUser> _userManager,
   IConfiguration _configuration,
   IEmailSender _emailSender,
-  IUser _user)
+  IUser _user,
+  IOptions<ClientOption> _clientOption)
   : IInvitationService
 {
   public async Task<Result<bool>> ProcessInvitationAsync(
@@ -42,14 +45,12 @@ public class InvitationService(
     var inviterName = _user.UserName ?? "Someone";
 
     var deepLink = _configuration["Dashboard:InviteUser"];
-    var baseUrl = _configuration["Client:BaseUrl"];
-    var logo = $"{baseUrl}{_configuration["Client:LogoMarket"]}";
 
     if (invitedUser is null)
     {
       var result = await HandlerUserNotExistsAsync(
-        email, warehouseId, inviteRole, _user.Id!.Value, deepLink, logo,
-        inviterName, warehouse.CompanyName, role.Name, baseUrl, ct);
+        email, warehouseId, inviteRole, _user.Id!.Value, deepLink, _clientOption.Value.LogoMarketWithUrl,
+        inviterName, warehouse.CompanyName, role.Name, _clientOption.Value.BaseUrl, ct);
 
       return result
         ? Result.Success(true)
@@ -57,7 +58,7 @@ public class InvitationService(
     }
 
     return await HandlerUserExistsAsync(
-      email, warehouseId, inviteRole, invitedUser, role, logo,
+      email, warehouseId, inviteRole, invitedUser, role, _clientOption.Value.LogoMarketWithUrl,
       inviterName, warehouse.CompanyName, ct);
   }
 

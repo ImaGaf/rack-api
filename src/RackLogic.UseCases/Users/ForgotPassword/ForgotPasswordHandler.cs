@@ -2,6 +2,7 @@
 using Ardalis.SharedKernel;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Options;
 using RackLogic.Core.Common;
 using RackLogic.Core.Interfaces;
 using RackLogic.Core.UserAggregate;
@@ -9,10 +10,11 @@ using RackLogic.Core.UserAggregate;
 namespace RackLogic.UseCases.Users.ForgotPassword;
 
 public class ForgotPasswordHandler(
-  IConfiguration _configuration,
   IRepositoryWithExpression<UserOtp> _userOtpRepository,
   UserManager<ApplicationUser> _userManager,
-  IEmailSender _emailSender)
+  IEmailSender _emailSender,
+  IConfiguration _configuration,
+  IOptions<ClientOption> _clientOption)
   : ICommandHandler<ForgotPasswordCommand, Result<bool>>
 {
   public async Task<Result<bool>> Handle(ForgotPasswordCommand request, CancellationToken cancellationToken)
@@ -32,10 +34,8 @@ public class ForgotPasswordHandler(
         ResetToken = resetToken
       });
 
-      var baseUrl = _configuration.GetSection("Client:BaseUrl").Value;
-      var logo = $"{baseUrl}{_configuration.GetSection("Dashboard:LogoMarket").Value}";
       var forgotPasswordUrl = _configuration.GetSection("Dashboard:ForgotPassword").Value;
-      var content = BuildEmailContent($"{user.FirstName}", otp, logo);
+      var content = BuildEmailContent($"{user.FirstName}", otp, _clientOption.Value.LogoMarketWithUrl);
       var result = await _emailSender.SendAsync(request.Email, "Reset RackPro password", content);
 
       if (result)

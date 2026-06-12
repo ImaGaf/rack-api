@@ -2,7 +2,7 @@
 using Ardalis.Result;
 using Ardalis.SharedKernel;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Options;
 using RackLogic.Core.Common.Constants;
 using RackLogic.Core.Interfaces;
 using RackLogic.Core.UserAggregate;
@@ -13,7 +13,7 @@ public class DeleteUserHandler(
   IUserTokenRepository _userTokenRepository,
   IRepositoryWithExpression<UserOtp> _userOtpRepository,
   IEmailSender _emailSender,
-  IConfiguration _configuration) 
+  IOptions<ClientOption> _clientOption) 
   : ICommandHandler<DeleteUserCommand, Result<bool>>
 {
   public async Task<Result<bool>> Handle(DeleteUserCommand request, CancellationToken cancellationToken)
@@ -41,11 +41,7 @@ public class DeleteUserHandler(
     // Delete record in AspNetUserTokens table with UserId = UserId delete
     await _userTokenRepository.DeleteTokensByUserIdAsync(user.Id, cancellationToken);
 
-    // Send email notification
-    var baseUrl = _configuration.GetSection("Dashboard:BaseUrl").Value;
-    var logo = $"{baseUrl}{_configuration.GetSection("Dashboard:LogoMarket").Value}";
-
-    var contentEmail = BuildDeleteAccountNotificationContent(logo, user.UserName!);
+    var contentEmail = BuildDeleteAccountNotificationContent(_clientOption.Value.LogoMarketWithUrl, user.UserName!);
     return await _emailSender.SendAsync(user.Email!, EmailConstants.DeleteAccountUser, contentEmail);
 
   }

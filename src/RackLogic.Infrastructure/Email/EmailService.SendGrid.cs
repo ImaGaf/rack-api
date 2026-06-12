@@ -5,10 +5,10 @@ using SendGrid;
 using SendGrid.Helpers.Mail;
 
 namespace RackLogic.Infrastructure.Email;
-public class EmailService : IEmailSender
+public class SendGridEmailService : IEmailSender
 {
   private readonly IConfiguration _configuration;
-  public EmailService(IConfiguration configuration)
+  public SendGridEmailService(IConfiguration configuration)
   {
     _configuration = configuration;
   }
@@ -40,7 +40,7 @@ public class EmailService : IEmailSender
     }
   }
 
-  public async Task SendSWLSignageAsync(string file, string? message, string? subject, string? email)
+  public async Task SendSWLSignageAsync(string file, string? subject, string? message, string? email)
   {
     try
     {
@@ -50,7 +50,7 @@ public class EmailService : IEmailSender
 
       var to = new EmailAddress(email);
 
-      var msg = MailHelper.CreateSingleEmail(from, to, "Send", "", message);
+      var msg = MailHelper.CreateSingleEmail(from, to, subject, "", message);
 
       msg.AddAttachment("file.pdf", file);
 

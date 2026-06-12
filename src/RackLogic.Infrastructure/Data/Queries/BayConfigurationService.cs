@@ -2,8 +2,10 @@
 using DinkToPdf;
 using DinkToPdf.Contracts;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Options;
 using RackLogic.Core.Common.Entity;
 using RackLogic.Core.Interfaces;
+using RackLogic.UseCases;
 using RackLogic.UseCases.BayConfigurator;
 using RackLogic.UseCases.BayConfigurator.ShareSWL;
 
@@ -15,20 +17,20 @@ public class BayConfigurationService : IBayConfigurationService
   private readonly IRepositoryWithExpression<FloorPlan> _floorPlanRepository;
   private readonly IConverter _converter;
   private readonly IEmailSender _emailSender;
-  private readonly IConfiguration _configuration;
+  private readonly ClientOption _clientOptions;
 
   public BayConfigurationService(
     IRepositoryWithExpression<BayConfiguration> bayconfigurationRepository,
     IRepositoryWithExpression<FloorPlan> floorPlanRepository,
     IConverter converter,
     IEmailSender emailSender,
-    IConfiguration configuration)
+    IOptions<ClientOption> options)
   {
     _bayconfigurationRepository = bayconfigurationRepository;
     _floorPlanRepository = floorPlanRepository;
     _converter = converter;
     _emailSender = emailSender;
-    _configuration = configuration;
+    _clientOptions = options.Value;
   }
 
   public async Task ExportSWLAsync(ShareSWLCommand request, CancellationToken cancellationToken = default)
@@ -49,17 +51,12 @@ public class BayConfigurationService : IBayConfigurationService
     var html = await File.ReadAllTextAsync(htmlPath, cancellationToken);
     var subject = "SWL Signage details have been shared with you";
     var htmlShareContent = await File.ReadAllTextAsync(Path.Combine("wwwroot", "EmailTemplates", "ShareSWL.html"));
-    var baseUrl = _configuration.GetSection("Client:BaseUrl").Value;
-    var logo = $"{baseUrl}{_configuration.GetSection("Dashboard:LogoMarket").Value}";
-    htmlShareContent = htmlShareContent.Replace("{logo}", logo);
+    htmlShareContent = htmlShareContent.Replace("{logo}", _clientOptions.LogoMarketWithUrl);
     htmlShareContent = htmlShareContent.Replace("{message}", request.Message);
     htmlShareContent = htmlShareContent.Replace("{currentYear}", DateTime.UtcNow.Year.ToString());
 
-    string baseImagePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "ReportTemplates");
-    string rackLogicLogo = "file:///" + Path.Combine(baseImagePath, "rack_logo_alter.svg");
-
     var pdfContent = html
-      .Replace("{{RackLogicLogo}}", rackLogicLogo)
+      .Replace("{{RackLogicLogo}}", _clientOptions.LogoReportWithUrl)
       .Replace("{{Client}}", bayConfiguration!.Warehouses!.CompanyName)
       .Replace("{{LocationAddress}}", bayConfiguration.Warehouses.Address)
       .Replace("{{Asset}}", asset is null ? string.Empty : asset.AssetName)
@@ -94,6 +91,6 @@ public class BayConfigurationService : IBayConfigurationService
 
     var file = Convert.ToBase64String(pdfBytes);
 
-    await _emailSender.SendSWLSignageAsync(file, htmlShareContent, subject, request.Email);
+    await _emailSender.SendSWLSignageAsync(file, subject, htmlShareContent, request.Email);
   }
 }

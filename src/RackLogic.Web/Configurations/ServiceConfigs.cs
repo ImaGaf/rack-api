@@ -17,9 +17,24 @@ public static class ServiceConfigs
 
     services.AddScoped<IAzureBlobService, AzureBlobService>();
     services.AddScoped<IUser, CurrentUser>();
-    services.AddScoped<IEmailSender, EmailService>();
     services.AddScoped(typeof(IRepositoryWithExpression<>), typeof(EfRepositoryWithExpression<>));
-    logger.LogInformation("{Project} services registered", "Mediatr and Email Sender");
+
+    var useSendGrid = builder.Configuration.GetValue<bool>("SendGrid:Enable");
+    if (useSendGrid)
+    {
+      services.AddScoped<IEmailSender, SendGridEmailService>();
+      return services;
+    }
+
+    var acsConnection = builder.Configuration.GetConnectionString("AcsConnection") ??
+      throw new Exception("AcsConnection string is not configured.");
+
+    services.AddSingleton<IEmailSender, ACSEmailService>(sp =>
+    {
+      var emailClient = new Azure.Communication.Email.EmailClient(acsConnection);
+      var emailAddrees = builder.Configuration["Acs:SenderAddress"] ?? string.Empty;
+      return new ACSEmailService(emailClient, emailAddrees);
+    });
 
     return services;
   }
