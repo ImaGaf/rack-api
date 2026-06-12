@@ -9,6 +9,7 @@
     <PackageVersion Include="Ardalis.SmartEnum" Version="8.1.0" />
     <PackageVersion Include="Ardalis.Specification" Version="8.0.0" />
     <PackageVersion Include="Ardalis.Specification.EntityFrameworkCore" Version="8.0.0" />
+    <PackageVersion Include="Azure.Communication.Email" Version="1.1.0" />
     <PackageVersion Include="Azure.Identity" Version="1.12.1" />
     <PackageVersion Include="Azure.Storage.Blobs" Version="12.26.0-beta.1" />
     <PackageVersion Include="coverlet.collector" Version="6.0.2" />
