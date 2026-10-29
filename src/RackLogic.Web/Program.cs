@@ -19,6 +19,7 @@ using Serilog;
 using Serilog.Extensions.Logging;
 
 
+DotEnvConfigs.Load();
 var builder = WebApplication.CreateBuilder(args);
 var appSettings = builder.Configuration.GetSection("TokenSettings").Get<TokenSettings>() ?? default!;
 builder.Services.AddSingleton(appSettings);

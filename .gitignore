@@ -374,3 +374,7 @@ FodyWeavers.xsd
 **/IWeather.Forecasts.API/wwwroot/forecasts/
 
 .publish*
+# Environment secrets
+.env
+.env.*
+!.env.example
